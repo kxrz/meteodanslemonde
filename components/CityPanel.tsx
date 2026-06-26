@@ -17,8 +17,14 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
   const isFR = city.type === "fr"
 
   return (
-    <div className="absolute top-4 right-4 z-[1000] w-80 bg-white rounded-xl shadow-2xl border border-neutral-200 overflow-hidden">
-      <div className={`px-5 py-4 ${isFR ? "bg-blue-600" : "bg-emerald-600"} text-white`}>
+    <div className="fixed sm:absolute bottom-0 sm:top-4 left-0 sm:left-auto right-0 sm:right-4 z-[1000] w-full sm:w-80 bg-white rounded-t-2xl sm:rounded-xl shadow-2xl border border-neutral-200 border-b-0 sm:border-b overflow-hidden max-h-[85vh] sm:max-h-[calc(65vh-2rem)] flex flex-col">
+      {/* Drag handle (mobile only) */}
+      <div className="sm:hidden flex justify-center pt-2 pb-1">
+        <div className="w-10 h-1 rounded-full bg-neutral-200" />
+      </div>
+
+      {/* Header */}
+      <div className={`px-5 py-4 ${isFR ? "bg-blue-600" : "bg-emerald-600"} text-white shrink-0`}>
         <div className="flex items-start justify-between gap-2">
           <div>
             <div className="text-xs font-medium uppercase tracking-widest opacity-80 mb-1">
@@ -39,7 +45,8 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         </div>
       </div>
 
-      <div className="px-5 py-4 border-b border-neutral-100">
+      {/* Météo */}
+      <div className="px-5 py-4 border-b border-neutral-100 shrink-0">
         <div className="flex items-start gap-3">
           <span className="text-4xl mt-1">{emoji}</span>
           <div className="flex-1">
@@ -69,7 +76,8 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         </div>
       </div>
 
-      <div className="px-5 py-4">
+      {/* Jumeaux */}
+      <div className="px-5 py-4 overflow-y-auto">
         <div className="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">
           {isFR ? "Jumeaux climatiques du jour" : "Villes françaises similaires"}
         </div>
@@ -112,7 +120,7 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         )}
       </div>
 
-      <div className="px-5 py-2 bg-neutral-50 border-t border-neutral-100">
+      <div className="px-5 py-2 bg-neutral-50 border-t border-neutral-100 shrink-0">
         <p className="text-[10px] text-neutral-400">Open-Meteo · données du jour</p>
       </div>
     </div>
