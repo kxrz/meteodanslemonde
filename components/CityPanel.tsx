@@ -18,7 +18,6 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
 
   return (
     <div className="absolute top-4 right-4 z-[1000] w-80 bg-white rounded-xl shadow-2xl border border-neutral-200 overflow-hidden">
-      {/* Header */}
       <div className={`px-5 py-4 ${isFR ? "bg-blue-600" : "bg-emerald-600"} text-white`}>
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -40,7 +39,6 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         </div>
       </div>
 
-      {/* Météo */}
       <div className="px-5 py-4 border-b border-neutral-100">
         <div className="flex items-start gap-3">
           <span className="text-4xl mt-1">{emoji}</span>
@@ -71,7 +69,6 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         </div>
       </div>
 
-      {/* Jumeaux */}
       <div className="px-5 py-4">
         <div className="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">
           {isFR ? "Jumeaux climatiques du jour" : "Villes françaises similaires"}
