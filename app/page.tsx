@@ -128,7 +128,7 @@ export default function Home() {
               <div className="text-3xl mb-3">🌡️</div>
               <h3 className="font-semibold text-neutral-800 mb-2">Données en temps réel</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
-                Les températures sont récupérées chaque jour via <strong>Open-Meteo</strong>, une API météo libre et gratuite, au moment du déploiement.
+                Les températures sont récupérées chaque jour via <strong>Open-Meteo</strong>, une API météo libre et gratuite.
               </p>
             </div>
             <div className="text-center px-4">
