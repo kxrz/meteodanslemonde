@@ -148,7 +148,7 @@ export default function Home() {
             <span className="inline-block w-3 h-3 rounded-full bg-amber-400 border-2 border-white shadow" />
             Sélectionnée / jumeau
           </div>
-          <p className="text-[10px] text-neutral-300 pt-1 border-t border-neutral-100">
+          <p className="text-[10px] text-neutral-600 pt-1 border-t border-neutral-100">
             Données du {dataLabel}
           </p>
         </div>

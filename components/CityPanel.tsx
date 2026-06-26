@@ -17,13 +17,11 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
   const isFR = city.type === "fr"
 
   return (
-    <div className="fixed bottom-0 sm:bottom-auto sm:top-20 right-0 sm:right-4 z-[1000] w-full sm:w-80 bg-white rounded-t-2xl sm:rounded-xl shadow-2xl border border-neutral-200 border-b-0 sm:border-b overflow-hidden max-h-[85vh] flex flex-col">
-      {/* Drag handle (mobile only) */}
+    <div className="fixed sm:absolute bottom-0 sm:top-4 left-0 sm:left-auto right-0 sm:right-4 z-[1000] w-full sm:w-80 bg-white rounded-t-2xl sm:rounded-xl shadow-2xl border border-neutral-200 border-b-0 sm:border-b overflow-hidden max-h-[85vh] flex flex-col">
       <div className="sm:hidden flex justify-center pt-2 pb-1 shrink-0">
         <div className="w-10 h-1 rounded-full bg-neutral-200" />
       </div>
 
-      {/* Header */}
       <div className={`px-5 py-4 ${isFR ? "bg-blue-600" : "bg-emerald-600"} text-white shrink-0`}>
         <div className="flex items-start justify-between gap-2">
           <div>
@@ -45,7 +43,6 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         </div>
       </div>
 
-      {/* Météo */}
       <div className="px-5 py-4 border-b border-neutral-100 shrink-0">
         <div className="flex items-start gap-3">
           <span className="text-4xl mt-1">{emoji}</span>
@@ -54,9 +51,6 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
               <>
                 <div className="text-3xl font-bold text-neutral-900">{city.apparent_temp_max}°C</div>
                 <div className="text-sm text-neutral-400 mt-0.5">ressenti max · {label}</div>
-                <div className="text-xs text-neutral-300 mt-1">
-                  actuel {city.temp}° · max {city.temp_max}°
-                </div>
               </>
             ) : (
               <>
@@ -76,7 +70,6 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         </div>
       </div>
 
-      {/* Jumeaux */}
       <div className="px-5 py-4 overflow-y-auto">
         <div className="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">
           {isFR ? "Jumeaux climatiques du jour" : "Villes françaises similaires"}
