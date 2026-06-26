@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const BASE_URL = "https://meteo.leswww.com";
@@ -92,7 +93,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="bg-neutral-50 text-neutral-900">{children}</body>
+      <body className="bg-neutral-50 text-neutral-900">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
