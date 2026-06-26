@@ -82,7 +82,7 @@ export default function Home() {
       </header>
 
       {/* Map */}
-      <section className="relative" style={{ height: "65vh" }}>
+      <section className="relative" style={{ height: "85vh" }}>
         {/* Legend */}
         <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-md px-4 py-3 space-y-1.5">
           <p className="text-xs font-semibold text-neutral-700 mb-1">Cliquez sur une ville</p>
