@@ -38,9 +38,11 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       const map = L.map(containerRef.current!, {
         center: [30, 10],
         zoom: 3,
-        zoomControl: true,
+        zoomControl: false,
         scrollWheelZoom: false,
       })
+
+      L.control.zoom({ position: "bottomright" }).addTo(map)
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
