@@ -17,9 +17,9 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
   const isFR = city.type === "fr"
 
   return (
-    <div className="fixed sm:absolute bottom-0 sm:top-4 left-0 sm:left-auto right-0 sm:right-4 z-[1000] w-full sm:w-80 bg-white rounded-t-2xl sm:rounded-xl shadow-2xl border border-neutral-200 border-b-0 sm:border-b overflow-hidden max-h-[85vh] sm:max-h-[calc(65vh-2rem)] flex flex-col">
+    <div className="fixed bottom-0 sm:bottom-auto sm:top-20 right-0 sm:right-4 z-[1000] w-full sm:w-80 bg-white rounded-t-2xl sm:rounded-xl shadow-2xl border border-neutral-200 border-b-0 sm:border-b overflow-hidden max-h-[85vh] flex flex-col">
       {/* Drag handle (mobile only) */}
-      <div className="sm:hidden flex justify-center pt-2 pb-1">
+      <div className="sm:hidden flex justify-center pt-2 pb-1 shrink-0">
         <div className="w-10 h-1 rounded-full bg-neutral-200" />
       </div>
 
