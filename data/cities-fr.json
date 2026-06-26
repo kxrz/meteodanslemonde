@@ -28,5 +28,11 @@
   {"id":"pau","name":"Pau","lat":43.3,"lon":-0.37,"region":"Nouvelle-Aquitaine","temp":27,"weathercode":0,"humidity":53,"wind":12,"apparent_temp":27,"temp_max":27,"apparent_temp_max":27},
   {"id":"bayonne","name":"Bayonne","lat":43.49,"lon":-1.48,"region":"Nouvelle-Aquitaine","temp":26,"weathercode":1,"humidity":58,"wind":14,"apparent_temp":26,"temp_max":26,"apparent_temp_max":26},
   {"id":"perpignan","name":"Perpignan","lat":42.69,"lon":2.89,"region":"Occitanie","temp":30,"weathercode":0,"humidity":48,"wind":20,"apparent_temp":30,"temp_max":30,"apparent_temp_max":30},
-  {"id":"toulon","name":"Toulon","lat":43.12,"lon":5.93,"region":"Provence-Alpes-Côte d'Azur","temp":28,"weathercode":0,"humidity":56,"wind":19,"apparent_temp":28,"temp_max":28,"apparent_temp_max":28}
+  {"id":"toulon","name":"Toulon","lat":43.12,"lon":5.93,"region":"Provence-Alpes-Côte d'Azur","temp":28,"weathercode":0,"humidity":56,"wind":19,"apparent_temp":28,"temp_max":28,"apparent_temp_max":28},
+  {"id":"ajaccio","name":"Ajaccio","lat":41.92,"lon":8.74,"region":"Corse","temp":27,"weathercode":0,"humidity":55,"wind":14,"apparent_temp":27,"temp_max":27,"apparent_temp_max":27},
+  {"id":"bastia","name":"Bastia","lat":42.7,"lon":9.45,"region":"Corse","temp":26,"weathercode":0,"humidity":57,"wind":16,"apparent_temp":26,"temp_max":26,"apparent_temp_max":26},
+  {"id":"la-rochelle","name":"La Rochelle","lat":46.16,"lon":-1.15,"region":"Nouvelle-Aquitaine","temp":22,"weathercode":1,"humidity":68,"wind":15,"apparent_temp":22,"temp_max":22,"apparent_temp_max":22},
+  {"id":"valence","name":"Valence","lat":44.93,"lon":4.89,"region":"Auvergne-Rhône-Alpes","temp":28,"weathercode":0,"humidity":50,"wind":11,"apparent_temp":28,"temp_max":28,"apparent_temp_max":28},
+  {"id":"besancon","name":"Besançon","lat":47.24,"lon":6.02,"region":"Bourgogne-Franche-Comté","temp":24,"weathercode":1,"humidity":62,"wind":10,"apparent_temp":24,"temp_max":24,"apparent_temp_max":24},
+  {"id":"nimes","name":"Nîmes","lat":43.84,"lon":4.36,"region":"Occitanie","temp":30,"weathercode":0,"humidity":45,"wind":18,"apparent_temp":30,"temp_max":30,"apparent_temp_max":30}
 ]
