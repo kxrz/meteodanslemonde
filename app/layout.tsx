@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
+const BASE_URL = "https://meteo.leswww.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL),
   title: "Comme Ailleurs — Jumeaux climatiques de vos villes françaises",
   description: "Quand il fait 38°C à Lille ou 41°C à Strasbourg, où dans le monde est-ce la normale ? Explorez en temps réel les jumeaux climatiques de 30 villes françaises sur une carte interactive mondiale.",
   keywords: [
@@ -15,11 +18,15 @@ export const metadata: Metadata = {
     "Open-Meteo",
     "changement climatique",
   ],
-  authors: [{ name: "leswww.com" }],
+  authors: [{ name: "leswww.com", url: "https://leswww.com" }],
   creator: "leswww.com",
+  alternates: {
+    canonical: BASE_URL,
+  },
   openGraph: {
     title: "Comme Ailleurs — Jumeaux climatiques de vos villes",
     description: "38°C à Lille ? Découvrez où dans le monde c'est la normale. Carte interactive des jumeaux climatiques en temps réel.",
+    url: BASE_URL,
     siteName: "Comme Ailleurs",
     locale: "fr_FR",
     type: "website",
@@ -44,6 +51,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "Comme Ailleurs",
+  url: BASE_URL,
   description: "Carte interactive des jumeaux climatiques : comparez le ressenti maximal des villes françaises avec leurs équivalents mondiaux.",
   applicationCategory: "WeatherApplication",
   operatingSystem: "All",
@@ -52,6 +60,7 @@ const jsonLd = {
   author: {
     "@type": "Organization",
     name: "leswww.com",
+    url: "https://leswww.com",
   },
   about: [
     { "@type": "Thing", name: "Météorologie" },
