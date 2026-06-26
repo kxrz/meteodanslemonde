@@ -39,6 +39,7 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
         center: [30, 10],
         zoom: 3,
         zoomControl: true,
+        scrollWheelZoom: false,
       })
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
