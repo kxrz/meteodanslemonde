@@ -1,7 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useRef, useEffect } from "react"
 import citiesFRRaw from "@/data/cities-fr.json"
 import citiesWorldRaw from "@/data/cities-world.json"
 import metaRaw from "@/data/meta.json"
@@ -49,6 +49,9 @@ const dataLabel = new Date(fetchedAt).toLocaleDateString("fr-FR", {
 
 export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [legendPos, setLegendPos] = useState({ x: 16, y: 16 })
+  const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null)
+  const isDragging = useRef(false)
 
   const selectedCity = useMemo(
     () => allCities.find((c) => c.id === selectedId) ?? null,
@@ -59,6 +62,42 @@ export default function Home() {
     () => (selectedCity ? computeTwins(selectedCity) : []),
     [selectedCity]
   )
+
+  useEffect(() => {
+    function onMouseMove(e: MouseEvent) {
+      if (!dragRef.current) return
+      isDragging.current = true
+      const dx = e.clientX - dragRef.current.startX
+      const dy = e.clientY - dragRef.current.startY
+      setLegendPos({ x: dragRef.current.origX + dx, y: dragRef.current.origY + dy })
+    }
+    function onMouseUp() {
+      dragRef.current = null
+      setTimeout(() => { isDragging.current = false }, 0)
+    }
+    function onTouchMove(e: TouchEvent) {
+      if (!dragRef.current) return
+      isDragging.current = true
+      const t = e.touches[0]
+      const dx = t.clientX - dragRef.current.startX
+      const dy = t.clientY - dragRef.current.startY
+      setLegendPos({ x: dragRef.current.origX + dx, y: dragRef.current.origY + dy })
+    }
+    function onTouchEnd() {
+      dragRef.current = null
+      setTimeout(() => { isDragging.current = false }, 0)
+    }
+    window.addEventListener("mousemove", onMouseMove)
+    window.addEventListener("mouseup", onMouseUp)
+    window.addEventListener("touchmove", onTouchMove, { passive: true })
+    window.addEventListener("touchend", onTouchEnd)
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("mouseup", onMouseUp)
+      window.removeEventListener("touchmove", onTouchMove)
+      window.removeEventListener("touchend", onTouchEnd)
+    }
+  }, [])
 
   function handleCityClick(id: string) {
     setSelectedId((prev) => (prev === id ? null : id))
@@ -83,8 +122,19 @@ export default function Home() {
 
       {/* Map */}
       <section className="relative" style={{ height: "85vh" }}>
-        {/* Legend */}
-        <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-md px-4 py-3 space-y-1.5">
+        {/* Draggable legend */}
+        <div
+          className="absolute z-[1000] bg-white rounded-lg shadow-md px-4 py-3 space-y-1.5 select-none cursor-grab active:cursor-grabbing"
+          style={{ left: legendPos.x, top: legendPos.y }}
+          onMouseDown={(e) => {
+            dragRef.current = { startX: e.clientX, startY: e.clientY, origX: legendPos.x, origY: legendPos.y }
+            e.preventDefault()
+          }}
+          onTouchStart={(e) => {
+            const t = e.touches[0]
+            dragRef.current = { startX: t.clientX, startY: t.clientY, origX: legendPos.x, origY: legendPos.y }
+          }}
+        >
           <p className="text-xs font-semibold text-neutral-700 mb-1">Cliquez sur une ville</p>
           <div className="flex items-center gap-2 text-xs text-neutral-600">
             <span className="inline-block w-3 h-3 rounded-full bg-blue-600 border-2 border-white shadow" />
