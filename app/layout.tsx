@@ -6,8 +6,8 @@ const BASE_URL = "https://meteo.leswww.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
-  title: "Comme Ailleurs — Jumeaux climatiques de vos villes françaises",
-  description: "Quand il fait 38°C à Lille ou 41°C à Strasbourg, où dans le monde est-ce la normale ? Explorez en temps réel les jumeaux climatiques de 30 villes françaises sur une carte interactive mondiale.",
+  title: "Chaud comme là — Jumeaux climatiques",
+  description: "Quand il fait 38°C à Lille, où dans le monde est-ce la normale ? Explorez les jumeaux climatiques de vos villes françaises en temps réel.",
   keywords: [
     "jumeaux climatiques",
     "canicule France",
@@ -15,7 +15,6 @@ export const metadata: Metadata = {
     "chaleur villes France",
     "ressenti thermique",
     "carte météo interactive",
-    "Open-Meteo",
     "changement climatique",
   ],
   authors: [{ name: "leswww.com", url: "https://leswww.com" }],
@@ -24,17 +23,26 @@ export const metadata: Metadata = {
     canonical: BASE_URL,
   },
   openGraph: {
-    title: "Comme Ailleurs — Jumeaux climatiques de vos villes",
-    description: "38°C à Lille ? Découvrez où dans le monde c'est la normale. Carte interactive des jumeaux climatiques en temps réel.",
+    title: "Chaud comme là.",
+    description: "38°C à Lille ? Découvrez où dans le monde c’est la normale. Carte interactive des jumeaux climatiques.",
     url: BASE_URL,
-    siteName: "Comme Ailleurs",
+    siteName: "Chaud comme là",
     locale: "fr_FR",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Chaud comme là — Jumeaux climatiques de vos villes françaises",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Comme Ailleurs — Jumeaux climatiques de vos villes françaises",
-    description: "38°C à Lille ? Découvrez où dans le monde c'est la normale. Carte interactive en temps réel.",
+    title: "Chaud comme là.",
+    description: "38°C à Lille ? Découvrez où dans le monde c’est la normale.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -50,7 +58,7 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "Comme Ailleurs",
+  name: "Chaud comme là",
   url: BASE_URL,
   description: "Carte interactive des jumeaux climatiques : comparez le ressenti maximal des villes françaises avec leurs équivalents mondiaux.",
   applicationCategory: "WeatherApplication",

@@ -73,9 +73,9 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-semibold uppercase tracking-widest px-3 py-1 rounded-full mb-4">
             Météo &amp; Climat
           </div>
-          <h1 className="text-4xl font-bold text-neutral-900 mb-3">Comme Ailleurs</h1>
+          <h1 className="text-4xl font-bold text-neutral-900 mb-3">Chaud comme là.</h1>
           <p className="text-lg text-neutral-500 leading-relaxed">
-            Quand il fait 38°C à Lille, où dans le monde est-ce la normale&nbsp;?
+            Quand il fait 38°C à Lille, où dans le monde est-ce la normale ?
             Explorez les <span className="text-blue-600 font-medium">jumeaux climatiques</span> de vos villes françaises.
           </p>
         </div>
@@ -122,7 +122,7 @@ export default function Home() {
       {/* How it works */}
       <section className="bg-white border-t border-neutral-200 py-14 px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-xl font-bold text-neutral-800 mb-8 text-center">Comment ça fonctionne&nbsp;?</h2>
+          <h2 className="text-xl font-bold text-neutral-800 mb-8 text-center">Comment ça fonctionne ?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center px-4">
               <div className="text-3xl mb-3">🌡️</div>
@@ -157,23 +157,23 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
               <div className="text-2xl mb-3">💧</div>
-              <h3 className="font-semibold text-neutral-800 mb-2">Boire avant d'avoir soif</h3>
+              <h3 className="font-semibold text-neutral-800 mb-2">Boire avant d’avoir soif</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
                 La sensation de soif est un signal tardif. Buvez régulièrement, même sans en ressentir le besoin, et évitez alcool et caféine.
               </p>
             </div>
             <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
               <div className="text-2xl mb-3">🪟</div>
-              <h3 className="font-semibold text-neutral-800 mb-2">Gérer les flux d'air</h3>
+              <h3 className="font-semibold text-neutral-800 mb-2">Gérer les flux d’air</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
-                Ouvrez la nuit pour laisser entrer l'air frais, fermez volets et fenêtres dès le matin. L'inertie thermique du bâtiment fait le reste.
+                Ouvrez la nuit pour laisser entrer l’air frais, fermez volets et fenêtres dès le matin. L’inertie thermique du bâtiment fait le reste.
               </p>
             </div>
             <div className="bg-white rounded-xl p-5 border border-orange-100 shadow-sm">
               <div className="text-2xl mb-3">🕑</div>
               <h3 className="font-semibold text-neutral-800 mb-2">Adapter ses horaires</h3>
               <p className="text-sm text-neutral-500 leading-relaxed">
-                Déplacez les activités physiques en dehors de la plage 11h–18h. Les pics de chaleur sont plus dangereux qu'il n'y paraît.
+                Déplacez les activités physiques en dehors de la plage 11h–18h. Les pics de chaleur sont plus dangereux qu’il n’y paraît.
               </p>
             </div>
           </div>
