@@ -2,6 +2,7 @@ name: Daily weather build
 on:
   schedule:
     - cron: '0 5 * * *'   # chaque jour à 5h UTC (7h Paris en été)
+  workflow_dispatch:
 
 jobs:
   trigger-vercel:
