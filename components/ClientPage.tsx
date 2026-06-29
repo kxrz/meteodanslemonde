@@ -1,7 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { CityFR, CityWorld, AnyCity } from "@/lib/types"
 import { getWeather } from "@/lib/weather-codes"
 import { useClimateData } from "@/lib/use-climate-data"
@@ -9,8 +9,8 @@ import { useClimateData } from "@/lib/use-climate-data"
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-neutral-200/50 rounded-3xl">
-      <span className="text-neutral-400 text-sm">Chargement de la carte…</span>
+    <div className="w-full h-full flex items-center justify-center bg-neutral-100">
+      <span className="text-neutral-400 text-sm">Chargement…</span>
     </div>
   ),
 })
@@ -32,7 +32,7 @@ function computeTwins(city: AnyCity, all: AnyCity[]): AnyCity[] {
 }
 
 function Skeleton({ className }: { className?: string }) {
-  return <div className={`bg-black/10 rounded-xl animate-pulse ${className ?? ""}`} />
+  return <div className={`bg-black/8 rounded-xl animate-pulse ${className ?? ""}`} />
 }
 
 interface Props {
@@ -43,10 +43,11 @@ interface Props {
 
 export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
-
-  const [heroCity] = useState(
-    () => citiesFR[Math.floor(Math.random() * citiesFR.length)]
-  )
+  // Fix hydration (#418): start with deterministic value, randomize client-side only
+  const [heroCity, setHeroCity] = useState(citiesFR[0])
+  useEffect(() => {
+    setHeroCity(citiesFR[Math.floor(Math.random() * citiesFR.length)])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const allCities: AnyCity[] = useMemo(() => [
     ...citiesFR.map((c) => ({ ...c, type: "fr" as const })),
@@ -82,115 +83,114 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
   return (
-    <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
+    <div className="h-screen flex flex-col bg-[#f9f8f5] overflow-hidden">
 
-      {/* Header */}
-      <header className="h-14 shrink-0 flex items-center justify-between px-5 border-b border-black/5 bg-[#f5f4f0]">
-        <span className="font-black text-base tracking-tight text-neutral-900">
-          en vrai, c'est chaud
-        </span>
-        <span className="text-xs text-neutral-400 hidden sm:block">
-          Données du {dataLabel}
-        </span>
+      {/* ── Hero ───────────────────────────────────────────────────── */}
+      <header className="shrink-0 px-5 lg:px-8 pt-5 pb-4 border-b border-black/5">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h1 className="text-4xl lg:text-5xl font-black tracking-tighter leading-none">
+              <span className="text-neutral-900">en vrai,</span>{" "}
+              <span className="text-neutral-400">c'est chaud.</span>
+            </h1>
+            <p className="text-[13px] text-neutral-500 mt-2 max-w-lg leading-snug">
+              Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ?
+              Jumeaux climatiques &amp; projections GIEC.
+            </p>
+          </div>
+          <div className="hidden md:flex items-center gap-1.5 shrink-0 text-xs text-neutral-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
+            {dataLabel}
+          </div>
+        </div>
       </header>
 
-      {/* Main */}
+      {/* ── Map + Panel ────────────────────────────────────────────── */}
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
         {/* Map */}
-        <div className="h-[42vh] lg:h-auto lg:w-[60%] shrink-0 relative">
+        <div className="h-[42vh] lg:h-auto lg:w-[60%] shrink-0">
           <Map
             citiesFR={citiesFR}
             citiesWorld={citiesWorld}
             selectedId={selectedId}
             twinIds={twins.map((t) => t.id)}
-            onCityClick={(id) => handleCityClick(id)}
+            onCityClick={handleCityClick}
           />
         </div>
 
         {/* Bento panel */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4">
-          <div className="grid grid-cols-2 gap-3 pb-4">
+        <div className="flex-1 min-h-0 overflow-y-auto p-3">
+          <div className="grid grid-cols-2 gap-3 pb-6">
 
             {!selectedCity ? (
 
-              // ── État par défaut ──────────────────────────────────────
+              // ── État par défaut ──────────────────────────────────
               <>
-                {/* Hero */}
-                <div className="col-span-2 bg-white rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-5">
-                    En ce moment
+                {/* Température hero */}
+                <div className="col-span-2 bg-white rounded-3xl p-6 border border-black/[0.06]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-300 mb-5">
+                    Là maintenant · France
                   </p>
-                  <p className="text-neutral-500 text-sm mb-0.5">il fait</p>
-                  <div className="flex items-baseline gap-1.5 leading-none">
-                    <span className="text-7xl font-black text-neutral-900">
+                  <div className="flex items-baseline gap-1 leading-none">
+                    <span className="text-[80px] font-black text-neutral-900 leading-none tabular-nums">
                       {heroCity.apparent_temp_max}°
                     </span>
-                    <span className="text-3xl font-black text-neutral-300">C</span>
                   </div>
-                  <p className="text-neutral-600 text-sm mt-1.5">
-                    à <span className="font-bold text-neutral-900">{heroCity.name}</span>
-                    <span className="text-neutral-400"> · {getWeather(heroCity.weathercode).emoji}</span>
+                  <p className="text-sm text-neutral-600 mt-3">
+                    {getWeather(heroCity.weathercode).emoji}{" "}
+                    <span className="font-semibold">{heroCity.name}</span>
+                    <span className="text-neutral-400"> · ressenti max</span>
                   </p>
-                  <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
-                    Cliquez une ville sur la carte pour la comparer avec le monde entier.
+                  <p className="text-xs text-neutral-400 mt-4 pt-4 border-t border-black/5 leading-relaxed">
+                    Sélectionnez une ville sur la carte pour explorer ses données climatiques.
                   </p>
                 </div>
 
-                {/* Compteur FR */}
-                <div className="bg-[#dbeafe] rounded-3xl p-5">
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800">
-                      France
-                    </span>
-                  </div>
-                  <div className="text-5xl font-black text-blue-900 leading-none">
+                {/* Compteur FR — fond sombre */}
+                <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col">
+                  <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/25 mb-auto pb-8">
+                    🇫🇷 France
+                  </span>
+                  <div className="text-[60px] font-black text-white leading-none tabular-nums">
                     {citiesFR.length}
                   </div>
-                  <div className="text-xs text-blue-700 mt-1.5">villes</div>
+                  <div className="text-xs text-white/30 mt-1">villes</div>
                 </div>
 
-                {/* Compteur Monde */}
-                <div className="bg-[#d1fae5] rounded-3xl p-5">
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-emerald-800">
-                      Monde
-                    </span>
-                  </div>
-                  <div className="text-5xl font-black text-emerald-900 leading-none">
+                {/* Compteur Monde — fond sombre */}
+                <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col">
+                  <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/25 mb-auto pb-8">
+                    🌍 Monde
+                  </span>
+                  <div className="text-[60px] font-black text-white leading-none tabular-nums">
                     {citiesWorld.length}
                   </div>
-                  <div className="text-xs text-emerald-700 mt-1.5">villes</div>
+                  <div className="text-xs text-white/30 mt-1">villes</div>
                 </div>
 
-                {/* Comment ça marche */}
-                <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    Comment ça marche
+                {/* Méthode */}
+                <div className="col-span-2 bg-white rounded-3xl p-5 border border-black/[0.06]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-300 mb-3">
+                    Méthode
                   </p>
                   <p className="text-sm text-neutral-600 leading-relaxed">
-                    On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
-                    Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
-                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
+                    Comparaison du{" "}
+                    <strong className="text-neutral-900">ressenti maximal journalier</strong>.
+                    Jumeaux climatiques à ±4°C. Normale ERA5 1991–2020.
+                    Projections{" "}
+                    <strong className="text-neutral-900">CMIP6</strong> (GIEC AR6).
                   </p>
                 </div>
 
-                {/* Source */}
-                <div className="col-span-2 bg-neutral-100 rounded-3xl p-4 flex items-center justify-between">
-                  <span className="text-xs text-neutral-500">Open-Meteo · ERA5 · CMIP6</span>
-                  <span className="text-xs text-neutral-400">{dataLabel}</span>
-                </div>
-
-                {/* Footer légal */}
-                <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                  cestchaud.fr ·{" "}
+                {/* Sources + Mentions légales */}
+                <div className="col-span-2 flex items-center justify-between text-xs text-neutral-400 px-1">
+                  <span>Open-Meteo · ERA5 · CMIP6</span>
                   <a
                     href="https://leswww.com/mentions-legales/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline underline-offset-2 hover:text-neutral-600"
+                    className="underline underline-offset-2 hover:text-neutral-600 transition-colors"
                   >
                     Mentions légales
                   </a>
@@ -199,29 +199,24 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
 
             ) : (
 
-              // ── Ville sélectionnée ───────────────────────────────────
+              // ── Ville sélectionnée ───────────────────────────────
               <>
-                {/* Météo principale */}
-                <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
-                  <div className="flex items-start justify-between gap-2 mb-4">
+                {/* Carte météo principale */}
+                <div className={`col-span-2 rounded-3xl p-6 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"}`}>
+                  <div className="flex items-start justify-between mb-5">
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold opacity-40 mb-1">
                         {isFR
                           ? (selectedCity as CityFR).region
                           : (selectedCity as CityWorld).country}
                       </p>
-                      <h2 className="text-2xl font-black text-neutral-900 leading-tight">
+                      <h2 className="text-3xl font-black text-neutral-900 tracking-tight leading-tight">
                         {selectedCity.name}
                       </h2>
-                      {!isFR && (
-                        <p className="text-xs opacity-50 mt-0.5">
-                          {(selectedCity as CityWorld).climateLabel}
-                        </p>
-                      )}
                     </div>
                     <button
                       onClick={() => setSelectedId(null)}
-                      className="text-black/30 hover:text-black/70 text-sm mt-1 shrink-0 transition-colors"
+                      className="text-black/20 hover:text-black/60 mt-1 shrink-0 transition-colors"
                       aria-label="Fermer"
                     >
                       ✕
@@ -230,14 +225,14 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   <div className="flex items-end justify-between">
                     <div>
                       <div className="flex items-baseline gap-1 leading-none">
-                        <span className="text-6xl font-black text-neutral-900">
+                        <span className="text-[72px] font-black text-neutral-900 leading-none tabular-nums">
                           {selectedCity.apparent_temp_max}°
                         </span>
                         <span className="text-2xl font-black text-neutral-400">C</span>
                       </div>
-                      <p className="text-xs text-neutral-500 mt-1.5">
+                      <p className="text-xs text-neutral-500 mt-2">
                         {getWeather(selectedCity.weathercode).emoji}{" "}
-                        ressenti max · {getWeather(selectedCity.weathercode).label}
+                        {getWeather(selectedCity.weathercode).label} · ressenti max
                       </p>
                     </div>
                     <div className="text-right text-xs text-neutral-500 space-y-1">
@@ -248,53 +243,45 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                 </div>
 
                 {/* Normale */}
-                <div className="bg-[#b8d4b0] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
-                    Normalement
+                <div className="bg-[#c8dfc4] rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/40 mb-4">
+                    Normale
                   </p>
                   {climate.loading ? (
-                    <>
-                      <Skeleton className="h-10 w-20 mb-2" />
-                      <Skeleton className="h-3 w-24" />
-                    </>
+                    <><Skeleton className="h-11 w-20 mb-2" /><Skeleton className="h-3 w-24" /></>
                   ) : climate.normal !== null ? (
                     <>
-                      <div className="text-4xl font-black text-green-900 leading-none">
-                        {climate.normal}°C
+                      <div className="text-[44px] font-black text-green-900 leading-none tabular-nums">
+                        {climate.normal}°
                       </div>
-                      <p className="text-xs text-green-900/50 mt-2">
-                        moy. {monthName} 1991–2020
+                      <p className="text-xs text-green-900/40 mt-2">
+                        {monthName} 1991–2020
                       </p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-green-900/30">—</p>
+                    <p className="text-4xl font-black text-green-900/20">—</p>
                   )}
                 </div>
 
                 {/* Anomalie */}
-                <div
-                  className={`rounded-3xl p-5 transition-colors ${
-                    climate.anomaly !== null && climate.anomaly > 2
-                      ? "bg-[#f4a27a]"
-                      : climate.anomaly !== null && climate.anomaly < -2
-                      ? "bg-[#a8c4d4]"
-                      : "bg-neutral-200"
-                  }`}
-                >
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                    Aujourd'hui c'est
+                <div className={`rounded-3xl p-5 transition-colors ${
+                  climate.anomaly !== null && climate.anomaly > 2
+                    ? "bg-[#f4a27a]"
+                    : climate.anomaly !== null && climate.anomaly < -2
+                    ? "bg-[#a8c4d4]"
+                    : "bg-neutral-200"
+                }`}>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/35 mb-4">
+                    Anomalie
                   </p>
                   {climate.loading ? (
-                    <>
-                      <Skeleton className="h-10 w-20 mb-2" />
-                      <Skeleton className="h-3 w-20" />
-                    </>
+                    <><Skeleton className="h-11 w-20 mb-2" /><Skeleton className="h-3 w-24" /></>
                   ) : climate.anomaly !== null ? (
                     <>
-                      <div className="text-4xl font-black text-neutral-900 leading-none">
-                        {climate.anomaly > 0 ? "+" : ""}{climate.anomaly}°C
+                      <div className="text-[44px] font-black text-neutral-900 leading-none tabular-nums">
+                        {climate.anomaly > 0 ? "+" : ""}{climate.anomaly}°
                       </div>
-                      <p className="text-xs text-black/50 mt-2">
+                      <p className="text-xs text-black/40 mt-2">
                         {climate.anomaly > 2
                           ? "au-dessus de la normale"
                           : climate.anomaly < -2
@@ -303,60 +290,56 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                       </p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-black/20">—</p>
+                    <p className="text-4xl font-black text-black/15">—</p>
                   )}
                 </div>
 
                 {/* Tendance 30 ans */}
-                <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
-                    Tendance observée — 30 ans
+                <div className="col-span-2 bg-white rounded-3xl p-5 border border-black/[0.06]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-300 mb-2">
+                    Tendance 30 ans
                   </p>
                   {climate.loading ? (
-                    <Skeleton className="h-7 w-40" />
+                    <Skeleton className="h-8 w-40" />
                   ) : climate.trend !== null ? (
-                    <p className="font-black text-xl text-neutral-900">
+                    <p className="text-2xl font-black text-neutral-900">
                       {climate.trend > 0 ? "+" : ""}{climate.trend}°C
                       <span className="text-sm font-normal text-neutral-400 ml-2">
-                        depuis 1990 sur {monthName}
+                        depuis 1990 en {monthName}
                       </span>
                     </p>
                   ) : (
-                    <p className="text-sm text-neutral-400">Données non disponibles</p>
+                    <p className="text-sm text-neutral-400">Non disponible</p>
                   )}
                 </div>
 
                 {/* Projections GIEC */}
-                <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                    Si rien ne change…
+                <div className="col-span-2 bg-[#e4dff0] rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/40 mb-1">
+                    Projections GIEC
                   </p>
-                  <p className="text-[10px] text-purple-900/40 mb-4">
-                    Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
+                  <p className="text-[10px] text-purple-900/30 mb-5">
+                    CMIP6 · écart vs 2000–2020
                   </p>
                   {climate.loading ? (
                     <div className="space-y-3">
-                      <Skeleton className="h-7 w-full" />
-                      <Skeleton className="h-7 w-full" />
-                      <Skeleton className="h-7 w-full" />
+                      <Skeleton className="h-9 w-full" />
+                      <Skeleton className="h-9 w-full" />
+                      <Skeleton className="h-9 w-full" />
                     </div>
                   ) : climate.error ? (
-                    <p className="text-xs text-purple-900/40">Données non disponibles</p>
+                    <p className="text-xs text-purple-900/30">Données non disponibles</p>
                   ) : (
-                    <div className="space-y-2.5">
-                      {(
-                        [
-                          { year: 2030, val: climate.proj2030 },
-                          { year: 2040, val: climate.proj2040 },
-                          { year: 2050, val: climate.proj2050 },
-                        ] as { year: number; val: number | null }[]
-                      ).map(({ year, val }) => (
-                        <div key={year} className="flex items-center justify-between">
-                          <span className="text-sm font-semibold text-purple-900/60">{year}</span>
-                          <span className="font-black text-2xl text-purple-900">
-                            {val !== null
-                              ? `${val >= 0 ? "+" : ""}${val.toFixed(1)}°C`
-                              : "—"}
+                    <div className="divide-y divide-purple-900/10">
+                      {([
+                        { year: 2030, val: climate.proj2030 },
+                        { year: 2040, val: climate.proj2040 },
+                        { year: 2050, val: climate.proj2050 },
+                      ] as { year: number; val: number | null }[]).map(({ year, val }) => (
+                        <div key={year} className="flex items-center justify-between py-2.5">
+                          <span className="text-sm font-semibold text-purple-900/50">{year}</span>
+                          <span className="font-black text-3xl text-purple-900 tabular-nums">
+                            {val !== null ? `${val >= 0 ? "+" : ""}${val.toFixed(1)}°` : "—"}
                           </span>
                         </div>
                       ))}
@@ -364,35 +347,34 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   )}
                 </div>
 
-                {/* Jumeaux */}
-                <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}
+                {/* Jumeaux climatiques */}
+                <div className="col-span-2 bg-white rounded-3xl p-5 border border-black/[0.06]">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-300 mb-3">
+                    {isFR ? "Ressent pareil aujourd'hui" : "Villes françaises similaires"}
                   </p>
                   {twins.length === 0 ? (
-                    <p className="text-sm text-neutral-400">Aucun jumeau à ±4°C.</p>
+                    <p className="text-sm text-neutral-400">Aucun jumeau à ±4°C aujourd'hui.</p>
                   ) : (
-                    <div className="space-y-1.5">
+                    <div className="space-y-0.5">
                       {twins.map((twin) => {
                         const tw = getWeather(twin.weathercode)
-                        const sub =
-                          twin.type === "world"
-                            ? (twin as CityWorld).country
-                            : (twin as CityFR).region
+                        const sub = twin.type === "world"
+                          ? (twin as CityWorld).country
+                          : (twin as CityFR).region
                         return (
                           <button
                             key={twin.id}
                             onClick={() => handleCityClick(twin.id)}
-                            className="w-full flex items-center gap-3 py-2.5 px-3 rounded-2xl hover:bg-neutral-50 text-left transition-colors border border-neutral-100"
+                            className="w-full flex items-center gap-3 py-2.5 px-3 rounded-2xl hover:bg-neutral-50 text-left transition-colors"
                           >
-                            <span className="text-lg">{tw.emoji}</span>
+                            <span className="text-lg leading-none">{tw.emoji}</span>
                             <div className="flex-1 min-w-0">
                               <div className="font-semibold text-sm text-neutral-800 truncate">
                                 {twin.name}
                               </div>
                               <div className="text-xs text-neutral-400 truncate">{sub}</div>
                             </div>
-                            <div className="shrink-0 font-black text-sm text-neutral-700">
+                            <div className="font-black text-sm text-neutral-700 shrink-0 tabular-nums">
                               {twin.apparent_temp_max}°C
                             </div>
                           </button>
@@ -402,14 +384,14 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   )}
                 </div>
 
-                {/* Footer note */}
-                <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                  cestchaud.fr · Open-Meteo · ERA5 · CMIP6 · {dataLabel} ·{" "}
+                {/* Footer */}
+                <div className="col-span-2 flex items-center justify-between text-xs text-neutral-400 px-1">
+                  <span>Open-Meteo · ERA5 · CMIP6 · {dataLabel}</span>
                   <a
                     href="https://leswww.com/mentions-legales/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline underline-offset-2 hover:text-neutral-600"
+                    className="underline underline-offset-2 hover:text-neutral-600 transition-colors"
                   >
                     Mentions légales
                   </a>
