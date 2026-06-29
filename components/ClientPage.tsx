@@ -80,12 +80,28 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
     selectedCity?.apparent_temp_max ?? 0
   )
 
-  const abs2030 = climate.proj2030 !== null && selectedCity
-    ? Math.round(selectedCity.apparent_temp_max + climate.proj2030) : null
-  const abs2040 = climate.proj2040 !== null && selectedCity
-    ? Math.round(selectedCity.apparent_temp_max + climate.proj2040) : null
-  const abs2050 = climate.proj2050 !== null && selectedCity
-    ? Math.round(selectedCity.apparent_temp_max + climate.proj2050) : null
+  const hasGiecData = climate.proj2030 !== null || climate.proj2040 !== null || climate.proj2050 !== null
+
+  // Build GIEC rows: clamp negative deltas to 0 (small negatives = model noise,
+  // not genuine cooling — caused by 3-year window variance at end of CMIP6 run)
+  const giecRows = selectedCity ? ([
+    { year: 2030, delta: climate.proj2030 },
+    { year: 2040, delta: climate.proj2040 },
+    { year: 2050, delta: climate.proj2050 },
+  ] as { year: number; delta: number | null }[])
+    .filter((r) => r.delta !== null)
+    .map(({ year, delta }) => {
+      const d = delta as number
+      const stable = d < 0
+      const displayDelta = Math.max(0, d)
+      return {
+        year,
+        rawDelta: d,
+        stable,
+        displayDelta,
+        abs: Math.round(selectedCity.apparent_temp_max + displayDelta),
+      }
+    }) : []
 
   function handleCityClick(id: string) {
     setSelectedId((prev) => (prev === id ? null : id))
@@ -97,7 +113,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
   })
   const isFR = selectedCity?.type === "fr"
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
-  const hasGiecData = abs2030 !== null || abs2040 !== null || abs2050 !== null
 
   return (
     <div className="h-screen flex flex-col bg-[#f9f8f5] overflow-hidden">
@@ -261,19 +276,13 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </p>
                   {hasGiecData ? (
                     <div className="divide-y divide-purple-900/10">
-                      {([
-                        { year: 2030, abs: abs2030, delta: climate.proj2030 },
-                        { year: 2040, abs: abs2040, delta: climate.proj2040 },
-                        { year: 2050, abs: abs2050, delta: climate.proj2050 },
-                      ] as { year: number; abs: number | null; delta: number | null }[]).filter(r => r.abs !== null).map(({ year, abs, delta }) => (
+                      {giecRows.map(({ year, stable, displayDelta, abs }) => (
                         <div key={year} className="flex items-center justify-between py-3">
                           <span className="text-sm font-semibold text-purple-900/60">{year}</span>
                           <div className="flex items-baseline gap-2">
-                            {delta !== null && (
-                              <span className="text-xs text-purple-900/45">
-                                {delta >= 0 ? "+" : ""}{delta}°
-                              </span>
-                            )}
+                            <span className="text-xs text-purple-900/45">
+                              {stable ? "~+0°" : `+${displayDelta}°`}
+                            </span>
                             <span className="font-black text-3xl text-purple-900 tabular-nums">
                               {abs}°C
                             </span>

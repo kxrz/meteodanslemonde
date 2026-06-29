@@ -12,9 +12,9 @@ import path from "path"
 
 const DATA_DIR = path.join(process.cwd(), "data")
 const CLIMATE_PATH = path.join(DATA_DIR, "climate.json")
-const BATCH_SIZE = 3          // fewer cities per batch = smaller responses
-const BETWEEN_CALLS_MS = 4000 // pause between archive call and climate call
-const BETWEEN_BATCHES_MS = 6000 // pause between batches
+const BATCH_SIZE = 3
+const BETWEEN_CALLS_MS = 4000
+const BETWEEN_BATCHES_MS = 6000
 
 interface ClimateEntry {
   normal: (number | null)[]
@@ -78,9 +78,9 @@ function computeEntry(id: string, arch: ApiResponse, clim: ApiResponse): Climate
     const recent = monthAvg(ad, av, m, 2015, 2024)
     trend.push(base != null && recent != null ? Math.round((recent - base) * 10) / 10 : null)
     const cb = monthAvg(cd, cv, m, 2000, 2020)
-    const c30 = monthAvg(cd, cv, m, 2028, 2032)
-    const c40 = monthAvg(cd, cv, m, 2038, 2042)
-    const c50 = monthAvg(cd, cv, m, 2048, 2050)
+    const c30 = monthAvg(cd, cv, m, 2028, 2032) // 5-year window
+    const c40 = monthAvg(cd, cv, m, 2036, 2044) // 9-year window (wider = less noise)
+    const c50 = monthAvg(cd, cv, m, 2043, 2050) // 8-year window (model ends 2050)
     proj2030.push(cb != null && c30 != null ? Math.round((c30 - cb) * 10) / 10 : null)
     proj2040.push(cb != null && c40 != null ? Math.round((c40 - cb) * 10) / 10 : null)
     proj2050.push(cb != null && c50 != null ? Math.round((c50 - cb) * 10) / 10 : null)
@@ -110,9 +110,7 @@ async function fetchOne(url: string, maxRetries = 4): Promise<Response> {
       continue
     }
     clearTimeout(t)
-
     if (res.status === 429) {
-      // Respect Retry-After if present, otherwise back off progressively
       const retryAfter = res.headers.get("Retry-After")
       const delay = retryAfter ? parseInt(retryAfter) * 1000 : 15000 * (attempt + 1)
       console.warn(`    [429, waiting ${Math.round(delay / 1000)}s]`)
@@ -130,8 +128,6 @@ async function fetchClimateBatch(
   const lats = cities.map((c) => c.lat).join(",")
   const lons = cities.map((c) => c.lon).join(",")
 
-  // Sequential: archive first, then pause, then climate
-  // Avoids hammering two different rate-limited endpoints simultaneously
   const archRes = await fetchOne(
     `https://archive-api.open-meteo.com/v1/archive` +
     `?latitude=${lats}&longitude=${lons}` +
@@ -173,7 +169,6 @@ async function main() {
     ...(JSON.parse(fs.readFileSync(worldPath, "utf-8")) as { id: string; lat: number; lon: number }[]),
   ].map((c) => ({ id: c.id, lat: c.lat, lon: c.lon }))
 
-  // Load existing data — skip already-fetched cities
   const existing: Record<string, ClimateEntry> = fs.existsSync(CLIMATE_PATH)
     ? JSON.parse(fs.readFileSync(CLIMATE_PATH, "utf-8"))
     : {}
@@ -211,7 +206,6 @@ async function main() {
     }
     console.log(`${batchOk}/${results.length} ok`)
 
-    // Save after every batch so progress isn't lost on interruption
     fs.writeFileSync(CLIMATE_PATH, JSON.stringify(climateMap))
 
     if (i < batches.length - 1) {
