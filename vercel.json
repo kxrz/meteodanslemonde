@@ -1,4 +1,4 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run fetch-weather && next build"
+  "buildCommand": "npm run fetch-weather && next build --webpack"
 }
