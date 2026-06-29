@@ -2,8 +2,9 @@ import type { Metadata } from "next"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "En vrai, c'est chaud",
+  title: "En vrai, c'est chaud — cestchaud.fr",
   description: "Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.",
+  metadataBase: new URL("https://cestchaud.fr"),
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
