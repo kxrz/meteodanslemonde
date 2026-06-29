@@ -8,6 +8,12 @@ type MarkerMap = globalThis.Map<string, CircleMarker>
 import { CityFR, CityWorld } from "@/lib/types"
 import { getWeather } from "@/lib/weather-codes"
 
+// Charter colors
+const COLOR_FR      = "#3b82f6" // blue-500
+const COLOR_WORLD   = "#10b981" // emerald-500
+const COLOR_SEL     = "#7c3aed" // violet-600  (selected)
+const COLOR_TWIN    = "#a78bfa" // violet-400  (twins)
+
 interface Props {
   citiesFR: CityFR[]
   citiesWorld: CityWorld[]
@@ -55,7 +61,7 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
           radius: 7,
-          fillColor: "#2563eb",
+          fillColor: COLOR_FR,
           color: "#fff",
           weight: 2,
           opacity: 1,
@@ -72,7 +78,7 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
           radius: 7,
-          fillColor: "#059669",
+          fillColor: COLOR_WORLD,
           color: "#fff",
           weight: 2,
           opacity: 1,
@@ -102,7 +108,7 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       markersRef.current.forEach((marker, id) => {
         const isFR = citiesFR.some((c) => c.id === id)
         marker.setStyle({
-          fillColor: isFR ? "#2563eb" : "#059669",
+          fillColor: isFR ? COLOR_FR : COLOR_WORLD,
           radius: 7,
           fillOpacity: 0.9,
         })
@@ -110,14 +116,12 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
 
       if (!selectedId) return
 
-      const selectedCityFR = citiesFR.find((c) => c.id === selectedId)
-      const selectedCityWorld = citiesWorld.find((c) => c.id === selectedId)
-      const selected = selectedCityFR ?? selectedCityWorld
+      const selected = citiesFR.find((c) => c.id === selectedId) ?? citiesWorld.find((c) => c.id === selectedId)
       if (!selected) return
 
       const selectedMarker = markersRef.current.get(selectedId)
       if (selectedMarker) {
-        selectedMarker.setStyle({ fillColor: "#f59e0b", radius: 10, fillOpacity: 1 })
+        selectedMarker.setStyle({ fillColor: COLOR_SEL, radius: 11, fillOpacity: 1 })
       }
 
       twinIds.forEach((twinId) => {
@@ -126,13 +130,13 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
 
         const line = L.polyline(
           [[selected.lat, selected.lon], [twin.lat, twin.lon]],
-          { color: "#f59e0b", weight: 2, opacity: 0.8, dashArray: "6 4" }
+          { color: COLOR_TWIN, weight: 2, opacity: 0.8, dashArray: "6 4" }
         ).addTo(mapRef.current!)
         linesRef.current.push(line)
 
         const twinMarker = markersRef.current.get(twinId)
         if (twinMarker) {
-          twinMarker.setStyle({ fillColor: "#f59e0b", radius: 9, fillOpacity: 1 })
+          twinMarker.setStyle({ fillColor: COLOR_TWIN, radius: 9, fillOpacity: 1 })
         }
       })
 

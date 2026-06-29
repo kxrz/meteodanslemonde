@@ -83,18 +83,28 @@ function monthAvg(
   return vals.reduce((a, b) => a + b, 0) / vals.length
 }
 
+async function fetchWithTimeout(url: string, timeoutMs = 30000): Promise<Response> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(url, { signal: controller.signal })
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
 async function fetchCityClimate(
   city: { id: string; lat: number; lon: number }
 ): Promise<[string, ClimateEntry | null]> {
   try {
     const [archRes, climRes] = await Promise.all([
-      fetch(
+      fetchWithTimeout(
         `https://archive-api.open-meteo.com/v1/archive` +
         `?latitude=${city.lat}&longitude=${city.lon}` +
         `&start_date=1991-01-01&end_date=2024-12-31` +
         `&daily=apparent_temperature_max&timezone=auto`
       ),
-      fetch(
+      fetchWithTimeout(
         `https://climate-api.open-meteo.com/v1/climate` +
         `?latitude=${city.lat}&longitude=${city.lon}` +
         `&start_date=2000-01-01&end_date=2050-12-31` +
@@ -102,7 +112,10 @@ async function fetchCityClimate(
       ),
     ])
 
-    if (!archRes.ok || !climRes.ok) return [city.id, null]
+    if (!archRes.ok || !climRes.ok) {
+      console.warn(`  [skip] ${city.id}: API error arch=${archRes.status} clim=${climRes.status}`)
+      return [city.id, null]
+    }
 
     const arch = await archRes.json()
     const clim = await climRes.json()
@@ -140,9 +153,27 @@ async function fetchCityClimate(
     }
 
     return [city.id, { normal, trend, proj2030, proj2040, proj2050 }]
-  } catch {
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.warn(`  [error] ${city.id}: ${msg}`)
     return [city.id, null]
   }
+}
+
+async function fetchCityClimateWithRetry(
+  city: { id: string; lat: number; lon: number },
+  retries = 2
+): Promise<[string, ClimateEntry | null]> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const result = await fetchCityClimate(city)
+    if (result[1] !== null) return result
+    if (attempt < retries) {
+      const delay = 1500 * (attempt + 1)
+      console.warn(`  [retry ${attempt + 1}/${retries}] ${city.id} in ${delay}ms`)
+      await new Promise((r) => setTimeout(r, delay))
+    }
+  }
+  return [city.id, null]
 }
 
 async function runConcurrent<T>(
@@ -185,23 +216,15 @@ async function main() {
   const date = fetchedAt.split("T")[0]
   const time = fetchedAt.split("T")[1].slice(0, 5) + " UTC"
   console.log(`\n✓ Done — ${date} ${time}`)
-  console.log("\nFR cities (temp / max / feels like max):")
-  updatedFR.forEach((c) =>
-    console.log(`  ${String(c.id).padEnd(14)} ${c.temp}° / max ${c.temp_max}° / ressenti ${c.apparent_temp_max}°`)
-  )
-  console.log("\nWorld cities:")
-  updatedWorld.forEach((c) =>
-    console.log(`  ${String(c.id).padEnd(14)} ${c.temp}° / max ${c.temp_max}° / ressenti ${c.apparent_temp_max}°`)
-  )
 
   // Climate data: archive ERA5 + CMIP6 projections for all cities
   const allCities = [
     ...updatedFR.map((c) => ({ id: String(c.id), lat: c.lat as number, lon: c.lon as number })),
     ...updatedWorld.map((c) => ({ id: String(c.id), lat: c.lat as number, lon: c.lon as number })),
   ]
-  console.log(`\nFetching climate data for ${allCities.length} cities (concurrency=5)…`)
-  const climateTasks = allCities.map((city) => () => fetchCityClimate(city))
-  const climateResults = await runConcurrent(climateTasks, 5)
+  console.log(`\nFetching climate data for ${allCities.length} cities (concurrency=15)…`)
+  const climateTasks = allCities.map((city) => () => fetchCityClimateWithRetry(city))
+  const climateResults = await runConcurrent(climateTasks, 15)
 
   const climateMap: Record<string, ClimateEntry> = {}
   let ok = 0
@@ -209,7 +232,13 @@ async function main() {
     if (entry) { climateMap[id] = entry; ok++ }
   }
   console.log(`✓ Climate: ${ok}/${allCities.length} cities`)
+
+  if (ok < allCities.length * 0.8) {
+    console.error(`WARNING: Only ${ok}/${allCities.length} cities have climate data. Build may have incomplete data.`)
+  }
+
   fs.writeFileSync(path.join(DATA_DIR, "climate.json"), JSON.stringify(climateMap))
+  console.log(`✓ Wrote data/climate.json (${Math.round(JSON.stringify(climateMap).length / 1024)} kB)`)
 }
 
 main().catch((err) => {
