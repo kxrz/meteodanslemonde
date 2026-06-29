@@ -182,6 +182,19 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   <span className="text-xs text-neutral-500">Open-Meteo · ERA5 · CMIP6</span>
                   <span className="text-xs text-neutral-400">{dataLabel}</span>
                 </div>
+
+                {/* Footer légal */}
+                <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
+                  cestchaud.fr ·{" "}
+                  <a
+                    href="https://leswww.com/mentions-legales/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-neutral-600"
+                  >
+                    Mentions légales
+                  </a>
+                </div>
               </>
 
             ) : (
@@ -391,7 +404,15 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
 
                 {/* Footer note */}
                 <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                  Open-Meteo · ERA5 · CMIP6 · {dataLabel}
+                  cestchaud.fr · Open-Meteo · ERA5 · CMIP6 · {dataLabel} ·{" "}
+                  <a
+                    href="https://leswww.com/mentions-legales/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-neutral-600"
+                  >
+                    Mentions légales
+                  </a>
                 </div>
               </>
             )}
