@@ -196,7 +196,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     </div>
                     <div className="text-right text-xs text-neutral-600 space-y-1">
                       <div>💧 {selectedCity.humidity}%</div>
-                      <div>💨 {selectedCity.wind} km/h</div>
+                      <div>💨 {selectedCity.wind} km/h</div>
                     </div>
                   </div>
                 </div>
@@ -252,7 +252,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {/* Ce qui a changé */}
                 <div className="col-span-2 bg-white rounded-3xl p-5 border border-black/[0.06]">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">
-                    Ce qui a changé · 30 ans
+                    Ce qui a changé · 30 ans
                   </p>
                   {climate.trend !== null ? (
                     <p className="text-2xl font-black text-neutral-900">
@@ -386,9 +386,9 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     Sources
                   </p>
                   <ul className="text-xs text-emerald-900/75 space-y-1.5 leading-relaxed">
-                    <li><strong className="text-emerald-900">Météo</strong> — Open-Meteo API</li>
-                    <li><strong className="text-emerald-900">Historique</strong> — ERA5 (1991–2024)</li>
-                    <li><strong className="text-emerald-900">Projections</strong> — CMIP6 via Open-Meteo</li>
+                    <li><strong className="text-emerald-900">Météo</strong> · Open-Meteo API</li>
+                    <li><strong className="text-emerald-900">Historique</strong> · ERA5 (1991–2024)</li>
+                    <li><strong className="text-emerald-900">Projections</strong> · CMIP6 via Open-Meteo</li>
                   </ul>
                 </div>
 
@@ -482,22 +482,19 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 </div>
 
                 {/* Footer */}
-                <div className="col-span-2 flex flex-col gap-2 px-1">
-                  <p className="text-xs text-neutral-600 leading-relaxed">
-                    Fait par un passionné de météo et amoureux des cartes, convaincu
-                    qu&apos;une carte bien faite vaut mieux qu&apos;un long discours.{" "}
-                    <a href="https://leswww.com" target="_blank" rel="noopener noreferrer"
-                      className="underline underline-offset-2 hover:text-neutral-900 transition-colors">
-                      leswww.com
+                <div className="col-span-2 flex items-center justify-between text-xs text-neutral-400 px-1">
+                  <span>Open-Meteo · ERA5 · CMIP6 · {dataLabel}</span>
+                  <span>
+                    © <a href="https://leswww.com" target="_blank" rel="noopener noreferrer"
+                      className="underline underline-offset-2 hover:text-neutral-600 transition-colors">
+                      LesWWW
                     </a>
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-neutral-400">
-                    <span>Open-Meteo · ERA5 · CMIP6 · {dataLabel}</span>
+                    {" · "}
                     <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer"
                       className="underline underline-offset-2 hover:text-neutral-600 transition-colors">
                       Mentions légales
                     </a>
-                  </div>
+                  </span>
                 </div>
               </>
             )}
