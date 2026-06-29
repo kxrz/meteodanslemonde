@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "fetch-weather": "tsx scripts/fetch-weather.ts"
+    "fetch-weather": "tsx scripts/fetch-weather.ts",
+    "fetch-climate": "tsx scripts/fetch-climate.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.0",
