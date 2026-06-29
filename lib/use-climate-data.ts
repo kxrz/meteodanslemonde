@@ -73,7 +73,7 @@ export function useClimateData(
         fetch(
           `https://climate-api.open-meteo.com/v1/climate` +
           `?latitude=${lat}&longitude=${lon}` +
-          `&start_date=2000-01-01&end_date=2055-12-31` +
+          `&start_date=2000-01-01&end_date=2050-12-31` +
           `&models=MRI_AGCM3_2_S&daily=temperature_2m_max`,
           { signal: sig }
         ),
@@ -100,11 +100,11 @@ export function useClimateData(
           ? Math.round((recent - baseline) * 10) / 10
           : null
 
-      // Projections : delta interne au modèle (même métrique, pas de biais)
+      // Projections : delta interne au modèle CMIP6 (évite les biais de métriques)
       const climBase = monthAvg(cd, cv, month, 2000, 2020)
       const c2030 = monthAvg(cd, cv, month, 2028, 2032)
       const c2040 = monthAvg(cd, cv, month, 2038, 2042)
-      const c2050 = monthAvg(cd, cv, month, 2048, 2052)
+      const c2050 = monthAvg(cd, cv, month, 2048, 2050) // modèle couvre jusqu'à 2050
 
       setData({
         normal,
