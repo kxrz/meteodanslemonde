@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
         <link rel="dns-prefetch" href="https://api.open-meteo.com" />
-        <link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
+        <link rel="dns-prefetch" href="https://tile.openstreetmap.fr" />
         <link rel="dns-prefetch" href="https://api.resend.com" />
       </head>
       <body className="h-full">{children}</body>
