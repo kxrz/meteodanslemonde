@@ -73,6 +73,10 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
     setSelectedId((prev) => (prev === id ? null : id))
   }
 
+  const dataLabel = new Date(fetchedAt).toLocaleDateString("fr-FR", {
+    day: "numeric", month: "long", year: "numeric",
+  })
+
   const isFR = selectedCity?.type === "fr"
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
@@ -115,7 +119,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
             {!selectedCity ? (
 
-              // ── État par défaut ───────────────────────────────────────
+              // ── État par défaut ──────────────────────────────────────────────
               <>
                 {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
@@ -194,15 +198,28 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {/* Météo principale */}
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
                   <div className="flex items-start justify-between gap-2 mb-4">
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold opacity-40 mb-1">
                         {isFR
                           ? (selectedCity as CityFR).region
                           : (selectedCity as CityWorld).country}
                       </p>
-                      <h2 className="text-2xl font-black text-neutral-900 leading-tight">
-                        {selectedCity.name}
-                      </h2>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-2xl font-black text-neutral-900 leading-tight">
+                          {selectedCity.name}
+                        </h2>
+                        {isFR && (
+                          <Link
+                            href={`/a/${slugify(selectedCity.name)}`}
+                            className="shrink-0 text-black/25 hover:text-black/70 transition-colors mt-0.5"
+                            title={`Fiche complète · ${selectedCity.name}`}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                            </svg>
+                          </Link>
+                        )}
+                      </div>
                       {!isFR && (
                         <p className="text-xs opacity-50 mt-0.5">
                           {(selectedCity as CityWorld).climateLabel}
@@ -267,7 +284,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   }`}
                 >
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                    Aujourd'hui c'est
+                    Aujourd&apos;hui c&apos;est
                   </p>
                   {climateAnomaly !== null ? (
                     <>
@@ -349,7 +366,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {/* Jumeaux */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}
+                    {isFR ? "Aujourd’hui, c’est comme à…" : "Villes françaises similaires"}
                   </p>
                   {twins.length === 0 ? (
                     <p className="text-sm text-neutral-400">Aucun jumeau à ±4°C.</p>

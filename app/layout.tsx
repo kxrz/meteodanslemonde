@@ -5,6 +5,19 @@ export const metadata: Metadata = {
   title: "En vrai, c'est chaud — cestchaud.fr",
   description: "Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.",
   metadataBase: new URL("https://cestchaud.fr"),
+  openGraph: {
+    title: "En vrai, c'est chaud — cestchaud.fr",
+    description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
+    url: "https://cestchaud.fr",
+    siteName: "cestchaud.fr",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "En vrai, c'est chaud — cestchaud.fr",
+    description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -12,15 +12,20 @@ export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "La chaleur en France · cestchaud.fr",
-  description: "Vue d'ensemble de la chaleur en France : températures actuelles, anomalies, tendances ERA5 et projections GIEC CMIP6 pour les 36 principales villes françaises.",
+  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
   alternates: { canonical: "https://cestchaud.fr/en/france" },
   openGraph: {
     title: "La chaleur en France · cestchaud.fr",
-    description: "Températures, anomalies et projections climatiques pour 36 villes françaises.",
+    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 36 villes françaises.",
     url: "https://cestchaud.fr/en/france",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "La chaleur en France · cestchaud.fr",
+    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 36 villes françaises.",
   },
 }
 
@@ -29,7 +34,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "La chaleur en France",
   url: "https://cestchaud.fr/en/france",
-  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
+  description: "Vue d’ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
   about: {
     "@type": "Country",
     name: "France",
@@ -240,25 +245,6 @@ export default async function FrancePage() {
                       {c.name}
                     </Link>
                   ))}
-                </div>
-              </div>
-
-              {/* Extrêmes du jour */}
-              <div className="bg-neutral-50 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                  Extrêmes du jour
-                </p>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-blue-900/50 mb-0.5">Plus frais</p>
-                    <div className="text-2xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}°C</div>
-                    <Link href={`/a/${slugify(coolest.name)}`} className="text-xs font-bold text-blue-900/70 hover:underline block truncate">{coolest.name}</Link>
-                  </div>
-                  <div>
-                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-0.5">Plus chaud</p>
-                    <div className="text-2xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}°C</div>
-                    <Link href={`/a/${slugify(hottest.name)}`} className="text-xs font-bold text-orange-900/70 hover:underline block truncate">{hottest.name}</Link>
-                  </div>
                 </div>
               </div>
 
