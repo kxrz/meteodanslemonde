@@ -72,10 +72,10 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "contact@cestchaud.fr",
+      from: "contact@envrai.cestchaud.fr",
       to: "florent@leswww.com",
       reply_to: email,
-      subject: `[cestchaud.fr] Message de ${name}`,
+      subject: `[CESTCHAUD] Message de ${name}`,
       text: `Nom : ${name}\nEmail : ${email}\n\n${message}`,
     }),
   })
