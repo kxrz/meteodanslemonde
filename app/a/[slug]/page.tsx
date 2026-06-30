@@ -30,17 +30,33 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const city = getCityBySlug(slug)
   if (!city) return {}
+
+  const climateMap = loadClimateMap()
+  const climate = (climateMap[city.id] ?? null) as ClimateEntry
+  const m = new Date().getMonth()
+  const proj2050 = climate?.proj2050?.[m] ?? null
+  const proj2050Str = proj2050 !== null ? ` GIEC 2050 : ${fmtDelta(proj2050)}°C.` : ""
+
+  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030–2050 pour ${city.name} (${city.region}).${proj2050Str}`
+
   return {
     title: `${city.name} · Chaleur & projections climatiques · cestchaud.fr`,
-    description: `Températures actuelles, historique 30 ans et projections GIEC 2030–2050 pour ${city.name} (${city.region}). Données ERA5 et CMIP6.`,
+    description,
     alternates: { canonical: `https://cestchaud.fr/a/${slug}` },
     openGraph: {
-      title: `${city.name} · Climat & projections`,
-      description: `Ressenti, tendance et projections CMIP6 pour ${city.name}.`,
+      title: `${city.name} · Chaleur & projections GIEC`,
+      description,
       url: `https://cestchaud.fr/a/${slug}`,
       siteName: "cestchaud.fr",
       locale: "fr_FR",
       type: "website",
+      images: [{ url: "/og/city.png", width: 1200, height: 630, alt: `${city.name} · cestchaud.fr` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${city.name} · Chaleur & projections GIEC`,
+      description,
+      images: ["/og/city.png"],
     },
   }
 }
@@ -90,7 +106,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
   const pageUrl = `https://cestchaud.fr/a/${slug}`
   const shareText = proj2050 !== null
-    ? `À ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d'ici 2050. `
+    ? `À ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d’ici 2050. `
     : `Découvrez les données climatiques de ${city.name} sur cestchaud.fr`
   const shareTextEncoded = encodeURIComponent(shareText + pageUrl)
   const shareLinks = {
@@ -137,11 +153,13 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
           {/* Left: Leaflet map (40%) full height */}
-          <div className="h-[50vw] max-h-[360px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative overflow-hidden border-b lg:border-b-0 lg:border-r border-black/[0.06]">
-            <CityMapWrapper lat={city.lat} lon={city.lon} name={city.name} />
+          <div className="h-[50vw] max-h-[360px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative p-3 lg:p-4">
+            <div className="w-full h-full rounded-3xl overflow-hidden">
+              <CityMapWrapper lat={city.lat} lon={city.lon} name={city.name} />
+            </div>
 
             {/* Overlay: city name + region */}
-            <div className="absolute top-3 left-3 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
+            <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 leading-none mb-0.5">
                 {city.region}
               </p>
@@ -149,7 +167,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             </div>
 
             {/* Overlay: coordinates */}
-            <div className="absolute bottom-3 left-3 z-[1000]">
+            <div className="absolute bottom-6 left-6 z-[1000]">
               <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
                 {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
               </p>
@@ -175,7 +193,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 {weather && (
                   <div className="bg-[#dbeafe] rounded-3xl p-6">
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
-                      Ressenti max aujourd'hui
+                      Ressenti max aujourd’hui
                     </p>
                     <div className="flex items-baseline gap-1.5 leading-none">
                       <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}°</span>
@@ -296,7 +314,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               >
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
-                    Vue d'ensemble
+                    Vue d’ensemble
                   </p>
                   <p className="text-base font-black text-neutral-900">La France en chiffres</p>
                 </div>

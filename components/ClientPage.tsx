@@ -103,14 +103,16 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
       <div className="flex flex-col lg:flex-row">
 
         {/* Map */}
-        <div className="h-[50vh] lg:h-[70vh] lg:w-[60%] shrink-0 relative">
-          <Map
-            citiesFR={citiesFR}
-            citiesWorld={citiesWorld}
-            selectedId={selectedId}
-            twinIds={twins.map((t) => t.id)}
-            onCityClick={handleCityClick}
-          />
+        <div className="h-[50vh] lg:h-[70vh] lg:w-[60%] shrink-0 relative p-3 lg:p-4">
+          <div className="w-full h-full rounded-3xl overflow-hidden">
+            <Map
+              citiesFR={citiesFR}
+              citiesWorld={citiesWorld}
+              selectedId={selectedId}
+              twinIds={twins.map((t) => t.id)}
+              onCityClick={handleCityClick}
+            />
+          </div>
         </div>
 
         {/* Bento panel */}
@@ -119,7 +121,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
             {!selectedCity ? (
 
-              // ── État par défaut
+              // ── État par défaut ────────────────────────────────────────────
               <>
                 {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
@@ -136,7 +138,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         <span className="text-3xl font-black text-neutral-300">C</span>
                       </div>
                       <p className="text-neutral-600 text-sm mt-1.5">
-                        à{" "}
+                        à{ " "}
                         <Link
                           href={`/a/${slugify(heroCity.name)}`}
                           className="font-bold text-neutral-900 hover:underline"
@@ -195,7 +197,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-sm text-neutral-600 leading-relaxed">
                     On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
                     Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
-                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
+                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
                   </p>
                 </div>
 
@@ -204,7 +206,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
             ) : (
 
-              // ── Ville sélectionnée
+              // ── Ville sélectionnée ───────────────────────────────────────────
               <>
                 {/* Météo principale */}
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
@@ -254,7 +256,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         <span className="text-2xl font-black text-neutral-400">C</span>
                       </div>
                       <p className="text-xs text-neutral-500 mt-1.5">
-                        {getWeather(selectedCity.weathercode).emoji}{" "}
+                        {getWeather(selectedCity.weathercode).emoji}{ ""}
                         ressenti max · {getWeather(selectedCity.weathercode).label}
                       </p>
                     </div>
@@ -295,7 +297,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   }`}
                 >
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                    Aujourd'hui c'est
+                    Aujourd’hui c’est
                   </p>
                   {climateAnomaly !== null ? (
                     <>
@@ -356,7 +358,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </div>
                 </div>
 
-                {/* CTA fiche ville (FR only) */}
+                {/* CTA fiche ville (FR only) — BEFORE twins */}
                 {isFR && (
                   <Link
                     href={`/a/${slugify(selectedCity.name)}`}
@@ -377,7 +379,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {/* Jumeaux */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}
+                    {isFR ? "Aujourd’hui, c’est comme à…" : "Villes françaises similaires"}
                   </p>
                   {twins.length === 0 ? (
                     <p className="text-sm text-neutral-400">Aucun jumeau à ±4°C.</p>
