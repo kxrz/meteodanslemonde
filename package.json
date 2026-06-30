@@ -6,8 +6,7 @@
     "dev": "next dev",
     "fetch-weather": "node scripts/fetch-weather.mjs",
     "fetch-climate": "npx tsx scripts/fetch-climate.ts",
-    "fetch-paid-static": "npx tsx scripts/fetch-paid-static.ts",
-    "fetch-paid-dynamic": "npx tsx scripts/fetch-paid-dynamic.ts",
+    "fetch-climate-scenarios": "npx tsx scripts/fetch-climate-scenarios.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
