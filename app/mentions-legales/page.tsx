@@ -24,7 +24,7 @@ export default function MentionsLegalesPage() {
           <h1 className="text-3xl font-black text-neutral-900 leading-tight">
             Mentions légales
           </h1>
-          <p className="text-xs text-neutral-400 mt-3">Mise à jour : Mai 2026</p>
+          <p className="text-xs text-neutral-400 mt-3">Mise à jour : Juin 2026</p>
         </div>
 
         {/* Right */}
