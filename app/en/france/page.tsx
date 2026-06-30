@@ -109,11 +109,11 @@ export default async function FrancePage() {
     // Paragraph 1 — today's snapshot
     {
       const tempDesc = avgTemp >= 35 ? "une vague de chaleur intense" : avgTemp >= 30 ? "une chaleur estivale prononcée" : avgTemp >= 25 ? "des températures estivales" : "des températures modérées"
-      const aboveStr = above30 > 0
-        ? ` ${above30} ville${above30 > 1 ? "s" : ""} dépassent les 30°C,`
-        : ""
+      const spread = above30 > 0
+        ? ` On compte ${above30} ville${above30 > 1 ? "s" : ""} au-dessus de 30°C, de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le thermomètre s'arrête à ${coolest.apparent_temp_max}°C.`
+        : ` De ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le ressenti plafonne à ${coolest.apparent_temp_max}°C, l'amplitude reste sensible.`
       parts.push(
-        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l'ensemble du territoire.${aboveStr} de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) qui marque le point le plus frais avec ${coolest.apparent_temp_max}°C.`
+        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l'ensemble du territoire.${spread}`
       )
     }
 
@@ -122,10 +122,10 @@ export default async function FrancePage() {
       const sign = biggestAnomaly.anomaly! > 0 ? "au-dessus" : "en dessous"
       const absAnomaly = Math.abs(biggestAnomaly.anomaly!)
       const trendStr = avgTrend !== null
-        ? ` À l'échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois — une trajectoire qui s'accélère.`
+        ? ` À l'échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois, une trajectoire qui s'accélère.`
         : ""
       parts.push(
-        `C'est à ${biggestAnomaly.name} que l'écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions — elles témoignent d'un glissement durable des repères climatiques.${trendStr}`
+        `C'est à ${biggestAnomaly.name} que l'écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions. Elles témoignent d'un glissement durable des repères climatiques.${trendStr}`
       )
     } else if (avgTrend !== null) {
       parts.push(
@@ -136,7 +136,7 @@ export default async function FrancePage() {
     // Paragraph 3 — GIEC projections
     if (mostImpacted && leastImpacted) {
       parts.push(
-        `Les projections GIEC CMIP6 dessinent des trajectoires très contrastées selon les territoires. ${mostImpacted.name} (${mostImpacted.region}) est la ville la plus exposée au scénario 2050, avec une hausse projetée de ${fmtDelta(mostImpacted.proj2050!)}°C, là où ${leastImpacted.name} (${leastImpacted.region}) figure parmi les moins impactées avec ${fmtDelta(leastImpacted.proj2050!)}°C. Ces écarts entre régions rappellent que le réchauffement ne sera pas uniforme : le Sud et les plaines continentales seront frappés plus tôt et plus fort que les façades atlantiques ou alpines.`
+        `Les projections GIEC CMIP6 dessinent des trajectoires très contrastées selon les territoires. ${mostImpacted.name} (${mostImpacted.region}) est la ville la plus exposée au scénario 2050, avec une hausse projetée de ${fmtDelta(mostImpacted.proj2050!)}°C. ${leastImpacted.name} (${leastImpacted.region}) figure parmi les moins impactées, à ${fmtDelta(leastImpacted.proj2050!)}°C. Ces écarts rappellent que le réchauffement ne sera pas uniforme : le Sud et les plaines continentales seront frappés plus tôt et plus fort que les façades atlantiques ou alpines.`
       )
     }
 
@@ -147,7 +147,7 @@ export default async function FrancePage() {
       const projStr = [proj40Str, proj50Str].filter(Boolean).join(", ")
       const top6Names = top6.map(c => c.name).slice(0, 3).join(", ")
       parts.push(
-        `Pour les six villes les plus chaudes aujourd'hui — dont ${top6Names} — le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays ; leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
+        `Pour les six villes les plus chaudes aujourd'hui, dont ${top6Names}, le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays. Leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
       )
     }
 
@@ -169,7 +169,7 @@ export default async function FrancePage() {
 
         <div className="flex-1 flex flex-col lg:flex-row min-h-0">
 
-          {/* Left panel — 40% */}
+          {/* Left panel */}
           <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-black/[0.06]">
             <div>
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
@@ -210,7 +210,7 @@ export default async function FrancePage() {
             <PageFooter />
           </div>
 
-          {/* Right panel — 60% scrollable */}
+          {/* Right panel */}
           <div className="flex-1 overflow-y-auto p-3 lg:p-4">
             <div className="grid grid-cols-2 gap-3 pb-4">
 

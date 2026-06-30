@@ -119,7 +119,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
             {!selectedCity ? (
 
-              // ── État par défaut ──────────────────────────────────────────────
+              // ── État par défaut ───────────────────────────────────────────
               <>
                 {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
@@ -135,15 +135,19 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </div>
                   <p className="text-neutral-600 text-sm mt-1.5">
                     à{" "}
-                    <Link
-                      href={`/a/${slugify(heroCity.name)}`}
-                      className="font-bold text-neutral-900 hover:underline"
-                    >
-                      {heroCity.name}
-                    </Link>
+                    <span className="font-bold text-neutral-900">{heroCity.name}</span>
                     <span className="text-neutral-400"> · {getWeather(heroCity.weathercode).emoji}</span>
                   </p>
-                  <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
+                  <div className="mt-5 flex flex-col sm:flex-row gap-2">
+                    <button
+                      onClick={() => handleCityClick(heroCity.id)}
+                      className="flex-1 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group text-left"
+                    >
+                      <span className="text-sm font-bold text-white">En savoir plus sur {heroCity.name}</span>
+                      <span className="text-white/40 group-hover:text-white/80 transition-colors ml-3">→</span>
+                    </button>
+                  </div>
+                  <p className="text-xs text-neutral-400 mt-3 leading-relaxed">
                     Cliquez une ville sur la carte pour la comparer avec le monde entier.
                   </p>
                 </div>
@@ -184,7 +188,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-sm text-neutral-600 leading-relaxed">
                     On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
                     Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
-                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
+                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
                   </p>
                 </div>
 
@@ -284,7 +288,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   }`}
                 >
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                    Aujourd&apos;hui c&apos;est
+                    Aujourd'hui c'est
                   </p>
                   {climateAnomaly !== null ? (
                     <>
@@ -345,7 +349,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </div>
                 </div>
 
-                {/* CTA fiche ville (FR only) — BEFORE twins */}
+                {/* CTA fiche ville (FR only) */}
                 {isFR && (
                   <Link
                     href={`/a/${slugify(selectedCity.name)}`}
@@ -366,7 +370,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {/* Jumeaux */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    {isFR ? "Aujourd’hui, c’est comme à…" : "Villes françaises similaires"}
+                    {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}
                   </p>
                   {twins.length === 0 ? (
                     <p className="text-sm text-neutral-400">Aucun jumeau à ±4°C.</p>
