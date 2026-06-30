@@ -6,7 +6,6 @@ import { useState, useMemo } from "react"
 import { CityFR, CityWorld, AnyCity } from "@/lib/types"
 import { slugify } from "@/lib/slugify"
 import { getWeather } from "@/lib/weather-codes"
-import { useClimateData } from "@/lib/use-climate-data"
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -19,6 +18,14 @@ const Map = dynamic(() => import("@/components/Map"), {
 
 const TWIN_MAX_DIFF = 4
 const TWIN_COUNT = 5
+
+type ClimateEntry = {
+  normal: number[]
+  trend: number[]
+  proj2030: (number | null)[]
+  proj2040: (number | null)[]
+  proj2050: (number | null)[]
+} | null
 
 function computeTwins(city: AnyCity, all: AnyCity[]): AnyCity[] {
   const ref = city.apparent_temp_max
@@ -33,17 +40,14 @@ function computeTwins(city: AnyCity, all: AnyCity[]): AnyCity[] {
     .map(({ city }) => city)
 }
 
-function Skeleton({ className }: { className?: string }) {
-  return <div className={`bg-black/10 rounded-xl animate-pulse ${className ?? ""}`} />
-}
-
 interface Props {
   citiesFR: CityFR[]
   citiesWorld: CityWorld[]
   fetchedAt: string
+  climateMap: Record<string, unknown>
 }
 
-export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) {
+export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMap }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const [heroCity] = useState(
@@ -65,12 +69,21 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
     [selectedCity, allCities]
   )
 
-  const climate = useClimateData(
-    selectedCity?.lat ?? 0,
-    selectedCity?.lon ?? 0,
-    selectedCity?.apparent_temp_max ?? 0,
-    selectedCity !== null
-  )
+  const climate = useMemo(() => {
+    if (!selectedCity || selectedCity.type !== "fr") return null
+    const m = new Date().getMonth()
+    const entry = (climateMap[selectedCity.id] ?? null) as ClimateEntry
+    if (!entry) return null
+    const normal = entry.normal?.[m] ?? null
+    const trend = entry.trend?.[m] ?? null
+    const proj2030 = entry.proj2030?.[m] ?? null
+    const proj2040 = entry.proj2040?.[m] ?? null
+    const proj2050 = entry.proj2050?.[m] ?? null
+    const anomaly = normal !== null
+      ? Math.round((selectedCity.apparent_temp_max - normal) * 10) / 10
+      : null
+    return { normal, trend, anomaly, proj2030, proj2040, proj2050 }
+  }, [selectedCity, climateMap])
 
   function handleCityClick(id: string) {
     setSelectedId((prev) => (prev === id ? null : id))
@@ -85,6 +98,15 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
 
   const isFR = selectedCity?.type === "fr"
 
+  const footer = (
+    <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
+      cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
+      <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600">© LesWWW</a>
+      {" · "}
+      <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-600">Mentions légales</a>
+    </div>
+  )
+
   return (
     <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
 
@@ -93,11 +115,11 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h1 className="text-3xl font-black tracking-tight text-neutral-900 leading-none">
-              En vrai, c’est chaud.
+              En vrai, c'est chaud.
             </h1>
             <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
               Nous sommes le {dayNameCap} {dateLabel}. Il est {timeLabel}.{" "}
-              Le ressenti d’aujourd’hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.
+              Le ressenti d'aujourd'hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.
             </p>
           </div>
           <div className="shrink-0 text-right">
@@ -150,7 +172,12 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                     <span className="text-3xl font-black text-neutral-300">C</span>
                   </div>
                   <p className="text-neutral-600 text-sm mt-1.5">
-                    <span className="font-bold text-neutral-900">{heroCity.name}</span>
+                    <Link
+                      href={`/a/${slugify(heroCity.name)}`}
+                      className="font-bold text-neutral-900 hover:underline underline-offset-2"
+                    >
+                      {heroCity.name}
+                    </Link>
                     <span className="text-neutral-400"> · ressenti max</span>
                   </p>
                   <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
@@ -194,7 +221,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   <p className="text-sm text-neutral-600 leading-relaxed">
                     On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
                     Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
-                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
+                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
                   </p>
                 </div>
 
@@ -206,16 +233,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   </Link>
                 </div>
 
-                {/* Footer */}
-                <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                  <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600">
-                    © LesWWW
-                  </a>
-                  {" · "}
-                  <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-600">
-                    Mentions légales
-                  </a>
-                </div>
+                {footer}
               </>
 
             ) : (
@@ -263,132 +281,114 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                     </div>
                     <div className="text-right text-xs text-neutral-500 space-y-1">
                       <div>💧 {selectedCity.humidity}%</div>
-                      <div>💨 {selectedCity.wind} km/h</div>
+                      <div>💨 {selectedCity.wind} km/h</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Normale */}
-                <div className="bg-[#b8d4b0] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
-                    Normalement
-                  </p>
-                  {climate.loading ? (
-                    <>
-                      <Skeleton className="h-10 w-20 mb-2" />
-                      <Skeleton className="h-3 w-24" />
-                    </>
-                  ) : climate.normal !== null ? (
-                    <>
-                      <div className="text-4xl font-black text-green-900 leading-none">
-                        {climate.normal}°C
-                      </div>
-                      <p className="text-xs text-green-900/50 mt-2">
-                        moy. {monthName} 1991–2020
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-2xl font-black text-green-900/30">—</p>
-                  )}
-                </div>
+                {isFR && (
+                  <div className="bg-[#b8d4b0] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
+                      Normalement
+                    </p>
+                    {climate?.normal !== null && climate?.normal !== undefined ? (
+                      <>
+                        <div className="text-4xl font-black text-green-900 leading-none">
+                          {climate.normal.toFixed(1)}°C
+                        </div>
+                        <p className="text-xs text-green-900/50 mt-2">
+                          moy. {monthName} 1991–2020
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-2xl font-black text-green-900/30">—</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Anomalie */}
-                <div
-                  className={`rounded-3xl p-5 transition-colors ${
-                    climate.anomaly !== null && climate.anomaly > 2
-                      ? "bg-[#f4a27a]"
-                      : climate.anomaly !== null && climate.anomaly < -2
-                      ? "bg-[#a8c4d4]"
-                      : "bg-neutral-200"
-                  }`}
-                >
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                    Aujourd’hui c’est
-                  </p>
-                  {climate.loading ? (
-                    <>
-                      <Skeleton className="h-10 w-20 mb-2" />
-                      <Skeleton className="h-3 w-20" />
-                    </>
-                  ) : climate.anomaly !== null ? (
-                    <>
-                      <div className="text-4xl font-black text-neutral-900 leading-none">
-                        {climate.anomaly > 0 ? "+" : ""}{climate.anomaly}°C
-                      </div>
-                      <p className="text-xs text-black/50 mt-2">
-                        {climate.anomaly > 2
-                          ? "au-dessus de la normale"
-                          : climate.anomaly < -2
-                          ? "en-dessous de la normale"
-                          : "dans la normale"}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-2xl font-black text-black/20">—</p>
-                  )}
-                </div>
+                {isFR && (
+                  <div
+                    className={`rounded-3xl p-5 transition-colors ${
+                      climate?.anomaly !== null && climate?.anomaly !== undefined && climate.anomaly > 2
+                        ? "bg-[#f4a27a]"
+                        : climate?.anomaly !== null && climate?.anomaly !== undefined && climate.anomaly < -2
+                        ? "bg-[#a8c4d4]"
+                        : "bg-neutral-200"
+                    }`}
+                  >
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
+                      Aujourd'hui c'est
+                    </p>
+                    {climate?.anomaly !== null && climate?.anomaly !== undefined ? (
+                      <>
+                        <div className="text-4xl font-black text-neutral-900 leading-none">
+                          {climate.anomaly > 0 ? "+" : ""}{climate.anomaly.toFixed(1)}°C
+                        </div>
+                        <p className="text-xs text-black/50 mt-2">
+                          {climate.anomaly > 2
+                            ? "au-dessus de la normale"
+                            : climate.anomaly < -2
+                            ? "en-dessous de la normale"
+                            : "dans la normale"}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-2xl font-black text-black/20">—</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Tendance 30 ans */}
-                <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
-                    Tendance observée · 30 ans
-                  </p>
-                  {climate.loading ? (
-                    <Skeleton className="h-7 w-40" />
-                  ) : climate.trend !== null ? (
-                    <p className="font-black text-xl text-neutral-900">
-                      {climate.trend > 0 ? "+" : ""}{climate.trend}°C
-                      <span className="text-sm font-normal text-neutral-400 ml-2">
-                        depuis 1990 sur {monthName}
-                      </span>
+                {isFR && (
+                  <div className="col-span-2 bg-white rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
+                      Tendance observée · 30 ans
                     </p>
-                  ) : (
-                    <p className="text-sm text-neutral-400">Données non disponibles</p>
-                  )}
-                </div>
+                    {climate?.trend !== null && climate?.trend !== undefined ? (
+                      <p className="font-black text-xl text-neutral-900">
+                        {climate.trend > 0 ? "+" : ""}{climate.trend.toFixed(1)}°C
+                        <span className="text-sm font-normal text-neutral-400 ml-2">
+                          depuis 1990 sur {monthName}
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="text-sm text-neutral-400">Données non disponibles</p>
+                    )}
+                  </div>
+                )}
 
                 {/* Projections GIEC */}
-                <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                    Si rien ne change…
-                  </p>
-                  <p className="text-[10px] text-purple-900/40 mb-4">
-                    Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
-                  </p>
-                  {climate.loading ? (
-                    <div className="space-y-3">
-                      <Skeleton className="h-7 w-full" />
-                      <Skeleton className="h-7 w-full" />
-                      <Skeleton className="h-7 w-full" />
-                    </div>
-                  ) : climate.error ? (
-                    <p className="text-xs text-purple-900/40">Données non disponibles</p>
-                  ) : (
+                {isFR && (
+                  <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
+                      Si rien ne change…
+                    </p>
+                    <p className="text-[10px] text-purple-900/40 mb-4">
+                      Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
+                    </p>
                     <div className="space-y-2.5">
-                      {(
-                        [
-                          { year: 2030, val: climate.proj2030 },
-                          { year: 2040, val: climate.proj2040 },
-                          { year: 2050, val: climate.proj2050 },
-                        ] as { year: number; val: number | null }[]
-                      ).map(({ year, val }) => (
+                      {([
+                        { year: 2030, val: climate?.proj2030 ?? null },
+                        { year: 2040, val: climate?.proj2040 ?? null },
+                        { year: 2050, val: climate?.proj2050 ?? null },
+                      ] as { year: number; val: number | null }[]).map(({ year, val }) => (
                         <div key={year} className="flex items-center justify-between">
                           <span className="text-sm font-semibold text-purple-900/60">{year}</span>
                           <span className="font-black text-2xl text-purple-900">
-                            {val !== null
-                              ? `${val >= 0 ? "+" : ""}${val.toFixed(1)}°C`
-                              : "—"}
+                            {val !== null ? `${val >= 0 ? "+" : ""}${val.toFixed(1)}°C` : "—"}
                           </span>
                         </div>
                       ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Jumeaux */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    {isFR ? "Aujourd’hui, c’est comme à…" : "Villes françaises similaires"}
+                    {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}
                   </p>
                   {twins.length === 0 ? (
                     <p className="text-sm text-neutral-400">Aucun jumeau à ±4°C.</p>
@@ -439,13 +439,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   </Link>
                 )}
 
-                {/* Footer */}
-                <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                  cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
-                  <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600">© LesWWW</a>
-                  {" · "}
-                  <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-600">Mentions légales</a>
-                </div>
+                {footer}
               </>
             )}
           </div>
