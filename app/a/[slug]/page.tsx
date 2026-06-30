@@ -89,7 +89,6 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
     day: "numeric", month: "long", year: "numeric",
   })
 
-  // GIEC rows — clamp negative deltas (model noise at end of CMIP6 run)
   const giecRows = ([
     { year: 2030, delta: climate.proj2030 },
     { year: 2040, delta: climate.proj2040 },
@@ -103,7 +102,6 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       return { year, stable, displayDelta, abs: Math.round(city.apparent_temp_max + displayDelta) }
     })
 
-  // Schema.org JSON-LD
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -125,9 +123,14 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       {/* Nav */}
       <header className="px-5 lg:px-8 pt-5 pb-4 border-b border-black/5">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors">
-            ← En vrai, c&apos;est chaud
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors">
+              ← En vrai, c&apos;est chaud
+            </Link>
+            <Link href="/en/france" className="text-xs text-neutral-400 hover:text-neutral-700 underline underline-offset-2 transition-colors">
+              La France en chiffres
+            </Link>
+          </div>
           <div className="flex items-center gap-1.5 text-xs text-neutral-400">
             <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
             {dataLabel}
@@ -137,7 +140,6 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
       <main className="px-5 lg:px-8 py-8 max-w-5xl mx-auto">
 
-        {/* City title */}
         <div className="mb-8">
           <p className="text-xs uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
             {city.region}
@@ -147,10 +149,9 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
           </h1>
         </div>
 
-        {/* Bento grid */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
 
-          {/* Ressenti jour-J — hero */}
+          {/* Ressenti jour-J */}
           <div className="col-span-2 lg:col-span-2 bg-[#dbeafe] rounded-3xl p-6">
             <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/65 mb-4">
               Ressenti aujourd&apos;hui

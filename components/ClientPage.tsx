@@ -1,6 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import Link from "next/link"
 import { useState, useMemo, useEffect } from "react"
 import { CityFR, CityWorld, AnyCity, ClimateMap } from "@/lib/types"
 import { getWeather } from "@/lib/weather-codes"
@@ -82,8 +83,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
   const hasGiecData = climate.proj2030 !== null || climate.proj2040 !== null || climate.proj2050 !== null
 
-  // Build GIEC rows: clamp negative deltas to 0 (small negatives = model noise,
-  // not genuine cooling — caused by 3-year window variance at end of CMIP6 run)
   const giecRows = selectedCity ? ([
     { year: 2030, delta: climate.proj2030 },
     { year: 2040, delta: climate.proj2040 },
@@ -131,9 +130,14 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
               et ce que le GIEC prédit pour 2030–2050.
             </p>
           </div>
-          <div className="hidden md:flex items-center gap-1.5 shrink-0 text-xs text-neutral-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
-            {dataLabel}
+          <div className="hidden md:flex flex-col items-end gap-1.5 shrink-0 text-xs text-neutral-400">
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
+              {dataLabel}
+            </div>
+            <Link href="/en/france" className="text-neutral-400 hover:text-neutral-700 underline underline-offset-2 transition-colors">
+              La France en chiffres →
+            </Link>
           </div>
         </div>
       </header>
@@ -266,7 +270,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   )}
                 </div>
 
-                {/* Ce qui vient — GIEC */}
+                {/* Ce qui vient · GIEC */}
                 <div className="col-span-2 bg-[#e4dff0] rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/65 mb-1">
                     Ce qui vient · GIEC
@@ -364,7 +368,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     Deux villes sont jumelles si leur{" "}
                     <strong className="text-blue-900">ressenti maximal journalier</strong>{" "}
                     diffère de moins de 4°C. On compare chaque ville française aux villes
-                    mondiales — et inversement.
+                    mondiales · et inversement.
                   </p>
                 </div>
 
@@ -473,12 +477,20 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     <strong className="text-neutral-900">CMIP6</strong>{" "}
                     donnent les températures estimées pour 2030, 2040 et 2050.
                   </p>
-                  <button
-                    onClick={() => setShowInfo(true)}
-                    className="text-xs text-neutral-500 underline underline-offset-2 hover:text-neutral-800 mt-3 transition-colors"
-                  >
-                    Méthode &amp; sources →
-                  </button>
+                  <div className="flex items-center gap-4 mt-3">
+                    <button
+                      onClick={() => setShowInfo(true)}
+                      className="text-xs text-neutral-500 underline underline-offset-2 hover:text-neutral-800 transition-colors"
+                    >
+                      Méthode &amp; sources →
+                    </button>
+                    <Link
+                      href="/en/france"
+                      className="text-xs text-neutral-500 underline underline-offset-2 hover:text-neutral-800 transition-colors"
+                    >
+                      La France en chiffres →
+                    </Link>
+                  </div>
                 </div>
 
                 {/* Footer */}
