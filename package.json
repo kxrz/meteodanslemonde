@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "fetch-weather": "node scripts/fetch-weather.mjs",
+    "fetch-climate": "npx tsx scripts/fetch-climate.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
