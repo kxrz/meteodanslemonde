@@ -49,7 +49,7 @@ app/
   a/[slug]/page.tsx     # Fiche ville (36 pages statiques)
   a-propos/page.tsx     # Methodologie et sources
   contact/page.tsx      # Formulaire de contact
-  api/contact/route.ts  # API Resend (rate limit + honeypot)
+  api/contact/route.ts  # API Resend
 
 components/
   ClientPage.tsx        # Carte + bento interactif (client)
@@ -61,7 +61,7 @@ components/
 
 data/
   cities-fr.json        # 36 villes françaises (coords + region)
-  cities-world.json     # 30 villes mondiales (coords + climat)
+  cities-world.json     # 67 villes mondiales (coords + climat)
   climate.json          # Normales ERA5 + projections CMIP6 par ville/mois
   weather-cache.json    # Cache météo généré au build (gitignore)
 
@@ -103,10 +103,6 @@ La commande de build Vercel est :
 ```
 npm run fetch-weather && next build --webpack
 ```
-
-Le domaine d'envoi email est `envrai.cestchaud.fr` (sous-domaine Resend isolé du domaine principal).
-
-Les redirections 301 depuis `meteo.leswww.com` vers `www.cestchaud.fr` sont gérées dans `next.config.ts`.
 
 ---
 
