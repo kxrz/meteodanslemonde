@@ -156,6 +156,13 @@ async function fetchScenario(city: { lat: number; lon: number }, models: string[
   const tKeys  = Object.keys(daily).filter(k => k.startsWith("temperature_2m_max") && k !== "time")
   const keys   = atKeys.length ? atKeys : tKeys
   console.log(`    [climate] using keys: ${keys.join(", ")}`)
+  // Sample check: first non-null value in each key
+  for (const k of keys) {
+    const arr = daily[k] as (number | null)[]
+    const nonNull = arr.filter(v => v != null)
+    const sample = nonNull.slice(0, 3)
+    console.log(`    [climate] ${k}: ${nonNull.length}/${arr.length} non-null, samples=${JSON.stringify(sample)}`)
+  }
 
   const proj2030: (number | null)[] = []
   const proj2040: (number | null)[] = []
