@@ -39,7 +39,6 @@ const MAX_RETRIES = 6
 
 // Models that reliably support each SSP in Open-Meteo Climate API
 const SSP_MODELS: Record<string, string[]> = {
-  ssp126: ["EC_Earth3P_HR", "MPI_ESM1_2_XR"],
   ssp245: ["EC_Earth3P_HR", "MPI_ESM1_2_XR"],
   ssp585: ["EC_Earth3P_HR", "MPI_ESM1_2_XR", "MRI_AGCM3_2_S"],
 }
