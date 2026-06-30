@@ -127,16 +127,23 @@ export default async function FrancePage() {
                   <div className="text-3xl font-black text-blue-900">{avgTemp}°C</div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#a8c4d4]/50 rounded-2xl p-3">
-                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-blue-900/50 mb-1">Plus frais</p>
-                    <div className="text-xl font-black text-blue-900">{coolest.apparent_temp_max}°C</div>
-                    <Link href={`/a/${slugify(coolest.name)}`} className="text-xs font-bold text-blue-900/70 hover:underline block truncate">{coolest.name}</Link>
+                  <div className="bg-[#fed7aa]/70 rounded-2xl p-3">
+                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-1">≥ 30°C</p>
+                    <div className="text-xl font-black text-orange-900">{above30}</div>
+                    <p className="text-[10px] text-orange-900/50">villes</p>
                   </div>
-                  <div className="bg-[#f4a27a]/50 rounded-2xl p-3">
-                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-1">Plus chaud</p>
-                    <div className="text-xl font-black text-orange-900">{hottest.apparent_temp_max}°C</div>
-                    <Link href={`/a/${slugify(hottest.name)}`} className="text-xs font-bold text-orange-900/70 hover:underline block truncate">{hottest.name}</Link>
-                  </div>
+                  {biggestAnomaly ? (
+                    <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
+                      <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
+                      <div className="text-xl font-black text-yellow-900">{fmtDelta(biggestAnomaly.anomaly)}°C</div>
+                      <Link href={`/a/${slugify(biggestAnomaly.name)}`} className="text-[10px] font-bold text-yellow-900/70 hover:underline block truncate">{biggestAnomaly.name}</Link>
+                    </div>
+                  ) : (
+                    <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
+                      <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
+                      <div className="text-xl font-black text-yellow-900/30">—</div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -146,66 +153,6 @@ export default async function FrancePage() {
           {/* Right panel — 60% scrollable */}
           <div className="flex-1 overflow-y-auto p-3 lg:p-4">
             <div className="grid grid-cols-2 gap-3 pb-4">
-
-              {/* Extrêmes du jour */}
-              <div className="bg-[#a8c4d4]/60 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/60 mb-3">
-                  Plus frais aujourd'hui
-                </p>
-                <div className="text-4xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}°C</div>
-                <Link
-                  href={`/a/${slugify(coolest.name)}`}
-                  className="text-sm font-bold text-blue-900/80 mt-1.5 block hover:underline"
-                >
-                  {coolest.name}
-                </Link>
-                <p className="text-xs text-blue-900/50">{coolest.region}</p>
-              </div>
-              <div className="bg-[#f4a27a]/60 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/60 mb-3">
-                  Plus chaud aujourd'hui
-                </p>
-                <div className="text-4xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}°C</div>
-                <Link
-                  href={`/a/${slugify(hottest.name)}`}
-                  className="text-sm font-bold text-orange-900/80 mt-1.5 block hover:underline"
-                >
-                  {hottest.name}
-                </Link>
-                <p className="text-xs text-orange-900/50">{hottest.region}</p>
-              </div>
-
-              {/* Villes ≥ 30°C */}
-              <div className="bg-[#fed7aa]/70 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/60 mb-3">
-                  Villes ≥ 30°C
-                </p>
-                <div className="text-5xl font-black text-orange-900 leading-none">{above30}</div>
-                <p className="text-xs text-orange-900/50 mt-1.5">sur {citiesFR.length} villes</p>
-              </div>
-
-              {/* Anomalie max */}
-              <div className="bg-[#fef9c3]/80 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-yellow-900/60 mb-3">
-                  Plus grande anomalie
-                </p>
-                {biggestAnomaly ? (
-                  <>
-                    <div className="text-4xl font-black text-yellow-900 leading-none">
-                      {fmtDelta(biggestAnomaly.anomaly)}°C
-                    </div>
-                    <Link
-                      href={`/a/${slugify(biggestAnomaly.name)}`}
-                      className="text-sm font-bold text-yellow-900/80 mt-1.5 block hover:underline"
-                    >
-                      {biggestAnomaly.name}
-                    </Link>
-                    <p className="text-xs text-yellow-900/50">vs. normale {monthName}</p>
-                  </>
-                ) : (
-                  <p className="text-2xl font-black text-yellow-900/30">—</p>
-                )}
-              </div>
 
               {/* GIEC 2050 plus exposée */}
               <div className="bg-purple-50 rounded-3xl p-5">
@@ -268,15 +215,6 @@ export default async function FrancePage() {
                 </div>
               )}
 
-              {/* Ressenti moyen */}
-              <div className="bg-[#dbeafe] rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
-                  Ressenti moyen France
-                </p>
-                <div className="text-5xl font-black text-blue-900 leading-none">{avgTemp}°C</div>
-                <p className="text-xs text-blue-700/60 mt-2">moy. {citiesFR.length} villes</p>
-              </div>
-
               {/* GIEC moy. top 6 */}
               <div className="bg-neutral-900 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
@@ -302,6 +240,25 @@ export default async function FrancePage() {
                       {c.name}
                     </Link>
                   ))}
+                </div>
+              </div>
+
+              {/* Extrêmes du jour */}
+              <div className="bg-neutral-50 rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+                  Extrêmes du jour
+                </p>
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-blue-900/50 mb-0.5">Plus frais</p>
+                    <div className="text-2xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}°C</div>
+                    <Link href={`/a/${slugify(coolest.name)}`} className="text-xs font-bold text-blue-900/70 hover:underline block truncate">{coolest.name}</Link>
+                  </div>
+                  <div>
+                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-0.5">Plus chaud</p>
+                    <div className="text-2xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}°C</div>
+                    <Link href={`/a/${slugify(hottest.name)}`} className="text-xs font-bold text-orange-900/70 hover:underline block truncate">{hottest.name}</Link>
+                  </div>
                 </div>
               </div>
 

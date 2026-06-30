@@ -129,15 +129,18 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
+      <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
 
         <SiteHeader asLink />
 
-        <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
+        {/* Main — map left, bento right */}
+        <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
-          <div className="h-[40vh] lg:h-auto lg:w-[40%] shrink-0 relative overflow-hidden border-b lg:border-b-0 lg:border-r border-black/[0.06]">
+          {/* Left: Leaflet map (40%) full height */}
+          <div className="h-[50vw] max-h-[360px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative overflow-hidden border-b lg:border-b-0 lg:border-r border-black/[0.06]">
             <CityMapWrapper lat={city.lat} lon={city.lon} name={city.name} />
 
+            {/* Overlay: city name + region */}
             <div className="absolute top-3 left-3 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 leading-none mb-0.5">
                 {city.region}
@@ -145,6 +148,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               <h1 className="text-base font-black text-neutral-900 leading-tight">{city.name}</h1>
             </div>
 
+            {/* Overlay: coordinates */}
             <div className="absolute bottom-3 left-3 z-[1000]">
               <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
                 {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
@@ -152,9 +156,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             </div>
           </div>
 
-          <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4 lg:w-[60%]">
+          {/* Right: bento (60%) */}
+          <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto p-3 lg:p-4 lg:w-[60%]">
             <div className="grid grid-cols-2 gap-3 pb-4">
 
+              {/* Narrative */}
               {narrative && (
                 <article className="col-span-2 bg-neutral-900 rounded-3xl p-6">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
@@ -164,53 +170,59 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </article>
               )}
 
-              {weather && (
-                <div className="col-span-2 bg-[#dbeafe] rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
-                    Ressenti max aujourd'hui
-                  </p>
-                  <div className="flex items-baseline gap-1.5 leading-none">
-                    <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}°</span>
-                    <span className="text-2xl font-black text-blue-400">C</span>
-                  </div>
-                  {anomaly !== null && (
-                    <p className="text-sm text-blue-800/60 mt-2">
-                      {fmtDelta(anomaly)}°C vs. normale {monthName}
+              {/* Température max + Normale + Tendance — grouped to guarantee stacking */}
+              <div className="col-span-2 space-y-3">
+                {weather && (
+                  <div className="bg-[#dbeafe] rounded-3xl p-6">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
+                      Ressenti max aujourd'hui
                     </p>
-                  )}
-                </div>
-              )}
-
-              <div className="bg-[#b8d4b0] rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
-                  Normalement en {monthName}
-                </p>
-                {normal !== null ? (
-                  <>
-                    <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}°C</div>
-                    <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
-                  </>
-                ) : (
-                  <p className="text-2xl font-black text-green-900/30">—</p>
-                )}
-              </div>
-
-              <div className="bg-white rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                  Tendance 30 ans
-                </p>
-                {trend !== null ? (
-                  <>
-                    <div className="text-4xl font-black text-neutral-900 leading-none">
-                      {fmtDelta(trend)}°C
+                    <div className="flex items-baseline gap-1.5 leading-none">
+                      <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}°</span>
+                      <span className="text-2xl font-black text-blue-400">C</span>
                     </div>
-                    <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
-                  </>
-                ) : (
-                  <p className="text-2xl font-black text-neutral-300">—</p>
+                    {anomaly !== null && (
+                      <p className="text-sm text-blue-800/60 mt-2">
+                        {fmtDelta(anomaly)}°C vs. normale {monthName}
+                      </p>
+                    )}
+                  </div>
                 )}
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Normale */}
+                  <div className="bg-[#b8d4b0] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
+                      Normalement en {monthName}
+                    </p>
+                    {normal !== null ? (
+                      <>
+                        <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}°C</div>
+                        <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
+                      </>
+                    ) : (
+                      <p className="text-2xl font-black text-green-900/30">—</p>
+                    )}
+                  </div>
+                  {/* Tendance 30 ans */}
+                  <div className="bg-white rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+                      Tendance 30 ans
+                    </p>
+                    {trend !== null ? (
+                      <>
+                        <div className="text-4xl font-black text-neutral-900 leading-none">
+                          {fmtDelta(trend)}°C
+                        </div>
+                        <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
+                      </>
+                    ) : (
+                      <p className="text-2xl font-black text-neutral-300">—</p>
+                    )}
+                  </div>
+                </div>
               </div>
 
+              {/* Projections GIEC */}
               <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
                   Si rien ne change…
@@ -234,6 +246,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </div>
               </div>
 
+              {/* Share */}
               <div className="col-span-2 bg-white rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
                   Partager
@@ -276,6 +289,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </div>
               </div>
 
+              {/* Lien France */}
               <Link
                 href="/en/france"
                 className="col-span-2 flex items-center justify-between bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-3xl px-6 py-5 group"

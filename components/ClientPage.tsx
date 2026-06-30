@@ -36,6 +36,10 @@ function computeTwins(city: AnyCity, all: AnyCity[]): AnyCity[] {
     .map(({ city }) => city)
 }
 
+function Skeleton({ className }: { className?: string }) {
+  return <div className={`bg-black/10 rounded-xl animate-pulse ${className ?? ""}`} />
+}
+
 interface Props {
   citiesFR: CityFR[]
   citiesWorld: CityWorld[]
@@ -69,10 +73,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
     setSelectedId((prev) => (prev === id ? null : id))
   }
 
-  const dataLabel = new Date(fetchedAt).toLocaleDateString("fr-FR", {
-    day: "numeric", month: "long", year: "numeric",
-  })
-
   const isFR = selectedCity?.type === "fr"
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
@@ -95,8 +95,10 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
       <SiteHeader />
 
+      {/* Main */}
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
+        {/* Map */}
         <div className="h-[42vh] lg:h-auto lg:w-[60%] shrink-0 relative">
           <Map
             citiesFR={citiesFR}
@@ -107,11 +109,15 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
           />
         </div>
 
+        {/* Bento panel */}
         <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4">
           <div className="grid grid-cols-2 gap-3 pb-4">
 
             {!selectedCity ? (
+
+              // ── État par défaut ───────────────────────────────────────
               <>
+                {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-5">
                     En ce moment
@@ -138,6 +144,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </p>
                 </div>
 
+                {/* Compteur FR */}
                 <div className="bg-[#dbeafe] rounded-3xl p-5">
                   <div className="flex items-center gap-1.5 mb-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
@@ -151,6 +158,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <div className="text-xs text-blue-700 mt-1.5">villes</div>
                 </div>
 
+                {/* Compteur Monde */}
                 <div className="bg-[#d1fae5] rounded-3xl p-5">
                   <div className="flex items-center gap-1.5 mb-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
@@ -164,6 +172,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <div className="text-xs text-emerald-700 mt-1.5">villes</div>
                 </div>
 
+                {/* Comment ça marche */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
                     Comment ça marche
@@ -175,15 +184,14 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </p>
                 </div>
 
-                <div className="col-span-2 bg-neutral-100 rounded-3xl p-4 flex items-center justify-between">
-                  <span className="text-xs text-neutral-500">Open-Meteo · ERA5 · CMIP6</span>
-                  <span className="text-xs text-neutral-400">{dataLabel}</span>
-                </div>
-
                 <PageFooter className="col-span-2" />
               </>
+
             ) : (
+
+              // ── Ville sélectionnée ───────────────────────────────────────
               <>
+                {/* Météo principale */}
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
                   <div className="flex items-start justify-between gap-2 mb-4">
                     <div>
@@ -229,6 +237,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </div>
                 </div>
 
+                {/* Normale */}
                 <div className="bg-[#b8d4b0] rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
                     Normalement
@@ -247,6 +256,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   )}
                 </div>
 
+                {/* Anomalie */}
                 <div
                   className={`rounded-3xl p-5 transition-colors ${
                     climateAnomaly !== null && climateAnomaly > 2
@@ -277,6 +287,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   )}
                 </div>
 
+                {/* Tendance 30 ans */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
                     Tendance observée — 30 ans
@@ -293,6 +304,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   )}
                 </div>
 
+                {/* Projections GIEC */}
                 <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
                     Si rien ne change…
@@ -316,6 +328,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </div>
                 </div>
 
+                {/* CTA fiche ville (FR only) — BEFORE twins */}
                 {isFR && (
                   <Link
                     href={`/a/${slugify(selectedCity.name)}`}
@@ -333,6 +346,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </Link>
                 )}
 
+                {/* Jumeaux */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
                     {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}

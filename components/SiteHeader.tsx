@@ -19,7 +19,7 @@ export default function SiteHeader({ asLink = false }: Props) {
 
   const title = (
     <span className="font-black text-3xl sm:text-4xl tracking-tight text-neutral-900 leading-none">
-      En vrai, c'est{"\ "}
+      En vrai, c'est{" "}
       <span className="relative inline-block">
         chaud
         <span className="absolute left-0 right-0 bottom-0.5 h-[3px] bg-red-500 rounded-full" />
@@ -29,17 +29,17 @@ export default function SiteHeader({ asLink = false }: Props) {
   )
 
   const subtitle = (
-    <p className="text-sm text-neutral-500 mt-2 leading-snug">
+    <div className="text-sm text-neutral-500 mt-2 leading-snug">
       {now ? (
-        <>
-          Nous sommes le{"\ "}
+        <p>
+          Nous sommes le{" "}
           {now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })},
-          il est{"\ "}
-          {now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}.{"\ "}
-        </>
+          il est{" "}
+          {now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}.
+        </p>
       ) : null}
-      Le ressenti d'aujourd'hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.
-    </p>
+      <p>Le ressenti d'aujourd'hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.</p>
+    </div>
   )
 
   return (
@@ -69,7 +69,7 @@ export default function SiteHeader({ asLink = false }: Props) {
 
       {menuOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-[2000] flex items-center justify-center"
           onClick={() => setMenuOpen(false)}
         >
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
