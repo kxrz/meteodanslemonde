@@ -41,7 +41,7 @@ export default function SiteHeaderMenu() {
             <ul className="space-y-4">
               {[
                 { href: "/en/france", label: "La France en chiffres" },
-                { href: "/methodologie", label: "Méthodologie" },
+                { href: "/a-propos", label: "À propos" },
                 { href: "/contact", label: "Contact" },
               ].map(({ href, label }) => (
                 <li key={href}>

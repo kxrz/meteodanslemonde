@@ -1,0 +1,18 @@
+/* TEAM */
+Creator: Florent
+Site: cestchaud.fr
+Contact: florent[at]leswww.com
+Location: France
+
+/* THANKS */
+Open-Meteo -- open-source weather API
+ECMWF / ERA5 -- historical climate reanalyses
+CMIP6 / GIEC AR6 -- climate projections
+OpenStreetMap contributors -- base map tiles
+CARTO -- map tile styling
+
+/* SITE */
+Last update: 2026/06/30
+Language: French
+Standards: HTML5, React, Next.js, Tailwind CSS
+Software: Next.js, Vercel, Leaflet

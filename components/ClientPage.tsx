@@ -102,7 +102,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
       <SiteHeader />
 
-      {/* Main */}
       <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
         {/* Map */}
@@ -123,8 +122,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
           <div className="grid grid-cols-2 gap-3 pb-4">
 
             {!selectedCity ? (
-
-              // ── État par défaut ────────────────────────────────────────────
               <>
                 {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
@@ -156,7 +153,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                       className="shrink-0 flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group"
                     >
                       <span className="text-sm font-bold text-white">En savoir plus sur {heroCity.name}</span>
-                      <span className="text-white/40 group-hover:text-white/80 transition-colors">→</span>
+                      <span className="text-white/50 group-hover:text-white transition-colors">→</span>
                     </button>
                   </div>
                   <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
@@ -196,13 +193,9 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 <div className="bg-[#dbeafe] rounded-3xl p-5">
                   <div className="flex items-center gap-1.5 mb-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800">
-                      France
-                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800">France</span>
                   </div>
-                  <div className="text-5xl font-black text-blue-900 leading-none">
-                    {citiesFR.length}
-                  </div>
+                  <div className="text-5xl font-black text-blue-900 leading-none">{citiesFR.length}</div>
                   <div className="text-xs text-blue-700 mt-1.5">villes</div>
                 </div>
 
@@ -210,13 +203,9 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 <div className="bg-[#d1fae5] rounded-3xl p-5">
                   <div className="flex items-center gap-1.5 mb-3">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-emerald-800">
-                      Monde
-                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-emerald-800">Monde</span>
                   </div>
-                  <div className="text-5xl font-black text-emerald-900 leading-none">
-                    {citiesWorld.length}
-                  </div>
+                  <div className="text-5xl font-black text-emerald-900 leading-none">{citiesWorld.length}</div>
                   <div className="text-xs text-emerald-700 mt-1.5">villes</div>
                 </div>
 
@@ -231,7 +220,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     En plus : données historiques ERA5 et projections GIEC (CMIP6).
                   </p>
                   <Link
-                    href="/methodologie"
+                    href="/a-propos"
                     className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-900 hover:underline"
                   >
                     Lire la méthodologie <span className="text-neutral-400">→</span>
@@ -240,10 +229,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
                 <PageFooter className="col-span-2" />
               </>
-
             ) : (
-
-              // ── Ville sélectionnée ───────────────────────────────────────────
               <>
                 {/* Météo principale */}
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
@@ -306,17 +292,11 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
                 {/* Normale */}
                 <div className="bg-[#b8d4b0] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
-                    Normalement
-                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">Normalement</p>
                   {climateNormal !== null ? (
                     <>
-                      <div className="text-4xl font-black text-green-900 leading-none">
-                        {fmt(climateNormal)}°C
-                      </div>
-                      <p className="text-xs text-green-900/50 mt-2">
-                        moy. {monthName} 1991–2020
-                      </p>
+                      <div className="text-4xl font-black text-green-900 leading-none">{fmt(climateNormal)}°C</div>
+                      <p className="text-xs text-green-900/50 mt-2">moy. {monthName} 1991–2020</p>
                     </>
                   ) : (
                     <p className="text-2xl font-black text-green-900/30">—</p>
@@ -324,29 +304,19 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 </div>
 
                 {/* Anomalie */}
-                <div
-                  className={`rounded-3xl p-5 transition-colors ${
-                    climateAnomaly !== null && climateAnomaly > 2
-                      ? "bg-[#f4a27a]"
-                      : climateAnomaly !== null && climateAnomaly < -2
-                      ? "bg-[#a8c4d4]"
-                      : "bg-neutral-200"
-                  }`}
-                >
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                    Aujourd’hui c’est
-                  </p>
+                <div className={`rounded-3xl p-5 transition-colors ${
+                  climateAnomaly !== null && climateAnomaly > 2
+                    ? "bg-[#f4a27a]"
+                    : climateAnomaly !== null && climateAnomaly < -2
+                    ? "bg-[#a8c4d4]"
+                    : "bg-neutral-200"
+                }`}>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">Aujourd’hui c’est</p>
                   {climateAnomaly !== null ? (
                     <>
-                      <div className="text-4xl font-black text-neutral-900 leading-none">
-                        {fmtDelta(climateAnomaly)}°C
-                      </div>
+                      <div className="text-4xl font-black text-neutral-900 leading-none">{fmtDelta(climateAnomaly)}°C</div>
                       <p className="text-xs text-black/50 mt-2">
-                        {climateAnomaly > 2
-                          ? "au-dessus de la normale"
-                          : climateAnomaly < -2
-                          ? "en-dessous de la normale"
-                          : "dans la normale"}
+                        {climateAnomaly > 2 ? "au-dessus de la normale" : climateAnomaly < -2 ? "en-dessous de la normale" : "dans la normale"}
                       </p>
                     </>
                   ) : (
@@ -356,15 +326,11 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
                 {/* Tendance 30 ans */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
-                    Tendance observée — 30 ans
-                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance observée — 30 ans</p>
                   {climateTrend !== null ? (
                     <p className="font-black text-xl text-neutral-900">
                       {fmtDelta(climateTrend)}°C
-                      <span className="text-sm font-normal text-neutral-400 ml-2">
-                        depuis 1990 sur {monthName}
-                      </span>
+                      <span className="text-sm font-normal text-neutral-400 ml-2">depuis 1990 sur {monthName}</span>
                     </p>
                   ) : (
                     <p className="text-sm text-neutral-400">Données non disponibles</p>
@@ -373,12 +339,8 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
                 {/* Projections GIEC */}
                 <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                    Si rien ne change…
-                  </p>
-                  <p className="text-[10px] text-purple-900/60 mb-4">
-                    Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
-                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">Si rien ne change…</p>
+                  <p className="text-[10px] text-purple-900/60 mb-4">Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020</p>
                   <div className="space-y-2.5">
                     {([
                       { year: 2030, val: climateProj2030 },
@@ -387,9 +349,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     ] as { year: number; val: number | null }[]).map(({ year, val }) => (
                       <div key={year} className="flex items-center justify-between">
                         <span className="text-sm font-semibold text-purple-900/60">{year}</span>
-                        <span className="font-black text-2xl text-purple-900">
-                          {fmtDelta(val)}°C
-                        </span>
+                        <span className="font-black text-2xl text-purple-900">{fmtDelta(val)}°C</span>
                       </div>
                     ))}
                   </div>
@@ -402,12 +362,8 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     className="col-span-2 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-3xl px-6 py-5 group"
                   >
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-1">
-                        Fiche complète
-                      </p>
-                      <p className="text-lg font-black text-white">
-                        {selectedCity.name} · données &amp; projections
-                      </p>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-1">Fiche complète</p>
+                      <p className="text-lg font-black text-white">{selectedCity.name} · données &amp; projections</p>
                     </div>
                     <span className="text-white/50 group-hover:text-white text-2xl transition-colors">→</span>
                   </Link>
@@ -424,10 +380,9 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     <div className="space-y-1.5">
                       {twins.map((twin) => {
                         const tw = getWeather(twin.weathercode)
-                        const sub =
-                          twin.type === "world"
-                            ? (twin as CityWorld).country
-                            : (twin as CityFR).region
+                        const sub = twin.type === "world"
+                          ? (twin as CityWorld).country
+                          : (twin as CityFR).region
                         return (
                           <button
                             key={twin.id}
@@ -436,14 +391,10 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                           >
                             <span className="text-lg">{tw.emoji}</span>
                             <div className="flex-1 min-w-0">
-                              <div className="font-semibold text-sm text-neutral-800 truncate">
-                                {twin.name}
-                              </div>
+                              <div className="font-semibold text-sm text-neutral-800 truncate">{twin.name}</div>
                               <div className="text-xs text-neutral-400 truncate">{sub}</div>
                             </div>
-                            <div className="shrink-0 font-black text-sm text-neutral-700">
-                              {twin.apparent_temp_max}°C
-                            </div>
+                            <div className="shrink-0 font-black text-sm text-neutral-700">{twin.apparent_temp_max}°C</div>
                           </button>
                         )
                       })}

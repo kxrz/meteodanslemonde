@@ -28,7 +28,6 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
     import("leaflet").then((L) => {
       if (!containerRef.current || mapRef.current) return
 
-      // Fix default icon path issue with Next.js
       delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -46,15 +45,14 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       })
       L.control.zoom({ position: "bottomleft" }).addTo(map)
 
-      L.tileLayer("https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, tuiles <a href="https://www.openstreetmap.fr">OSM France</a>',
-        subdomains: "abc",
-        maxZoom: 20,
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 19,
       }).addTo(map)
 
       mapRef.current = map
 
-      // FR cities
       citiesFR.forEach((city) => {
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
@@ -68,11 +66,9 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.apparent_temp_max}°C ressenti`, { direction: "top" })
           .on("click", () => onCityClick(city.id))
-
         markersRef.current.set(city.id, marker)
       })
 
-      // World cities
       citiesWorld.forEach((city) => {
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
@@ -86,7 +82,6 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.temp}°C<br><em>${city.climateLabel}</em>`, { direction: "top" })
           .on("click", () => onCityClick(city.id))
-
         markersRef.current.set(city.id, marker)
       })
     })
@@ -97,16 +92,13 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Draw lines when selection changes
   useEffect(() => {
     if (!mapRef.current || typeof window === "undefined") return
 
     import("leaflet").then((L) => {
-      // Clear existing lines
       linesRef.current.forEach((l) => l.remove())
       linesRef.current = []
 
-      // Reset all marker styles
       markersRef.current.forEach((marker, id) => {
         const isFR = citiesFR.some((c) => c.id === id)
         marker.setStyle({
@@ -123,7 +115,6 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       const selected = selectedCityFR ?? selectedCityWorld
       if (!selected) return
 
-      // Highlight selected
       const selectedMarker = markersRef.current.get(selectedId)
       if (selectedMarker) {
         selectedMarker.setStyle({ fillColor: "#f59e0b", radius: 10, fillOpacity: 1 })
@@ -132,20 +123,17 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       twinIds.forEach((twinId) => {
         const twin = citiesFR.find((c) => c.id === twinId) ?? citiesWorld.find((c) => c.id === twinId)
         if (!twin) return
-
         const line = L.polyline(
           [[selected.lat, selected.lon], [twin.lat, twin.lon]],
           { color: "#f59e0b", weight: 2, opacity: 0.8, dashArray: "6 4" }
         ).addTo(mapRef.current!)
         linesRef.current.push(line)
-
         const twinMarker = markersRef.current.get(twinId)
         if (twinMarker) {
           twinMarker.setStyle({ fillColor: "#f59e0b", radius: 9, fillOpacity: 1 })
         }
       })
 
-      // Pan to selected city
       mapRef.current?.panTo([selected.lat, selected.lon], { animate: true, duration: 0.5 })
     })
   }, [selectedId, twinIds, citiesFR, citiesWorld])

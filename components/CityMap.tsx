@@ -33,8 +33,8 @@ export default function CityMap({ lat, lon, name }: Props) {
     })
 
     L.tileLayer(
-      "https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png",
-      { subdomains: "abc", maxZoom: 20 }
+      "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+      { subdomains: "abcd", maxZoom: 19 }
     ).addTo(map)
 
     mapRef.current = map
