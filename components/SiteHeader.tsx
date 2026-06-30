@@ -12,7 +12,7 @@ export default function SiteHeader({ asLink = false }: Props) {
 
   const title = (
     <span className="font-black text-3xl sm:text-4xl tracking-tight text-neutral-900 leading-none">
-      En vrai, c'est{" "}
+      En vrai, c&apos;est{" "}
       <span className="relative inline-block">
         chaud
         <span className="absolute left-0 right-0 bottom-0.5 h-[3px] bg-red-500 rounded-full" />
@@ -33,7 +33,7 @@ export default function SiteHeader({ asLink = false }: Props) {
         )}
         <div className="text-sm text-neutral-500 mt-2 leading-snug">
           <p>Nous sommes le {dateStr}, il est {timeStr}.</p>
-          <p>Le ressenti d'aujourd'hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.</p>
+          <p>Le ressenti d&apos;aujourd&apos;hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.</p>
         </div>
       </div>
       <SiteHeaderMenu />

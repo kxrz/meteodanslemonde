@@ -25,7 +25,7 @@ export default function MentionsLegalesPage() {
             <h1 className="text-3xl font-black text-neutral-900 leading-tight">
               Mentions légales
             </h1>
-            <p className="text-xs text-neutral-400 mt-3">Mise à jour : Mai 2026</p>
+            <p className="text-xs text-neutral-400 mt-3">Mise à jour : Mai 2026</p>
           </div>
           <PageFooter />
         </div>
@@ -38,11 +38,11 @@ export default function MentionsLegalesPage() {
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Éditeur</p>
               <p className="text-sm text-neutral-700 leading-relaxed">
                 <strong className="text-neutral-900">LesWWW</strong> — EURL<br />
-                SIREN : 912 258 050 — RCS Lille Métropole<br />
-                N° TVA : FR60 912 258 050<br />
-                Code NAF : 73.11Z<br />
-                Gérant : Florent Bertiaux<br />
-                Bureau : Chez NOW Coworking, 40 Place du Théâtre, 59800 Lille
+                SIREN : 912 258 050 — RCS Lille Métropole<br />
+                N° TVA : FR60 912 258 050<br />
+                Code NAF : 73.11Z<br />
+                Gérant : Florent Bertiaux<br />
+                Bureau : Chez NOW Coworking, 40 Place du Théâtre, 59800 Lille
               </p>
             </div>
 
@@ -63,7 +63,7 @@ export default function MentionsLegalesPage() {
             <div className="bg-white rounded-3xl p-6 space-y-2">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Propriété intellectuelle</p>
               <p className="text-sm text-neutral-700 leading-relaxed">
-                L'ensemble du site est protégé par la législation sur la propriété intellectuelle. Toute reproduction nécessite l'accord écrit de LesWWW.
+                L&apos;ensemble du site est protégé par la législation sur la propriété intellectuelle. Toute reproduction nécessite l&apos;accord écrit de LesWWW.
               </p>
             </div>
 
@@ -77,7 +77,7 @@ export default function MentionsLegalesPage() {
             <div className="bg-white rounded-3xl p-6 space-y-2">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Responsabilité</p>
               <p className="text-sm text-neutral-700 leading-relaxed">
-                Les informations sont mises à jour avec soin mais sans garantie d'exactitude permanente. Toute utilisation du site se fait sous votre responsabilité.
+                Les informations sont mises à jour avec soin mais sans garantie d&apos;exactitude permanente. Toute utilisation du site se fait sous votre responsabilité.
               </p>
             </div>
 

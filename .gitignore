@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# generated build-time data
+/data/weather-cache.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
