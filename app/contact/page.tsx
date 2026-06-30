@@ -3,6 +3,8 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import ContactForm from "@/components/ContactForm"
 
+export const revalidate = 604800
+
 export const metadata: Metadata = {
   title: "Contact · cestchaud.fr",
   description: "Contactez l'équipe cestchaud.fr — questions, données, partenariats.",

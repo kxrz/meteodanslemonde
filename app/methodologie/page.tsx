@@ -2,6 +2,8 @@ import { Metadata } from "next"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 
+export const revalidate = 604800
+
 export const metadata: Metadata = {
   title: "Méthodologie · cestchaud.fr",
   description: "Comment cestchaud.fr collecte, calcule et présente les données de température, les anomalies et les projections climatiques GIEC.",

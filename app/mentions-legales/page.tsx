@@ -2,6 +2,8 @@ import { Metadata } from "next"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 
+export const revalidate = 604800
+
 export const metadata: Metadata = {
   title: "Mentions légales · cestchaud.fr",
   alternates: { canonical: "https://cestchaud.fr/mentions-legales" },
