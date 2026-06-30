@@ -365,7 +365,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   >
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-1">Fiche complète</p>
-                      <p className="text-lg font-black text-white">{selectedCity.name} · données &amp; projections</p>
+                      <p className="text-lg font-black text-white">{selectedCity.name} - données &amp; projections</p>
                     </div>
                     <span className="text-white/50 group-hover:text-white text-2xl transition-colors">→</span>
                   </Link>
