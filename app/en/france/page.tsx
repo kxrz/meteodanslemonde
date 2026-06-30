@@ -12,7 +12,7 @@ export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "La chaleur en France · cestchaud.fr",
-  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
+  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
   alternates: { canonical: "https://cestchaud.fr/en/france" },
   openGraph: {
     title: "La chaleur en France · cestchaud.fr",
@@ -21,11 +21,13 @@ export const metadata: Metadata = {
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",
+    images: [{ url: "/og/france.png", width: 1200, height: 630, alt: "La chaleur en France · cestchaud.fr" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "La chaleur en France · cestchaud.fr",
     description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 36 villes françaises.",
+    images: ["/og/france.png"],
   },
 }
 
@@ -34,7 +36,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "La chaleur en France",
   url: "https://cestchaud.fr/en/france",
-  description: "Vue d’ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
+  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
   about: {
     "@type": "Country",
     name: "France",
@@ -100,6 +102,59 @@ export default async function FrancePage() {
   }
   const avgProj2040 = getAvgProj("proj2040")
   const avgProj2050 = getAvgProj("proj2050")
+
+  function buildFranceNarrative() {
+    const parts: string[] = []
+
+    // Paragraph 1 — today's snapshot
+    {
+      const tempDesc = avgTemp >= 35 ? "une vague de chaleur intense" : avgTemp >= 30 ? "une chaleur estivale prononcée" : avgTemp >= 25 ? "des températures estivales" : "des températures modérées"
+      const aboveStr = above30 > 0
+        ? ` ${above30} ville${above30 > 1 ? "s" : ""} dépassent les 30°C,`
+        : ""
+      parts.push(
+        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l'ensemble du territoire.${aboveStr} de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) qui marque le point le plus frais avec ${coolest.apparent_temp_max}°C.`
+      )
+    }
+
+    // Paragraph 2 — anomaly vs ERA5 normal
+    if (biggestAnomaly) {
+      const sign = biggestAnomaly.anomaly! > 0 ? "au-dessus" : "en dessous"
+      const absAnomaly = Math.abs(biggestAnomaly.anomaly!)
+      const trendStr = avgTrend !== null
+        ? ` À l'échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois — une trajectoire qui s'accélère.`
+        : ""
+      parts.push(
+        `C'est à ${biggestAnomaly.name} que l'écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions — elles témoignent d'un glissement durable des repères climatiques.${trendStr}`
+      )
+    } else if (avgTrend !== null) {
+      parts.push(
+        `Les données ERA5 révèlent une tendance de ${fmtDelta(avgTrend)}°C sur 30 ans pour ce mois à l'échelle nationale. Ce chiffre, stable et mesuré sur des décennies, illustre une mutation profonde du climat français.`
+      )
+    }
+
+    // Paragraph 3 — GIEC projections
+    if (mostImpacted && leastImpacted) {
+      parts.push(
+        `Les projections GIEC CMIP6 dessinent des trajectoires très contrastées selon les territoires. ${mostImpacted.name} (${mostImpacted.region}) est la ville la plus exposée au scénario 2050, avec une hausse projetée de ${fmtDelta(mostImpacted.proj2050!)}°C, là où ${leastImpacted.name} (${leastImpacted.region}) figure parmi les moins impactées avec ${fmtDelta(leastImpacted.proj2050!)}°C. Ces écarts entre régions rappellent que le réchauffement ne sera pas uniforme : le Sud et les plaines continentales seront frappés plus tôt et plus fort que les façades atlantiques ou alpines.`
+      )
+    }
+
+    // Paragraph 4 — top 6 projection summary
+    if (avgProj2040 !== null || avgProj2050 !== null) {
+      const proj40Str = avgProj2040 !== null ? `${fmtDelta(Math.round(avgProj2040 * 10) / 10)}°C en 2040` : null
+      const proj50Str = avgProj2050 !== null ? `${fmtDelta(Math.round(avgProj2050 * 10) / 10)}°C en 2050` : null
+      const projStr = [proj40Str, proj50Str].filter(Boolean).join(", ")
+      const top6Names = top6.map(c => c.name).slice(0, 3).join(", ")
+      parts.push(
+        `Pour les six villes les plus chaudes aujourd'hui — dont ${top6Names} — le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays ; leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
+      )
+    }
+
+    return parts
+  }
+
+  const narrativeParagraphs = buildFranceNarrative()
 
   return (
     <>
@@ -217,6 +272,22 @@ export default async function FrancePage() {
                       depuis 1990 · {monthName}
                     </span>
                   </p>
+                </div>
+              )}
+
+              {/* Editorial narrative */}
+              {narrativeParagraphs.length > 0 && (
+                <div className="col-span-2 bg-neutral-950 rounded-3xl p-6">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/25 mb-5">
+                    Analyse · {monthName} {new Date().getFullYear()}
+                  </p>
+                  <div className="space-y-4">
+                    {narrativeParagraphs.map((para, i) => (
+                      <p key={i} className={`leading-relaxed ${i === 0 ? "text-base font-semibold text-white/90" : "text-sm text-white/60"}`}>
+                        {para}
+                      </p>
+                    ))}
+                  </div>
                 </div>
               )}
 
