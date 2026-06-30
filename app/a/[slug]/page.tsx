@@ -151,6 +151,31 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
 
+          {/* SVG placeholder — carte du centre-ville */}
+          <div className="col-span-2 lg:col-span-3 rounded-3xl overflow-hidden bg-neutral-100 border border-black/[0.06] relative" style={{ height: "260px" }}>
+            {/* Grille de rues simulée */}
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 opacity-30">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#94a3b8" strokeWidth="0.5"/>
+                </pattern>
+                <pattern id="grid2" width="120" height="80" patternUnits="userSpaceOnUse">
+                  <path d="M 120 0 L 0 0 0 80" fill="none" stroke="#94a3b8" strokeWidth="1"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)"/>
+              <rect width="100%" height="100%" fill="url(#grid2)"/>
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              <p className="text-xs uppercase tracking-[0.15em] font-semibold text-neutral-400">
+                Carte du centre-ville
+              </p>
+              <p className="text-[10px] text-neutral-300">
+                {city.lat.toFixed(4)}°N · {city.lon.toFixed(4)}°E
+              </p>
+            </div>
+          </div>
+
           {/* Ressenti jour-J */}
           <div className="col-span-2 lg:col-span-2 bg-[#dbeafe] rounded-3xl p-6">
             <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/65 mb-4">

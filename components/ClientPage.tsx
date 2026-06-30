@@ -6,6 +6,7 @@ import { useState, useMemo, useEffect } from "react"
 import { CityFR, CityWorld, AnyCity, ClimateMap } from "@/lib/types"
 import { getWeather } from "@/lib/weather-codes"
 import { getClimateValues } from "@/lib/use-climate-data"
+import { slugify } from "@/lib/slugify"
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -93,13 +94,8 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
       const d = delta as number
       const stable = d < 0
       const displayDelta = Math.max(0, d)
-      return {
-        year,
-        rawDelta: d,
-        stable,
-        displayDelta,
-        abs: Math.round(selectedCity.apparent_temp_max + displayDelta),
-      }
+      return { year, rawDelta: d, stable, displayDelta,
+        abs: Math.round(selectedCity.apparent_temp_max + displayDelta) }
     }) : []
 
   function handleCityClick(id: string) {
@@ -116,7 +112,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
   return (
     <div className="h-screen flex flex-col bg-[#f9f8f5] overflow-hidden">
 
-      {/* ── Hero ──────────────────────────────────────────────── */}
       <header className="shrink-0 px-5 lg:px-8 pt-5 pb-4 border-b border-black/5">
         <div className="flex items-end justify-between gap-4">
           <div className="min-w-0 flex-1">
@@ -142,10 +137,8 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
         </div>
       </header>
 
-      {/* ── Map + Panel ────────────────────────────────────────── */}
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
-        {/* Map */}
         <div className="h-[42vh] lg:h-auto lg:w-[60%] shrink-0">
           <Map
             citiesFR={citiesFR}
@@ -156,22 +149,17 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
           />
         </div>
 
-        {/* Bento panel */}
         <div className="flex-1 min-h-0 overflow-y-auto p-3">
           <div className="grid grid-cols-2 gap-3 pb-6">
 
             {selectedCity ? (
-
-              // ── Ville sélectionnée ───────────────────────────────────
               <>
                 {/* Météo principale */}
                 <div className={`col-span-2 rounded-3xl p-6 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"}`}>
                   <div className="flex items-start justify-between mb-5">
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-1">
-                        {isFR
-                          ? (selectedCity as CityFR).region
-                          : (selectedCity as CityWorld).country}
+                        {isFR ? (selectedCity as CityFR).region : (selectedCity as CityWorld).country}
                       </p>
                       <h2 className="text-3xl font-black text-neutral-900 tracking-tight leading-tight">
                         {selectedCity.name}
@@ -215,9 +203,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                       <div className="text-[44px] font-black text-green-900 leading-none tabular-nums">
                         {climate.normal}°
                       </div>
-                      <p className="text-xs text-green-900/65 mt-2">
-                        {monthName} 1991–2020
-                      </p>
+                      <p className="text-xs text-green-900/65 mt-2">{monthName} 1991–2020</p>
                     </>
                   ) : (
                     <p className="text-xs text-green-900/40 italic mt-2">données insuffisantes</p>
@@ -226,11 +212,9 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
                 {/* L'écart */}
                 <div className={`rounded-3xl p-5 ${
-                  climate.anomaly !== null && climate.anomaly > 2
-                    ? "bg-[#f4a27a]"
-                    : climate.anomaly !== null && climate.anomaly < -2
-                    ? "bg-[#a8c4d4]"
-                    : "bg-neutral-200"
+                  climate.anomaly !== null && climate.anomaly > 2 ? "bg-[#f4a27a]"
+                  : climate.anomaly !== null && climate.anomaly < -2 ? "bg-[#a8c4d4]"
+                  : "bg-neutral-200"
                 }`}>
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/55 mb-4">
                     L&apos;écart
@@ -241,10 +225,8 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         {climate.anomaly > 0 ? "+" : ""}{climate.anomaly}°
                       </div>
                       <p className="text-xs text-black/60 mt-2">
-                        {climate.anomaly > 2
-                          ? "au-dessus de la normale"
-                          : climate.anomaly < -2
-                          ? "en-dessous de la normale"
+                        {climate.anomaly > 2 ? "au-dessus de la normale"
+                          : climate.anomaly < -2 ? "en-dessous de la normale"
                           : "dans la normale"}
                       </p>
                     </>
@@ -287,9 +269,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                             <span className="text-xs text-purple-900/45">
                               {stable ? "~+0°" : `+${displayDelta}°`}
                             </span>
-                            <span className="font-black text-3xl text-purple-900 tabular-nums">
-                              {abs}°C
-                            </span>
+                            <span className="font-black text-3xl text-purple-900 tabular-nums">{abs}°C</span>
                           </div>
                         </div>
                       ))}
@@ -334,6 +314,24 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   )}
                 </div>
 
+                {/* CTA fiche ville — FR seulement */}
+                {isFR && (
+                  <Link
+                    href={`/a/${slugify(selectedCity.name)}`}
+                    className="col-span-2 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-3xl px-6 py-5 group"
+                  >
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/40 mb-1">
+                        Fiche complète
+                      </p>
+                      <p className="text-lg font-black text-white">
+                        {selectedCity.name} · données &amp; projections
+                      </p>
+                    </div>
+                    <span className="text-white/40 group-hover:text-white/80 text-2xl transition-colors">→</span>
+                  </Link>
+                )}
+
                 {/* Footer ville */}
                 <div className="col-span-2 flex items-center justify-between text-xs text-neutral-400 px-1">
                   <span>Open-Meteo · ERA5 · CMIP6 · {dataLabel}</span>
@@ -345,8 +343,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
               </>
 
             ) : showInfo ? (
-
-              // ── Méthode & sources ─────────────────────────────────
               <>
                 <div className="col-span-2 flex items-center justify-between px-1 mb-1">
                   <button
@@ -420,10 +416,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
               </>
 
             ) : (
-
-              // ── État par défaut ─────────────────────────────────
               <>
-                {/* Température hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6 border border-black/[0.06]">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-5">
                     En ce moment · France
@@ -441,7 +434,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </p>
                 </div>
 
-                {/* Compteur FR */}
                 <div className="bg-[#dbeafe] rounded-3xl p-5 flex flex-col">
                   <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/65 mb-auto pb-8">
                     🇫🇷 France
@@ -452,7 +444,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <div className="text-xs text-blue-900/60 mt-1">villes</div>
                 </div>
 
-                {/* Compteur Monde */}
                 <div className="bg-[#d1fae5] rounded-3xl p-5 flex flex-col">
                   <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-emerald-900/65 mb-auto pb-8">
                     🌍 Monde
@@ -463,7 +454,6 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <div className="text-xs text-emerald-900/60 mt-1">villes</div>
                 </div>
 
-                {/* Comment ça marche */}
                 <div className="col-span-2 bg-white rounded-3xl p-5 border border-black/[0.06]">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-3">
                     Comment ça marche
@@ -493,19 +483,14 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </div>
                 </div>
 
-                {/* Footer */}
                 <div className="col-span-2 flex items-center justify-between text-xs text-neutral-400 px-1">
                   <span>Open-Meteo · ERA5 · CMIP6 · {dataLabel}</span>
                   <span>
                     © <a href="https://leswww.com" target="_blank" rel="noopener noreferrer"
-                      className="underline underline-offset-2 hover:text-neutral-600 transition-colors">
-                      LesWWW
-                    </a>
+                      className="underline underline-offset-2 hover:text-neutral-600 transition-colors">LesWWW</a>
                     {" · "}
                     <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer"
-                      className="underline underline-offset-2 hover:text-neutral-600 transition-colors">
-                      Mentions légales
-                    </a>
+                      className="underline underline-offset-2 hover:text-neutral-600 transition-colors">Mentions légales</a>
                   </span>
                 </div>
               </>
