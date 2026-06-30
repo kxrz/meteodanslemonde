@@ -3,6 +3,7 @@ import { Metadata } from "next"
 import { slugify } from "@/lib/slugify"
 import { getWeatherData } from "@/lib/weather-data"
 import { getWeather } from "@/lib/weather-codes"
+import SiteHeader from "@/components/SiteHeader"
 
 export const revalidate = 86400
 
@@ -26,11 +27,7 @@ const jsonLd = {
   name: "La chaleur en France",
   url: "https://cestchaud.fr/en/france",
   description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
-  about: {
-    "@type": "Country",
-    name: "France",
-    sameAs: "https://www.wikidata.org/wiki/Q142",
-  },
+  about: { "@type": "Country", name: "France", sameAs: "https://www.wikidata.org/wiki/Q142" },
 }
 
 type ClimateEntry = {
@@ -44,14 +41,13 @@ type ClimateEntry = {
 let climateMap: Record<string, unknown> = {}
 try { climateMap = require("@/data/climate.json") } catch {}
 
-function fmt(n: number | null | undefined, decimals = 1): string {
-  if (n === null || n === undefined) return "—"
-  return n.toFixed(decimals)
+function fmt(n: number | null | undefined, d = 1) {
+  if (n == null) return "—"
+  return (n > 0 ? "+" : "") + n.toFixed(d)
 }
 
 export default async function FrancePage() {
   const { citiesFR, fetchedAt } = await getWeatherData()
-
   const m = new Date().getMonth()
   const today = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
@@ -60,181 +56,216 @@ export default async function FrancePage() {
   const sorted = [...citiesFR].sort((a, b) => b.apparent_temp_max - a.apparent_temp_max)
   const hottest = sorted[0]
   const coolest = sorted[sorted.length - 1]
+  const tempDelta = hottest.apparent_temp_max - coolest.apparent_temp_max
   const avgTemp = Math.round(citiesFR.reduce((s, c) => s + c.apparent_temp_max, 0) / citiesFR.length)
+  const citiesAbove30 = citiesFR.filter(c => c.apparent_temp_max >= 30).length
 
-  // Enrich with climate data
-  const enriched = citiesFR.map((city) => {
-    const entry = (climateMap[city.id] ?? null) as ClimateEntry
-    const normal = entry?.normal?.[m] ?? null
-    const trend = entry?.trend?.[m] ?? null
-    const proj2040 = entry?.proj2040?.[m] ?? null
-    const proj2050 = entry?.proj2050?.[m] ?? null
-    const anomaly = normal !== null ? city.apparent_temp_max - normal : null
-    return { ...city, normal, trend, proj2040, proj2050, anomaly }
+  const enriched = citiesFR.map(city => {
+    const e = (climateMap[city.id] ?? null) as ClimateEntry
+    return {
+      ...city,
+      normal: e?.normal?.[m] ?? null,
+      trend: e?.trend?.[m] ?? null,
+      proj2040: e?.proj2040?.[m] ?? null,
+      proj2050: e?.proj2050?.[m] ?? null,
+      anomaly: e?.normal?.[m] != null ? city.apparent_temp_max - e!.normal![m] : null,
+    }
   })
 
-  const withTrend = enriched.filter((c) => c.trend !== null)
-  const withProj2040 = enriched.filter((c) => c.proj2040 !== null)
-  const withProj2050 = enriched.filter((c) => c.proj2050 !== null)
-  const withAnomaly = enriched.filter((c) => c.anomaly !== null)
+  const withTrend = enriched.filter(c => c.trend != null)
+  const withProj40 = enriched.filter(c => c.proj2040 != null)
+  const withProj50 = enriched.filter(c => c.proj2050 != null)
+  const withAnomaly = enriched.filter(c => c.anomaly != null)
 
-  const avgTrend = withTrend.length
-    ? withTrend.reduce((s, c) => s + c.trend!, 0) / withTrend.length
-    : null
-  const avgProj2040 = withProj2040.length
-    ? withProj2040.reduce((s, c) => s + c.proj2040!, 0) / withProj2040.length
-    : null
-  const avgProj2050 = withProj2050.length
-    ? withProj2050.reduce((s, c) => s + c.proj2050!, 0) / withProj2050.length
-    : null
+  const avgTrend = withTrend.length ? withTrend.reduce((s, c) => s + c.trend!, 0) / withTrend.length : null
+  const avgProj40 = withProj40.length ? withProj40.reduce((s, c) => s + c.proj2040!, 0) / withProj40.length : null
+  const avgProj50 = withProj50.length ? withProj50.reduce((s, c) => s + c.proj2050!, 0) / withProj50.length : null
 
-  const biggestAnomaly = withAnomaly.length
-    ? [...withAnomaly].sort((a, b) => b.anomaly! - a.anomaly!)[0]
-    : null
+  const biggestAnomaly = withAnomaly.length ? [...withAnomaly].sort((a, b) => b.anomaly! - a.anomaly!)[0] : null
+  const trendMax = withTrend.length ? [...withTrend].sort((a, b) => b.trend! - a.trend!)[0] : null
+  const proj50Champion = withProj50.length ? [...withProj50].sort((a, b) => b.proj2050! - a.proj2050!)[0] : null
+  const proj50Least = withProj50.length ? [...withProj50].sort((a, b) => a.proj2050! - b.proj2050!)[0] : null
+  const top6 = [...withProj50].sort((a, b) => b.proj2050! - a.proj2050!).slice(0, 6)
 
-  const top6 = [...withProj2050]
-    .sort((a, b) => b.proj2050! - a.proj2050!)
-    .slice(0, 6)
+  const footer = (
+    <div className="col-span-2 text-center text-xs text-neutral-500 pb-1">
+      cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
+      <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700">© LesWWW</a>
+      {" · "}
+      <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-700">Mentions légales</a>
+      {" · "}
+      <Link href="/contact" className="underline underline-offset-2 hover:text-neutral-700">Contact</Link>
+    </div>
+  )
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
+        <SiteHeader asLink />
 
-        {/* Header */}
-        <header className="h-14 shrink-0 flex items-center justify-between px-5 border-b border-black/5 bg-[#f5f4f0]">
-          <Link
-            href="/"
-            className="font-black text-base tracking-tight text-neutral-900 hover:opacity-70 transition-opacity"
-          >
-            ← En vrai, c'est chaud.
-          </Link>
-          <span className="text-xs text-neutral-400 hidden sm:block">{today}</span>
-        </header>
-
-        {/* Content */}
         <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4">
           <div className="max-w-2xl mx-auto">
             <div className="grid grid-cols-2 gap-3 pb-4">
 
-              {/* Title */}
+              {/* Titre */}
               <div className="col-span-2 bg-white rounded-3xl p-6">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">
                   Vue d'ensemble · {dataLabel}
                 </p>
-                <h1 className="text-2xl font-black text-neutral-900 leading-tight">
-                  La chaleur en France
-                </h1>
-                <p className="text-sm text-neutral-500 mt-2 leading-relaxed">
-                  Ressenti maximal journalier pour {citiesFR.length} villes françaises. Cliquez une ville pour voir sa fiche complète.
+                <h2 className="text-2xl font-black text-neutral-900 leading-tight">La chaleur en France</h2>
+                <p className="text-sm text-neutral-600 mt-2 leading-relaxed">
+                  Ressenti maximal journalier pour {citiesFR.length} villes françaises. Cliquez une ville pour sa fiche complète.
                 </p>
               </div>
 
-              {/* Ressenti moyen + ville la plus chaude */}
-              <div className="bg-[#dbeafe] rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
-                  Ressenti moyen
-                </p>
-                <div className="text-5xl font-black text-blue-900 leading-none">{avgTemp}°C</div>
-                <p className="text-xs text-blue-700/60 mt-2">moy. {citiesFR.length} villes · aujourd'hui</p>
-              </div>
+              {/* ── FUN STATS ── */}
 
-              {/* Plus chaud */}
-              <div className="bg-[#f4a27a]/40 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">
-                  Plus chaud aujourd'hui
-                </p>
-                <div className="text-3xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}°C</div>
-                <p className="text-sm font-bold text-orange-900/70 mt-1.5">{hottest.name}</p>
-                <p className="text-xs text-orange-900/40">{hottest.region}</p>
-              </div>
-
-              {/* Anomalie la plus forte */}
-              <div className="bg-[#f4a27a]/20 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">
-                  Plus forte anomalie
-                </p>
-                {biggestAnomaly ? (
-                  <>
-                    <div className="text-3xl font-black text-orange-900 leading-none">
-                      {biggestAnomaly.anomaly! > 0 ? "+" : ""}{fmt(biggestAnomaly.anomaly)}°C
-                    </div>
-                    <p className="text-sm font-bold text-orange-900/70 mt-1.5">{biggestAnomaly.name}</p>
-                    <p className="text-xs text-orange-900/40">vs. normale {monthName}</p>
-                  </>
-                ) : (
-                  <p className="text-2xl font-black text-orange-900/20">—</p>
-                )}
-              </div>
-
-              {/* Tendance 30 ans */}
-              <div className="bg-white rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                  Tendance 30 ans
-                </p>
-                {avgTrend !== null ? (
-                  <>
-                    <div className="text-3xl font-black text-neutral-900 leading-none">
-                      {avgTrend > 0 ? "+" : ""}{fmt(avgTrend)}°C
-                    </div>
-                    <p className="text-xs text-neutral-400 mt-2">moy. France · depuis 1990 · {monthName}</p>
-                  </>
-                ) : (
-                  <p className="text-2xl font-black text-neutral-300">—</p>
-                )}
-              </div>
-
-              {/* Projections GIEC */}
-              <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                  Si rien ne change…
-                </p>
-                <p className="text-[10px] text-purple-900/40 mb-4">
-                  Modèle CMIP6 (GIEC AR6) · moyenne France · écart vs. 2000–2020
-                </p>
-                <div className="grid grid-cols-2 gap-4">
+              {/* Extrêmes du jour */}
+              <div className="col-span-2 bg-[#dbeafe] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800 mb-3">Les extrêmes du jour</p>
+                <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-purple-900/60 mb-0.5">2040</p>
-                    <p className="font-black text-3xl text-purple-900">
-                      {avgProj2040 !== null ? `${avgProj2040 >= 0 ? "+" : ""}${fmt(avgProj2040)}°C` : "—"}
-                    </p>
+                    <div className="text-4xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}°C</div>
+                    <Link href={`/a/${slugify(coolest.name)}`} className="text-sm font-bold text-blue-800 hover:underline underline-offset-2 mt-1 block">{coolest.name}</Link>
+                    <p className="text-xs text-blue-700">{coolest.region}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-purple-900/60 mb-0.5">2050</p>
-                    <p className="font-black text-3xl text-purple-900">
-                      {avgProj2050 !== null ? `${avgProj2050 >= 0 ? "+" : ""}${fmt(avgProj2050)}°C` : "—"}
-                    </p>
+                  <div className="text-center">
+                    <div className="text-2xl font-black text-blue-800">{tempDelta}°C</div>
+                    <p className="text-[10px] uppercase tracking-widest text-blue-700 font-semibold">d'écart</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-4xl font-black text-blue-900 leading-none">{hottest.apparent_temp_max}°C</div>
+                    <Link href={`/a/${slugify(hottest.name)}`} className="text-sm font-bold text-blue-800 hover:underline underline-offset-2 mt-1 block text-right">{hottest.name}</Link>
+                    <p className="text-xs text-blue-700 text-right">{hottest.region}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Top 6 villes les plus impactées */}
+              {/* Villes > 30°C */}
+              <div className="bg-[#f4a27a]/60 rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900 mb-3">
+                  Villes ≥ 30°C
+                </p>
+                <div className="text-5xl font-black text-orange-900 leading-none">{citiesAbove30}</div>
+                <p className="text-sm text-orange-800 mt-2">villes sur {citiesFR.length} aujourd'hui</p>
+              </div>
+
+              {/* Plus grande anomalie */}
+              <div className="bg-[#fef9c3] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-yellow-800 mb-3">
+                  Anomalie max
+                </p>
+                {biggestAnomaly ? (
+                  <>
+                    <div className="text-3xl font-black text-yellow-900 leading-none">{fmt(biggestAnomaly.anomaly)}°C</div>
+                    <Link href={`/a/${slugify(biggestAnomaly.name)}`} className="text-sm font-bold text-yellow-800 hover:underline underline-offset-2 mt-1.5 block">{biggestAnomaly.name}</Link>
+                    <p className="text-xs text-yellow-700">vs. normale {monthName}</p>
+                  </>
+                ) : <p className="text-2xl font-black text-yellow-800/40">—</p>}
+              </div>
+
+              {/* Champion GIEC 2050 */}
+              <div className="bg-[#7c3aed] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/80 mb-3">
+                  Plus impactée · 2050
+                </p>
+                {proj50Champion ? (
+                  <>
+                    <div className="text-3xl font-black text-white leading-none">{fmt(proj50Champion.proj2050)}°C</div>
+                    <Link href={`/a/${slugify(proj50Champion.name)}`} className="text-sm font-bold text-white/90 hover:text-white underline-offset-2 mt-1.5 block">{proj50Champion.name}</Link>
+                    <p className="text-xs text-white/70">projection CMIP6</p>
+                  </>
+                ) : <p className="text-2xl font-black text-white/30">—</p>}
+              </div>
+
+              {/* Moins impactée GIEC 2050 */}
+              <div className="bg-[#e0e7ff] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-indigo-800 mb-3">
+                  Moins impactée · 2050
+                </p>
+                {proj50Least ? (
+                  <>
+                    <div className="text-3xl font-black text-indigo-900 leading-none">{fmt(proj50Least.proj2050)}°C</div>
+                    <Link href={`/a/${slugify(proj50Least.name)}`} className="text-sm font-bold text-indigo-800 hover:underline underline-offset-2 mt-1.5 block">{proj50Least.name}</Link>
+                    <p className="text-xs text-indigo-700">projection CMIP6</p>
+                  </>
+                ) : <p className="text-2xl font-black text-indigo-800/30">—</p>}
+              </div>
+
+              {/* Record tendance 30 ans */}
+              {trendMax && (
+                <div className="col-span-2 bg-white rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">
+                    Record tendance observée · 30 ans
+                  </p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-3xl font-black text-neutral-900">{fmt(trendMax.trend)}°C</div>
+                      <p className="text-xs text-neutral-600 mt-1">depuis 1990 en {monthName}</p>
+                    </div>
+                    <Link href={`/a/${slugify(trendMax.name)}`} className="text-right">
+                      <p className="text-base font-black text-neutral-900 hover:underline underline-offset-2">{trendMax.name}</p>
+                      <p className="text-xs text-neutral-500">{trendMax.region}</p>
+                    </Link>
+                  </div>
+                </div>
+              )}
+
+              {/* ── DONNÉES ── */}
+
+              {/* Ressenti moyen */}
+              <div className="bg-[#dbeafe] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800 mb-3">Ressenti moyen</p>
+                <div className="text-5xl font-black text-blue-900 leading-none">{avgTemp}°C</div>
+                <p className="text-xs text-blue-800 mt-2">moy. {citiesFR.length} villes · aujourd'hui</p>
+              </div>
+
+              {/* Plus chaud */}
+              <div className="bg-[#f4a27a]/60 rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900 mb-3">Plus chaud</p>
+                <div className="text-3xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}°C</div>
+                <Link href={`/a/${slugify(hottest.name)}`} className="text-sm font-bold text-orange-900 hover:underline underline-offset-2 mt-1.5 block">{hottest.name}</Link>
+                <p className="text-xs text-orange-800">{hottest.region}</p>
+              </div>
+
+              {/* GIEC France */}
+              <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900 mb-1">Si rien ne change…</p>
+                <p className="text-[10px] text-purple-800 mb-4">Modèle CMIP6 (GIEC AR6) · moyenne France · écart vs. 2000–2020</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-purple-900 mb-0.5">2040</p>
+                    <p className="font-black text-3xl text-purple-900">{fmt(avgProj40)}°C</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-purple-900 mb-0.5">2050</p>
+                    <p className="font-black text-3xl text-purple-900">{fmt(avgProj50)}°C</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top 6 impactées */}
               {top6.length > 0 && (
                 <div className="col-span-2 bg-neutral-900 rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-4">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-4">
                     Villes les plus impactées · projection 2050
                   </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-1">
                     {top6.map((city, i) => (
                       <Link
                         key={city.id}
                         href={`/a/${slugify(city.name)}`}
-                        className="flex items-center justify-between py-2 px-3 rounded-2xl hover:bg-white/10 transition-colors group"
+                        className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-white/10 transition-colors group"
                       >
                         <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-white/20 text-xs font-mono w-4 shrink-0">{i + 1}</span>
+                          <span className="text-white/40 text-xs font-mono w-4 shrink-0">{i + 1}</span>
                           <div className="min-w-0">
                             <div className="font-semibold text-sm text-white truncate">{city.name}</div>
-                            <div className="text-[10px] text-white/40 truncate">{city.region}</div>
+                            <div className="text-[10px] text-white/60 truncate">{city.region}</div>
                           </div>
                         </div>
-                        <span className="font-black text-sm text-white/80 shrink-0 ml-2">
-                          +{fmt(city.proj2050)}°C
-                        </span>
+                        <span className="font-black text-sm text-white shrink-0 ml-2">{fmt(city.proj2050)}°C</span>
                       </Link>
                     ))}
                   </div>
@@ -243,12 +274,12 @@ export default async function FrancePage() {
 
               {/* Toutes les villes */}
               <div className="col-span-2 bg-white rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-4">
                   Toutes les villes · du plus chaud au plus frais
                 </p>
-                <div className="space-y-1">
-                  {sorted.map((city) => {
-                    const weather = getWeather(city.weathercode)
+                <div className="space-y-0.5">
+                  {sorted.map(city => {
+                    const w = getWeather(city.weathercode)
                     return (
                       <Link
                         key={city.id}
@@ -256,15 +287,13 @@ export default async function FrancePage() {
                         className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-neutral-50 transition-colors group"
                       >
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-base">{weather.emoji}</span>
-                          <div className="min-w-0">
-                            <span className="font-semibold text-sm text-neutral-800 group-hover:text-neutral-900">{city.name}</span>
-                            <span className="text-xs text-neutral-400 ml-2">{city.region}</span>
-                          </div>
+                          <span className="text-base">{w.emoji}</span>
+                          <span className="font-semibold text-sm text-neutral-900">{city.name}</span>
+                          <span className="text-xs text-neutral-500 hidden sm:block">{city.region}</span>
                         </div>
-                        <div className="flex items-center gap-3 shrink-0">
-                          <span className="font-black text-sm text-neutral-700">{city.apparent_temp_max}°C</span>
-                          <span className="text-neutral-300 group-hover:text-neutral-500 transition-colors text-sm">→</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="font-black text-sm text-neutral-800">{city.apparent_temp_max}°C</span>
+                          <span className="text-neutral-300 group-hover:text-neutral-600 text-sm">→</span>
                         </div>
                       </Link>
                     )
@@ -273,37 +302,14 @@ export default async function FrancePage() {
               </div>
 
               {/* Plus frais */}
-              <div className="col-span-2 bg-[#a8c4d4]/40 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
-                  Plus frais aujourd'hui
-                </p>
+              <div className="col-span-2 bg-[#a8c4d4]/60 rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900 mb-3">Plus frais aujourd'hui</p>
                 <div className="text-3xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}°C</div>
-                <p className="text-sm font-bold text-blue-900/70 mt-1.5">{coolest.name}</p>
-                <p className="text-xs text-blue-900/40">{coolest.region}</p>
+                <Link href={`/a/${slugify(coolest.name)}`} className="text-sm font-bold text-blue-900 hover:underline underline-offset-2 mt-1.5 block">{coolest.name}</Link>
+                <p className="text-xs text-blue-800">{coolest.region}</p>
               </div>
 
-              {/* Footer */}
-              <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
-                <a
-                  href="https://leswww.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-neutral-600"
-                >
-                  © LesWWW
-                </a>
-                {" · "}
-                <a
-                  href="https://leswww.com/mentions-legales/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-neutral-600"
-                >
-                  Mentions légales
-                </a>
-              </div>
-
+              {footer}
             </div>
           </div>
         </div>
