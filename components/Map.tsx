@@ -8,11 +8,6 @@ type MarkerMap = globalThis.Map<string, CircleMarker>
 import { CityFR, CityWorld } from "@/lib/types"
 import { getWeather } from "@/lib/weather-codes"
 
-const COLOR_FR    = "#3b82f6"
-const COLOR_WORLD = "#10b981"
-const COLOR_SEL   = "#7c3aed"
-const COLOR_TWIN  = "#a78bfa"
-
 interface Props {
   citiesFR: CityFR[]
   citiesWorld: CityWorld[]
@@ -40,13 +35,14 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
         shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       })
 
+      const isMobile = window.matchMedia("(max-width: 768px)").matches
       const map = L.map(containerRef.current!, {
         center: [30, 10],
-        zoom: 3,
+        zoom: isMobile ? 2 : 3,
         zoomControl: false,
         scrollWheelZoom: false,
+        dragging: !isMobile,
       })
-
       L.control.zoom({ position: "bottomleft" }).addTo(map)
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
@@ -59,22 +55,34 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       citiesFR.forEach((city) => {
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
-          radius: 7, fillColor: COLOR_FR, color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.9,
+          radius: 7,
+          fillColor: "#2563eb",
+          color: "#fff",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9,
         })
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.apparent_temp_max}°C ressenti`, { direction: "top" })
           .on("click", () => onCityClick(city.id))
+
         markersRef.current.set(city.id, marker)
       })
 
       citiesWorld.forEach((city) => {
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
-          radius: 7, fillColor: COLOR_WORLD, color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.9,
+          radius: 7,
+          fillColor: "#059669",
+          color: "#fff",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9,
         })
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.temp}°C<br><em>${city.climateLabel}</em>`, { direction: "top" })
           .on("click", () => onCityClick(city.id))
+
         markersRef.current.set(city.id, marker)
       })
     })
@@ -94,27 +102,39 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
 
       markersRef.current.forEach((marker, id) => {
         const isFR = citiesFR.some((c) => c.id === id)
-        marker.setStyle({ fillColor: isFR ? COLOR_FR : COLOR_WORLD, radius: 7, fillOpacity: 0.9 })
+        marker.setStyle({
+          fillColor: isFR ? "#2563eb" : "#059669",
+          radius: 7,
+          fillOpacity: 0.9,
+        })
       })
 
       if (!selectedId) return
 
-      const selected = citiesFR.find((c) => c.id === selectedId) ?? citiesWorld.find((c) => c.id === selectedId)
+      const selectedCityFR = citiesFR.find((c) => c.id === selectedId)
+      const selectedCityWorld = citiesWorld.find((c) => c.id === selectedId)
+      const selected = selectedCityFR ?? selectedCityWorld
       if (!selected) return
 
       const selectedMarker = markersRef.current.get(selectedId)
-      if (selectedMarker) selectedMarker.setStyle({ fillColor: COLOR_SEL, radius: 11, fillOpacity: 1 })
+      if (selectedMarker) {
+        selectedMarker.setStyle({ fillColor: "#f59e0b", radius: 10, fillOpacity: 1 })
+      }
 
       twinIds.forEach((twinId) => {
         const twin = citiesFR.find((c) => c.id === twinId) ?? citiesWorld.find((c) => c.id === twinId)
         if (!twin) return
+
         const line = L.polyline(
           [[selected.lat, selected.lon], [twin.lat, twin.lon]],
-          { color: COLOR_TWIN, weight: 2, opacity: 0.8, dashArray: "6 4" }
+          { color: "#f59e0b", weight: 2, opacity: 0.8, dashArray: "6 4" }
         ).addTo(mapRef.current!)
         linesRef.current.push(line)
+
         const twinMarker = markersRef.current.get(twinId)
-        if (twinMarker) twinMarker.setStyle({ fillColor: COLOR_TWIN, radius: 9, fillOpacity: 1 })
+        if (twinMarker) {
+          twinMarker.setStyle({ fillColor: "#f59e0b", radius: 9, fillOpacity: 1 })
+        }
       })
 
       mapRef.current?.panTo([selected.lat, selected.lon], { animate: true, duration: 0.5 })
