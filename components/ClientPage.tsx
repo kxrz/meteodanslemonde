@@ -6,12 +6,14 @@ import { useState, useMemo } from "react"
 import { CityFR, CityWorld, AnyCity } from "@/lib/types"
 import { slugify } from "@/lib/slugify"
 import { getWeather } from "@/lib/weather-codes"
+import { ClimateEntry } from "@/lib/climate"
 import SiteHeader from "@/components/SiteHeader"
+import PageFooter from "@/components/PageFooter"
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-neutral-200/50 rounded-3xl">
+    <div className="w-full h-full flex items-center justify-center bg-neutral-200/50">
       <span className="text-neutral-500 text-sm">Chargement de la carte…</span>
     </div>
   ),
@@ -19,14 +21,6 @@ const Map = dynamic(() => import("@/components/Map"), {
 
 const TWIN_MAX_DIFF = 4
 const TWIN_COUNT = 5
-
-type ClimateEntry = {
-  normal: number[]
-  trend: number[]
-  proj2030: (number | null)[]
-  proj2040: (number | null)[]
-  proj2050: (number | null)[]
-} | null
 
 function computeTwins(city: AnyCity, all: AnyCity[]): AnyCity[] {
   const ref = city.apparent_temp_max
@@ -50,8 +44,7 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [heroCity] = useState(() => citiesFR[Math.floor(Math.random() * citiesFR.length)])
 
-  const now = new Date()
-  const monthName = now.toLocaleDateString("fr-FR", { month: "long" })
+  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
   const allCities: AnyCity[] = useMemo(() => [
     ...citiesFR.map(c => ({ ...c, type: "fr" as const })),
@@ -66,12 +59,12 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
     const m = new Date().getMonth()
     const entry = (climateMap[selectedCity.id] ?? null) as ClimateEntry
     if (!entry) return null
-    const normal = entry.normal?.[m] ?? null
-    const trend = entry.trend?.[m] ?? null
+    const normal   = entry.normal?.[m]   ?? null
+    const trend    = entry.trend?.[m]    ?? null
     const proj2030 = entry.proj2030?.[m] ?? null
     const proj2040 = entry.proj2040?.[m] ?? null
     const proj2050 = entry.proj2050?.[m] ?? null
-    const anomaly = normal != null ? Math.round((selectedCity.apparent_temp_max - normal) * 10) / 10 : null
+    const anomaly  = normal != null ? Math.round((selectedCity.apparent_temp_max - normal) * 10) / 10 : null
     return { normal, trend, anomaly, proj2030, proj2040, proj2050 }
   }, [selectedCity, climateMap])
 
@@ -80,17 +73,6 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
   }
 
   const isFR = selectedCity?.type === "fr"
-
-  const footer = (
-    <div className="col-span-2 text-center text-xs text-neutral-500 pb-1">
-      cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
-      <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700">© LesWWW</a>
-      {" · "}
-      <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-700">Mentions légales</a>
-      {" · "}
-      <Link href="/contact" className="underline underline-offset-2 hover:text-neutral-700">Contact</Link>
-    </div>
-  )
 
   return (
     <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
@@ -103,7 +85,7 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
             citiesWorld={citiesWorld}
             selectedId={selectedId}
             twinIds={twins.map(t => t.id)}
-            onCityClick={(id) => handleCityClick(id)}
+            onCityClick={handleCityClick}
           />
         </div>
 
@@ -112,11 +94,8 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
 
             {!selectedCity ? (
               <>
-                {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-5">
-                    En ce moment · France
-                  </p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-5">En ce moment · France</p>
                   <p className="text-neutral-600 text-sm mb-0.5">il fait</p>
                   <div className="flex items-baseline gap-1.5 leading-none">
                     <span className="text-7xl font-black text-neutral-900">{heroCity.apparent_temp_max}°</span>
@@ -161,11 +140,10 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   <Link href="/en/france" className="text-xs text-neutral-500 hover:text-neutral-800 transition-colors">La France en chiffres →</Link>
                 </div>
 
-                {footer}
+                <PageFooter className="col-span-2" />
               </>
             ) : (
               <>
-                {/* Météo */}
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
                   <div className="flex items-start justify-between gap-2 mb-4">
                     <div>
@@ -194,7 +172,6 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   </div>
                 </div>
 
-                {/* Normale */}
                 {isFR && (
                   <div className="bg-[#b8d4b0] rounded-3xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900 mb-3">Normalement</p>
@@ -207,7 +184,6 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   </div>
                 )}
 
-                {/* Anomalie */}
                 {isFR && (
                   <div className={`rounded-3xl p-5 ${
                     climate?.anomaly != null && climate.anomaly > 2 ? "bg-[#f4a27a]" :
@@ -227,7 +203,6 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   </div>
                 )}
 
-                {/* Tendance */}
                 {isFR && (
                   <div className="col-span-2 bg-white rounded-3xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">Tendance observée · 30 ans</p>
@@ -240,7 +215,6 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   </div>
                 )}
 
-                {/* GIEC */}
                 {isFR && (
                   <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900 mb-1">Si rien ne change…</p>
@@ -258,12 +232,9 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   </div>
                 )}
 
-                {/* CTA fiche ville — avant les jumeaux */}
                 {isFR && (
-                  <Link
-                    href={`/a/${slugify(selectedCity.name)}`}
-                    className="col-span-2 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-3xl px-6 py-5 group"
-                  >
+                  <Link href={`/a/${slugify(selectedCity.name)}`}
+                    className="col-span-2 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-3xl px-6 py-5 group">
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-1">Fiche complète</p>
                       <p className="text-lg font-black text-white">{selectedCity.name} · données &amp; projections</p>
@@ -272,7 +243,6 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   </Link>
                 )}
 
-                {/* Jumeaux */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-3">
                     {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}
@@ -285,11 +255,8 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                         const tw = getWeather(twin.weathercode)
                         const sub = twin.type === "world" ? (twin as CityWorld).country : (twin as CityFR).region
                         return (
-                          <button
-                            key={twin.id}
-                            onClick={() => handleCityClick(twin.id)}
-                            className="w-full flex items-center gap-3 py-2.5 px-3 rounded-2xl hover:bg-neutral-50 text-left transition-colors border border-neutral-100"
-                          >
+                          <button key={twin.id} onClick={() => handleCityClick(twin.id)}
+                            className="w-full flex items-center gap-3 py-2.5 px-3 rounded-2xl hover:bg-neutral-50 text-left transition-colors border border-neutral-100">
                             <span className="text-lg">{tw.emoji}</span>
                             <div className="flex-1 min-w-0">
                               <div className="font-semibold text-sm text-neutral-800 truncate">{twin.name}</div>
@@ -303,7 +270,7 @@ export default function ClientPage({ citiesFR, citiesWorld, climateMap }: Props)
                   )}
                 </div>
 
-                {footer}
+                <PageFooter className="col-span-2" />
               </>
             )}
           </div>

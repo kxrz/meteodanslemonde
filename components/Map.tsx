@@ -8,18 +8,17 @@ type MarkerMap = globalThis.Map<string, CircleMarker>
 import { CityFR, CityWorld } from "@/lib/types"
 import { getWeather } from "@/lib/weather-codes"
 
-// Charter colors
-const COLOR_FR      = "#3b82f6" // blue-500
-const COLOR_WORLD   = "#10b981" // emerald-500
-const COLOR_SEL     = "#7c3aed" // violet-600  (selected)
-const COLOR_TWIN    = "#a78bfa" // violet-400  (twins)
+const COLOR_FR    = "#3b82f6"
+const COLOR_WORLD = "#10b981"
+const COLOR_SEL   = "#7c3aed"
+const COLOR_TWIN  = "#a78bfa"
 
 interface Props {
   citiesFR: CityFR[]
   citiesWorld: CityWorld[]
   selectedId: string | null
   twinIds: string[]
-  onCityClick: (id: string, type: "fr" | "world") => void
+  onCityClick: (id: string) => void
 }
 
 export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCityClick }: Props) {
@@ -60,34 +59,22 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       citiesFR.forEach((city) => {
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
-          radius: 7,
-          fillColor: COLOR_FR,
-          color: "#fff",
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.9,
+          radius: 7, fillColor: COLOR_FR, color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.9,
         })
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.apparent_temp_max}°C ressenti`, { direction: "top" })
-          .on("click", () => onCityClick(city.id, "fr"))
-
+          .on("click", () => onCityClick(city.id))
         markersRef.current.set(city.id, marker)
       })
 
       citiesWorld.forEach((city) => {
         const { emoji } = getWeather(city.weathercode)
         const marker = L.circleMarker([city.lat, city.lon], {
-          radius: 7,
-          fillColor: COLOR_WORLD,
-          color: "#fff",
-          weight: 2,
-          opacity: 1,
-          fillOpacity: 0.9,
+          radius: 7, fillColor: COLOR_WORLD, color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.9,
         })
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.temp}°C<br><em>${city.climateLabel}</em>`, { direction: "top" })
-          .on("click", () => onCityClick(city.id, "world"))
-
+          .on("click", () => onCityClick(city.id))
         markersRef.current.set(city.id, marker)
       })
     })
@@ -107,11 +94,7 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
 
       markersRef.current.forEach((marker, id) => {
         const isFR = citiesFR.some((c) => c.id === id)
-        marker.setStyle({
-          fillColor: isFR ? COLOR_FR : COLOR_WORLD,
-          radius: 7,
-          fillOpacity: 0.9,
-        })
+        marker.setStyle({ fillColor: isFR ? COLOR_FR : COLOR_WORLD, radius: 7, fillOpacity: 0.9 })
       })
 
       if (!selectedId) return
@@ -120,24 +103,18 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       if (!selected) return
 
       const selectedMarker = markersRef.current.get(selectedId)
-      if (selectedMarker) {
-        selectedMarker.setStyle({ fillColor: COLOR_SEL, radius: 11, fillOpacity: 1 })
-      }
+      if (selectedMarker) selectedMarker.setStyle({ fillColor: COLOR_SEL, radius: 11, fillOpacity: 1 })
 
       twinIds.forEach((twinId) => {
         const twin = citiesFR.find((c) => c.id === twinId) ?? citiesWorld.find((c) => c.id === twinId)
         if (!twin) return
-
         const line = L.polyline(
           [[selected.lat, selected.lon], [twin.lat, twin.lon]],
           { color: COLOR_TWIN, weight: 2, opacity: 0.8, dashArray: "6 4" }
         ).addTo(mapRef.current!)
         linesRef.current.push(line)
-
         const twinMarker = markersRef.current.get(twinId)
-        if (twinMarker) {
-          twinMarker.setStyle({ fillColor: COLOR_TWIN, radius: 9, fillOpacity: 1 })
-        }
+        if (twinMarker) twinMarker.setStyle({ fillColor: COLOR_TWIN, radius: 9, fillOpacity: 1 })
       })
 
       mapRef.current?.panTo([selected.lat, selected.lon], { animate: true, duration: 0.5 })

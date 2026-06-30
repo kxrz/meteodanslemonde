@@ -1,6 +1,7 @@
 import { Metadata } from "next"
 import SiteHeader from "@/components/SiteHeader"
 import ContactForm from "@/components/ContactForm"
+import PageFooter from "@/components/PageFooter"
 
 export const metadata: Metadata = {
   title: "Contact · cestchaud.fr",
@@ -8,14 +9,12 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://cestchaud.fr/contact" },
 }
 
-// Mettez à jour avec l'URL LinkedIn exacte
 const LINKEDIN_URL = "https://www.linkedin.com/company/leswww"
 
 export default function ContactPage() {
   return (
     <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
       <SiteHeader asLink />
-
       <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4">
         <div className="max-w-lg mx-auto">
           <div className="grid grid-cols-1 gap-3 pb-4">
@@ -28,12 +27,8 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <a
-              href={LINKEDIN_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between bg-[#0A66C2] hover:bg-[#004182] transition-colors rounded-3xl px-6 py-5 group"
-            >
+            <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer"
+              className="flex items-center justify-between bg-[#0A66C2] hover:bg-[#004182] transition-colors rounded-3xl px-6 py-5 group">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/70 mb-1">Contact direct</p>
                 <p className="text-base font-black text-white">LesWWW sur LinkedIn</p>
@@ -45,13 +40,7 @@ export default function ContactPage() {
 
             <ContactForm />
 
-            <div className="text-center text-xs text-neutral-400 pb-1">
-              cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
-              <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600">© LesWWW</a>
-              {" · "}
-              <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-600">Mentions légales</a>
-            </div>
-
+            <PageFooter />
           </div>
         </div>
       </div>
