@@ -20,22 +20,20 @@ export default function AProposPage() {
 
         {/* Left */}
         <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 border-black/[0.06]">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-              À propos
-            </p>
-            <h1 className="text-3xl font-black text-neutral-900 leading-tight">
-              D'où viennent ces chiffres ?
-            </h1>
-            <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
-              Des données ouvertes, des calculs transparents, zéro contenu inventé. Un outil pédagogique pour rendre la crise climatique lisible.
-            </p>
-          </div>
+          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+            À propos
+          </p>
+          <h1 className="text-3xl font-black text-neutral-900 leading-tight">
+            D'où viennent ces chiffres ?
+          </h1>
+          <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
+            Des données ouvertes, des calculs transparents, zéro contenu inventé. Un outil pédagogique pour rendre la crise climatique lisible.
+          </p>
         </div>
 
         {/* Right */}
-        <div className="flex-1 lg:overflow-y-auto p-5 lg:p-8">
-          <div className="max-w-lg space-y-4">
+        <div className="flex-1 lg:overflow-y-auto p-5 lg:p-8 flex flex-col">
+          <div className="max-w-lg space-y-4 flex-1">
 
             {/* Transparence */}
             <section className="bg-neutral-950 rounded-3xl p-6">
@@ -155,9 +153,9 @@ export default function AProposPage() {
             </section>
 
           </div>
+          <PageFooter className="px-0 mt-8" />
         </div>
       </div>
-      <PageFooter className="px-5 lg:px-8" />
     </div>
   )
 }
