@@ -13,8 +13,11 @@ import path from "path"
 const DATA_DIR = path.join(process.cwd(), "data")
 const CLIMATE_PATH = path.join(DATA_DIR, "climate.json")
 const BATCH_SIZE = 3
-const BETWEEN_CALLS_MS = 4000
-const BETWEEN_BATCHES_MS = 8000
+const BETWEEN_CALLS_MS = 3000
+const BETWEEN_BATCHES_MS = 5000
+// Low retry count: fail fast and move on rather than spending minutes on one blocked batch.
+// Re-run the script later (different IP / after rate-limit reset) to fill gaps.
+const MAX_RETRIES = 2
 
 interface ClimateEntry {
   normal: (number | null)[]
@@ -103,26 +106,27 @@ function computeEntry(
   return { normal, trend, proj2030, proj2040, proj2050 }
 }
 
-async function fetchOne(url: string, maxRetries = 5): Promise<Response> {
+async function fetchOne(url: string): Promise<Response> {
   let lastErr: Error | null = null
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     const ctrl = new AbortController()
-    const t = setTimeout(() => ctrl.abort(), 60000)
+    const t = setTimeout(() => ctrl.abort(), 30000)
     let res: Response
     try {
       res = await fetch(url, { signal: ctrl.signal })
     } catch (err) {
       clearTimeout(t)
       lastErr = err instanceof Error ? err : new Error(String(err))
-      const delay = 10000 * (attempt + 1)
+      const delay = 5000 * (attempt + 1)
       console.warn(`    [network error, retry in ${delay / 1000}s] ${lastErr.message}`)
       await new Promise((r) => setTimeout(r, delay))
       continue
     }
     clearTimeout(t)
     if (res.status === 429) {
+      if (attempt === MAX_RETRIES) break
       const retryAfter = res.headers.get("Retry-After")
-      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 20000 * (attempt + 1)
+      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 15000 * (attempt + 1)
       console.warn(`    [429, waiting ${Math.round(delay / 1000)}s]`)
       await new Promise((r) => setTimeout(r, delay))
       continue
@@ -153,14 +157,14 @@ async function fetchClimateBatch(
     }
     const data = await archRes.json()
     archList = Array.isArray(data) ? data : [data]
-  } catch (err) {
-    console.warn(`    [fail] archive: ${(err as Error).message}`)
+  } catch {
+    console.warn(`    [fail] archive — skipping batch`)
     return cities.map((c) => [c.id, null])
   }
 
   await new Promise((r) => setTimeout(r, BETWEEN_CALLS_MS))
 
-  // --- Climate (CMIP6) — failure is non-fatal: archive data still saved ---
+  // --- Climate (CMIP6) — failure is non-fatal ---
   let climList: ApiResponse[] | null = null
   try {
     const climRes = await fetchOne(
@@ -173,10 +177,10 @@ async function fetchClimateBatch(
       const data = await climRes.json()
       climList = Array.isArray(data) ? data : [data]
     } else {
-      console.warn(`    [climate fail HTTP ${climRes.status} — projections will be null]`)
+      console.warn(`    [climate fail HTTP ${climRes.status} — projections null]`)
     }
   } catch {
-    console.warn(`    [climate max retries — projections will be null, archive saved]`)
+    console.warn(`    [climate rate-limited — projections null, archive saved]`)
   }
 
   return cities.map((city, i) => [
@@ -202,6 +206,12 @@ async function main() {
 
   if (todo.length === 0) {
     console.log(`All ${allCities.length} cities already have climate data. Nothing to do.`)
+    // Show how many have projections
+    const withProj = Object.values(existing).filter((e) => e.proj2030?.some((v) => v != null)).length
+    console.log(`  ${withProj}/${allCities.length} have GIEC projections.`)
+    if (withProj < allCities.length) {
+      console.log(`  To retry projection-only gaps, delete those city IDs from data/climate.json and re-run.`)
+    }
     return
   }
 
@@ -211,7 +221,7 @@ async function main() {
   const batches: typeof todo[] = []
   for (let i = 0; i < todo.length; i += BATCH_SIZE) batches.push(todo.slice(i, i + BATCH_SIZE))
 
-  const totalSecs = Math.ceil(batches.length * ((BETWEEN_CALLS_MS + BETWEEN_BATCHES_MS) / 1000 + 6))
+  const totalSecs = Math.ceil(batches.length * ((BETWEEN_CALLS_MS + BETWEEN_BATCHES_MS) / 1000 + 4))
   console.log(`Fetching ${todo.length} cities in ${batches.length} batches (~${totalSecs}s estimated)\n`)
 
   const climateMap = { ...existing }
@@ -243,18 +253,15 @@ async function main() {
   }
 
   const total = allCities.length
-  console.log(`\n✓ Climate: ${ok}/${total} cities with data`)
+  console.log(`\n✓ Done: ${ok}/${total} cities`)
   if (noProjections.length > 0) {
-    console.warn(`  Archive only (no GIEC projections): ${noProjections.join(", ")}`)
-    console.log(`  Tip: re-run 'npm run fetch-climate' to retry projections for these cities.`)
+    console.warn(`  Archive-only (no GIEC projections): ${noProjections.join(", ")}`)
   }
 
   const sizeKB = Math.round(fs.statSync(CLIMATE_PATH).size / 1024)
   console.log(`✓ Wrote ${CLIMATE_PATH} (${sizeKB} kB)`)
-  if (ok >= total) {
-    console.log("\nNext step:")
-    console.log("  git add data/climate.json && git commit -m 'chore: update climate data' && git push")
-  }
+  console.log("\nNext step:")
+  console.log("  git add data/climate.json && git commit -m 'chore: update climate data' && git push")
 }
 
 main().catch((err) => {
