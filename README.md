@@ -1,43 +1,138 @@
-# Chaud comme là
+# cestchaud.fr
 
-**Quand il fait 38°C à Lille, où dans le monde est-ce la normale ?**
+**Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ?**
 
-Une carte interactive qui trouve les jumeaux climatiques de vos villes françaises — les endroits dans le monde où il fait exactement pareil aujourd'hui.
+cestchaud.fr visualise le ressenti thermique du jour dans 36 villes françaises et 30 villes mondiales, calcule leurs "jumeaux climatiques", et projette l'évolution de la chaleur jusqu'en 2050 selon les modèles GIEC.
 
-![Aperçu de l'application](public/og-image.png)
+![Aperçu cestchaud.fr](public/og/home.png)
 
-## Comment ça fonctionne
+---
 
-- Cliquez sur une ville française (bleue) pour voir ses jumeaux climatiques mondiaux (verts)
-- La comparaison se base sur le **ressenti maximal journalier** — plus représentatif que la température brute
-- Les jumeaux sont les villes dont le ressenti est identique à **±4°C près**
-- Les données météo sont récupérées via [Open-Meteo](https://open-meteo.com/) et rafraîchies toutes les **24h**
+## Ce que fait le site
 
-## Stack
+- **Carte interactive** — ressenti max du jour pour chaque ville, colorée par intensité
+- **Jumeaux climatiques** — cliquer une ville française affiche les villes du monde où il fait pareil aujourd'hui (± 4°C)
+- **Fiche ville** — pour chaque ville française : ressenti, anomalie vs. normale ERA5, tendance sur 30 ans, projections GIEC 2030/2040/2050
+- **Vue France** — classement des 36 villes, narrative éditoriale générée, top 6 les plus exposées selon le GIEC
+- **Pas d'IA générative** — toutes les données viennent de sources scientifiques ouvertes, rien n'est inventé
 
-- [Next.js](https://nextjs.org/) (App Router, ISR)
-- [Leaflet](https://leafletjs.com/) via `react-leaflet`
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Open-Meteo](https://open-meteo.com/) — API météo libre et gratuite, sans clé
+---
+
+## Sources de données
+
+| Source | Usage |
+|--------|-------|
+| [Open-Meteo](https://open-meteo.com/) | Ressenti max journalier (`apparent_temperature_max`) - gratuit, sans clé |
+| [ERA5 / ECMWF](https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5) | Normales climatiques 1991-2020, tendance observée sur 30 ans |
+| [CMIP6 / GIEC AR6](https://www.ipcc.ch/report/ar6/wg1/) | Projections 2030, 2040, 2050 - scenario SSP2-4.5 |
+
+Les données ERA5 et CMIP6 sont précalculées et stockées dans `data/climate.json`. Les données météo temps réel sont récupérées à chaque build via `npm run fetch-weather`.
+
+---
+
+## Stack technique
+
+- **[Next.js](https://nextjs.org/)** - App Router, ISR (`revalidate = 86400`)
+- **[Tailwind CSS v4](https://tailwindcss.com/)** - styles et layout bento
+- **[Leaflet](https://leafletjs.com/)** - carte interactive (tiles Carto light)
+- **[Resend](https://resend.com/)** - formulaire de contact
+- **[Vercel](https://vercel.com/)** - hébergement et déploiement continu
+
+---
+
+## Architecture
+
+```
+app/
+  page.tsx              # Accueil - carte + bento panel
+  en/france/page.tsx    # Vue d'ensemble France
+  a/[slug]/page.tsx     # Fiche ville (36 pages statiques)
+  a-propos/page.tsx     # Methodologie et sources
+  contact/page.tsx      # Formulaire de contact
+  api/contact/route.ts  # API Resend (rate limit + honeypot)
+
+components/
+  ClientPage.tsx        # Carte + bento interactif (client)
+  Map.tsx               # Leaflet carte monde
+  CityMap.tsx           # Leaflet carte ville unique
+  CityPanel.tsx         # Panel detail ville (carte monde)
+  SiteHeader.tsx        # Header avec date du jour
+  ContactForm.tsx       # Formulaire avec honeypot
+
+data/
+  cities-fr.json        # 36 villes françaises (coords + region)
+  cities-world.json     # 30 villes mondiales (coords + climat)
+  climate.json          # Normales ERA5 + projections CMIP6 par ville/mois
+  weather-cache.json    # Cache météo généré au build (gitignore)
+
+scripts/
+  fetch-weather.mjs     # Récupère Open-Meteo pour toutes les villes
+```
+
+---
 
 ## Lancer en local
 
 ```bash
 npm install
+
+# Récupère les données météo (requis avant le build)
+npm run fetch-weather
+
+# Dev
 npm run dev
+
+# Build
+npm run build
 ```
 
-L'application sera disponible sur [http://localhost:3000](http://localhost:3000).
+L'application est disponible sur [http://localhost:3000](http://localhost:3000).
 
-Aucune variable d'environnement requise — Open-Meteo est public et sans authentification.
+### Variables d'environnement
 
-## Données
+| Variable | Usage |
+|----------|-------|
+| `RESEND_API_KEY` | Envoi des emails via le formulaire de contact |
 
-- **36 villes françaises** — `data/cities-fr.json`
-- **30 villes mondiales** — `data/cities-world.json`
+---
 
-Les fichiers JSON contiennent uniquement les coordonnées et métadonnées. Les données météo sont récupérées dynamiquement au runtime.
+## Déploiement
 
-## Licence
+La commande de build Vercel est :
 
-[MIT](LICENSE)
+```
+npm run fetch-weather && next build --webpack
+```
+
+Le domaine d'envoi email est `envrai.cestchaud.fr` (sous-domaine Resend isolé du domaine principal).
+
+Les redirections 301 depuis `meteo.leswww.com` vers `www.cestchaud.fr` sont gérées dans `next.config.ts`.
+
+---
+
+## Securite formulaire de contact
+
+- Rate limit : 3 requetes par minute par IP
+- Honeypot : champ masque, rejet silencieux si rempli (cote client + API)
+- Validation : longueur, format email, taille payload
+
+---
+
+## Pages et URLs
+
+| URL | Description |
+|-----|-------------|
+| `/` | Accueil - carte interactive + jumeaux climatiques |
+| `/en/france` | Vue d'ensemble chaleur en France |
+| `/a/[ville]` | Fiche climatique par ville (ex: `/a/bordeaux`) |
+| `/a-propos` | Methodologie, sources, outils |
+| `/contact` | Formulaire de contact |
+| `/mentions-legales` | Mentions legales |
+
+---
+
+## Auteur
+
+[Florent Bertiaux](https://leswww.com) - creatif technologique, France.
+
+> Ce projet est ne de la conviction que les donnees climatiques meritent d'etre lues autrement, sans jargon et sans filtre.
