@@ -12,11 +12,13 @@ export const metadata: Metadata = {
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",
+    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "En vrai, c'est chaud — cestchaud.fr" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "En vrai, c'est chaud — cestchaud.fr",
     description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
+    images: ["/og/home.png"],
   },
 }
 
