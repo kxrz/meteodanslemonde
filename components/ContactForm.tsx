@@ -2,76 +2,92 @@
 
 import { useState } from "react"
 
+type State = "idle" | "sending" | "sent" | "error"
+
 export default function ContactForm() {
+  const [state, setState] = useState<State>("idle")
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle")
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setStatus("sending")
+    setState("sending")
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, message }),
       })
-      if (!res.ok) throw new Error()
-      setStatus("sent")
+      if (res.ok) {
+        setState("sent")
+      } else {
+        setState("error")
+      }
     } catch {
-      setStatus("error")
+      setState("error")
     }
   }
 
-  if (status === "sent") {
+  if (state === "sent") {
     return (
-      <div className="bg-[#b8d4b0] rounded-3xl p-6 text-center">
-        <p className="text-xl font-black text-green-900">Message envoyé ✓</p>
-        <p className="text-sm text-green-800 mt-2 leading-relaxed">On revient vers vous rapidement. Merci !</p>
+      <div className="bg-[#d1fae5] rounded-3xl p-6 text-center">
+        <p className="text-2xl font-black text-emerald-900 mb-2">Message envoyé ✓</p>
+        <p className="text-sm text-emerald-800/70">On vous répond dès que possible.</p>
       </div>
     )
   }
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 space-y-4">
-      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">
-        Formulaire de contact
-      </p>
       <div>
-        <label className="text-xs font-semibold text-neutral-700 mb-1.5 block">Nom</label>
+        <label className="block text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1.5">
+          Nom
+        </label>
         <input
-          type="text" required value={name} onChange={e => setName(e.target.value)}
-          className="w-full rounded-xl border border-neutral-200 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 bg-neutral-50"
+          type="text"
+          required
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full bg-neutral-100 rounded-2xl px-4 py-3 text-sm text-neutral-900 outline-none focus:ring-2 focus:ring-neutral-300"
           placeholder="Votre nom"
         />
       </div>
       <div>
-        <label className="text-xs font-semibold text-neutral-700 mb-1.5 block">Email</label>
+        <label className="block text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1.5">
+          Email
+        </label>
         <input
-          type="email" required value={email} onChange={e => setEmail(e.target.value)}
-          className="w-full rounded-xl border border-neutral-200 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 bg-neutral-50"
-          placeholder="vous@exemple.fr"
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full bg-neutral-100 rounded-2xl px-4 py-3 text-sm text-neutral-900 outline-none focus:ring-2 focus:ring-neutral-300"
+          placeholder="votre@email.com"
         />
       </div>
       <div>
-        <label className="text-xs font-semibold text-neutral-700 mb-1.5 block">Message</label>
+        <label className="block text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1.5">
+          Message
+        </label>
         <textarea
-          required rows={4} value={message} onChange={e => setMessage(e.target.value)}
-          className="w-full rounded-xl border border-neutral-200 px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-900/10 bg-neutral-50 resize-none"
+          required
+          rows={4}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-full bg-neutral-100 rounded-2xl px-4 py-3 text-sm text-neutral-900 outline-none focus:ring-2 focus:ring-neutral-300 resize-none"
           placeholder="Votre message…"
         />
       </div>
-      {status === "error" && (
-        <p className="text-xs text-red-600 font-medium">
-          Erreur lors de l'envoi. Contactez-nous directement sur LinkedIn.
-        </p>
+      {state === "error" && (
+        <p className="text-sm text-red-600">Une erreur est survenue. Réessayez ou contactez-nous directement.</p>
       )}
       <button
-        type="submit" disabled={status === "sending"}
-        className="w-full bg-neutral-900 hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-2xl py-3 transition-colors text-sm"
+        type="submit"
+        disabled={state === "sending"}
+        className="w-full bg-neutral-900 hover:bg-neutral-800 disabled:opacity-50 text-white font-black rounded-2xl py-4 transition-colors"
       >
-        {status === "sending" ? "Envoi en cours…" : "Envoyer le message"}
+        {state === "sending" ? "Envoi…" : "Envoyer"}
       </button>
     </form>
   )

@@ -15,46 +15,43 @@ export default function CityMap({ lat, lon, name }: Props) {
   const mapRef = useRef<LeafletMap | null>(null)
 
   useEffect(() => {
-    if (typeof window === "undefined" || mapRef.current) return
+    if (!containerRef.current || mapRef.current) return
 
-    import("leaflet").then((L) => {
-      if (!containerRef.current || mapRef.current) return
+    const L = require("leaflet")
 
-      const map = L.map(containerRef.current!, {
-        center: [lat, lon],
-        zoom: 13,
-        zoomControl: false,
-        scrollWheelZoom: false,
-        dragging: false,
-        doubleClickZoom: false,
-        keyboard: false,
-      })
-
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        maxZoom: 19,
-      }).addTo(map)
-
-      L.circleMarker([lat, lon], {
-        radius: 8,
-        fillColor: "#ef4444",
-        color: "#fff",
-        weight: 2.5,
-        opacity: 1,
-        fillOpacity: 1,
-      })
-        .addTo(map)
-        .bindTooltip(name, { permanent: true, direction: "top", offset: [0, -10], className: "city-map-tooltip" })
-        .openTooltip()
-
-      mapRef.current = map
+    const map = L.map(containerRef.current, {
+      center: [lat, lon],
+      zoom: 13,
+      dragging: false,
+      touchZoom: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      keyboard: false,
+      zoomControl: false,
+      attributionControl: false,
     })
 
+    L.tileLayer(
+      "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+      { subdomains: "abcd", maxZoom: 19 }
+    ).addTo(map)
+
+    L.circleMarker([lat, lon], {
+      radius: 8,
+      fillColor: "#ef4444",
+      color: "#fff",
+      weight: 2,
+      fillOpacity: 0.9,
+    }).addTo(map)
+
+    mapRef.current = map
+
     return () => {
-      mapRef.current?.remove()
+      map.remove()
       mapRef.current = null
     }
-  }, [lat, lon, name]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lat, lon, name])
 
   return <div ref={containerRef} className="w-full h-full" />
 }
