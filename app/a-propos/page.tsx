@@ -6,9 +6,9 @@ import PageFooter from "@/components/PageFooter"
 export const revalidate = 604800
 
 export const metadata: Metadata = {
-  title: "À propos · cestchaud.fr",
+  title: "A propos - cestchaud.fr",
   description: "Comment cestchaud.fr collecte, calcule et présente les données de température, les anomalies et les projections climatiques GIEC.",
-  alternates: { canonical: "https://cestchaud.fr/a-propos" },
+  alternates: { canonical: "https://www.cestchaud.fr/a-propos" },
 }
 
 export default function AProposPage() {

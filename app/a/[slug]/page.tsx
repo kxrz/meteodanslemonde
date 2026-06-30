@@ -37,26 +37,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const proj2050 = climate?.proj2050?.[m] ?? null
   const proj2050Str = proj2050 !== null ? ` GIEC 2050 : ${fmtDelta(proj2050)}°C.` : ""
 
-  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030–2050 pour ${city.name} (${city.region}).${proj2050Str}`
+  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030-2050 pour ${city.name} (${city.region}).${proj2050Str}`
 
   return {
-    title: `${city.name} · Chaleur & projections climatiques · cestchaud.fr`,
+    title: `${city.name} - Chaleur et projections climatiques - cestchaud.fr`,
     description,
-    alternates: { canonical: `https://cestchaud.fr/a/${slug}` },
+    alternates: { canonical: `https://www.cestchaud.fr/a/${slug}` },
     openGraph: {
-      title: `${city.name} · Chaleur & projections GIEC`,
+      title: `${city.name} - Chaleur et projections GIEC`,
       description,
-      url: `https://cestchaud.fr/a/${slug}`,
+      url: `https://www.cestchaud.fr/a/${slug}`,
       siteName: "cestchaud.fr",
       locale: "fr_FR",
       type: "website",
-      images: [{ url: "/og/city.png", width: 1200, height: 630, alt: `${city.name} · cestchaud.fr` }],
+      images: [{ url: "https://www.cestchaud.fr/og/city.png", width: 1200, height: 630, alt: `${city.name} - cestchaud.fr` }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${city.name} · Chaleur & projections GIEC`,
+      title: `${city.name} - Chaleur et projections GIEC`,
       description,
-      images: ["/og/city.png"],
+      images: ["https://www.cestchaud.fr/og/city.png"],
     },
   }
 }

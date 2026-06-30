@@ -11,23 +11,23 @@ import type { ClimateEntry } from "@/lib/climate"
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: "La chaleur en France · cestchaud.fr",
+  title: "La chaleur en France - cestchaud.fr",
   description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
-  alternates: { canonical: "https://cestchaud.fr/en/france" },
+  alternates: { canonical: "https://www.cestchaud.fr/en/france" },
   openGraph: {
-    title: "La chaleur en France · cestchaud.fr",
-    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 36 villes françaises.",
-    url: "https://cestchaud.fr/en/france",
+    title: "La chaleur en France - cestchaud.fr",
+    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030-2050 pour 36 villes francaises.",
+    url: "https://www.cestchaud.fr/en/france",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",
-    images: [{ url: "/og/france.png", width: 1200, height: 630, alt: "La chaleur en France · cestchaud.fr" }],
+    images: [{ url: "https://www.cestchaud.fr/og/france.png", width: 1200, height: 630, alt: "La chaleur en France - cestchaud.fr" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "La chaleur en France · cestchaud.fr",
-    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 36 villes françaises.",
-    images: ["/og/france.png"],
+    title: "La chaleur en France - cestchaud.fr",
+    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030-2050 pour 36 villes francaises.",
+    images: ["https://www.cestchaud.fr/og/france.png"],
   },
 }
 
@@ -35,7 +35,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebPage",
   name: "La chaleur en France",
-  url: "https://cestchaud.fr/en/france",
+  url: "https://www.cestchaud.fr/en/france",
   description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
   about: {
     "@type": "Country",
