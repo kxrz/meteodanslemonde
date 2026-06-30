@@ -135,14 +135,27 @@ async function fetchScenario(city: { lat: number; lon: number }, models: string[
     `&models=${models.join(",")}&daily=temperature_2m_max,apparent_temperature_max` + API_SUFFIX
 
   const res = await fetchWithRetry(url)
-  if (!res.ok) { console.warn(`    [climate fail ${res.status}]`); return null }
-  const data = await res.json() as { daily: Record<string, (number | null)[]> }
+  if (!res.ok) {
+    const body = await res.text().catch(() => "")
+    console.warn(`    [climate fail ${res.status}] ${body.slice(0, 200)}`)
+    return null
+  }
+  const data = await res.json() as { daily?: Record<string, (number | null)[]>; error?: boolean; reason?: string }
+
+  // Debug: show what the API actually returned
+  if (!data.daily) {
+    console.warn(`    [climate] no daily field. Response:`, JSON.stringify(data).slice(0, 300))
+    return null
+  }
   const daily = data.daily
   const dates = daily.time as unknown as string[]
+  console.log(`    [climate] keys: ${Object.keys(daily).join(", ")}`)
+  console.log(`    [climate] ${dates?.length ?? 0} days, first=${dates?.[0]} last=${dates?.[dates.length-1]}`)
 
   const atKeys = Object.keys(daily).filter(k => k.startsWith("apparent_temperature_max") && k !== "time")
   const tKeys  = Object.keys(daily).filter(k => k.startsWith("temperature_2m_max") && k !== "time")
   const keys   = atKeys.length ? atKeys : tKeys
+  console.log(`    [climate] using keys: ${keys.join(", ")}`)
 
   const proj2030: (number | null)[] = []
   const proj2040: (number | null)[] = []
