@@ -12,12 +12,10 @@ import path from "path"
 
 const DATA_DIR = path.join(process.cwd(), "data")
 const CLIMATE_PATH = path.join(DATA_DIR, "climate.json")
-const BATCH_SIZE = 3
-const BETWEEN_CALLS_MS = 3000
-const BETWEEN_BATCHES_MS = 5000
-// Low retry count: fail fast and move on rather than spending minutes on one blocked batch.
-// Re-run the script later (different IP / after rate-limit reset) to fill gaps.
-const MAX_RETRIES = 2
+const BATCH_SIZE = 1           // 1 ville à la fois — moins de pression sur l'API
+const BETWEEN_CALLS_MS = 8000  // 8s entre archive et climate pour la même ville
+const BETWEEN_BATCHES_MS = 12000 // 12s entre chaque ville
+const MAX_RETRIES = 5          // on insiste davantage avant d'abandonner
 
 interface ClimateEntry {
   normal: (number | null)[]
@@ -140,7 +138,7 @@ async function fetchOne(url: string): Promise<Response> {
     if (res.status === 429) {
       if (attempt === MAX_RETRIES) break
       const retryAfter = res.headers.get("Retry-After")
-      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 15000 * (attempt + 1)
+      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 30000 * (attempt + 1)
       console.warn(`    [429, waiting ${Math.round(delay / 1000)}s]`)
       await new Promise((r) => setTimeout(r, delay))
       continue
