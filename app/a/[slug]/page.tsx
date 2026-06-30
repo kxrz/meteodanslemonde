@@ -1,9 +1,19 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Metadata } from "next"
+import dynamic from "next/dynamic"
 import { slugify } from "@/lib/slugify"
 
 export const revalidate = 86400
+
+const CityMap = dynamic(() => import("@/components/CityMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-neutral-100">
+      <span className="text-neutral-400 text-sm">Chargement…</span>
+    </div>
+  ),
+})
 
 const citiesFR = require("@/data/cities-fr.json") as Array<{
   id: string; name: string; lat: number; lon: number; region: string
@@ -108,13 +118,13 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
       <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
 
-        {/* Header — always fixed */}
+        {/* Header */}
         <header className="h-14 shrink-0 flex items-center justify-between px-5 border-b border-black/5 bg-[#f5f4f0] z-10">
           <Link
             href="/"
             className="font-black text-base tracking-tight text-neutral-900 hover:opacity-70 transition-opacity"
           >
-            ← en vrai, c'est chaud
+            ← En vrai, c'est chaud.
           </Link>
           <div className="flex items-center gap-4">
             <Link
@@ -130,50 +140,25 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         {/* Main — map left, bento right */}
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
-          {/* Left: SVG placeholder (40%) */}
-          <div className="h-[35vw] max-h-64 lg:h-auto lg:w-[40%] shrink-0 relative overflow-hidden bg-neutral-100 border-b lg:border-b-0 lg:border-r border-black/[0.06]">
-            <div className="w-full h-full relative">
-              {/* SVG grid */}
-              <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <pattern id="grid-sm" width="32" height="32" patternUnits="userSpaceOnUse">
-                    <path d="M 32 0 L 0 0 0 32" fill="none" stroke="black" strokeWidth="0.5" opacity="0.12" />
-                  </pattern>
-                  <pattern id="grid-lg" width="128" height="96" patternUnits="userSpaceOnUse">
-                    <path d="M 128 0 L 0 0 0 96" fill="none" stroke="black" strokeWidth="1" opacity="0.08" />
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid-sm)" />
-                <rect width="100%" height="100%" fill="url(#grid-lg)" />
-              </svg>
+          {/* Left: Leaflet map (40%) */}
+          <div className="h-[35vw] max-h-64 lg:h-auto lg:w-[40%] shrink-0 relative overflow-hidden border-b lg:border-b-0 lg:border-r border-black/[0.06]">
+            <CityMap lat={city.lat} lon={city.lon} name={city.name} />
 
-              {/* City name faint background */}
-              <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none select-none">
-                <span
-                  className="font-black text-neutral-900 whitespace-nowrap"
-                  style={{ fontSize: "clamp(48px, 10vw, 120px)", opacity: 0.07, letterSpacing: "-0.03em" }}
-                >
-                  {city.name}
-                </span>
-              </div>
-
-              {/* Top-left: region + h1 */}
-              <div className="absolute top-5 left-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-1">
+            {/* City info overlay */}
+            <div className="absolute top-4 left-4 z-[1000] pointer-events-none">
+              <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-sm">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500">
                   {city.region}
                 </p>
-                <h1 className="text-2xl font-black text-neutral-900 leading-tight">{city.name}</h1>
+                <h1 className="text-lg font-black text-neutral-900 leading-tight">{city.name}</h1>
               </div>
+            </div>
 
-              {/* Bottom-left: coordinates */}
-              <div className="absolute bottom-5 left-5">
-                <p className="font-mono text-[10px] text-neutral-400">
-                  {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
-                </p>
-                <p className="text-[10px] text-neutral-400 mt-0.5">
-                  Carte bientôt disponible
-                </p>
-              </div>
+            {/* Coordinates */}
+            <div className="absolute bottom-4 left-4 z-[1000] pointer-events-none">
+              <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded-lg px-2 py-1">
+                {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
+              </p>
             </div>
           </div>
 
@@ -181,7 +166,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
           <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4 lg:w-[60%]">
             <div className="grid grid-cols-2 gap-3 pb-4">
 
-              {/* Narrative — TOP (rédactionnel en premier) */}
+              {/* Narrative */}
               {narrative && (
                 <article className="col-span-2 bg-neutral-900 rounded-3xl p-6">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
@@ -268,9 +253,18 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   href="https://leswww.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-neutral-600"
+                  className="hover:text-neutral-600"
                 >
                   © LesWWW
+                </a>
+                {" · "}
+                <a
+                  href="https://leswww.com/mentions-legales/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 hover:text-neutral-600"
+                >
+                  Mentions légales
                 </a>
               </div>
 
