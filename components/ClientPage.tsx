@@ -126,29 +126,36 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-5">
                     En ce moment
                   </p>
-                  <p className="text-neutral-500 text-sm mb-0.5">il fait</p>
-                  <div className="flex items-baseline gap-1.5 leading-none">
-                    <span className="text-7xl font-black text-neutral-900">
-                      {heroCity.apparent_temp_max}°
-                    </span>
-                    <span className="text-3xl font-black text-neutral-300">C</span>
-                  </div>
-                  <p className="text-neutral-600 text-sm mt-1.5">
-                    à{" "}
-                    <span className="font-bold text-neutral-900">{heroCity.name}</span>
-                    <span className="text-neutral-400"> · {getWeather(heroCity.weathercode).emoji}</span>
-                  </p>
-                  <div className="mt-5 flex flex-col sm:flex-row gap-2">
+                  <div className="flex items-end justify-between gap-4">
+                    <div>
+                      <p className="text-neutral-500 text-sm mb-0.5">il fait</p>
+                      <div className="flex items-baseline gap-1.5 leading-none">
+                        <span className="text-7xl font-black text-neutral-900">
+                          {heroCity.apparent_temp_max}°
+                        </span>
+                        <span className="text-3xl font-black text-neutral-300">C</span>
+                      </div>
+                      <p className="text-neutral-600 text-sm mt-1.5">
+                        à{" "}
+                        <Link
+                          href={`/a/${slugify(heroCity.name)}`}
+                          className="font-bold text-neutral-900 hover:underline"
+                        >
+                          {heroCity.name}
+                        </Link>
+                        <span className="text-neutral-400"> · {getWeather(heroCity.weathercode).emoji}</span>
+                      </p>
+                    </div>
                     <button
                       onClick={() => handleCityClick(heroCity.id)}
-                      className="flex-1 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group text-left"
+                      className="shrink-0 flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group"
                     >
                       <span className="text-sm font-bold text-white">En savoir plus sur {heroCity.name}</span>
-                      <span className="text-white/40 group-hover:text-white/80 transition-colors ml-3">→</span>
+                      <span className="text-white/40 group-hover:text-white/80 transition-colors">→</span>
                     </button>
                   </div>
-                  <p className="text-xs text-neutral-400 mt-3 leading-relaxed">
-                    Cliquez une ville sur la carte pour la comparer avec le monde entier.
+                  <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
+                    Ou cliquez une autre ville de la carte pour la comparer avec le monde entier.
                   </p>
                 </div>
 
