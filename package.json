@@ -8,9 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "fetch-weather": "tsx scripts/fetch-weather.ts",
-    "fetch-climate": "tsx scripts/fetch-climate.ts"
+    "fetch-climate": "tsx scripts/fetch-climate.ts",
+    "generate-narratives": "tsx scripts/generate-narratives.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
     "@radix-ui/react-slot": "^1.3.0",
     "@tailwindcss/postcss": "^4",
     "@types/leaflet": "^1.9.21",
