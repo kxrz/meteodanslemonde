@@ -76,31 +76,42 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
     setSelectedId((prev) => (prev === id ? null : id))
   }
 
-  const dataLabel = new Date(fetchedAt).toLocaleDateString("fr-FR", {
-    day: "numeric", month: "long", year: "numeric",
-  })
+  const now = new Date()
+  const dayName = now.toLocaleDateString("fr-FR", { weekday: "long" })
+  const dayNameCap = dayName.charAt(0).toUpperCase() + dayName.slice(1)
+  const dateLabel = now.toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+  const timeLabel = now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
+  const monthName = now.toLocaleDateString("fr-FR", { month: "long" })
 
   const isFR = selectedCity?.type === "fr"
-  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
   return (
     <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
 
       {/* Header */}
-      <header className="h-14 shrink-0 flex items-center justify-between px-5 border-b border-black/5 bg-[#f5f4f0]">
-        <span className="font-black text-base tracking-tight text-neutral-900">
-          en vrai, c'est chaud
-        </span>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/en/france"
-            className="hidden sm:block text-xs text-neutral-500 hover:text-neutral-900 transition-colors"
-          >
-            La France en chiffres →
-          </Link>
-          <span className="text-xs text-neutral-400 hidden md:block">
-            Données du {dataLabel}
-          </span>
+      <header className="shrink-0 px-5 pt-4 pb-3 border-b border-black/5 bg-[#f5f4f0]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-3xl font-black tracking-tight text-neutral-900 leading-none">
+              En vrai, c’est chaud.
+            </h1>
+            <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
+              Nous sommes le {dayNameCap} {dateLabel}. Il est {timeLabel}.{" "}
+              Le ressenti d’aujourd’hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.
+            </p>
+          </div>
+          <div className="shrink-0 text-right">
+            <div className="flex items-center justify-end gap-1.5 mb-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+              <span className="text-xs text-neutral-500">{dateLabel}</span>
+            </div>
+            <Link
+              href="/en/france"
+              className="text-xs text-neutral-400 hover:text-neutral-900 transition-colors whitespace-nowrap"
+            >
+              La France en chiffres →
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -124,12 +135,12 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
 
             {!selectedCity ? (
 
-              // ── État par défaut ──────────────────────────────────────
+              // ── État par défaut
               <>
                 {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-5">
-                    En ce moment
+                    En ce moment · France
                   </p>
                   <p className="text-neutral-500 text-sm mb-0.5">il fait</p>
                   <div className="flex items-baseline gap-1.5 leading-none">
@@ -139,18 +150,18 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                     <span className="text-3xl font-black text-neutral-300">C</span>
                   </div>
                   <p className="text-neutral-600 text-sm mt-1.5">
-                    à <span className="font-bold text-neutral-900">{heroCity.name}</span>
-                    <span className="text-neutral-400"> · {getWeather(heroCity.weathercode).emoji}</span>
+                    <span className="font-bold text-neutral-900">{heroCity.name}</span>
+                    <span className="text-neutral-400"> · ressenti max</span>
                   </p>
                   <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
-                    Cliquez une ville sur la carte pour la comparer avec le monde entier.
+                    Touchez une ville sur la carte.
                   </p>
                 </div>
 
                 {/* Compteur FR */}
                 <div className="bg-[#dbeafe] rounded-3xl p-5">
                   <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
+                    <span className="text-sm">🇫🇷</span>
                     <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800">
                       France
                     </span>
@@ -164,7 +175,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                 {/* Compteur Monde */}
                 <div className="bg-[#d1fae5] rounded-3xl p-5">
                   <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
+                    <span className="text-sm">🌍</span>
                     <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-emerald-800">
                       Monde
                     </span>
@@ -183,35 +194,25 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   <p className="text-sm text-neutral-600 leading-relaxed">
                     On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
                     Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
-                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
+                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
                   </p>
                 </div>
 
                 {/* Source */}
                 <div className="col-span-2 bg-neutral-100 rounded-3xl p-4 flex items-center justify-between">
                   <span className="text-xs text-neutral-500">Open-Meteo · ERA5 · CMIP6</span>
-                  <span className="text-xs text-neutral-400">{dataLabel}</span>
+                  <Link href="/en/france" className="text-xs text-neutral-400 hover:text-neutral-700 transition-colors">
+                    La France en chiffres →
+                  </Link>
                 </div>
 
-                {/* Footer légal */}
+                {/* Footer */}
                 <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                  <Link href="/en/france" className="hover:text-neutral-600">La France en chiffres</Link>
-                  {" · "}
-                  <a
-                    href="https://leswww.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-neutral-600"
-                  >
+                  <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600">
                     © LesWWW
                   </a>
                   {" · "}
-                  <a
-                    href="https://leswww.com/mentions-legales/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline underline-offset-2 hover:text-neutral-600"
-                  >
+                  <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-600">
                     Mentions légales
                   </a>
                 </div>
@@ -219,7 +220,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
 
             ) : (
 
-              // ── Ville sélectionnée ───────────────────────────────────
+              // ── Ville sélectionnée
               <>
                 {/* Météo principale */}
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
@@ -262,7 +263,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                     </div>
                     <div className="text-right text-xs text-neutral-500 space-y-1">
                       <div>💧 {selectedCity.humidity}%</div>
-                      <div>💨 {selectedCity.wind} km/h</div>
+                      <div>💨 {selectedCity.wind} km/h</div>
                     </div>
                   </div>
                 </div>
@@ -302,7 +303,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   }`}
                 >
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                    Aujourd'hui c'est
+                    Aujourd’hui c’est
                   </p>
                   {climate.loading ? (
                     <>
@@ -387,7 +388,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                 {/* Jumeaux */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    {isFR ? "Aujourd'hui, c'est comme à…" : "Villes françaises similaires"}
+                    {isFR ? "Aujourd’hui, c’est comme à…" : "Villes françaises similaires"}
                   </p>
                   {twins.length === 0 ? (
                     <p className="text-sm text-neutral-400">Aucun jumeau à ±4°C.</p>
@@ -407,9 +408,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                           >
                             <span className="text-lg">{tw.emoji}</span>
                             <div className="flex-1 min-w-0">
-                              <div className="font-semibold text-sm text-neutral-800 truncate">
-                                {twin.name}
-                              </div>
+                              <div className="font-semibold text-sm text-neutral-800 truncate">{twin.name}</div>
                               <div className="text-xs text-neutral-400 truncate">{sub}</div>
                             </div>
                             <div className="shrink-0 font-black text-sm text-neutral-700">
@@ -440,26 +439,12 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt }: Props) 
                   </Link>
                 )}
 
-                {/* Footer note */}
+                {/* Footer */}
                 <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
-                  cestchaud.fr · Open-Meteo · ERA5 · CMIP6 · {dataLabel} ·{" "}
-                  <a
-                    href="https://leswww.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-neutral-600"
-                  >
-                    © LesWWW
-                  </a>
+                  cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
+                  <a href="https://leswww.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-600">© LesWWW</a>
                   {" · "}
-                  <a
-                    href="https://leswww.com/mentions-legales/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline underline-offset-2 hover:text-neutral-600"
-                  >
-                    Mentions légales
-                  </a>
+                  <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-neutral-600">Mentions légales</a>
                 </div>
               </>
             )}
