@@ -13,7 +13,7 @@ interface Props {
   citiesWorld: CityWorld[]
   selectedId: string | null
   twinIds: string[]
-  onCityClick: (id: string, type: "fr" | "world") => void
+  onCityClick: (id: string) => void
 }
 
 export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCityClick }: Props) {
@@ -35,17 +35,19 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
         shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       })
 
+      const isMobile = window.matchMedia("(max-width: 768px)").matches
       const map = L.map(containerRef.current!, {
         center: [30, 10],
-        zoom: 3,
+        zoom: isMobile ? 2 : 3,
         zoomControl: false,
         scrollWheelZoom: false,
+        dragging: !isMobile,
       })
-
       L.control.zoom({ position: "bottomleft" }).addTo(map)
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
         maxZoom: 19,
       }).addTo(map)
 
@@ -63,8 +65,7 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
         })
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.apparent_temp_max}°C ressenti`, { direction: "top" })
-          .on("click", () => onCityClick(city.id, "fr"))
-
+          .on("click", () => onCityClick(city.id))
         markersRef.current.set(city.id, marker)
       })
 
@@ -80,8 +81,7 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
         })
           .addTo(map)
           .bindTooltip(`<strong>${city.name}</strong><br>${emoji} ${city.temp}°C<br><em>${city.climateLabel}</em>`, { direction: "top" })
-          .on("click", () => onCityClick(city.id, "world"))
-
+          .on("click", () => onCityClick(city.id))
         markersRef.current.set(city.id, marker)
       })
     })
@@ -123,13 +123,11 @@ export default function Map({ citiesFR, citiesWorld, selectedId, twinIds, onCity
       twinIds.forEach((twinId) => {
         const twin = citiesFR.find((c) => c.id === twinId) ?? citiesWorld.find((c) => c.id === twinId)
         if (!twin) return
-
         const line = L.polyline(
           [[selected.lat, selected.lon], [twin.lat, twin.lon]],
           { color: "#f59e0b", weight: 2, opacity: 0.8, dashArray: "6 4" }
         ).addTo(mapRef.current!)
         linesRef.current.push(line)
-
         const twinMarker = markersRef.current.get(twinId)
         if (twinMarker) {
           twinMarker.setStyle({ fillColor: "#f59e0b", radius: 9, fillOpacity: 1 })

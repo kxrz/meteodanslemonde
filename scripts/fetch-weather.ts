@@ -62,33 +62,23 @@ async function main() {
   const citiesFR: CityBase[] = JSON.parse(fs.readFileSync(frPath, "utf-8"))
   const citiesWorld: CityBase[] = JSON.parse(fs.readFileSync(worldPath, "utf-8"))
 
-  console.log(`Fetching ${citiesFR.length} FR cities...`)
+  console.log(`Fetching weather for ${citiesFR.length} FR cities...`)
   const resultsFR = await fetchBatch(citiesFR)
 
-  console.log(`Fetching ${citiesWorld.length} world cities...`)
+  console.log(`Fetching weather for ${citiesWorld.length} world cities...`)
   const resultsWorld = await fetchBatch(citiesWorld)
 
   const fetchedAt = new Date().toISOString()
-
   const updatedFR = citiesFR.map((city, i) => applyWeather(city, resultsFR[i]))
   const updatedWorld = citiesWorld.map((city, i) => applyWeather(city, resultsWorld[i]))
 
-  const meta = { fetchedAt }
-  fs.writeFileSync(path.join(DATA_DIR, "meta.json"), JSON.stringify(meta, null, 2))
+  fs.writeFileSync(path.join(DATA_DIR, "meta.json"), JSON.stringify({ fetchedAt }, null, 2))
   fs.writeFileSync(frPath, JSON.stringify(updatedFR, null, 2))
   fs.writeFileSync(worldPath, JSON.stringify(updatedWorld, null, 2))
 
   const date = fetchedAt.split("T")[0]
   const time = fetchedAt.split("T")[1].slice(0, 5) + " UTC"
-  console.log(`\n✓ Done — ${date} ${time}`)
-  console.log("\nFR cities (temp / max / feels like max):")
-  updatedFR.forEach((c) =>
-    console.log(`  ${String(c.id).padEnd(14)} ${c.temp}° / max ${c.temp_max}° / ressenti ${c.apparent_temp_max}°`)
-  )
-  console.log("\nWorld cities:")
-  updatedWorld.forEach((c) =>
-    console.log(`  ${String(c.id).padEnd(14)} ${c.temp}° / max ${c.temp_max}° / ressenti ${c.apparent_temp_max}°`)
-  )
+  console.log(`✓ Weather done — ${date} ${time}`)
 }
 
 main().catch((err) => {
