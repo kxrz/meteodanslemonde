@@ -18,30 +18,28 @@ export default function MentionsLegalesPage() {
 
         {/* Left */}
         <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 lg:sticky lg:top-0 lg:h-screen flex flex-col border-b lg:border-b-0 lg:border-r border-black/[0.06]">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-              Informations légales
-            </p>
-            <h1 className="text-3xl font-black text-neutral-900 leading-tight">
-              Mentions légales
-            </h1>
-            <p className="text-xs text-neutral-400 mt-3">Mise à jour : Mai 2026</p>
-          </div>
+          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+            Informations légales
+          </p>
+          <h1 className="text-3xl font-black text-neutral-900 leading-tight">
+            Mentions légales
+          </h1>
+          <p className="text-xs text-neutral-400 mt-3">Mise à jour : Mai 2026</p>
         </div>
 
         {/* Right */}
-        <div className="flex-1 p-5 lg:p-8 overflow-y-auto">
-          <div className="max-w-lg space-y-4">
+        <div className="flex-1 p-5 lg:p-8 overflow-y-auto flex flex-col">
+          <div className="max-w-lg space-y-4 flex-1">
 
             <div className="bg-white rounded-3xl p-6 space-y-2">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Éditeur</p>
               <p className="text-sm text-neutral-700 leading-relaxed">
                 <strong className="text-neutral-900">LesWWW</strong> - EURL<br />
-                SIREN : 912 258 050 - RCS Lille Métropole<br />
-                N° TVA : FR60 912 258 050<br />
-                Code NAF : 73.11Z<br />
-                Gérant : Florent Bertiaux<br />
-                Bureau : Chez NOW Coworking, 40 Place du Théâtre, 59800 Lille
+                SIREN : 912 258 050 - RCS Lille Métropole<br />
+                N° TVA : FR60 912 258 050<br />
+                Code NAF : 73.11Z<br />
+                Gérant : Florent Bertiaux<br />
+                Bureau : Chez NOW Coworking, 40 Place du Théâtre, 59800 Lille
               </p>
             </div>
 
@@ -81,9 +79,9 @@ export default function MentionsLegalesPage() {
             </div>
 
           </div>
+          <PageFooter className="px-0 mt-8" />
         </div>
       </div>
-      <PageFooter className="px-5 lg:px-8" />
     </div>
   )
 }
