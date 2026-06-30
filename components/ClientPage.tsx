@@ -128,7 +128,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-5">
                     En ce moment
                   </p>
-                  <div className="flex items-end justify-between gap-4">
+                  <div className="flex flex-col gap-3">
                     <div>
                       <p className="text-neutral-500 text-sm mb-0.5">il fait</p>
                       <div className="flex items-baseline gap-1.5 leading-none">
@@ -150,7 +150,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     </div>
                     <button
                       onClick={() => handleCityClick(heroCity.id)}
-                      className="shrink-0 flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group"
+                      className="self-start flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group"
                     >
                       <span className="text-sm font-bold text-white">En savoir plus sur {heroCity.name}</span>
                       <span className="text-white/50 group-hover:text-white transition-colors">→</span>

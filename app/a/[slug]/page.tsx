@@ -310,15 +310,15 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {/* Lien France */}
               <Link
                 href="/en/france"
-                className="col-span-2 flex items-center justify-between bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-3xl px-6 py-5 group"
+                className="col-span-2 flex items-center justify-between bg-[#dbeafe] hover:bg-[#bfdbfe] transition-colors rounded-3xl px-6 py-5 group"
               >
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/50 mb-1">
                     Vue d’ensemble
                   </p>
-                  <p className="text-base font-black text-neutral-900">La France en chiffres</p>
+                  <p className="text-base font-black text-blue-900">La France en chiffres</p>
                 </div>
-                <span className="text-neutral-400 group-hover:text-neutral-700 text-2xl transition-colors">→</span>
+                <span className="text-blue-400 group-hover:text-blue-700 text-2xl transition-colors">→</span>
               </Link>
 
               <PageFooter className="col-span-2" />
