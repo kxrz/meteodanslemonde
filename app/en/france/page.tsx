@@ -12,7 +12,7 @@ export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "La chaleur en France · cestchaud.fr",
-  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
+  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
   alternates: { canonical: "https://cestchaud.fr/en/france" },
   openGraph: {
     title: "La chaleur en France · cestchaud.fr",
@@ -36,7 +36,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "La chaleur en France",
   url: "https://cestchaud.fr/en/france",
-  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
+  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
   about: {
     "@type": "Country",
     name: "France",
@@ -110,10 +110,10 @@ export default async function FrancePage() {
     {
       const tempDesc = avgTemp >= 35 ? "une vague de chaleur intense" : avgTemp >= 30 ? "une chaleur estivale prononcée" : avgTemp >= 25 ? "des températures estivales" : "des températures modérées"
       const spread = above30 > 0
-        ? ` On compte ${above30} ville${above30 > 1 ? "s" : ""} au-dessus de 30°C, de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le thermomètre s'arrête à ${coolest.apparent_temp_max}°C.`
-        : ` De ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le ressenti plafonne à ${coolest.apparent_temp_max}°C, l'amplitude reste sensible.`
+        ? ` On compte ${above30} ville${above30 > 1 ? "s" : ""} au-dessus de 30°C, de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le thermomètre s’arrête à ${coolest.apparent_temp_max}°C.`
+        : ` De ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le ressenti plafonne à ${coolest.apparent_temp_max}°C, l’amplitude reste sensible.`
       parts.push(
-        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l'ensemble du territoire.${spread}`
+        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l’ensemble du territoire.${spread}`
       )
     }
 
@@ -122,14 +122,14 @@ export default async function FrancePage() {
       const sign = biggestAnomaly.anomaly! > 0 ? "au-dessus" : "en dessous"
       const absAnomaly = Math.abs(biggestAnomaly.anomaly!)
       const trendStr = avgTrend !== null
-        ? ` À l'échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois, une trajectoire qui s'accélère.`
+        ? ` À l’échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois, une trajectoire qui s’accélère.`
         : ""
       parts.push(
-        `C'est à ${biggestAnomaly.name} que l'écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions. Elles témoignent d'un glissement durable des repères climatiques.${trendStr}`
+        `C’est à ${biggestAnomaly.name} que l’écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions. Elles témoignent d’un glissement durable des repères climatiques.${trendStr}`
       )
     } else if (avgTrend !== null) {
       parts.push(
-        `Les données ERA5 révèlent une tendance de ${fmtDelta(avgTrend)}°C sur 30 ans pour ce mois à l'échelle nationale. Ce chiffre, stable et mesuré sur des décennies, illustre une mutation profonde du climat français.`
+        `Les données ERA5 révèlent une tendance de ${fmtDelta(avgTrend)}°C sur 30 ans pour ce mois à l’échelle nationale. Ce chiffre, stable et mesuré sur des décennies, illustre une mutation profonde du climat français.`
       )
     }
 
@@ -147,7 +147,7 @@ export default async function FrancePage() {
       const projStr = [proj40Str, proj50Str].filter(Boolean).join(", ")
       const top6Names = top6.map(c => c.name).slice(0, 3).join(", ")
       parts.push(
-        `Pour les six villes les plus chaudes aujourd'hui, dont ${top6Names}, le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays. Leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
+        `Pour les six villes les plus chaudes aujourd’hui, dont ${top6Names}, le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays. Leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
       )
     }
 
@@ -163,14 +163,14 @@ export default async function FrancePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
+      <div className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col bg-[#f5f4f0]">
 
         <SiteHeader asLink />
 
-        <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+        <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
-          {/* Left panel */}
-          <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-black/[0.06]">
+          {/* Left panel — 40% */}
+          <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col justify-between border-b lg:border-b-0 border-black/[0.06]">
             <div>
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
                 France · {dataLabel}
@@ -210,8 +210,8 @@ export default async function FrancePage() {
             <PageFooter />
           </div>
 
-          {/* Right panel */}
-          <div className="flex-1 overflow-y-auto p-3 lg:p-4">
+          {/* Right panel — 60% scrollable */}
+          <div className="flex-1 lg:overflow-y-auto p-3 lg:p-4">
             <div className="grid grid-cols-2 gap-3 pb-4">
 
               {/* GIEC 2050 plus exposée */}
@@ -278,12 +278,12 @@ export default async function FrancePage() {
               {/* Editorial narrative */}
               {narrativeParagraphs.length > 0 && (
                 <div className="col-span-2 bg-neutral-950 rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/25 mb-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-5">
                     Analyse · {monthName} {new Date().getFullYear()}
                   </p>
                   <div className="space-y-4">
                     {narrativeParagraphs.map((para, i) => (
-                      <p key={i} className={`leading-relaxed ${i === 0 ? "text-base font-semibold text-white/90" : "text-sm text-white/60"}`}>
+                      <p key={i} className={`leading-relaxed ${i === 0 ? "text-base font-semibold text-white" : "text-sm text-white/80"}`}>
                         {para}
                       </p>
                     ))}
@@ -292,26 +292,26 @@ export default async function FrancePage() {
               )}
 
               {/* GIEC moy. top 6 */}
-              <div className="bg-neutral-900 rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
-                  GIEC moy. top 6
+              <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/60 mb-4">
+                  GIEC · moyenne des 6 villes les plus chaudes
                 </p>
-                <div className="space-y-1 mb-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-white/40">2040</span>
-                    <span className="font-black text-lg text-white">{fmtDelta(avgProj2040)}°C</span>
+                <div className="flex gap-8 mb-4">
+                  <div>
+                    <p className="text-xs font-semibold text-purple-900/50 mb-1">2040</p>
+                    <p className="font-black text-3xl text-purple-900">{fmtDelta(avgProj2040)}°C</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-white/40">2050</span>
-                    <span className="font-black text-lg text-white">{fmtDelta(avgProj2050)}°C</span>
+                  <div>
+                    <p className="text-xs font-semibold text-purple-900/50 mb-1">2050</p>
+                    <p className="font-black text-3xl text-purple-900">{fmtDelta(avgProj2050)}°C</p>
                   </div>
                 </div>
-                <div className="space-y-0.5">
+                <div className="border-t border-purple-900/10 pt-3 flex flex-wrap gap-x-4 gap-y-1">
                   {top6.map((c) => (
                     <Link
                       key={c.id}
                       href={`/a/${slugify(c.name)}`}
-                      className="block text-xs text-white/40 hover:text-white/70 transition-colors"
+                      className="text-xs font-semibold text-purple-900/70 hover:text-purple-900 hover:underline transition-colors"
                     >
                       {c.name}
                     </Link>

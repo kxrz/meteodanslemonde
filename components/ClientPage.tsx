@@ -94,16 +94,19 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
       ? Math.round((selectedCity.apparent_temp_max - climateNormal) * 10) / 10
       : null
 
+  const hottestCity = citiesFR.reduce((a, b) => b.apparent_temp_max > a.apparent_temp_max ? b : a)
+  const coldestCity = citiesFR.reduce((a, b) => b.apparent_temp_max < a.apparent_temp_max ? b : a)
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
+    <div className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col bg-[#f5f4f0]">
 
       <SiteHeader />
 
       {/* Main */}
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
         {/* Map */}
-        <div className="h-[50vh] lg:h-[70vh] lg:w-[60%] shrink-0 relative p-3 lg:p-4">
+        <div className="h-[50vh] lg:h-auto lg:w-[60%] shrink-0 relative p-3 lg:p-4">
           <div className="w-full h-full rounded-3xl overflow-hidden">
             <Map
               citiesFR={citiesFR}
@@ -116,7 +119,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
         </div>
 
         {/* Bento panel */}
-        <div className="flex-1 p-3 lg:p-4">
+        <div className="flex-1 p-3 lg:p-4 lg:overflow-y-auto">
           <div className="grid grid-cols-2 gap-3 pb-4">
 
             {!selectedCity ? (
@@ -138,7 +141,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         <span className="text-3xl font-black text-neutral-300">C</span>
                       </div>
                       <p className="text-neutral-600 text-sm mt-1.5">
-                        à{ " "}
+                        à{" "}
                         <Link
                           href={`/a/${slugify(heroCity.name)}`}
                           className="font-bold text-neutral-900 hover:underline"
@@ -159,6 +162,34 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-xs text-neutral-400 mt-4 leading-relaxed">
                     Ou cliquez une autre ville de la carte pour la comparer avec le monde entier.
                   </p>
+                </div>
+
+                {/* Ville la plus chaude */}
+                <div className="bg-[#fed7aa]/80 rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">
+                    La plus chaude
+                  </p>
+                  <div className="text-4xl font-black text-orange-900 leading-none">
+                    {hottestCity.apparent_temp_max}°C
+                  </div>
+                  <Link href={`/a/${slugify(hottestCity.name)}`} className="text-sm font-bold text-orange-900/80 mt-1.5 block hover:underline truncate">
+                    {hottestCity.name}
+                  </Link>
+                  <p className="text-xs text-orange-900/50 truncate">{hottestCity.region}</p>
+                </div>
+
+                {/* Ville la plus fraîche */}
+                <div className="bg-[#bfdbfe]/70 rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
+                    La plus fraîche
+                  </p>
+                  <div className="text-4xl font-black text-blue-900 leading-none">
+                    {coldestCity.apparent_temp_max}°C
+                  </div>
+                  <Link href={`/a/${slugify(coldestCity.name)}`} className="text-sm font-bold text-blue-900/80 mt-1.5 block hover:underline truncate">
+                    {coldestCity.name}
+                  </Link>
+                  <p className="text-xs text-blue-900/50 truncate">{coldestCity.region}</p>
                 </div>
 
                 {/* Compteur FR */}
@@ -194,11 +225,17 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
                     Comment ça marche
                   </p>
-                  <p className="text-sm text-neutral-600 leading-relaxed">
+                  <p className="text-sm text-neutral-600 leading-relaxed mb-4">
                     On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
                     Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
                     En plus : données historiques ERA5 et projections GIEC (CMIP6).
                   </p>
+                  <Link
+                    href="/methodologie"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-900 hover:underline"
+                  >
+                    Lire la méthodologie <span className="text-neutral-400">→</span>
+                  </Link>
                 </div>
 
                 <PageFooter className="col-span-2" />
@@ -256,7 +293,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         <span className="text-2xl font-black text-neutral-400">C</span>
                       </div>
                       <p className="text-xs text-neutral-500 mt-1.5">
-                        {getWeather(selectedCity.weathercode).emoji}{ ""}
+                        {getWeather(selectedCity.weathercode).emoji}{" "}
                         ressenti max · {getWeather(selectedCity.weathercode).label}
                       </p>
                     </div>
@@ -358,21 +395,21 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   </div>
                 </div>
 
-                {/* CTA fiche ville (FR only) — BEFORE twins */}
+                {/* CTA fiche ville (FR only) */}
                 {isFR && (
                   <Link
                     href={`/a/${slugify(selectedCity.name)}`}
                     className="col-span-2 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-3xl px-6 py-5 group"
                   >
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/40 mb-1">
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-1">
                         Fiche complète
                       </p>
                       <p className="text-lg font-black text-white">
                         {selectedCity.name} · données &amp; projections
                       </p>
                     </div>
-                    <span className="text-white/40 group-hover:text-white/80 text-2xl transition-colors">→</span>
+                    <span className="text-white/50 group-hover:text-white text-2xl transition-colors">→</span>
                   </Link>
                 )}
 
