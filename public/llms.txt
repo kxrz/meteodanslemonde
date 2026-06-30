@@ -2,14 +2,14 @@
 
 > Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.
 
-Ce site compare le ressenti maximal journalièr de villes françaises et mondiales pour identifier des « jumeaux climatiques » — des villes qui vivent aujourd’hui les températures qu’une ville française vivra demain sous l’effet du réchauffement.
+Ce site compare le ressenti maximal journalièr de villes françaises et mondiales pour identifier des « jumeaux climatiques » - des villes qui vivent aujourd’hui les températures qu’une ville française vivra demain sous l’effet du réchauffement.
 
 Aucun contenu n’est généré par IA générative. Toutes les données proviennent de sources scientifiques ouvertes.
 
 ## Sources de données
 
 - Open-Meteo : températures ressenties en temps réel (apparent_temperature_max)
-- ERA5 (ECMWF) : normales climatiques 1991–2020 et tendances sur 30 ans
+- ERA5 (ECMWF) : normales climatiques 1991-2020 et tendances sur 30 ans
 - CMIP6 / GIEC AR6 : projections climatiques 2030, 2040, 2050 (scénario SSP2-4.5)
 
 ## Pages

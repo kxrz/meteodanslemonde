@@ -113,13 +113,13 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
     twitter: `https://twitter.com/intent/tweet?text=${shareTextEncoded}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
     whatsapp: `https://api.whatsapp.com/send?text=${shareTextEncoded}`,
-    email: `mailto:?subject=${encodeURIComponent(`${city.name} · données climatiques`)}&body=${shareTextEncoded}`,
+    email: `mailto:?subject=${encodeURIComponent(`${city.name} - données climatiques`)}&body=${shareTextEncoded}`,
   }
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${city.name} · Chaleur & projections climatiques`,
+    name: `${city.name} - Chaleur & projections climatiques`,
     url: pageUrl,
     description: `Données climatiques et projections GIEC pour ${city.name}, ${city.region}.`,
     about: {
@@ -149,7 +149,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
         <SiteHeader asLink />
 
-        {/* Main — map left, bento right */}
+        {/* Main - map left, bento right */}
         <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
           {/* Left: Leaflet map (40%) full height */}
@@ -169,7 +169,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             {/* Overlay: coordinates */}
             <div className="absolute bottom-6 left-6 z-[1000]">
               <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
-                {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
+                {city.lat.toFixed(2)}°N - {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
               </p>
             </div>
           </div>
@@ -188,7 +188,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </article>
               )}
 
-              {/* Température max + Normale + Tendance — grouped to guarantee stacking */}
+              {/* Température max + Normale + Tendance - grouped to guarantee stacking */}
               <div className="col-span-2 space-y-3">
                 {weather && (
                   <div className="bg-[#dbeafe] rounded-3xl p-6">
@@ -215,10 +215,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     {normal !== null ? (
                       <>
                         <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}°C</div>
-                        <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
+                        <p className="text-xs text-green-900/50 mt-2">moy. 1991-2020</p>
                       </>
                     ) : (
-                      <p className="text-2xl font-black text-green-900/30">—</p>
+                      <p className="text-2xl font-black text-green-900/30">-</p>
                     )}
                   </div>
                   {/* Tendance 30 ans */}
@@ -231,10 +231,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                         <div className="text-4xl font-black text-neutral-900 leading-none">
                           {fmtDelta(trend)}°C
                         </div>
-                        <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
+                        <p className="text-xs text-neutral-400 mt-2">depuis 1990 - {monthName}</p>
                       </>
                     ) : (
-                      <p className="text-2xl font-black text-neutral-300">—</p>
+                      <p className="text-2xl font-black text-neutral-300">-</p>
                     )}
                   </div>
                 </div>
@@ -246,7 +246,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   Si rien ne change…
                 </p>
                 <p className="text-[10px] text-purple-900/60 mb-4">
-                  Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
+                  Modèle CMIP6 (GIEC AR6) - écart vs. 2000-2020
                 </p>
                 <div className="space-y-2.5">
                   {([

@@ -145,7 +145,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         >
                           {heroCity.name}
                         </Link>
-                        <span className="text-neutral-400"> · {getWeather(heroCity.weathercode).emoji}</span>
+                        <span className="text-neutral-400"> - {getWeather(heroCity.weathercode).emoji}</span>
                       </p>
                     </div>
                     <button
@@ -248,7 +248,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                           <Link
                             href={`/a/${slugify(selectedCity.name)}`}
                             className="shrink-0 flex flex-col items-center gap-0.5 text-black/25 hover:text-black/70 transition-colors mt-0.5"
-                            title={`Fiche complète · ${selectedCity.name}`}
+                            title={`Fiche complète - ${selectedCity.name}`}
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="11" cy="11" r="8" />
@@ -282,7 +282,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                       </div>
                       <p className="text-xs text-neutral-500 mt-1.5">
                         {getWeather(selectedCity.weathercode).emoji}{" "}
-                        ressenti max · {getWeather(selectedCity.weathercode).label}
+                        ressenti max - {getWeather(selectedCity.weathercode).label}
                       </p>
                     </div>
                     <div className="text-right text-xs text-neutral-500 space-y-1">
@@ -298,10 +298,10 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   {climateNormal !== null ? (
                     <>
                       <div className="text-4xl font-black text-green-900 leading-none">{fmt(climateNormal)}°C</div>
-                      <p className="text-xs text-green-900/50 mt-2">moy. {monthName} 1991–2020</p>
+                      <p className="text-xs text-green-900/50 mt-2">moy. {monthName} 1991-2020</p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-green-900/30">—</p>
+                    <p className="text-2xl font-black text-green-900/30">-</p>
                   )}
                 </div>
 
@@ -322,13 +322,13 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                       </p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-black/20">—</p>
+                    <p className="text-2xl font-black text-black/20">-</p>
                   )}
                 </div>
 
                 {/* Tendance 30 ans */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance observée — 30 ans</p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance observée - 30 ans</p>
                   {climateTrend !== null ? (
                     <p className="font-black text-xl text-neutral-900">
                       {fmtDelta(climateTrend)}°C
@@ -342,7 +342,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {/* Projections GIEC */}
                 <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">Si rien ne change…</p>
-                  <p className="text-[10px] text-purple-900/60 mb-4">Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020</p>
+                  <p className="text-[10px] text-purple-900/60 mb-4">Modèle CMIP6 (GIEC AR6) - écart vs. 2000-2020</p>
                   <div className="space-y-2.5">
                     {([
                       { year: 2030, val: climateProj2030 },

@@ -106,7 +106,7 @@ export default async function FrancePage() {
   function buildFranceNarrative() {
     const parts: string[] = []
 
-    // Paragraph 1 — today's snapshot
+    // Paragraph 1 - today's snapshot
     {
       const tempDesc = avgTemp >= 35 ? "une vague de chaleur intense" : avgTemp >= 30 ? "une chaleur estivale prononcée" : avgTemp >= 25 ? "des températures estivales" : "des températures modérées"
       const spread = above30 > 0
@@ -117,7 +117,7 @@ export default async function FrancePage() {
       )
     }
 
-    // Paragraph 2 — anomaly vs ERA5 normal
+    // Paragraph 2 - anomaly vs ERA5 normal
     if (biggestAnomaly) {
       const sign = biggestAnomaly.anomaly! > 0 ? "au-dessus" : "en dessous"
       const absAnomaly = Math.abs(biggestAnomaly.anomaly!)
@@ -133,14 +133,14 @@ export default async function FrancePage() {
       )
     }
 
-    // Paragraph 3 — GIEC projections
+    // Paragraph 3 - GIEC projections
     if (mostImpacted && leastImpacted) {
       parts.push(
         `Les projections GIEC CMIP6 dessinent des trajectoires très contrastées selon les territoires. ${mostImpacted.name} (${mostImpacted.region}) est la ville la plus exposée au scénario 2050, avec une hausse projetée de ${fmtDelta(mostImpacted.proj2050!)}°C. ${leastImpacted.name} (${leastImpacted.region}) figure parmi les moins impactées, à ${fmtDelta(leastImpacted.proj2050!)}°C. Ces écarts rappellent que le réchauffement ne sera pas uniforme : le Sud et les plaines continentales seront frappés plus tôt et plus fort que les façades atlantiques ou alpines.`
       )
     }
 
-    // Paragraph 4 — top 6 projection summary
+    // Paragraph 4 - top 6 projection summary
     if (avgProj2040 !== null || avgProj2050 !== null) {
       const proj40Str = avgProj2040 !== null ? `${fmtDelta(Math.round(avgProj2040 * 10) / 10)}°C en 2040` : null
       const proj50Str = avgProj2050 !== null ? `${fmtDelta(Math.round(avgProj2050 * 10) / 10)}°C en 2050` : null
@@ -169,11 +169,11 @@ export default async function FrancePage() {
 
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
-          {/* Left panel — 40% */}
+          {/* Left panel - 40% */}
           <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col justify-between border-b lg:border-b-0 border-black/[0.06]">
             <div>
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                France · {dataLabel}
+                France - {dataLabel}
               </p>
               <h1 className="text-3xl font-black text-neutral-900 leading-tight">
                 La chaleur en France
@@ -201,7 +201,7 @@ export default async function FrancePage() {
                   ) : (
                     <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
                       <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
-                      <div className="text-xl font-black text-yellow-900/30">—</div>
+                      <div className="text-xl font-black text-yellow-900/30">-</div>
                     </div>
                   )}
                 </div>
@@ -210,14 +210,14 @@ export default async function FrancePage() {
             <PageFooter />
           </div>
 
-          {/* Right panel — 60% scrollable */}
+          {/* Right panel - 60% scrollable */}
           <div className="flex-1 lg:overflow-y-auto p-3 lg:p-4">
             <div className="grid grid-cols-2 gap-3 pb-4">
 
               {/* GIEC 2050 plus exposée */}
               <div className="bg-purple-50 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/60 mb-3">
-                  GIEC 2050 · plus exposée
+                  GIEC 2050 - plus exposée
                 </p>
                 {mostImpacted ? (
                   <>
@@ -233,14 +233,14 @@ export default async function FrancePage() {
                     <p className="text-xs text-purple-900/50">{mostImpacted.region}</p>
                   </>
                 ) : (
-                  <p className="text-2xl font-black text-purple-900/20">—</p>
+                  <p className="text-2xl font-black text-purple-900/20">-</p>
                 )}
               </div>
 
               {/* GIEC 2050 moins exposée */}
               <div className="bg-indigo-50 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-indigo-900/60 mb-3">
-                  GIEC 2050 · moins exposée
+                  GIEC 2050 - moins exposée
                 </p>
                 {leastImpacted ? (
                   <>
@@ -256,7 +256,7 @@ export default async function FrancePage() {
                     <p className="text-xs text-indigo-900/50">{leastImpacted.region}</p>
                   </>
                 ) : (
-                  <p className="text-2xl font-black text-indigo-900/20">—</p>
+                  <p className="text-2xl font-black text-indigo-900/20">-</p>
                 )}
               </div>
 
@@ -264,12 +264,12 @@ export default async function FrancePage() {
               {avgTrend !== null && (
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
-                    Tendance 30 ans · moyenne France
+                    Tendance 30 ans - moyenne France
                   </p>
                   <p className="font-black text-2xl text-neutral-900">
                     {fmtDelta(avgTrend)}°C
                     <span className="text-sm font-normal text-neutral-400 ml-2">
-                      depuis 1990 · {monthName}
+                      depuis 1990 - {monthName}
                     </span>
                   </p>
                 </div>
@@ -279,7 +279,7 @@ export default async function FrancePage() {
               {narrativeParagraphs.length > 0 && (
                 <div className="col-span-2 bg-neutral-950 rounded-3xl p-6">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-5">
-                    Analyse · {monthName} {new Date().getFullYear()}
+                    Analyse - {monthName} {new Date().getFullYear()}
                   </p>
                   <div className="space-y-4">
                     {narrativeParagraphs.map((para, i) => (
@@ -294,7 +294,7 @@ export default async function FrancePage() {
               {/* GIEC moy. top 6 */}
               <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/60 mb-4">
-                  GIEC · moyenne des 6 villes les plus chaudes
+                  GIEC - moyenne des 6 villes les plus chaudes
                 </p>
                 <div className="flex gap-8 mb-4">
                   <div>
@@ -322,7 +322,7 @@ export default async function FrancePage() {
               {/* Toutes les villes */}
               <div className="col-span-2 bg-white rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
-                  Toutes les villes · du plus chaud au plus frais
+                  Toutes les villes - du plus chaud au plus frais
                 </p>
                 <div className="space-y-1">
                   {sorted.map((city) => {

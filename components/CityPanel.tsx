@@ -50,7 +50,7 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
             {isFR ? (
               <>
                 <div className="text-3xl font-bold text-neutral-900">{city.apparent_temp_max}°C</div>
-                <div className="text-sm text-neutral-400 mt-0.5">ressenti max · {label}</div>
+                <div className="text-sm text-neutral-400 mt-0.5">ressenti max - {label}</div>
               </>
             ) : (
               <>
@@ -75,7 +75,7 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
           {isFR ? "Jumeaux climatiques du jour" : "Villes françaises similaires"}
         </div>
         <div className="text-[10px] text-neutral-300 mb-3">
-          Basé sur le ressenti max · ±4°C
+          Basé sur le ressenti max - ±4°C
         </div>
         {twins.length === 0 ? (
           <p className="text-xs text-neutral-400 italic">Aucun jumeau trouvé aujourd'hui</p>
@@ -114,7 +114,7 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
       </div>
 
       <div className="px-5 py-2 bg-neutral-50 border-t border-neutral-100 shrink-0">
-        <p className="text-[10px] text-neutral-400">Open-Meteo · données du jour</p>
+        <p className="text-[10px] text-neutral-400">Open-Meteo - données du jour</p>
       </div>
     </div>
   )
