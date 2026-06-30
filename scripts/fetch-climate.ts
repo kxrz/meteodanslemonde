@@ -10,6 +10,19 @@
 import fs from "fs"
 import path from "path"
 
+const envPath = path.join(process.cwd(), ".env.local")
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
+    const [k, ...rest] = line.split("=")
+    if (k?.trim() && !k.startsWith("#")) process.env[k.trim()] = rest.join("=").trim()
+  }
+}
+
+const API_KEY    = process.env.OPEN_METEO_API_KEY ?? ""
+const API_SUFFIX = API_KEY ? `&apikey=${API_KEY}` : ""
+
+if (!API_KEY) console.warn("⚠ OPEN_METEO_API_KEY not set — running without auth (rate limits apply)")
+
 const DATA_DIR = path.join(process.cwd(), "data")
 const CLIMATE_PATH = path.join(DATA_DIR, "climate.json")
 const BATCH_SIZE = 1           // 1 ville à la fois — moins de pression sur l'API
@@ -161,7 +174,7 @@ async function fetchClimateBatch(
       `https://archive-api.open-meteo.com/v1/archive` +
       `?latitude=${lats}&longitude=${lons}` +
       `&start_date=1991-01-01&end_date=2024-12-31` +
-      `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC`
+      `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC` + API_SUFFIX
     )
     if (!archRes.ok) {
       console.warn(`    [fail] archive HTTP ${archRes.status}`)
@@ -183,7 +196,7 @@ async function fetchClimateBatch(
       `https://climate-api.open-meteo.com/v1/climate` +
       `?latitude=${lats}&longitude=${lons}` +
       `&start_date=2000-01-01&end_date=2050-12-31` +
-      `&models=EC_Earth3P_HR,MPI_ESM1_2_XR,NICAM16_8S&daily=temperature_2m_max`
+      `&models=EC_Earth3P_HR,MPI_ESM1_2_XR,NICAM16_8S&daily=temperature_2m_max` + API_SUFFIX
     )
     if (climRes.ok) {
       const data = await climRes.json()

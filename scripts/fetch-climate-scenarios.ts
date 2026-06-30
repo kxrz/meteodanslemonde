@@ -16,8 +16,22 @@
 import fs from "fs"
 import path from "path"
 
-const DATA_DIR     = path.join(process.cwd(), "data")
-const OUTPUT_PATH  = path.join(DATA_DIR, "climate-full.json")
+// Load .env.local if present (tsx doesn't auto-load it)
+const envPath = path.join(process.cwd(), ".env.local")
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
+    const [k, ...rest] = line.split("=")
+    if (k?.trim() && !k.startsWith("#")) process.env[k.trim()] = rest.join("=").trim()
+  }
+}
+
+const API_KEY  = process.env.OPEN_METEO_API_KEY ?? ""
+const API_SUFFIX = API_KEY ? `&apikey=${API_KEY}` : ""
+
+if (!API_KEY) console.warn("⚠ OPEN_METEO_API_KEY not set — running without auth (rate limits apply)")
+
+const DATA_DIR    = path.join(process.cwd(), "data")
+const OUTPUT_PATH = path.join(DATA_DIR, "climate-full.json")
 
 const DELAY_BETWEEN_CALLS = 10_000   // between archive / each SSP call
 const DELAY_BETWEEN_CITIES = 20_000  // between cities
@@ -92,7 +106,7 @@ async function fetchNormals(city: { lat: number; lon: number }) {
     `https://archive-api.open-meteo.com/v1/archive` +
     `?latitude=${city.lat}&longitude=${city.lon}` +
     `&start_date=1991-01-01&end_date=2024-12-31` +
-    `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC`
+    `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC` + API_SUFFIX
 
   const res = await fetchWithRetry(url)
   if (!res.ok) { console.warn(`    [archive fail ${res.status}]`); return null }
@@ -118,7 +132,7 @@ async function fetchScenario(city: { lat: number; lon: number }, models: string[
     `https://climate-api.open-meteo.com/v1/climate` +
     `?latitude=${city.lat}&longitude=${city.lon}` +
     `&start_date=2000-01-01&end_date=2050-12-31` +
-    `&models=${models.join(",")}&daily=temperature_2m_max,apparent_temperature_max`
+    `&models=${models.join(",")}&daily=temperature_2m_max,apparent_temperature_max` + API_SUFFIX
 
   const res = await fetchWithRetry(url)
   if (!res.ok) { console.warn(`    [climate fail ${res.status}]`); return null }
