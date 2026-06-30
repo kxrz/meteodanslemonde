@@ -247,12 +247,14 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         {isFR && (
                           <Link
                             href={`/a/${slugify(selectedCity.name)}`}
-                            className="shrink-0 text-black/25 hover:text-black/70 transition-colors mt-0.5"
+                            className="shrink-0 flex flex-col items-center gap-0.5 text-black/25 hover:text-black/70 transition-colors mt-0.5"
                             title={`Fiche complète · ${selectedCity.name}`}
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                              <circle cx="11" cy="11" r="8" />
+                              <path d="m21 21-4.35-4.35" />
                             </svg>
+                            <span className="text-[9px] font-medium leading-none">plus d'infos</span>
                           </Link>
                         )}
                       </div>
@@ -359,7 +361,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {isFR && (
                   <Link
                     href={`/a/${slugify(selectedCity.name)}`}
-                    className="col-span-2 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-3xl px-6 py-5 group"
+                    className="col-span-2 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-3xl px-6 py-5 group animate-glow-border ring-1 ring-white/10"
                   >
                     <div>
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-1">Fiche complète</p>
