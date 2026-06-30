@@ -14,7 +14,7 @@ const DATA_DIR = path.join(process.cwd(), "data")
 const CLIMATE_PATH = path.join(DATA_DIR, "climate.json")
 const BATCH_SIZE = 3
 const BETWEEN_CALLS_MS = 4000
-const BETWEEN_BATCHES_MS = 6000
+const BETWEEN_BATCHES_MS = 8000
 
 interface ClimateEntry {
   normal: (number | null)[]
@@ -57,16 +57,21 @@ function monthAvg(
   return vals.reduce((a, b) => a + b, 0) / vals.length
 }
 
-function computeEntry(id: string, arch: ApiResponse, clim: ApiResponse): ClimateEntry | null {
-  if (!arch?.daily?.time || !clim?.daily?.time) return null
+function computeEntry(
+  id: string,
+  arch: ApiResponse,
+  clim: ApiResponse | null
+): ClimateEntry | null {
+  if (!arch?.daily?.time) return null
   const ad = arch.daily.time as string[]
   const av = mergeValues(
     (arch.daily.apparent_temperature_max as (number | null)[]) ?? [],
     (arch.daily.temperature_2m_max as (number | null)[]) ?? []
   )
-  const cd = clim.daily.time as string[]
-  const cv = (clim.daily.temperature_2m_max as (number | null)[]) ?? []
-  if (!ad.length || !cd.length) return null
+  if (!ad.length) return null
+
+  const cd = (clim?.daily?.time as string[]) ?? []
+  const cv = (clim?.daily?.temperature_2m_max as (number | null)[]) ?? []
 
   const normal: (number | null)[] = [], trend: (number | null)[] = []
   const proj2030: (number | null)[] = [], proj2040: (number | null)[] = [], proj2050: (number | null)[] = []
@@ -77,23 +82,28 @@ function computeEntry(id: string, arch: ApiResponse, clim: ApiResponse): Climate
     const base = monthAvg(ad, av, m, 1991, 2000)
     const recent = monthAvg(ad, av, m, 2015, 2024)
     trend.push(base != null && recent != null ? Math.round((recent - base) * 10) / 10 : null)
-    const cb = monthAvg(cd, cv, m, 2000, 2020)
-    const c30 = monthAvg(cd, cv, m, 2028, 2032) // 5-year window
-    const c40 = monthAvg(cd, cv, m, 2036, 2044) // 9-year window (wider = less noise)
-    const c50 = monthAvg(cd, cv, m, 2043, 2050) // 8-year window (model ends 2050)
-    proj2030.push(cb != null && c30 != null ? Math.round((c30 - cb) * 10) / 10 : null)
-    proj2040.push(cb != null && c40 != null ? Math.round((c40 - cb) * 10) / 10 : null)
-    proj2050.push(cb != null && c50 != null ? Math.round((c50 - cb) * 10) / 10 : null)
+
+    if (cd.length && cv.length) {
+      const cb = monthAvg(cd, cv, m, 2000, 2020)
+      const c30 = monthAvg(cd, cv, m, 2028, 2032)
+      const c40 = monthAvg(cd, cv, m, 2036, 2044)
+      const c50 = monthAvg(cd, cv, m, 2043, 2050)
+      proj2030.push(cb != null && c30 != null ? Math.round((c30 - cb) * 10) / 10 : null)
+      proj2040.push(cb != null && c40 != null ? Math.round((c40 - cb) * 10) / 10 : null)
+      proj2050.push(cb != null && c50 != null ? Math.round((c50 - cb) * 10) / 10 : null)
+    } else {
+      proj2030.push(null); proj2040.push(null); proj2050.push(null)
+    }
   }
 
-  if (!normal.some((v) => v != null) && !proj2030.some((v) => v != null)) {
-    console.warn(`    [skip] ${id}: all values null`)
+  if (!normal.some((v) => v != null)) {
+    console.warn(`    [skip] ${id}: all archive values null`)
     return null
   }
   return { normal, trend, proj2030, proj2040, proj2050 }
 }
 
-async function fetchOne(url: string, maxRetries = 4): Promise<Response> {
+async function fetchOne(url: string, maxRetries = 5): Promise<Response> {
   let lastErr: Error | null = null
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     const ctrl = new AbortController()
@@ -112,7 +122,7 @@ async function fetchOne(url: string, maxRetries = 4): Promise<Response> {
     clearTimeout(t)
     if (res.status === 429) {
       const retryAfter = res.headers.get("Retry-After")
-      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 15000 * (attempt + 1)
+      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 20000 * (attempt + 1)
       console.warn(`    [429, waiting ${Math.round(delay / 1000)}s]`)
       await new Promise((r) => setTimeout(r, delay))
       continue
@@ -128,36 +138,51 @@ async function fetchClimateBatch(
   const lats = cities.map((c) => c.lat).join(",")
   const lons = cities.map((c) => c.lon).join(",")
 
-  const archRes = await fetchOne(
-    `https://archive-api.open-meteo.com/v1/archive` +
-    `?latitude=${lats}&longitude=${lons}` +
-    `&start_date=1991-01-01&end_date=2024-12-31` +
-    `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC`
-  )
-  if (!archRes.ok) {
-    console.warn(`    [fail] archive HTTP ${archRes.status}`)
+  // --- Archive (ERA5) ---
+  let archList: ApiResponse[]
+  try {
+    const archRes = await fetchOne(
+      `https://archive-api.open-meteo.com/v1/archive` +
+      `?latitude=${lats}&longitude=${lons}` +
+      `&start_date=1991-01-01&end_date=2024-12-31` +
+      `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC`
+    )
+    if (!archRes.ok) {
+      console.warn(`    [fail] archive HTTP ${archRes.status}`)
+      return cities.map((c) => [c.id, null])
+    }
+    const data = await archRes.json()
+    archList = Array.isArray(data) ? data : [data]
+  } catch (err) {
+    console.warn(`    [fail] archive: ${(err as Error).message}`)
     return cities.map((c) => [c.id, null])
   }
-  const archData = await archRes.json()
 
   await new Promise((r) => setTimeout(r, BETWEEN_CALLS_MS))
 
-  const climRes = await fetchOne(
-    `https://climate-api.open-meteo.com/v1/climate` +
-    `?latitude=${lats}&longitude=${lons}` +
-    `&start_date=2000-01-01&end_date=2050-12-31` +
-    `&models=MRI_AGCM3_2_S&daily=temperature_2m_max`
-  )
-  if (!climRes.ok) {
-    console.warn(`    [fail] climate HTTP ${climRes.status}`)
-    return cities.map((c) => [c.id, null])
+  // --- Climate (CMIP6) — failure is non-fatal: archive data still saved ---
+  let climList: ApiResponse[] | null = null
+  try {
+    const climRes = await fetchOne(
+      `https://climate-api.open-meteo.com/v1/climate` +
+      `?latitude=${lats}&longitude=${lons}` +
+      `&start_date=2000-01-01&end_date=2050-12-31` +
+      `&models=MRI_AGCM3_2_S&daily=temperature_2m_max`
+    )
+    if (climRes.ok) {
+      const data = await climRes.json()
+      climList = Array.isArray(data) ? data : [data]
+    } else {
+      console.warn(`    [climate fail HTTP ${climRes.status} — projections will be null]`)
+    }
+  } catch {
+    console.warn(`    [climate max retries — projections will be null, archive saved]`)
   }
-  const climData = await climRes.json()
 
-  const archList = (Array.isArray(archData) ? archData : [archData]) as ApiResponse[]
-  const climList = (Array.isArray(climData) ? climData : [climData]) as ApiResponse[]
-
-  return cities.map((city, i) => [city.id, computeEntry(city.id, archList[i], climList[i])])
+  return cities.map((city, i) => [
+    city.id,
+    computeEntry(city.id, archList[i], climList ? climList[i] : null),
+  ])
 }
 
 async function main() {
@@ -191,7 +216,7 @@ async function main() {
 
   const climateMap = { ...existing }
   let ok = Object.keys(existing).length
-  const failed: string[] = []
+  const noProjections: string[] = []
 
   for (let i = 0; i < batches.length; i++) {
     const batch = batches[i]
@@ -201,8 +226,12 @@ async function main() {
     const results = await fetchClimateBatch(batch)
     let batchOk = 0
     for (const [id, entry] of results) {
-      if (entry) { climateMap[id] = entry; ok++; batchOk++ }
-      else failed.push(id)
+      if (entry) {
+        climateMap[id] = entry
+        ok++
+        batchOk++
+        if (!entry.proj2030.some((v) => v != null)) noProjections.push(id)
+      }
     }
     console.log(`${batchOk}/${results.length} ok`)
 
@@ -215,19 +244,20 @@ async function main() {
 
   const total = allCities.length
   console.log(`\n✓ Climate: ${ok}/${total} cities with data`)
-  if (failed.length > 0) console.warn(`  No data for: ${failed.join(", ")}`)
+  if (noProjections.length > 0) {
+    console.warn(`  Archive only (no GIEC projections): ${noProjections.join(", ")}`)
+    console.log(`  Tip: re-run 'npm run fetch-climate' to retry projections for these cities.`)
+  }
 
   const sizeKB = Math.round(fs.statSync(CLIMATE_PATH).size / 1024)
   console.log(`✓ Wrote ${CLIMATE_PATH} (${sizeKB} kB)`)
-  if (ok < total) {
-    console.log(`\nTip: re-run 'npm run fetch-climate' to retry the ${failed.length} failed cities.`)
-  } else {
+  if (ok >= total) {
     console.log("\nNext step:")
     console.log("  git add data/climate.json && git commit -m 'chore: update climate data' && git push")
   }
 }
 
 main().catch((err) => {
-  console.error("Error:", err.message)
+  console.error("Fatal error:", err.message)
   process.exit(1)
 })
