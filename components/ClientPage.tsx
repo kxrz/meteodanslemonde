@@ -95,15 +95,15 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
       : null
 
   return (
-    <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
 
       <SiteHeader />
 
       {/* Main */}
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-row">
 
         {/* Map */}
-        <div className="h-[42vh] lg:h-auto lg:w-[60%] shrink-0 relative">
+        <div className="h-[50vh] lg:h-[70vh] lg:w-[60%] shrink-0 relative">
           <Map
             citiesFR={citiesFR}
             citiesWorld={citiesWorld}
@@ -114,12 +114,12 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
         </div>
 
         {/* Bento panel */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4">
+        <div className="flex-1 p-3 lg:p-4">
           <div className="grid grid-cols-2 gap-3 pb-4">
 
             {!selectedCity ? (
 
-              // ── État par défaut ───────────────────────────────────────────
+              // ── État par défaut
               <>
                 {/* Hero */}
                 <div className="col-span-2 bg-white rounded-3xl p-6">
@@ -204,7 +204,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
             ) : (
 
-              // ── Ville sélectionnée ───────────────────────────────────────
+              // ── Ville sélectionnée
               <>
                 {/* Météo principale */}
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
