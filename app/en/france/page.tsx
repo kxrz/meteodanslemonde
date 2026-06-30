@@ -12,7 +12,7 @@ export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "La chaleur en France - cestchaud.fr",
-  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
+  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
   alternates: { canonical: "https://www.cestchaud.fr/en/france" },
   openGraph: {
     title: "La chaleur en France - cestchaud.fr",
@@ -36,7 +36,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "La chaleur en France",
   url: "https://www.cestchaud.fr/en/france",
-  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
+  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
   about: {
     "@type": "Country",
     name: "France",
@@ -110,10 +110,10 @@ export default async function FrancePage() {
     {
       const tempDesc = avgTemp >= 35 ? "une vague de chaleur intense" : avgTemp >= 30 ? "une chaleur estivale prononcée" : avgTemp >= 25 ? "des températures estivales" : "des températures modérées"
       const spread = above30 > 0
-        ? ` On compte ${above30} ville${above30 > 1 ? "s" : ""} au-dessus de 30°C, de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le thermomètre s’arrête à ${coolest.apparent_temp_max}°C.`
-        : ` De ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le ressenti plafonne à ${coolest.apparent_temp_max}°C, l’amplitude reste sensible.`
+        ? ` On compte ${above30} ville${above30 > 1 ? "s" : ""} au-dessus de 30°C, de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le thermomètre s'arrête à ${coolest.apparent_temp_max}°C.`
+        : ` De ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le ressenti plafonne à ${coolest.apparent_temp_max}°C, l'amplitude reste sensible.`
       parts.push(
-        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l’ensemble du territoire.${spread}`
+        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l'ensemble du territoire.${spread}`
       )
     }
 
@@ -122,14 +122,14 @@ export default async function FrancePage() {
       const sign = biggestAnomaly.anomaly! > 0 ? "au-dessus" : "en dessous"
       const absAnomaly = Math.abs(biggestAnomaly.anomaly!)
       const trendStr = avgTrend !== null
-        ? ` À l’échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois, une trajectoire qui s’accélère.`
+        ? ` À l'échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois, une trajectoire qui s'accélère.`
         : ""
       parts.push(
-        `C’est à ${biggestAnomaly.name} que l’écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions. Elles témoignent d’un glissement durable des repères climatiques.${trendStr}`
+        `C'est à ${biggestAnomaly.name} que l'écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions. Elles témoignent d'un glissement durable des repères climatiques.${trendStr}`
       )
     } else if (avgTrend !== null) {
       parts.push(
-        `Les données ERA5 révèlent une tendance de ${fmtDelta(avgTrend)}°C sur 30 ans pour ce mois à l’échelle nationale. Ce chiffre, stable et mesuré sur des décennies, illustre une mutation profonde du climat français.`
+        `Les données ERA5 révèlent une tendance de ${fmtDelta(avgTrend)}°C sur 30 ans pour ce mois à l'échelle nationale. Ce chiffre, stable et mesuré sur des décennies, illustre une mutation profonde du climat français.`
       )
     }
 
@@ -147,7 +147,7 @@ export default async function FrancePage() {
       const projStr = [proj40Str, proj50Str].filter(Boolean).join(", ")
       const top6Names = top6.map(c => c.name).slice(0, 3).join(", ")
       parts.push(
-        `Pour les six villes les plus chaudes aujourd’hui, dont ${top6Names}, le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays. Leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
+        `Pour les six villes les plus chaudes aujourd'hui, dont ${top6Names}, le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays. Leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
       )
     }
 
@@ -210,8 +210,8 @@ export default async function FrancePage() {
           </div>
 
           {/* Right panel - 60% scrollable */}
-          <div className="flex-1 lg:overflow-y-auto p-3 lg:p-4">
-            <div className="grid grid-cols-2 gap-3 pb-4">
+          <div className="flex-1 lg:overflow-y-auto p-3 lg:p-4 flex flex-col">
+            <div className="grid grid-cols-2 gap-3 pb-4 flex-1">
 
               {/* GIEC 2050 plus exposée */}
               <div className="bg-purple-50 rounded-3xl p-5">
@@ -353,9 +353,9 @@ export default async function FrancePage() {
               </div>
 
             </div>
+            <PageFooter className="px-0 mt-4" />
           </div>
         </div>
-        <PageFooter className="px-5 lg:px-8" />
       </div>
     </>
   )
