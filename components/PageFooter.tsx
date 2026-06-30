@@ -13,14 +13,9 @@ export default function PageFooter({ className }: { className?: string }) {
         © LesWWW
       </a>
       {" · "}
-      <a
-        href="https://leswww.com/mentions-legales/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline underline-offset-2 hover:text-neutral-700"
-      >
+      <Link href="/mentions-legales" className="underline underline-offset-2 hover:text-neutral-700">
         Mentions légales
-      </a>
+      </Link>
       {" · "}
       <Link href="/contact" className="underline underline-offset-2 hover:text-neutral-700">
         Contact

@@ -12,7 +12,7 @@ export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "La chaleur en France · cestchaud.fr",
-  description: "Vue d'ensemble de la chaleur en France : températures actuelles, anomalies, tendances ERA5 et projections GIEC CMIP6 pour les 36 principales villes françaises.",
+  description: "Vue d'ensemble de la chaleur en France : températures actuelles, anomalies, tendances ERA5 et projections GIEC CMIP6 pour les 36 principales villes françaises.",
   alternates: { canonical: "https://cestchaud.fr/en/france" },
   openGraph: {
     title: "La chaleur en France · cestchaud.fr",
@@ -29,7 +29,7 @@ const jsonLd = {
   "@type": "WebPage",
   name: "La chaleur en France",
   url: "https://cestchaud.fr/en/france",
-  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
+  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
   about: {
     "@type": "Country",
     name: "France",
@@ -107,22 +107,47 @@ export default async function FrancePage() {
 
         <SiteHeader asLink />
 
-        <div className="flex-1 overflow-y-auto p-3 lg:p-4">
-          <div className="max-w-4xl mx-auto">
+        <div className="flex-1 flex flex-col lg:flex-row min-h-0">
+
+          {/* Left panel — 40% */}
+          <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 lg:sticky lg:top-0 lg:h-screen lg:overflow-hidden flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-black/[0.06]">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+                France · {dataLabel}
+              </p>
+              <h1 className="text-3xl font-black text-neutral-900 leading-tight">
+                La chaleur en France
+              </h1>
+              <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
+                Ressenti maximal journalier pour {citiesFR.length} villes françaises. Anomalies, tendances ERA5 et projections GIEC CMIP6.
+              </p>
+              <div className="mt-6 space-y-3">
+                <div className="bg-[#dbeafe] rounded-2xl p-4">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-1">Ressenti moyen</p>
+                  <div className="text-3xl font-black text-blue-900">{avgTemp}°C</div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-[#a8c4d4]/50 rounded-2xl p-3">
+                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-blue-900/50 mb-1">Plus frais</p>
+                    <div className="text-xl font-black text-blue-900">{coolest.apparent_temp_max}°C</div>
+                    <Link href={`/a/${slugify(coolest.name)}`} className="text-xs font-bold text-blue-900/70 hover:underline block truncate">{coolest.name}</Link>
+                  </div>
+                  <div className="bg-[#f4a27a]/50 rounded-2xl p-3">
+                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-1">Plus chaud</p>
+                    <div className="text-xl font-black text-orange-900">{hottest.apparent_temp_max}°C</div>
+                    <Link href={`/a/${slugify(hottest.name)}`} className="text-xs font-bold text-orange-900/70 hover:underline block truncate">{hottest.name}</Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <PageFooter />
+          </div>
+
+          {/* Right panel — 60% scrollable */}
+          <div className="flex-1 overflow-y-auto p-3 lg:p-4">
             <div className="grid grid-cols-2 gap-3 pb-4">
 
-              <div className="col-span-2 bg-white rounded-3xl p-6">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
-                  France · {dataLabel}
-                </p>
-                <h1 className="text-2xl font-black text-neutral-900 leading-tight">
-                  La chaleur en France
-                </h1>
-                <p className="text-sm text-neutral-600 mt-2 leading-relaxed">
-                  Ressenti maximal journalier pour {citiesFR.length} villes françaises.
-                </p>
-              </div>
-
+              {/* Extrêmes du jour */}
               <div className="bg-[#a8c4d4]/60 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/60 mb-3">
                   Plus frais aujourd'hui
@@ -150,6 +175,7 @@ export default async function FrancePage() {
                 <p className="text-xs text-orange-900/50">{hottest.region}</p>
               </div>
 
+              {/* Villes ≥ 30°C */}
               <div className="bg-[#fed7aa]/70 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/60 mb-3">
                   Villes ≥ 30°C
@@ -158,6 +184,7 @@ export default async function FrancePage() {
                 <p className="text-xs text-orange-900/50 mt-1.5">sur {citiesFR.length} villes</p>
               </div>
 
+              {/* Anomalie max */}
               <div className="bg-[#fef9c3]/80 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-yellow-900/60 mb-3">
                   Plus grande anomalie
@@ -180,6 +207,7 @@ export default async function FrancePage() {
                 )}
               </div>
 
+              {/* GIEC 2050 plus exposée */}
               <div className="bg-purple-50 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/60 mb-3">
                   GIEC 2050 · plus exposée
@@ -202,6 +230,7 @@ export default async function FrancePage() {
                 )}
               </div>
 
+              {/* GIEC 2050 moins exposée */}
               <div className="bg-indigo-50 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-indigo-900/60 mb-3">
                   GIEC 2050 · moins exposée
@@ -224,6 +253,7 @@ export default async function FrancePage() {
                 )}
               </div>
 
+              {/* Tendance 30 ans */}
               {avgTrend !== null && (
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
@@ -238,6 +268,7 @@ export default async function FrancePage() {
                 </div>
               )}
 
+              {/* Ressenti moyen */}
               <div className="bg-[#dbeafe] rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
                   Ressenti moyen France
@@ -246,6 +277,7 @@ export default async function FrancePage() {
                 <p className="text-xs text-blue-700/60 mt-2">moy. {citiesFR.length} villes</p>
               </div>
 
+              {/* GIEC moy. top 6 */}
               <div className="bg-neutral-900 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
                   GIEC moy. top 6
@@ -273,6 +305,7 @@ export default async function FrancePage() {
                 </div>
               </div>
 
+              {/* Toutes les villes */}
               <div className="col-span-2 bg-white rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
                   Toutes les villes · du plus chaud au plus frais
@@ -295,7 +328,7 @@ export default async function FrancePage() {
                           <span className="font-black text-sm text-neutral-700">{city.apparent_temp_max}°C</span>
                           {proj2050 !== null && (
                             <span className="text-xs text-purple-700/70 hidden sm:block">
-                              2050 : {fmtDelta(proj2050)}
+                              2050 : {fmtDelta(proj2050)}
                             </span>
                           )}
                           <span className="text-neutral-300 group-hover:text-neutral-500 transition-colors text-sm">→</span>
@@ -305,8 +338,6 @@ export default async function FrancePage() {
                   })}
                 </div>
               </div>
-
-              <PageFooter className="col-span-2" />
 
             </div>
           </div>

@@ -37,14 +37,6 @@ export default function CityMap({ lat, lon, name }: Props) {
       { subdomains: "abcd", maxZoom: 19 }
     ).addTo(map)
 
-    L.circleMarker([lat, lon], {
-      radius: 8,
-      fillColor: "#ef4444",
-      color: "#fff",
-      weight: 2,
-      fillOpacity: 0.9,
-    }).addTo(map)
-
     mapRef.current = map
 
     return () => {
