@@ -42,7 +42,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 })
   }
 
-  const { name, email, message } = body as Record<string, unknown>
+  const { name, email, message, website } = body as Record<string, unknown>
+
+  if (typeof website === "string" && website.trim()) {
+    return NextResponse.json({ ok: true })
+  }
 
   if (
     typeof name !== "string" || !name.trim() ||

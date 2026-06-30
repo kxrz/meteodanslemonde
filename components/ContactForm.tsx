@@ -9,9 +9,11 @@ export default function ContactForm() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
+  const [website, setWebsite] = useState("")
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (website) return
     setState("sending")
     try {
       const res = await fetch("/api/contact", {
@@ -40,6 +42,19 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 space-y-4">
+      {/* honeypot — invisible for humans */}
+      <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}>
+        <label htmlFor="website">Website</label>
+        <input
+          id="website"
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
       <div>
         <label className="block text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1.5">
           Nom
