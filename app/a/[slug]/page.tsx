@@ -1,75 +1,62 @@
-import { notFound } from "next/navigation"
 import Link from "next/link"
-import citiesFRRaw from "@/data/cities-fr.json"
-import citiesWorldRaw from "@/data/cities-world.json"
-import metaRaw from "@/data/meta.json"
-import { CityFR, CityWorld, ClimateMap } from "@/lib/types"
-import { getClimateValues } from "@/lib/use-climate-data"
-import { getWeather } from "@/lib/weather-codes"
+import { notFound } from "next/navigation"
+import { Metadata } from "next"
 import { slugify } from "@/lib/slugify"
 
 export const revalidate = 86400
 
-const citiesFR = citiesFRRaw as CityFR[]
-const citiesWorld = citiesWorldRaw as CityWorld[]
+const citiesFR = require("@/data/cities-fr.json") as Array<{
+  id: string; name: string; lat: number; lon: number; region: string
+}>
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-let climateMap: ClimateMap = {}
-try { climateMap = require("@/data/climate.json") as ClimateMap } catch {}
+let climateMap: Record<string, unknown> = {}
+try { climateMap = require("@/data/climate.json") } catch {}
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 let narratives: Record<string, string> = {}
-try { narratives = require("@/data/narratives.json") as Record<string, string> } catch {}
+try { narratives = require("@/data/narratives.json") } catch {}
 
-const TWIN_MAX_DIFF = 4
-const TWIN_COUNT = 5
-
-function getCityBySlug(slug: string): CityFR | null {
+function getCityBySlug(slug: string) {
   return citiesFR.find((c) => slugify(c.name) === slug) ?? null
-}
-
-function computeTwins(city: CityFR): CityWorld[] {
-  const ref = city.apparent_temp_max
-  return citiesWorld
-    .map((c) => ({ city: c, diff: Math.abs(c.apparent_temp_max - ref) }))
-    .filter(({ diff }) => diff <= TWIN_MAX_DIFF)
-    .sort((a, b) => a.diff - b.diff)
-    .slice(0, TWIN_COUNT)
-    .map(({ city }) => city)
 }
 
 export async function generateStaticParams() {
   return citiesFR.map((c) => ({ slug: slugify(c.name) }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const city = getCityBySlug(slug)
   if (!city) return {}
-
-  const month = new Date().getMonth() + 1
-  const climate = getClimateValues(climateMap[city.id], month, city.apparent_temp_max)
-  const weather = getWeather(city.weathercode)
-
-  const anomalyStr = climate.anomaly !== null
-    ? (climate.anomaly > 0 ? `+${climate.anomaly}°C par rapport à la normale` : `${climate.anomaly}°C par rapport à la normale`)
-    : ""
-  const proj2050Str = climate.proj2050 !== null && climate.proj2050 > 0
-    ? ` En 2050, le GIEC projette +${climate.proj2050}°C supplémentaires.`
-    : ""
-
-  const description = `${city.name} (${city.region}) : ${city.apparent_temp_max}°C de ressenti aujourd'hui (${weather.label}). ${anomalyStr}.${proj2050Str} Données ERA5 et projections CMIP6.`
-
   return {
-    title: `${city.name} · ${city.apparent_temp_max}°C ressenti aujourd'hui · cestchaud.fr`,
-    description,
-    openGraph: {
-      title: `${city.name} · En vrai, c'est chaud`,
-      description,
-      url: `https://cestchaud.fr/a/${slug}`,
-    },
+    title: `${city.name} · Chaleur & projections climatiques · cestchaud.fr`,
+    description: `Températures actuelles, historique 30 ans et projections GIEC 2030–2050 pour ${city.name} (${city.region}). Données ERA5 et CMIP6.`,
     alternates: { canonical: `https://cestchaud.fr/a/${slug}` },
+    openGraph: {
+      title: `${city.name} · Climat & projections`,
+      description: `Ressenti, tendance et projections CMIP6 pour ${city.name}.`,
+      url: `https://cestchaud.fr/a/${slug}`,
+      siteName: "cestchaud.fr",
+      locale: "fr_FR",
+      type: "website",
+    },
   }
+}
+
+type ClimateEntry = {
+  normal: number[]
+  trend: number[]
+  proj2030: (number | null)[]
+  proj2040: (number | null)[]
+  proj2050: (number | null)[]
+} | null
+
+function getMonthIndex() {
+  return new Date().getMonth()
+}
+
+function fmt(n: number | null | undefined, decimals = 1): string {
+  if (n === null || n === undefined) return "—"
+  return n.toFixed(decimals)
 }
 
 export default async function CityPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -77,282 +64,220 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const city = getCityBySlug(slug)
   if (!city) notFound()
 
-  const month = new Date().getMonth() + 1
-  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
-  const climate = getClimateValues(climateMap[city.id], month, city.apparent_temp_max)
-  const weather = getWeather(city.weathercode)
-  const twins = computeTwins(city)
+  const climate = (climateMap[city.id] ?? null) as ClimateEntry
   const narrative = narratives[city.id] ?? null
+  const m = getMonthIndex()
 
-  const fetchedAt = (metaRaw as { fetchedAt: string }).fetchedAt
-  const dataLabel = new Date(fetchedAt).toLocaleDateString("fr-FR", {
-    day: "numeric", month: "long", year: "numeric",
-  })
+  const normal = climate?.normal?.[m] ?? null
+  const trend = climate?.trend?.[m] ?? null
+  const proj2030 = climate?.proj2030?.[m] ?? null
+  const proj2040 = climate?.proj2040?.[m] ?? null
+  const proj2050 = climate?.proj2050?.[m] ?? null
 
-  const giecRows = ([
-    { year: 2030, delta: climate.proj2030 },
-    { year: 2040, delta: climate.proj2040 },
-    { year: 2050, delta: climate.proj2050 },
-  ] as { year: number; delta: number | null }[])
-    .filter((r) => r.delta !== null)
-    .map(({ year, delta }) => {
-      const d = delta as number
-      const stable = d < 0
-      const displayDelta = Math.max(0, d)
-      return { year, stable, displayDelta, abs: Math.round(city.apparent_temp_max + displayDelta) }
-    })
+  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
+  const today = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `Météo et climat à ${city.name}`,
-    description: `Ressenti, normales historiques et projections climatiques GIEC pour ${city.name} (${city.region}).`,
+    name: `${city.name} · Chaleur & projections climatiques`,
     url: `https://cestchaud.fr/a/${slug}`,
+    description: `Données climatiques et projections GIEC pour ${city.name}, ${city.region}.`,
     about: {
       "@type": "Place",
       name: city.name,
-      geo: { "@type": "GeoCoordinates", latitude: city.lat, longitude: city.lon },
-      containedInPlace: { "@type": "AdministrativeArea", name: city.region, containedInPlace: { "@type": "Country", name: "France" } },
+      geo: {
+        "@type": "GeoCoordinates",
+        latitude: city.lat,
+        longitude: city.lon,
+      },
+      containedInPlace: {
+        "@type": "AdministrativeArea",
+        name: city.region,
+        containedInPlace: { "@type": "Country", name: "France" },
+      },
     },
   }
 
   return (
-    <div className="h-screen flex flex-col bg-[#f9f8f5] overflow-hidden">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-      {/* Nav */}
-      <header className="shrink-0 px-5 lg:px-8 pt-5 pb-4 border-b border-black/5">
-        <div className="flex items-center justify-between">
+      <div className="h-screen flex flex-col bg-[#f5f4f0] overflow-hidden">
+
+        {/* Header — always fixed */}
+        <header className="h-14 shrink-0 flex items-center justify-between px-5 border-b border-black/5 bg-[#f5f4f0] z-10">
+          <Link
+            href="/"
+            className="font-black text-base tracking-tight text-neutral-900 hover:opacity-70 transition-opacity"
+          >
+            ← en vrai, c'est chaud
+          </Link>
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors">
-              ← En vrai, c&apos;est chaud
-            </Link>
-            <Link href="/en/france" className="text-xs text-neutral-400 hover:text-neutral-700 underline underline-offset-2 transition-colors">
-              La France en chiffres
-            </Link>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-neutral-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
-            {dataLabel}
-          </div>
-        </div>
-      </header>
-
-      {/* Two-column layout: SVG left, data right */}
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
-
-        {/* Left — SVG map placeholder */}
-        <div className="h-[35vw] max-h-64 lg:max-h-none lg:h-auto lg:w-[42%] shrink-0 relative bg-neutral-100 border-b lg:border-b-0 lg:border-r border-black/[0.06] overflow-hidden">
-          {/* Grille de rues simulée */}
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 opacity-20">
-            <defs>
-              <pattern id="grid-sm" width="32" height="32" patternUnits="userSpaceOnUse">
-                <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#64748b" strokeWidth="0.5"/>
-              </pattern>
-              <pattern id="grid-lg" width="128" height="96" patternUnits="userSpaceOnUse">
-                <path d="M 128 0 L 0 0 0 96" fill="none" stroke="#64748b" strokeWidth="1.5"/>
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#grid-sm)"/>
-            <rect width="100%" height="100%" fill="url(#grid-lg)"/>
-          </svg>
-
-          {/* Nom de la ville en grand, faint */}
-          <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
-            <span
-              className="font-black text-neutral-300 select-none leading-none tracking-tighter"
-              style={{ fontSize: "clamp(60px, 12vw, 140px)", opacity: 0.35 }}
+            <Link
+              href="/en/france"
+              className="hidden sm:block text-xs text-neutral-500 hover:text-neutral-900 transition-colors"
             >
-              {city.name}
-            </span>
+              La France en chiffres →
+            </Link>
+            <span className="text-xs text-neutral-400 hidden md:block">{today}</span>
           </div>
+        </header>
 
-          {/* Titre + coords en bas */}
-          <div className="absolute bottom-0 left-0 right-0 px-5 pb-5">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">
-              Carte du centre-ville
-            </p>
-            <p className="text-[10px] text-neutral-300 mt-0.5 font-mono">
-              {city.lat.toFixed(4)}°N · {city.lon.toFixed(4)}°E
-            </p>
-          </div>
+        {/* Main — map left, bento right */}
+        <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
-          {/* City title — top left */}
-          <div className="absolute top-0 left-0 px-5 pt-5">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-0.5">
-              {city.region}
-            </p>
-            <h1 className="text-3xl lg:text-4xl font-black tracking-tighter text-neutral-700 leading-none">
-              {city.name}
-            </h1>
-          </div>
-        </div>
+          {/* Left: SVG placeholder (40%) */}
+          <div className="h-[35vw] max-h-64 lg:h-auto lg:w-[40%] shrink-0 relative overflow-hidden bg-neutral-100 border-b lg:border-b-0 lg:border-r border-black/[0.06]">
+            <div className="w-full h-full relative">
+              {/* SVG grid */}
+              <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="grid-sm" width="32" height="32" patternUnits="userSpaceOnUse">
+                    <path d="M 32 0 L 0 0 0 32" fill="none" stroke="black" strokeWidth="0.5" opacity="0.12" />
+                  </pattern>
+                  <pattern id="grid-lg" width="128" height="96" patternUnits="userSpaceOnUse">
+                    <path d="M 128 0 L 0 0 0 96" fill="none" stroke="black" strokeWidth="1" opacity="0.08" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-sm)" />
+                <rect width="100%" height="100%" fill="url(#grid-lg)" />
+              </svg>
 
-        {/* Right — bento data panel */}
-        <div className="flex-1 min-h-0 overflow-y-auto p-3">
-          <div className="grid grid-cols-2 gap-3 pb-6">
+              {/* City name faint background */}
+              <div className="absolute inset-0 flex items-center justify-center overflow-hidden pointer-events-none select-none">
+                <span
+                  className="font-black text-neutral-900 whitespace-nowrap"
+                  style={{ fontSize: "clamp(48px, 10vw, 120px)", opacity: 0.07, letterSpacing: "-0.03em" }}
+                >
+                  {city.name}
+                </span>
+              </div>
 
-            {/* Ressenti jour-J */}
-            <div className="col-span-2 bg-[#dbeafe] rounded-3xl p-6">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/65 mb-4">
-                Ressenti aujourd&apos;hui
-              </p>
-              <div className="flex items-end justify-between">
-                <div>
-                  <div className="flex items-baseline gap-1 leading-none">
-                    <span className="text-[72px] font-black text-neutral-900 leading-none tabular-nums">
-                      {city.apparent_temp_max}°
-                    </span>
-                    <span className="text-2xl font-black text-neutral-400">C</span>
-                  </div>
-                  <p className="text-sm text-neutral-600 mt-2">
-                    {weather.emoji} {weather.label} · ressenti max
-                  </p>
-                </div>
-                <div className="text-right text-xs text-neutral-600 space-y-1">
-                  <div>💧 {city.humidity}%</div>
-                  <div>💨 {city.wind} km/h</div>
-                </div>
+              {/* Top-left: region + h1 */}
+              <div className="absolute top-5 left-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-1">
+                  {city.region}
+                </p>
+                <h1 className="text-2xl font-black text-neutral-900 leading-tight">{city.name}</h1>
+              </div>
+
+              {/* Bottom-left: coordinates */}
+              <div className="absolute bottom-5 left-5">
+                <p className="font-mono text-[10px] text-neutral-400">
+                  {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
+                </p>
+                <p className="text-[10px] text-neutral-400 mt-0.5">
+                  Carte bientôt disponible
+                </p>
               </div>
             </div>
+          </div>
 
-            {/* En temps normal */}
-            <div className="bg-[#c8dfc4] rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/65 mb-4">
-                En temps normal
-              </p>
-              {climate.normal !== null ? (
-                <>
-                  <div className="text-[44px] font-black text-green-900 leading-none tabular-nums">
-                    {climate.normal}°
-                  </div>
-                  <p className="text-xs text-green-900/65 mt-2">{monthName} 1991–2020</p>
-                </>
-              ) : (
-                <p className="text-xs text-green-900/40 italic mt-2">données insuffisantes</p>
-              )}
-            </div>
+          {/* Right: bento (60%) */}
+          <div className="flex-1 min-h-0 overflow-y-auto p-3 lg:p-4 lg:w-[60%]">
+            <div className="grid grid-cols-2 gap-3 pb-4">
 
-            {/* L'écart */}
-            <div className={`rounded-3xl p-5 ${
-              climate.anomaly !== null && climate.anomaly > 2 ? "bg-[#f4a27a]"
-              : climate.anomaly !== null && climate.anomaly < -2 ? "bg-[#a8c4d4]"
-              : "bg-neutral-200"
-            }`}>
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/55 mb-4">
-                L&apos;écart
-              </p>
-              {climate.anomaly !== null ? (
-                <>
-                  <div className="text-[44px] font-black text-neutral-900 leading-none tabular-nums">
-                    {climate.anomaly > 0 ? "+" : ""}{climate.anomaly}°
-                  </div>
-                  <p className="text-xs text-black/60 mt-2">
-                    {climate.anomaly > 2 ? "au-dessus de la normale"
-                      : climate.anomaly < -2 ? "en-dessous de la normale"
-                      : "dans la normale"}
+              {/* Narrative — TOP (rédactionnel en premier) */}
+              {narrative && (
+                <article className="col-span-2 bg-neutral-900 rounded-3xl p-6">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
+                    En quelques mots
                   </p>
-                </>
-              ) : (
-                <p className="text-xs text-black/40 italic mt-2">données insuffisantes</p>
+                  <p className="text-sm text-white/80 leading-relaxed">{narrative}</p>
+                </article>
               )}
-            </div>
 
-            {/* Ce qui a changé */}
-            <div className="col-span-2 bg-white rounded-3xl p-5 border border-black/[0.06]">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">
-                Ce qui a changé · 30 ans
-              </p>
-              {climate.trend !== null ? (
-                <p className="text-2xl font-black text-neutral-900">
-                  {climate.trend > 0 ? "+" : ""}{climate.trend}°C
-                  <span className="text-sm font-normal text-neutral-500 ml-2">
-                    depuis 1990 en {monthName}
-                  </span>
+              {/* Normale */}
+              <div className="bg-[#b8d4b0] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
+                  Normalement en {monthName}
                 </p>
-              ) : (
-                <p className="text-xs text-neutral-400 italic">données insuffisantes</p>
-              )}
-            </div>
+                {normal !== null ? (
+                  <>
+                    <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}°C</div>
+                    <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
+                  </>
+                ) : (
+                  <p className="text-2xl font-black text-green-900/30">—</p>
+                )}
+              </div>
 
-            {/* GIEC */}
-            <div className="col-span-2 bg-[#e4dff0] rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/65 mb-1">
-                Ce qui vient · GIEC
-              </p>
-              <p className="text-[10px] text-purple-900/55 mb-5">
-                Si rien ne change · ressenti estimé un jour comme aujourd&apos;hui
-              </p>
-              {giecRows.length > 0 ? (
-                <div className="divide-y divide-purple-900/10">
-                  {giecRows.map(({ year, stable, displayDelta, abs }) => (
-                    <div key={year} className="flex items-center justify-between py-3">
+              {/* Tendance 30 ans */}
+              <div className="bg-white rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+                  Tendance 30 ans
+                </p>
+                {trend !== null ? (
+                  <>
+                    <div className="text-4xl font-black text-neutral-900 leading-none">
+                      {trend > 0 ? "+" : ""}{fmt(trend)}°C
+                    </div>
+                    <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
+                  </>
+                ) : (
+                  <p className="text-2xl font-black text-neutral-300">—</p>
+                )}
+              </div>
+
+              {/* Projections GIEC */}
+              <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
+                  Si rien ne change…
+                </p>
+                <p className="text-[10px] text-purple-900/40 mb-4">
+                  Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
+                </p>
+                <div className="space-y-2.5">
+                  {([
+                    { year: 2030, val: proj2030 },
+                    { year: 2040, val: proj2040 },
+                    { year: 2050, val: proj2050 },
+                  ] as { year: number; val: number | null }[]).map(({ year, val }) => (
+                    <div key={year} className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-purple-900/60">{year}</span>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-xs text-purple-900/45">
-                          {stable ? "~+0°" : `+${displayDelta}°`}
-                        </span>
-                        <span className="font-black text-3xl text-purple-900 tabular-nums">{abs}°C</span>
-                      </div>
+                      <span className="font-black text-2xl text-purple-900">
+                        {val !== null ? `${val >= 0 ? "+" : ""}${fmt(val)}°C` : "—"}
+                      </span>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-xs text-purple-900/50 italic">données insuffisantes</p>
-              )}
-            </div>
-
-            {/* Narrative */}
-            {narrative && (
-              <div className="col-span-2 bg-neutral-900 rounded-3xl p-6">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/40 mb-3">
-                  Ce que ça veut dire
-                </p>
-                <p className="text-sm text-white/90 leading-relaxed">{narrative}</p>
               </div>
-            )}
 
-            {/* Jumelles mondiales */}
-            {twins.length > 0 && (
-              <div className="col-span-2 bg-white rounded-3xl p-5 border border-black/[0.06]">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-3">
-                  Le même ressenti, ailleurs
-                </p>
-                <div className="grid grid-cols-1 gap-0.5">
-                  {twins.map((twin) => {
-                    const tw = getWeather(twin.weathercode)
-                    return (
-                      <div key={twin.id} className="flex items-center gap-3 py-2 px-3 rounded-2xl bg-neutral-50">
-                        <span className="text-lg leading-none">{tw.emoji}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-sm text-neutral-800 truncate">{twin.name}</div>
-                          <div className="text-xs text-neutral-500 truncate">{twin.country}</div>
-                        </div>
-                        <div className="font-black text-sm text-neutral-700 shrink-0 tabular-nums">
-                          {twin.apparent_temp_max}°
-                        </div>
-                      </div>
-                    )
-                  })}
+              {/* Lien retour France */}
+              <Link
+                href="/en/france"
+                className="col-span-2 flex items-center justify-between bg-white hover:bg-neutral-50 transition-colors rounded-3xl px-6 py-5 group"
+              >
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
+                    Vue d'ensemble
+                  </p>
+                  <p className="text-base font-black text-neutral-900">La France en chiffres · données &amp; projections</p>
                 </div>
+                <span className="text-neutral-300 group-hover:text-neutral-600 text-2xl transition-colors">→</span>
+              </Link>
+
+              {/* Footer */}
+              <div className="col-span-2 text-center text-xs text-neutral-400 pb-1">
+                cestchaud.fr · Open-Meteo · ERA5 · CMIP6 ·{" "}
+                <a
+                  href="https://leswww.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 hover:text-neutral-600"
+                >
+                  © LesWWW
+                </a>
               </div>
-            )}
 
-            {/* Footer */}
-            <div className="col-span-2 flex items-center justify-between text-xs text-neutral-400 px-1 pt-2">
-              <span>Open-Meteo · ERA5 · CMIP6 · {dataLabel}</span>
-              <span>
-                © <a href="https://leswww.com" target="_blank" rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-neutral-600 transition-colors">LesWWW</a>
-                {" · "}
-                <a href="https://leswww.com/mentions-legales/" target="_blank" rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-neutral-600 transition-colors">Mentions légales</a>
-              </span>
             </div>
-
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
