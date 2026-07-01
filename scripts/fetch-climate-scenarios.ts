@@ -1,12 +1,11 @@
 /**
  * ONE-TIME SCRIPT — run during paid Open-Meteo subscription.
- * Collects CMIP6 projections for all 3 SSP scenarios with a multi-model ensemble.
+ * Collects CMIP6 projections for SSP2-4.5 and SSP5-8.5 with a multi-model ensemble.
  *
  * Output: data/climate-full.json
  * Structure per city:
  *   normal: number[]        ERA5 1991-2020 monthly apparent temp normals
  *   trend:  number[]        observed trend 1991-2000 vs 2015-2024
- *   ssp126: { proj2030, proj2040, proj2050 }   optimistic
  *   ssp245: { proj2030, proj2040, proj2050 }   current trajectory
  *   ssp585: { proj2030, proj2040, proj2050 }   worst case
  *
@@ -73,6 +72,16 @@ async function fetchWithRetry(url: string): Promise<Response> {
   throw lastErr ?? new Error("max retries")
 }
 
+async function safeJson(res: Response): Promise<unknown | null> {
+  const text = await res.text().catch(() => "")
+  try {
+    return JSON.parse(text)
+  } catch {
+    console.warn(`    [json parse error] ${text.slice(0, 200)}`)
+    return null
+  }
+}
+
 function monthAvg(
   dates: string[], values: (number | null)[],
   month: number, y1: number, y2: number
@@ -109,7 +118,9 @@ async function fetchNormals(city: { lat: number; lon: number }) {
 
   const res = await fetchWithRetry(url)
   if (!res.ok) { console.warn(`    [archive fail ${res.status}]`); return null }
-  const data = await res.json() as { daily: Record<string, (number | null)[]> }
+  const data = await safeJson(res) as { daily?: Record<string, (number | null)[]> } | null
+  if (!data?.daily) { console.warn(`    [archive] invalid response`); return null }
+
   const dates = data.daily.time as unknown as string[]
   const vals  = (data.daily.apparent_temperature_max ?? data.daily.temperature_2m_max) as (number | null)[]
 
@@ -139,24 +150,21 @@ async function fetchScenario(city: { lat: number; lon: number }, models: string[
     console.warn(`    [climate fail ${res.status}] ${body.slice(0, 200)}`)
     return null
   }
-  const data = await res.json() as { daily?: Record<string, (number | null)[]>; error?: boolean; reason?: string }
-
-  // Debug: show what the API actually returned
-  if (!data.daily) {
-    console.warn(`    [climate] no daily field. Response:`, JSON.stringify(data).slice(0, 300))
+  const data = await safeJson(res) as { daily?: Record<string, (number | null)[]>; error?: boolean; reason?: string } | null
+  if (!data?.daily) {
+    console.warn(`    [climate] invalid or empty response`)
     return null
   }
+
   const daily = data.daily
   const dates = daily.time as unknown as string[]
-  console.log(`    [climate] keys: ${Object.keys(daily).join(", ")}`)
-  console.log(`    [climate] ${dates?.length ?? 0} days, first=${dates?.[0]} last=${dates?.[dates.length-1]}`)
+  console.log(`    [climate] ${dates?.length ?? 0} days, keys: ${Object.keys(daily).filter(k => k !== "time").join(", ")}`)
 
   const atKeys = Object.keys(daily).filter(k => k.startsWith("apparent_temperature_max") && k !== "time")
   const tKeys  = Object.keys(daily).filter(k => k.startsWith("temperature_2m_max") && k !== "time")
-  // Some models return apparent_temperature_max keys but with all-null values — fall back to temperature_2m_max
   const hasAtData = atKeys.some(k => (daily[k] as (number | null)[]).some(v => v != null))
   const keys = hasAtData ? atKeys : tKeys
-  console.log(`    [climate] using keys: ${keys.join(", ")}`)
+  console.log(`    [climate] using ${hasAtData ? "apparent_temperature_max" : "temperature_2m_max"} (${keys.length} models)`)
 
   const proj2030: (number | null)[] = []
   const proj2040: (number | null)[] = []
@@ -227,7 +235,7 @@ async function main() {
   console.log(`✓ Done — ${Object.keys(output).length} cities`)
   console.log(`  data/climate-full.json written`)
   console.log(`\nNext:`)
-  console.log(`  git add data/climate-full.json && git commit -m "chore: climate-full with SSP1-2.6/SSP2-4.5/SSP5-8.5" && git push`)
+  console.log(`  git add data/climate-full.json && git commit -m "chore: climate-full complete" && git push`)
 }
 
 main().catch(e => { console.error(e); process.exit(1) })
