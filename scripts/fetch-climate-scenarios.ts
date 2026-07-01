@@ -107,7 +107,7 @@ function ensembleMonthAvg(
   return cols.length ? cols.reduce((a, b) => a + b) / cols.length : null
 }
 
-// ─── fetch ERA5 normals + trend ───────────────────────────────────────────────
+// ─── fetch ERA5 normals + trend (with retry on transient errors) ──────────────
 
 async function fetchNormals(city: { lat: number; lon: number }) {
   const url =
@@ -116,23 +116,35 @@ async function fetchNormals(city: { lat: number; lon: number }) {
     `&start_date=1991-01-01&end_date=2024-12-31` +
     `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC` + API_SUFFIX
 
-  const res = await fetchWithRetry(url)
-  if (!res.ok) { console.warn(`    [archive fail ${res.status}]`); return null }
-  const data = await safeJson(res) as { daily?: Record<string, (number | null)[]> } | null
-  if (!data?.daily) { console.warn(`    [archive] invalid response`); return null }
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const res = await fetchWithRetry(url)
+    if (!res.ok) { console.warn(`    [archive fail ${res.status}]`); return null }
+    const data = await safeJson(res) as { daily?: Record<string, (number | null)[]> } | null
+    if (!data?.daily) {
+      if (attempt < MAX_RETRIES) {
+        const wait = 15_000 * (attempt + 1)
+        console.warn(`    [archive] invalid response, retry in ${wait / 1000}s`)
+        await sleep(wait)
+        continue
+      }
+      console.warn(`    [archive] invalid response after ${MAX_RETRIES} retries`)
+      return null
+    }
 
-  const dates = data.daily.time as unknown as string[]
-  const vals  = (data.daily.apparent_temperature_max ?? data.daily.temperature_2m_max) as (number | null)[]
+    const dates = data.daily.time as unknown as string[]
+    const vals  = (data.daily.apparent_temperature_max ?? data.daily.temperature_2m_max) as (number | null)[]
 
-  const normal: (number | null)[] = []
-  const trend:  (number | null)[] = []
-  for (let m = 1; m <= 12; m++) {
-    normal.push(round0(monthAvg(dates, vals, m, 1991, 2020)))
-    const base   = monthAvg(dates, vals, m, 1991, 2000)
-    const recent = monthAvg(dates, vals, m, 2015, 2024)
-    trend.push(base != null && recent != null ? round1(recent - base) : null)
+    const normal: (number | null)[] = []
+    const trend:  (number | null)[] = []
+    for (let m = 1; m <= 12; m++) {
+      normal.push(round0(monthAvg(dates, vals, m, 1991, 2020)))
+      const base   = monthAvg(dates, vals, m, 1991, 2000)
+      const recent = monthAvg(dates, vals, m, 2015, 2024)
+      trend.push(base != null && recent != null ? round1(recent - base) : null)
+    }
+    return { normal, trend }
   }
-  return { normal, trend }
+  return null
 }
 
 // ─── fetch one SSP scenario ───────────────────────────────────────────────────
