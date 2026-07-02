@@ -18,6 +18,10 @@ const citiesFR = require("@/data/cities-fr.json") as Array<{
 let narratives: Record<string, string> = {}
 try { narratives = require("@/data/narratives.json") } catch {}
 
+interface YearExtreme { max: number; max_date: string; min: number; min_date: string }
+let yearExtremesMap: Record<string, YearExtreme> = {}
+try { yearExtremesMap = require("@/data/year-extremes.json") } catch {}
+
 function getCityBySlug(slug: string) {
   return citiesFR.find((c) => slugify(c.name) === slug) ?? null
 }
@@ -37,26 +41,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const proj2050 = climate?.proj2050?.[m] ?? null
   const proj2050Str = proj2050 !== null ? ` GIEC 2050 : ${fmtDelta(proj2050)}°C.` : ""
 
-  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030-2050 pour ${city.name} (${city.region}).${proj2050Str}`
+  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030–2050 pour ${city.name} (${city.region}).${proj2050Str}`
 
   return {
-    title: `${city.name} - Chaleur et projections climatiques - cestchaud.fr`,
+    title: `${city.name} · Chaleur & projections climatiques · cestchaud.fr`,
     description,
-    alternates: { canonical: `https://www.cestchaud.fr/a/${slug}` },
+    alternates: { canonical: `https://cestchaud.fr/a/${slug}` },
     openGraph: {
-      title: `${city.name} - Chaleur et projections GIEC`,
+      title: `${city.name} · Chaleur & projections GIEC`,
       description,
-      url: `https://www.cestchaud.fr/a/${slug}`,
+      url: `https://cestchaud.fr/a/${slug}`,
       siteName: "cestchaud.fr",
       locale: "fr_FR",
       type: "website",
-      images: [{ url: "https://www.cestchaud.fr/og/city.png", width: 1200, height: 630, alt: `${city.name} - cestchaud.fr` }],
+      images: [{ url: "/og/city.png", width: 1200, height: 630, alt: `${city.name} · cestchaud.fr` }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${city.name} - Chaleur et projections GIEC`,
+      title: `${city.name} · Chaleur & projections GIEC`,
       description,
-      images: ["https://www.cestchaud.fr/og/city.png"],
+      images: ["/og/city.png"],
     },
   }
 }
@@ -88,6 +92,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const climateMap = loadClimateMap()
   const climate = (climateMap[city.id] ?? null) as ClimateEntry
   const narrative = narratives[city.id] ?? null
+  const yearExtremes = yearExtremesMap[city.id] ?? null
   const weather = await fetchCityWeather(city.lat, city.lon)
   const m = new Date().getMonth()
 
@@ -106,20 +111,20 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
   const pageUrl = `https://cestchaud.fr/a/${slug}`
   const shareText = proj2050 !== null
-    ? `À ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d’ici 2050. `
+    ? `À ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d'ici 2050. `
     : `Découvrez les données climatiques de ${city.name} sur cestchaud.fr`
   const shareTextEncoded = encodeURIComponent(shareText + pageUrl)
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?text=${shareTextEncoded}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
     whatsapp: `https://api.whatsapp.com/send?text=${shareTextEncoded}`,
-    email: `mailto:?subject=${encodeURIComponent(`${city.name} - données climatiques`)}&body=${shareTextEncoded}`,
+    email: `mailto:?subject=${encodeURIComponent(`${city.name} · données climatiques`)}&body=${shareTextEncoded}`,
   }
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${city.name} - Chaleur & projections climatiques`,
+    name: `${city.name} · Chaleur & projections climatiques`,
     url: pageUrl,
     description: `Données climatiques et projections GIEC pour ${city.name}, ${city.region}.`,
     about: {
@@ -149,7 +154,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
         <SiteHeader asLink />
 
-        {/* Main - map left, bento right */}
+        {/* Main — map left, bento right */}
         <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
           {/* Left: Leaflet map (40%) full height */}
@@ -169,7 +174,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             {/* Overlay: coordinates */}
             <div className="absolute bottom-6 left-6 z-[1000]">
               <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
-                {city.lat.toFixed(2)}°N - {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
+                {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
               </p>
             </div>
           </div>
@@ -188,12 +193,12 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </article>
               )}
 
-              {/* Température max + Normale + Tendance - grouped to guarantee stacking */}
+              {/* Température max + Normale + Tendance — grouped to guarantee stacking */}
               <div className="col-span-2 space-y-3">
                 {weather && (
                   <div className="bg-[#dbeafe] rounded-3xl p-6">
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
-                      Ressenti max aujourd’hui
+                      Ressenti max aujourd'hui
                     </p>
                     <div className="flex items-baseline gap-1.5 leading-none">
                       <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}°</span>
@@ -215,10 +220,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     {normal !== null ? (
                       <>
                         <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}°C</div>
-                        <p className="text-xs text-green-900/50 mt-2">moy. 1991-2020</p>
+                        <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
                       </>
                     ) : (
-                      <p className="text-2xl font-black text-green-900/30">-</p>
+                      <p className="text-2xl font-black text-green-900/30">—</p>
                     )}
                   </div>
                   {/* Tendance 30 ans */}
@@ -231,14 +236,38 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                         <div className="text-4xl font-black text-neutral-900 leading-none">
                           {fmtDelta(trend)}°C
                         </div>
-                        <p className="text-xs text-neutral-400 mt-2">depuis 1990 - {monthName}</p>
+                        <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
                       </>
                     ) : (
-                      <p className="text-2xl font-black text-neutral-300">-</p>
+                      <p className="text-2xl font-black text-neutral-300">—</p>
                     )}
                   </div>
                 </div>
               </div>
+
+              {/* Extrêmes de l'année */}
+              {yearExtremes && (
+                <div className="col-span-2 grid grid-cols-2 gap-3">
+                  <div className="bg-[#fee2e2] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-900/50 mb-3">
+                      Record chaud {new Date().getFullYear()}
+                    </p>
+                    <div className="text-4xl font-black text-red-900 leading-none">{yearExtremes.max}°C</div>
+                    <p className="text-xs text-red-900/50 mt-2">
+                      {new Date(yearExtremes.max_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                    </p>
+                  </div>
+                  <div className="bg-[#dbeafe] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
+                      Record froid {new Date().getFullYear()}
+                    </p>
+                    <div className="text-4xl font-black text-blue-900 leading-none">{yearExtremes.min}°C</div>
+                    <p className="text-xs text-blue-900/50 mt-2">
+                      {new Date(yearExtremes.min_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Projections GIEC */}
               <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
@@ -246,7 +275,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   Si rien ne change…
                 </p>
                 <p className="text-[10px] text-purple-900/60 mb-4">
-                  Modèle CMIP6 (GIEC AR6) - écart vs. 2000-2020
+                  Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
                 </p>
                 <div className="space-y-2.5">
                   {([
@@ -310,15 +339,15 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {/* Lien France */}
               <Link
                 href="/en/france"
-                className="col-span-2 flex items-center justify-between bg-[#dbeafe] hover:bg-[#bfdbfe] transition-colors rounded-3xl px-6 py-5 group"
+                className="col-span-2 flex items-center justify-between bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-3xl px-6 py-5 group"
               >
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/50 mb-1">
-                    Vue d’ensemble
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
+                    Vue d'ensemble
                   </p>
-                  <p className="text-base font-black text-blue-900">La France en chiffres</p>
+                  <p className="text-base font-black text-neutral-900">La France en chiffres</p>
                 </div>
-                <span className="text-blue-400 group-hover:text-blue-700 text-2xl transition-colors">→</span>
+                <span className="text-neutral-400 group-hover:text-neutral-700 text-2xl transition-colors">→</span>
               </Link>
 
               <PageFooter className="col-span-2" />
