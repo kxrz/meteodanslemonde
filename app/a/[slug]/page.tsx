@@ -204,6 +204,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}°</span>
                       <span className="text-2xl font-black text-blue-400">C</span>
                     </div>
+                    <p className="text-xs text-blue-800/40 mt-1.5 italic">ressenti au plus chaud de la journée</p>
                     {anomaly !== null && (
                       <p className="text-sm text-blue-800/60 mt-2">
                         {fmtDelta(anomaly)}°C vs. normale {monthName}
@@ -256,6 +257,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     <p className="text-xs text-red-900/50 mt-2">
                       {new Date(yearExtremes.max_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     </p>
+                    <p className="text-xs text-red-900/30 mt-1 italic">ressenti au plus chaud de la journée</p>
                   </div>
                   <div className="bg-[#dbeafe] rounded-3xl p-5">
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
