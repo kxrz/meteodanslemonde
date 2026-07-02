@@ -53,7 +53,7 @@ export default function AProposPage() {
               </p>
               <h2 className="text-lg font-black text-neutral-900 mb-3">Open-Meteo</h2>
               <p className="text-sm text-neutral-600 leading-relaxed">
-                Les ressenti max journaliers proviennent de l'API <strong className="text-neutral-900">Open-Meteo</strong> <em>(open source, gratuite)</em>.
+                Les ressentis max journaliers proviennent de l'API <strong className="text-neutral-900">Open-Meteo</strong> <em>(open source, gratuite)</em>.
                 On utilise <code className="text-xs bg-neutral-100 px-1.5 py-0.5 rounded">apparent_temperature_max</code>, le ressenti thermique réel qui intègre vent et humidité.
                 Les données sont rafraîchies une fois par jour.
               </p>
