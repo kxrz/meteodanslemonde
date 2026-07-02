@@ -18,6 +18,10 @@ const citiesFR = require("@/data/cities-fr.json") as Array<{
 let narratives: Record<string, string> = {}
 try { narratives = require("@/data/narratives.json") } catch {}
 
+interface YearExtreme { max: number; max_date: string; min: number; min_date: string }
+let yearExtremesMap: Record<string, YearExtreme> = {}
+try { yearExtremesMap = require("@/data/year-extremes.json") } catch {}
+
 function getCityBySlug(slug: string) {
   return citiesFR.find((c) => slugify(c.name) === slug) ?? null
 }
@@ -88,6 +92,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const climateMap = loadClimateMap()
   const climate = (climateMap[city.id] ?? null) as ClimateEntry
   const narrative = narratives[city.id] ?? null
+  const yearExtremes = yearExtremesMap[city.id] ?? null
   const weather = await fetchCityWeather(city.lat, city.lon)
   const m = new Date().getMonth()
 
@@ -239,6 +244,30 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   </div>
                 </div>
               </div>
+
+              {/* Extrêmes de l'année */}
+              {yearExtremes && (
+                <div className="col-span-2 grid grid-cols-2 gap-3">
+                  <div className="bg-[#fee2e2] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-900/50 mb-3">
+                      Record chaud {new Date().getFullYear()}
+                    </p>
+                    <div className="text-4xl font-black text-red-900 leading-none">{yearExtremes.max}°C</div>
+                    <p className="text-xs text-red-900/50 mt-2">
+                      {new Date(yearExtremes.max_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                    </p>
+                  </div>
+                  <div className="bg-[#dbeafe] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
+                      Record froid {new Date().getFullYear()}
+                    </p>
+                    <div className="text-4xl font-black text-blue-900 leading-none">{yearExtremes.min}°C</div>
+                    <p className="text-xs text-blue-900/50 mt-2">
+                      {new Date(yearExtremes.min_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {/* Projections GIEC */}
               <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
