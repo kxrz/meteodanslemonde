@@ -1,0 +1,5957 @@
+[
+  {
+    "id": "21071F",
+    "civilite": "Mme",
+    "nom": "Aeschlimann",
+    "prenom": "Marie-Do",
+    "fullName": "Mme Marie-Do Aeschlimann",
+    "email": "md.aeschlimann@senat.fr",
+    "twitter": "MDoAeschlimann",
+    "facebook": "https://www.facebook.com/mariedo.aeschlimann",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "92",
+    "deptName": "Hauts-de-Seine"
+  },
+  {
+    "id": "14133K",
+    "civilite": "M.",
+    "nom": "Allizard",
+    "prenom": "Pascal",
+    "fullName": "M. Pascal Allizard",
+    "email": "p.allizard@senat.fr",
+    "twitter": "AllizardPascal",
+    "facebook": "https://www.facebook.com/profile.php?id=1153400834",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "14",
+    "deptName": "Calvados"
+  },
+  {
+    "id": "20032T",
+    "civilite": "M.",
+    "nom": "Anglars",
+    "prenom": "Jean-Claude",
+    "fullName": "M. Jean-Claude Anglars",
+    "email": "jc.anglars@senat.fr",
+    "twitter": "JCAnglars",
+    "facebook": "https://www.facebook.com/profile.php?id=100005489411928",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": "12",
+    "deptName": "Aveyron"
+  },
+  {
+    "id": "21042A",
+    "civilite": "Mme",
+    "nom": "Antoine",
+    "prenom": "Jocelyne",
+    "fullName": "Mme Jocelyne Antoine",
+    "email": "j.antoine@senat.fr",
+    "twitter": "Antoinejocelyn6",
+    "facebook": "https://www.facebook.com/suzanne.golfier",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": "54",
+    "deptName": "Meurthe-et-Moselle"
+  },
+  {
+    "id": "19760E",
+    "civilite": "Mme",
+    "nom": "Apourceau-Poly",
+    "prenom": "Cathy",
+    "fullName": "Mme Cathy Apourceau-Poly",
+    "email": "c.apourceau-poly@senat.fr",
+    "twitter": "Apourceau",
+    "facebook": "https://www.facebook.com/profile.php?id=100046971763251",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Vice-Présidente de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "62",
+    "deptName": "Pas-de-Calais"
+  },
+  {
+    "id": "14189C",
+    "civilite": "M.",
+    "nom": "Arnaud",
+    "prenom": "Jean-Michel",
+    "fullName": "M. Jean-Michel Arnaud",
+    "email": "jm.arnaud@senat.fr",
+    "twitter": "Arnaud_jm",
+    "facebook": "https://www.facebook.com/profile.php?id=1186870649",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": "26",
+    "deptName": "Drôme"
+  },
+  {
+    "id": "19631V",
+    "civilite": "Mme",
+    "nom": "Artigalas",
+    "prenom": "Viviane",
+    "fullName": "Mme Viviane Artigalas",
+    "email": "v.artigalas@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100005489764026",
+    "commissions": [
+      "Vice-Présidente de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "65",
+    "deptName": "Hautes-Pyrénées"
+  },
+  {
+    "id": "20112S",
+    "civilite": "M.",
+    "nom": "Bacchi",
+    "prenom": "Jérémy",
+    "fullName": "M. Jérémy Bacchi",
+    "email": "j.bacchi@senat.fr",
+    "twitter": "JeremyBacchi",
+    "facebook": "https://www.facebook.com/profile.php?id=100063935010927",
+    "commissions": [
+      "Vice-Président  de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "13",
+    "deptName": "Bouches-du-Rhône"
+  },
+  {
+    "id": "20076G",
+    "civilite": "M.",
+    "nom": "Bacci",
+    "prenom": "Jean",
+    "fullName": "M. Jean Bacci",
+    "email": "j.bacci@senat.fr",
+    "twitter": null,
+    "facebook": "https://m.facebook.com/JeanBacciSenateur/",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": "83",
+    "deptName": "Var"
+  },
+  {
+    "id": "21084L",
+    "civilite": "M.",
+    "nom": "Barros",
+    "prenom": "Pierre",
+    "fullName": "M. Pierre Barros",
+    "email": "p.barros@senat.fr",
+    "twitter": "PierreBarros95",
+    "facebook": "https://www.facebook.com/profile.php?id=100092547395047",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "95",
+    "deptName": "Val-d'Oise"
+  },
+  {
+    "id": "21460Q",
+    "civilite": "M.",
+    "nom": "Basquin",
+    "prenom": "Alexandre",
+    "fullName": "M. Alexandre Basquin",
+    "email": "a.basquin@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": "77",
+    "deptName": "Seine-et-Marne"
+  },
+  {
+    "id": "19667J",
+    "civilite": "M.",
+    "nom": "Bazin",
+    "prenom": "Arnaud",
+    "fullName": "M. Arnaud Bazin",
+    "email": "a.bazin@senat.fr",
+    "twitter": "arnaud_bazinVO",
+    "facebook": "https://www.facebook.com/profile.php?id=100057929957443",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "95",
+    "deptName": "Val-d'Oise"
+  },
+  {
+    "id": "21035B",
+    "civilite": "Mme",
+    "nom": "Bélim",
+    "prenom": "Audrey",
+    "fullName": "Mme Audrey Bélim",
+    "email": "a.belim@senat.fr",
+    "twitter": "AudreyBelim974",
+    "facebook": "https://www.facebook.com/AudreyBelimElue",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": "974",
+    "deptName": "La Réunion"
+  },
+  {
+    "id": "20024T",
+    "civilite": "M.",
+    "nom": "Belin",
+    "prenom": "Bruno",
+    "fullName": "M. Bruno Belin",
+    "email": "b.belin@senat.fr",
+    "twitter": "brunobelin",
+    "facebook": "https://www.facebook.com/profile.php?id=677350901",
+    "commissions": [
+      "Vice-Président  de la Commission des finances",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "86",
+    "deptName": "Vienne"
+  },
+  {
+    "id": "21125C",
+    "civilite": "Mme",
+    "nom": "Bellamy",
+    "prenom": "Marie-Jeanne",
+    "fullName": "Mme Marie-Jeanne Bellamy",
+    "email": "mj.bellamy@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "78",
+    "deptName": "Yvelines"
+  },
+  {
+    "id": "20022R",
+    "civilite": "Mme",
+    "nom": "Bellurot",
+    "prenom": "Nadine",
+    "fullName": "Mme Nadine Bellurot",
+    "email": "n.bellurot@senat.fr",
+    "twitter": "nbellurot",
+    "facebook": "https://www.facebook.com/profile.php?id=100063840938941",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "21",
+    "deptName": "Côte-d'Or"
+  },
+  {
+    "id": "19954N",
+    "civilite": "Mme",
+    "nom": "Belrhiti",
+    "prenom": "Catherine",
+    "fullName": "Mme Catherine Belrhiti",
+    "email": "c.belrhiti@senat.fr",
+    "twitter": "CatBELRHITI",
+    "facebook": "https://www.facebook.com/profile.php?id=100003094434363",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "57",
+    "deptName": "Moselle"
+  },
+  {
+    "id": "20110Q",
+    "civilite": "M.",
+    "nom": "Benarroche",
+    "prenom": "Guy",
+    "fullName": "M. Guy Benarroche",
+    "email": "g.benarroche@senat.fr",
+    "twitter": "GuyBenarroche",
+    "facebook": "https://www.facebook.com/profile.php?id=100036621184741",
+    "commissions": [
+      "Vice-Président  de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": "13",
+    "deptName": "Bouches-du-Rhône"
+  },
+  {
+    "id": "19575F",
+    "civilite": "Mme",
+    "nom": "Berthet",
+    "prenom": "Martine",
+    "fullName": "Mme Martine Berthet",
+    "email": "m.berthet@senat.fr",
+    "twitter": "MartineBerthet",
+    "facebook": "https://www.facebook.com/profile.php?id=100058063478619",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "73",
+    "deptName": "Savoie"
+  },
+  {
+    "id": "21514M",
+    "civilite": "Mme",
+    "nom": "Bessin-Guérin",
+    "prenom": "Marie-Pierre",
+    "fullName": "Mme Marie-Pierre Bessin-Guérin",
+    "email": "mp.bessin-guerin@senat.fr",
+    "twitter": "mpGuerin44",
+    "facebook": "https://www.facebook.com/MariePierreGuerin44",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20116W",
+    "civilite": "M.",
+    "nom": "Bilhac",
+    "prenom": "Christian",
+    "fullName": "M. Christian Bilhac",
+    "email": "c.bilhac@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100000085483951",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14030Q",
+    "civilite": "Mme",
+    "nom": "Billon",
+    "prenom": "Annick",
+    "fullName": "Mme Annick Billon",
+    "email": "a.billon@senat.fr",
+    "twitter": "AnnickBillon",
+    "facebook": "https://www.facebook.com/profile.php?id=100005951148289",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21043B",
+    "civilite": "M.",
+    "nom": "Bitz",
+    "prenom": "Olivier",
+    "fullName": "M. Olivier Bitz",
+    "email": null,
+    "twitter": "OlivierBitz",
+    "facebook": "https://www.facebook.com/profile.php?id=61556997327696",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "17367Q",
+    "civilite": "M.",
+    "nom": "Blanc",
+    "prenom": "Étienne",
+    "fullName": "M. Étienne Blanc",
+    "email": "e.blanc@senat.fr",
+    "twitter": "blanc_etienne",
+    "facebook": "https://www.facebook.com/profile.php?id=100063790746936",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21048G",
+    "civilite": "M.",
+    "nom": "Blanc",
+    "prenom": "Grégory",
+    "fullName": "M. Grégory Blanc",
+    "email": "g.blanc@senat.fr",
+    "twitter": "gregory_blanc",
+    "facebook": "https://www.facebook.com/gregory.blanc.927",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20086J",
+    "civilite": "M.",
+    "nom": "Blanc",
+    "prenom": "Jean-Baptiste",
+    "fullName": "M. Jean-Baptiste Blanc",
+    "email": "senateurjbblanc@gmail.com",
+    "twitter": "jbblanc84",
+    "facebook": "https://www.facebook.com/profile.php?id=100056145245008",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20094J",
+    "civilite": "Mme",
+    "nom": "Blatrix Contat",
+    "prenom": "Florence",
+    "fullName": "Mme Florence Blatrix Contat",
+    "email": "f.blatrix-contat@senat.fr",
+    "twitter": "FlorenceBlatrix",
+    "facebook": "https://www.facebook.com/profile.php?id=100063615443852",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21050A",
+    "civilite": "M.",
+    "nom": "Bleunven",
+    "prenom": "Yves",
+    "fullName": "M. Yves Bleunven",
+    "email": "y.bleunven@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/yves.bleunven.7",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21584C",
+    "civilite": "M.",
+    "nom": "Boileau",
+    "prenom": "Pierre",
+    "fullName": "M. Pierre Boileau",
+    "email": "p.boileau@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19367Y",
+    "civilite": "Mme",
+    "nom": "Bonfanti-Dossat",
+    "prenom": "Christine",
+    "fullName": "Mme Christine Bonfanti-Dossat",
+    "email": "c.bonfanti-dossat@senat.fr",
+    "twitter": "cbonfantidossat",
+    "facebook": "https://www.facebook.com/profile.php?id=100003148763275",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14069U",
+    "civilite": "M.",
+    "nom": "Bonhomme",
+    "prenom": "François",
+    "fullName": "M. François Bonhomme",
+    "email": "f.bonhomme@senat.fr",
+    "twitter": "F_Bonhomme",
+    "facebook": "https://www.facebook.com/profile.php?id=100057713033480",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20042V",
+    "civilite": "M.",
+    "nom": "Bonneau",
+    "prenom": "François",
+    "fullName": "M. François Bonneau",
+    "email": "f.bonneau@senat.fr",
+    "twitter": "FBonneauSenat",
+    "facebook": "https://www.facebook.com/profile.php?id=100058061591173",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08060W",
+    "civilite": "Mme",
+    "nom": "Bonnefoy",
+    "prenom": "Nicole",
+    "fullName": "Mme Nicole Bonnefoy",
+    "email": "n.bonnefoy@senat.fr",
+    "twitter": "bonnefoy_n",
+    "facebook": "https://www.facebook.com/profile.php?id=100010679208727",
+    "commissions": [
+      "Vice-Présidente de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20078J",
+    "civilite": "M.",
+    "nom": "Bonnus",
+    "prenom": "Michel",
+    "fullName": "M. Michel Bonnus",
+    "email": "m.bonnus@senat.fr",
+    "twitter": "MichelBonnus",
+    "facebook": "https://www.facebook.com/profile.php?id=100057808582481",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20138D",
+    "civilite": "Mme",
+    "nom": "Borchio Fontimp",
+    "prenom": "Alexandra",
+    "fullName": "Mme Alexandra Borchio Fontimp",
+    "email": "a.borchio-fontimp@senat.fr",
+    "twitter": "alexndraborchio",
+    "facebook": "https://www.facebook.com/profile.php?id=669618683",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20088L",
+    "civilite": "M.",
+    "nom": "Bouad",
+    "prenom": "Denis",
+    "fullName": "M. Denis Bouad",
+    "email": "d.bouad@senat.fr",
+    "twitter": "dbouad",
+    "facebook": "https://www.facebook.com/profile.php?id=100014861104877",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21046E",
+    "civilite": "Mme",
+    "nom": "Bourcier",
+    "prenom": "Corinne",
+    "fullName": "Mme Corinne Bourcier",
+    "email": "c.bourcier@senat.fr",
+    "twitter": "BourcierCorinne",
+    "facebook": "https://www.facebook.com/corinne.pouplard.5",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20114U",
+    "civilite": "M.",
+    "nom": "Bourgi",
+    "prenom": "Hussein",
+    "fullName": "M. Hussein Bourgi",
+    "email": "h.bourgi@senat.fr",
+    "twitter": "husseinbourgi",
+    "facebook": "https://www.facebook.com/profile.php?id=693945651",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "18045D",
+    "civilite": "Mme",
+    "nom": "Bourguignon",
+    "prenom": "Brigitte",
+    "fullName": "Mme Brigitte Bourguignon",
+    "email": "b.bourguignon@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19383Y",
+    "civilite": "M.",
+    "nom": "Boyer",
+    "prenom": "Jean-Marc",
+    "fullName": "M. Jean-Marc Boyer",
+    "email": "jm.boyer@senat.fr",
+    "twitter": "BoyerJ_M",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "17737W",
+    "civilite": "Mme",
+    "nom": "Boyer",
+    "prenom": "Valérie",
+    "fullName": "Mme Valérie Boyer",
+    "email": "v.boyer@senat.fr",
+    "twitter": "valerieboyer13",
+    "facebook": "https://www.facebook.com/profile.php?id=100044620530807",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21052C",
+    "civilite": "M.",
+    "nom": "Brault",
+    "prenom": "Jean-Luc",
+    "fullName": "M. Jean-Luc Brault",
+    "email": "jl.brault@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21404G",
+    "civilite": "Mme",
+    "nom": "Briante Guillemont",
+    "prenom": "Sophie",
+    "fullName": "Mme Sophie Briante Guillemont",
+    "email": "s.briante-guillemont@senat.fr",
+    "twitter": "sbg_senat",
+    "facebook": "https://www.facebook.com/sophie.briante.guillemont.2024",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20080C",
+    "civilite": "Mme",
+    "nom": "Briquet",
+    "prenom": "Isabelle",
+    "fullName": "Mme Isabelle Briquet",
+    "email": "i.briquet@senat.fr",
+    "twitter": "IsabelleBrique2",
+    "facebook": "https://www.facebook.com/profile.php?id=100006997788594",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19621T",
+    "civilite": "M.",
+    "nom": "Brisson",
+    "prenom": "Max",
+    "fullName": "M. Max Brisson",
+    "email": "m.brisson@senat.fr",
+    "twitter": "max_brisson",
+    "facebook": "https://www.facebook.com/profile.php?id=1570173750",
+    "commissions": [
+      "Vice-Président  de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21088Q",
+    "civilite": "M.",
+    "nom": "Brossat",
+    "prenom": "Ian",
+    "fullName": "M. Ian Brossat",
+    "email": null,
+    "twitter": "IanBrossat",
+    "facebook": "https://www.facebook.com/BrossatIan",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21089R",
+    "civilite": "Mme",
+    "nom": "Brossel",
+    "prenom": "Colombe",
+    "fullName": "Mme Colombe Brossel",
+    "email": null,
+    "twitter": "cbrossel",
+    "facebook": "https://www.facebook.com/ColombeBrosselParis",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19758L",
+    "civilite": "Mme",
+    "nom": "Brulin",
+    "prenom": "Céline",
+    "fullName": "Mme Céline Brulin",
+    "email": "c.brulin@senat.fr",
+    "twitter": "celine_brulin",
+    "facebook": "https://www.facebook.com/profile.php?id=100057705595682",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21063F",
+    "civilite": "M.",
+    "nom": "Bruyen",
+    "prenom": "Christian",
+    "fullName": "M. Christian Bruyen",
+    "email": "c.bruyen@senat.fr",
+    "twitter": "ChristianBruyen",
+    "facebook": "https://www.facebook.com/Bruyen.Christian",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "04047H",
+    "civilite": "M.",
+    "nom": "Buffet",
+    "prenom": "François-Noël",
+    "fullName": "M. François-Noël Buffet",
+    "email": "fn.buffet@senat.fr",
+    "twitter": "fnb_officiel",
+    "facebook": "https://www.facebook.com/profile.php?id=100002970954666",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19782L",
+    "civilite": "M.",
+    "nom": "Buis",
+    "prenom": "Bernard",
+    "fullName": "M. Bernard Buis",
+    "email": "b.buis@senat.fr",
+    "twitter": "bernard_buis",
+    "facebook": "https://www.facebook.com/profile.php?id=100008837088741",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires économiques"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20090E",
+    "civilite": "M.",
+    "nom": "Burgoa",
+    "prenom": "Laurent",
+    "fullName": "M. Laurent Burgoa",
+    "email": "l.burgoa@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=1546321676",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21096Q",
+    "civilite": "M.",
+    "nom": "Buval",
+    "prenom": "Frédéric",
+    "fullName": "M. Frédéric Buval",
+    "email": null,
+    "twitter": null,
+    "facebook": "https://www.facebook.com/buval.frederic.7",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14207L",
+    "civilite": "M.",
+    "nom": "Cabanel",
+    "prenom": "Henri",
+    "fullName": "M. Henri Cabanel",
+    "email": "h.cabanel@senat.fr",
+    "twitter": "senateurcabanel",
+    "facebook": "https://www.facebook.com/profile.php?id=100007414273615",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20104S",
+    "civilite": "M.",
+    "nom": "Cadec",
+    "prenom": "Alain",
+    "fullName": "M. Alain Cadec",
+    "email": "a.cadec@senat.fr",
+    "twitter": "AlainCadec",
+    "facebook": "https://www.facebook.com/profile.php?id=100058060989555",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14255U",
+    "civilite": "M.",
+    "nom": "Cadic",
+    "prenom": "Olivier",
+    "fullName": "M. Olivier Cadic",
+    "email": "o.cadic@senat.fr",
+    "twitter": "OlivierCadic",
+    "facebook": "https://www.facebook.com/profile.php?id=727383815",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21083K",
+    "civilite": "M.",
+    "nom": "Cambier",
+    "prenom": "Guislain",
+    "fullName": "M. Guislain Cambier",
+    "email": "g.cambier@senat.fr",
+    "twitter": "CambierGuislain",
+    "facebook": "https://www.facebook.com/guislain.cambier",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "04042C",
+    "civilite": "M.",
+    "nom": "Cambon",
+    "prenom": "Christian",
+    "fullName": "M. Christian Cambon",
+    "email": "c.cambon@senat.fr",
+    "twitter": "ChCambon",
+    "facebook": "https://www.facebook.com/profile.php?id=100008031431478",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21045D",
+    "civilite": "Mme",
+    "nom": "Canalès",
+    "prenom": "Marion",
+    "fullName": "Mme Marion Canalès",
+    "email": "m.canales@senat.fr",
+    "twitter": "MarionCanales",
+    "facebook": "https://www.facebook.com/marioncanales63",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14053L",
+    "civilite": "Mme",
+    "nom": "Canayer",
+    "prenom": "Agnès",
+    "fullName": "Mme Agnès Canayer",
+    "email": "a.canayer@senat.fr",
+    "twitter": "ACanayer",
+    "facebook": "https://www.facebook.com/profile.php?id=1176894978",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14083S",
+    "civilite": "M.",
+    "nom": "Canévet",
+    "prenom": "Michel",
+    "fullName": "M. Michel Canévet",
+    "email": "m.canevet@senat.fr",
+    "twitter": "michelcanevet",
+    "facebook": "https://www.facebook.com/profile.php?id=100057747502905",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11053K",
+    "civilite": "M.",
+    "nom": "Capo-Canellas",
+    "prenom": "Vincent",
+    "fullName": "M. Vincent Capo-Canellas",
+    "email": "v.capo-canellas@senat.fr",
+    "twitter": "Capo_Canellas",
+    "facebook": "https://www.facebook.com/profile.php?id=100058022561111",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19545Y",
+    "civilite": "M.",
+    "nom": "Capus",
+    "prenom": "Emmanuel",
+    "fullName": "M. Emmanuel Capus",
+    "email": "e.capus@senat.fr",
+    "twitter": "EmmanuelCapus",
+    "facebook": "https://www.facebook.com/profile.php?id=100057731692439",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20060X",
+    "civilite": "M.",
+    "nom": "Cardon",
+    "prenom": "Rémi",
+    "fullName": "M. Rémi Cardon",
+    "email": "r.cardon@senat.fr",
+    "twitter": "Cardon_Remi",
+    "facebook": "https://www.facebook.com/profile.php?id=1259946388",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "12028B",
+    "civilite": "Mme",
+    "nom": "Carlotti",
+    "prenom": "Marie-Arlette",
+    "fullName": "Mme Marie-Arlette Carlotti",
+    "email": "ma.carlotti@senat.fr",
+    "twitter": "MACarlotti",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": "Questeure du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19629C",
+    "civilite": "Mme",
+    "nom": "Carrère",
+    "prenom": "Maryse",
+    "fullName": "Mme Maryse Carrère",
+    "email": "m.carrere@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057856818295",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21090J",
+    "civilite": "Mme",
+    "nom": "Carrère-Gée",
+    "prenom": "Marie-Claire",
+    "fullName": "Mme Marie-Claire Carrère-Gée",
+    "email": "mc.carrere-gee@senat.fr",
+    "twitter": "mccg",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19721W",
+    "civilite": "M.",
+    "nom": "Cazabonne",
+    "prenom": "Alain",
+    "fullName": "M. Alain Cazabonne",
+    "email": "a.cazabonne@senat.fr",
+    "twitter": "ACazabonne",
+    "facebook": "https://www.facebook.com/profile.php?id=1844025768",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19057M",
+    "civilite": "Mme",
+    "nom": "Cazebonne",
+    "prenom": "Samantha",
+    "fullName": "Mme Samantha Cazebonne",
+    "email": "s.cazebonne@senat.fr",
+    "twitter": "scazebonne",
+    "facebook": "https://www.facebook.com/profile.php?id=100022593913067",
+    "commissions": [
+      "Vice-Présidente de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21057H",
+    "civilite": "M.",
+    "nom": "Chaillou",
+    "prenom": "Christophe",
+    "fullName": "M. Christophe Chaillou",
+    "email": "c.chaillou@senat.fr",
+    "twitter": "C_Chaillou",
+    "facebook": "https://www.facebook.com/ChaillouChristophe",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14329V",
+    "civilite": "Mme",
+    "nom": "Chain-Larché",
+    "prenom": "Anne",
+    "fullName": "Mme Anne Chain-Larché",
+    "email": "a.chain-larche@senat.fr",
+    "twitter": "anne_chain",
+    "facebook": "https://www.facebook.com/profile.php?id=100032666798399",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": "Vice-présidente du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14038Y",
+    "civilite": "M.",
+    "nom": "Chaize",
+    "prenom": "Patrick",
+    "fullName": "M. Patrick Chaize",
+    "email": "p.chaize@senat.fr",
+    "twitter": "p_chaize",
+    "facebook": "https://www.facebook.com/profile.php?id=100013049684042",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20264J",
+    "civilite": "M.",
+    "nom": "Chantrel",
+    "prenom": "Yan",
+    "fullName": "M. Yan Chantrel",
+    "email": "y.chantrel@senat.fr",
+    "twitter": "YanChantrel",
+    "facebook": "https://www.facebook.com/profile.php?id=100001635230244",
+    "commissions": [
+      "Vice-Président  de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14195A",
+    "civilite": "M.",
+    "nom": "Chasseing",
+    "prenom": "Daniel",
+    "fullName": "M. Daniel Chasseing",
+    "email": "d.chasseing@senat.fr",
+    "twitter": "DanielChasseing",
+    "facebook": "https://www.facebook.com/profile.php?id=100057799342101",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08028W",
+    "civilite": "M.",
+    "nom": "Chatillon",
+    "prenom": "Alain",
+    "fullName": "M. Alain Chatillon",
+    "email": "a.chatillon@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Vice-Président  de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20144B",
+    "civilite": "M.",
+    "nom": "Chauvet",
+    "prenom": "Patrick",
+    "fullName": "M. Patrick Chauvet",
+    "email": "p.chauvet@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21065H",
+    "civilite": "M.",
+    "nom": "Chevalier",
+    "prenom": "Cédric",
+    "fullName": "M. Cédric Chevalier",
+    "email": "c.chevalier@senat.fr",
+    "twitter": "ChevalierSenat",
+    "facebook": "https://www.facebook.com/profile.php?id=61551806835411",
+    "commissions": [
+      "Vice-Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "18083K",
+    "civilite": "M.",
+    "nom": "Chevrollier",
+    "prenom": "Guillaume",
+    "fullName": "M. Guillaume Chevrollier",
+    "email": "g.chevrollier@senat.fr",
+    "twitter": "gchevrollier",
+    "facebook": "https://www.facebook.com/profile.php?id=100058218183022",
+    "commissions": [
+      "Vice-Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14267Y",
+    "civilite": "M.",
+    "nom": "Cigolotti",
+    "prenom": "Olivier",
+    "fullName": "M. Olivier Cigolotti",
+    "email": "o.cigolotti@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100010059766794",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": "Questeur du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21072G",
+    "civilite": "Mme",
+    "nom": "Ciuntu",
+    "prenom": "Marie-Carole",
+    "fullName": "Mme Marie-Carole Ciuntu",
+    "email": "mc.ciuntu@senat.fr",
+    "twitter": "mcciuntu",
+    "facebook": "https://www.facebook.com/mariecarole.ciuntu",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19295A",
+    "civilite": "Mme",
+    "nom": "Conconne",
+    "prenom": "Catherine",
+    "fullName": "Mme Catherine Conconne",
+    "email": "c.conconne@senat.fr",
+    "twitter": "CConconne",
+    "facebook": "https://www.facebook.com/profile.php?id=1810548402",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11027H",
+    "civilite": "Mme",
+    "nom": "Conway-Mouret",
+    "prenom": "Hélène",
+    "fullName": "Mme Hélène Conway-Mouret",
+    "email": "h.conway-mouret@senat.fr",
+    "twitter": "hconwaymouret",
+    "facebook": "https://www.facebook.com/profile.php?id=100058083039806",
+    "commissions": [
+      "Vice-Présidente de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21034A",
+    "civilite": "Mme",
+    "nom": "Corbière Naminzo",
+    "prenom": "Evelyne",
+    "fullName": "Mme Evelyne Corbière Naminzo",
+    "email": "e.corbiere-naminzo@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100092330057501",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19681G",
+    "civilite": "M.",
+    "nom": "Corbisez",
+    "prenom": "Jean-Pierre",
+    "fullName": "M. Jean-Pierre Corbisez",
+    "email": "jp.corbisez@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100004830727552",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11115U",
+    "civilite": "M.",
+    "nom": "Courtial",
+    "prenom": "Édouard",
+    "fullName": "M. Édouard Courtial",
+    "email": "e.courtial@senat.fr",
+    "twitter": "EdouardCourtial",
+    "facebook": "https://www.facebook.com/profile.php?id=100058240384691",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20070A",
+    "civilite": "M.",
+    "nom": "Cozic",
+    "prenom": "Thierry",
+    "fullName": "M. Thierry Cozic",
+    "email": "t.cozic@senat.fr",
+    "twitter": "Th_Cozic",
+    "facebook": "https://www.facebook.com/profile.php?id=1546360600",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11056N",
+    "civilite": "Mme",
+    "nom": "Cukierman",
+    "prenom": "Cécile",
+    "fullName": "Mme Cécile Cukierman",
+    "email": "c.cukierman@senat.fr",
+    "twitter": "CecileCukierman",
+    "facebook": "https://www.facebook.com/profile.php?id=100000426845158",
+    "commissions": [
+      "Vice-Présidente de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14357A",
+    "civilite": "M.",
+    "nom": "Cuypers",
+    "prenom": "Pierre",
+    "fullName": "M. Pierre Cuypers",
+    "email": null,
+    "twitter": "PierreCuypers77",
+    "facebook": "https://www.facebook.com/profile.php?id=100021969314976",
+    "commissions": [
+      "Membre de la Commission des affaires économiques",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "18395Y",
+    "civilite": "Mme",
+    "nom": "Daniel",
+    "prenom": "Karine",
+    "fullName": "Mme Karine Daniel",
+    "email": "k.daniel@senat.fr",
+    "twitter": "KarineDaniel44",
+    "facebook": "https://www.facebook.com/KarineDanielNantes",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11065P",
+    "civilite": "M.",
+    "nom": "Dantec",
+    "prenom": "Ronan",
+    "fullName": "M. Ronan Dantec",
+    "email": "r.dantec@senat.fr",
+    "twitter": "RonanDantec",
+    "facebook": "https://www.facebook.com/profile.php?id=100058201204685",
+    "commissions": [
+      "Vice-Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19693L",
+    "civilite": "Mme",
+    "nom": "Darcos",
+    "prenom": "Laure",
+    "fullName": "Mme Laure Darcos",
+    "email": "l.darcos@senat.fr",
+    "twitter": "LDarcos",
+    "facebook": "https://www.facebook.com/profile.php?id=100009109571748",
+    "commissions": [
+      "Vice-Présidente de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14259Y",
+    "civilite": "M.",
+    "nom": "Darnaud",
+    "prenom": "Mathieu",
+    "fullName": "M. Mathieu Darnaud",
+    "email": "m.darnaud@senat.fr",
+    "twitter": "mathdarnaud",
+    "facebook": "https://www.facebook.com/profile.php?id=799474691",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21067K",
+    "civilite": "M.",
+    "nom": "Darras",
+    "prenom": "Jérôme",
+    "fullName": "M. Jérôme Darras",
+    "email": "j.darras@senat.fr",
+    "twitter": "jeromedarras62",
+    "facebook": "https://www.facebook.com/jeromedarras62",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21041Y",
+    "civilite": "M.",
+    "nom": "Daubet",
+    "prenom": "Raphaël",
+    "fullName": "M. Raphaël Daubet",
+    "email": "r.daubet@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "04008A",
+    "civilite": "M.",
+    "nom": "Daubresse",
+    "prenom": "Marc-Philippe",
+    "fullName": "M. Marc-Philippe Daubresse",
+    "email": "mp.daubresse@senat.fr",
+    "twitter": "DAUBRESSE_MP",
+    "facebook": "https://www.facebook.com/profile.php?id=100057941235895",
+    "commissions": [
+      "Vice-Président  de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19701S",
+    "civilite": "Mme",
+    "nom": "de Cidrac",
+    "prenom": "Marta",
+    "fullName": "Mme Marta de Cidrac",
+    "email": "m.de-cidrac@senat.fr",
+    "twitter": "MartadeCidrac",
+    "facebook": "https://www.facebook.com/profile.php?id=715289729",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Vice-Présidente de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19649G",
+    "civilite": "Mme",
+    "nom": "de La Gontrie",
+    "prenom": "Marie-Pierre",
+    "fullName": "Mme Marie-Pierre de La Gontrie",
+    "email": null,
+    "twitter": "mpdelagontrie",
+    "facebook": "https://www.facebook.com/profile.php?id=100057907605082",
+    "commissions": [
+      "Vice-Présidente de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19735D",
+    "civilite": "Mme",
+    "nom": "de La Provôté",
+    "prenom": "Sonia",
+    "fullName": "Mme Sonia de La Provôté",
+    "email": "s.delaprovote@senat.fr",
+    "twitter": "SoniadlpCaen",
+    "facebook": "https://www.facebook.com/profile.php?id=1407204158",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08034U",
+    "civilite": "M.",
+    "nom": "de Legge",
+    "prenom": "Dominique",
+    "fullName": "M. Dominique de Legge",
+    "email": "d.de-legge@senat.fr",
+    "twitter": "Domdelegge",
+    "facebook": "https://www.facebook.com/profile.php?id=100058314511627",
+    "commissions": [
+      "Membre de la Commission des finances",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20142Y",
+    "civilite": "Mme",
+    "nom": "de Marco",
+    "prenom": "Monique",
+    "fullName": "Mme Monique de Marco",
+    "email": "m.de-marco@senat.fr",
+    "twitter": "moniquedemarco",
+    "facebook": "https://www.facebook.com/profile.php?id=1016890097",
+    "commissions": [
+      "Vice-Présidente de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08011M",
+    "civilite": "M.",
+    "nom": "de Montgolfier",
+    "prenom": "Albéric",
+    "fullName": "M. Albéric de Montgolfier",
+    "email": "a.de-montgolfier@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057823849689",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14169X",
+    "civilite": "M.",
+    "nom": "de Nicolaÿ",
+    "prenom": "Louis-Jean",
+    "fullName": "M. Louis-Jean de Nicolaÿ",
+    "email": "lj.de-nicolay@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057848477072",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11070L",
+    "civilite": "M.",
+    "nom": "Delahaye",
+    "prenom": "Vincent",
+    "fullName": "M. Vincent Delahaye",
+    "email": "v.delahaye@senat.fr",
+    "twitter": "V_Delahaye",
+    "facebook": "https://www.facebook.com/profile.php?id=100058013440369",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19719D",
+    "civilite": "Mme",
+    "nom": "Delattre",
+    "prenom": "Nathalie",
+    "fullName": "Mme Nathalie Delattre",
+    "email": "n.delattre@senat.fr",
+    "twitter": "n_delattre",
+    "facebook": "https://www.facebook.com/profile.php?id=100057732863453",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14327T",
+    "civilite": "M.",
+    "nom": "Delcros",
+    "prenom": "Bernard",
+    "fullName": "M. Bernard Delcros",
+    "email": "b.delcros@senat.fr",
+    "twitter": "bernarddelcros",
+    "facebook": "https://www.facebook.com/profile.php?id=100008522839242",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20140W",
+    "civilite": "Mme",
+    "nom": "Demas",
+    "prenom": "Patricia",
+    "fullName": "Mme Patricia Demas",
+    "email": "p.demas@senat.fr",
+    "twitter": "demas_patricia",
+    "facebook": "https://www.facebook.com/profile.php?id=100055526785139",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "17229F",
+    "civilite": "M.",
+    "nom": "Demilly",
+    "prenom": "Stéphane",
+    "fullName": "M. Stéphane Demilly",
+    "email": "s.demilly@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=1684842056",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14217N",
+    "civilite": "Mme",
+    "nom": "Deseyne",
+    "prenom": "Chantal",
+    "fullName": "Mme Chantal Deseyne",
+    "email": "c.deseyne@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100025503286241",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20248J",
+    "civilite": "Mme",
+    "nom": "Devésa",
+    "prenom": "Brigitte",
+    "fullName": "Mme Brigitte Devésa",
+    "email": "b.devesa@senat.fr",
+    "twitter": "DEVESA3",
+    "facebook": "https://www.facebook.com/profile.php?id=100001565787892",
+    "commissions": [
+      "Membre de la Commission des affaires sociales",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19251M",
+    "civilite": "M.",
+    "nom": "Devinaz",
+    "prenom": "Gilbert-Luc",
+    "fullName": "M. Gilbert-Luc Devinaz",
+    "email": null,
+    "twitter": null,
+    "facebook": "https://www.facebook.com/gldevinaz",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "15197G",
+    "civilite": "M.",
+    "nom": "Dhersin",
+    "prenom": "Franck",
+    "fullName": "M. Franck Dhersin",
+    "email": "f.dhersin@senat.fr",
+    "twitter": "FDhersin",
+    "facebook": "https://www.facebook.com/franck.dhersin.3",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14215L",
+    "civilite": "Mme",
+    "nom": "Di Folco",
+    "prenom": "Catherine",
+    "fullName": "Mme Catherine Di Folco",
+    "email": "c.di-folco@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14042U",
+    "civilite": "Mme",
+    "nom": "Doineau",
+    "prenom": "Élisabeth",
+    "fullName": "Mme Élisabeth Doineau",
+    "email": "e.doineau@senat.fr",
+    "twitter": "E_Doineau",
+    "facebook": "https://www.facebook.com/profile.php?id=100057965834085",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20134Y",
+    "civilite": "M.",
+    "nom": "Dossus",
+    "prenom": "Thomas",
+    "fullName": "M. Thomas Dossus",
+    "email": "t.dossus@senat.fr",
+    "twitter": "tomdoss",
+    "facebook": "https://www.facebook.com/profile.php?id=100002154834314",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20124W",
+    "civilite": "Mme",
+    "nom": "Drexler",
+    "prenom": "Sabine",
+    "fullName": "Mme Sabine Drexler",
+    "email": "s.drexler@senat.fr",
+    "twitter": "DrexlerSabine",
+    "facebook": "https://www.facebook.com/profile.php?id=100063862400185",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20040T",
+    "civilite": "M.",
+    "nom": "Duffourg",
+    "prenom": "Alain",
+    "fullName": "M. Alain Duffourg",
+    "email": "a.duffourg@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100077989782277",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "07033P",
+    "civilite": "Mme",
+    "nom": "Dumas",
+    "prenom": "Catherine",
+    "fullName": "Mme Catherine Dumas",
+    "email": "c.dumas@senat.fr",
+    "twitter": "catherine_dumas",
+    "facebook": "https://www.facebook.com/profile.php?id=100005509571240",
+    "commissions": [
+      "Vice-Présidente de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20074E",
+    "civilite": "Mme",
+    "nom": "Dumont",
+    "prenom": "Françoise",
+    "fullName": "Mme Françoise Dumont",
+    "email": "f.dumont@senat.fr",
+    "twitter": "frdumont83",
+    "facebook": "https://www.facebook.com/profile.php?id=100063901682312",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19507S",
+    "civilite": "M.",
+    "nom": "Duplomb",
+    "prenom": "Laurent",
+    "fullName": "M. Laurent Duplomb",
+    "email": "l.duplomb@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100058098908620",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14249W",
+    "civilite": "Mme",
+    "nom": "Duranton",
+    "prenom": "Nicole",
+    "fullName": "Mme Nicole Duranton",
+    "email": "n.duranton@senat.fr",
+    "twitter": "NicoleDuranton",
+    "facebook": "https://www.facebook.com/profile.php?id=100010460109363",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21074J",
+    "civilite": "M.",
+    "nom": "Durox",
+    "prenom": "Aymeric",
+    "fullName": "M. Aymeric Durox",
+    "email": "a.durox@senat.fr",
+    "twitter": "AymericDurox",
+    "facebook": "https://www.facebook.com/aymericdurox",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11074Q",
+    "civilite": "M.",
+    "nom": "Éblé",
+    "prenom": "Vincent",
+    "fullName": "M. Vincent Éblé",
+    "email": "v.eble@senat.fr",
+    "twitter": "VincentEBLE",
+    "facebook": "https://www.facebook.com/profile.php?id=1245925903",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11110B",
+    "civilite": "Mme",
+    "nom": "Espagnac",
+    "prenom": "Frédérique",
+    "fullName": "Mme Frédérique Espagnac",
+    "email": "f.espagnac@senat.fr",
+    "twitter": "FEspagnac",
+    "facebook": "https://www.facebook.com/profile.php?id=100057920656235",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14187A",
+    "civilite": "Mme",
+    "nom": "Estrosi Sassone",
+    "prenom": "Dominique",
+    "fullName": "Mme Dominique Estrosi Sassone",
+    "email": "d.estrosi-sassone@senat.fr",
+    "twitter": "dominiq_estrosi",
+    "facebook": "https://www.facebook.com/profile.php?id=100044328224592",
+    "commissions": [
+      "Présidente de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19673G",
+    "civilite": "Mme",
+    "nom": "Eustache-Brinio",
+    "prenom": "Jacqueline",
+    "fullName": "Mme Jacqueline Eustache-Brinio",
+    "email": "j.eustache-brinio@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=1016865502",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21091K",
+    "civilite": "Mme",
+    "nom": "Evren",
+    "prenom": "Agnès",
+    "fullName": "Mme Agnès Evren",
+    "email": "a.evren@senat.fr",
+    "twitter": "AgnesEvren",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21062E",
+    "civilite": "M.",
+    "nom": "Fagnen",
+    "prenom": "Sébastien",
+    "fullName": "M. Sébastien Fagnen",
+    "email": "s.fagnen@senat.fr",
+    "twitter": "sebastienfagnen",
+    "facebook": "https://www.facebook.com/sebastien.fagnen",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21086N",
+    "civilite": "M.",
+    "nom": "Fargeot",
+    "prenom": "Daniel",
+    "fullName": "M. Daniel Fargeot",
+    "email": "d.fargeot@senat.fr",
+    "twitter": "DanielFargeot",
+    "facebook": "https://www.facebook.com/fargeot.daniel/",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20038A",
+    "civilite": "M.",
+    "nom": "Favreau",
+    "prenom": "Gilbert",
+    "fullName": "M. Gilbert Favreau",
+    "email": "g.favreau@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100009051262194",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19647E",
+    "civilite": "M.",
+    "nom": "Féraud",
+    "prenom": "Rémi",
+    "fullName": "M. Rémi Féraud",
+    "email": "r.feraud@senat.fr",
+    "twitter": "RemiFeraud",
+    "facebook": "https://www.facebook.com/profile.php?id=100057830059919",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14281W",
+    "civilite": "Mme",
+    "nom": "Féret",
+    "prenom": "Corinne",
+    "fullName": "Mme Corinne Féret",
+    "email": "c.feret@senat.fr",
+    "twitter": "CorinneFeret",
+    "facebook": "https://www.facebook.com/profile.php?id=100058301791709",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20100N",
+    "civilite": "M.",
+    "nom": "Fernique",
+    "prenom": "Jacques",
+    "fullName": "M. Jacques Fernique",
+    "email": "j.fernique@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=1607534182",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20132W",
+    "civilite": "M.",
+    "nom": "Fialaire",
+    "prenom": "Bernard",
+    "fullName": "M. Bernard Fialaire",
+    "email": "b.fialaire@senat.fr",
+    "twitter": "BernardFialaire",
+    "facebook": "https://www.facebook.com/profile.php?id=100006429324480",
+    "commissions": [
+      "Vice-Président  de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08045X",
+    "civilite": "M.",
+    "nom": "Fichet",
+    "prenom": "Jean-Luc",
+    "fullName": "M. Jean-Luc Fichet",
+    "email": "jl.fichet@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100009309676928",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19111A",
+    "civilite": "Mme",
+    "nom": "Florennes",
+    "prenom": "Isabelle",
+    "fullName": "Mme Isabelle Florennes",
+    "email": "i.florennes@senat.fr",
+    "twitter": "iflorennes92",
+    "facebook": "https://www.facebook.com/IFlorennes",
+    "commissions": [
+      "Vice-Présidente de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "17023S",
+    "civilite": "M.",
+    "nom": "Folliot",
+    "prenom": "Philippe",
+    "fullName": "M. Philippe Folliot",
+    "email": "p.folliot@senat.fr",
+    "twitter": "philippefolliot",
+    "facebook": "https://www.facebook.com/profile.php?id=100057752665348",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21033Y",
+    "civilite": "M.",
+    "nom": "Fouassin",
+    "prenom": "Stéphane",
+    "fullName": "M. Stéphane Fouassin",
+    "email": "s.fouassin@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/FouassinStephaneOff",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08018U",
+    "civilite": "M.",
+    "nom": "Frassa",
+    "prenom": "Christophe-André",
+    "fullName": "M. Christophe-André Frassa",
+    "email": "c.frassa@senat.fr",
+    "twitter": "C_Frassa",
+    "facebook": "https://www.facebook.com/profile.php?id=100000994813808",
+    "commissions": [
+      "Vice-Président  de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20286Q",
+    "civilite": "Mme",
+    "nom": "Gacquerre",
+    "prenom": "Amel",
+    "fullName": "Mme Amel Gacquerre",
+    "email": "a.gacquerre@senat.fr",
+    "twitter": "amel_gacquerre",
+    "facebook": "https://www.facebook.com/profile.php?id=1618332965",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20172F",
+    "civilite": "Mme",
+    "nom": "Garnier",
+    "prenom": "Laurence",
+    "fullName": "Mme Laurence Garnier",
+    "email": "l.garnier@senat.fr",
+    "twitter": "LGarnier44",
+    "facebook": "https://www.facebook.com/profile.php?id=100060185894411",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19695N",
+    "civilite": "M.",
+    "nom": "Gay",
+    "prenom": "Fabien",
+    "fullName": "M. Fabien Gay",
+    "email": "f.gay@senat.fr",
+    "twitter": "fabien_gay",
+    "facebook": "https://www.facebook.com/profile.php?id=100044361462853",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20120S",
+    "civilite": "M.",
+    "nom": "Genet",
+    "prenom": "Fabien",
+    "fullName": "M. Fabien Genet",
+    "email": "f.genet@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100063525588113",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14355X",
+    "civilite": "Mme",
+    "nom": "Gerbaud",
+    "prenom": "Frédérique",
+    "fullName": "Mme Frédérique Gerbaud",
+    "email": "f.gerbaud@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100014911986800",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19820Y",
+    "civilite": "M.",
+    "nom": "Gillé",
+    "prenom": "Hervé",
+    "fullName": "M. Hervé Gillé",
+    "email": "h.gille@senat.fr",
+    "twitter": "GilleHerve",
+    "facebook": "https://www.facebook.com/profile.php?id=100058222952522",
+    "commissions": [
+      "Vice-Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21032X",
+    "civilite": "Mme",
+    "nom": "Girardin",
+    "prenom": "Annick",
+    "fullName": "Mme Annick Girardin",
+    "email": "a.girardin@senat.fr",
+    "twitter": "AnnickGirardin",
+    "facebook": "https://www.facebook.com/annickgirardin.fr",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19387D",
+    "civilite": "M.",
+    "nom": "Gold",
+    "prenom": "Éric",
+    "fullName": "M. Éric Gold",
+    "email": "e.gold@senat.fr",
+    "twitter": "egold_senat",
+    "facebook": "https://www.facebook.com/profile.php?id=1626575065",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19347U",
+    "civilite": "M.",
+    "nom": "Gontard",
+    "prenom": "Guillaume",
+    "fullName": "M. Guillaume Gontard",
+    "email": "g.gontard@senat.fr",
+    "twitter": "GuillaumGontard",
+    "facebook": "https://www.facebook.com/profile.php?id=100009151634114",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20180F",
+    "civilite": "Mme",
+    "nom": "Gosselin",
+    "prenom": "Béatrice",
+    "fullName": "Mme Béatrice Gosselin",
+    "email": "b.gosselin@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100061942819989",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "07004J",
+    "civilite": "Mme",
+    "nom": "Goulet",
+    "prenom": "Nathalie",
+    "fullName": "Mme Nathalie Goulet",
+    "email": "n.goulet@senat.fr",
+    "twitter": "senateur61",
+    "facebook": "https://www.facebook.com/profile.php?id=100057751881737",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08056B",
+    "civilite": "Mme",
+    "nom": "Goy-Chavent",
+    "prenom": "Sylvie",
+    "fullName": "Mme Sylvie Goy-Chavent",
+    "email": "s.goy-chavent@senat.fr",
+    "twitter": "SGoyChavent",
+    "facebook": "https://www.facebook.com/profile.php?id=100023178783040",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14211G",
+    "civilite": "M.",
+    "nom": "Grand",
+    "prenom": "Jean-Pierre",
+    "fullName": "M. Jean-Pierre Grand",
+    "email": "jp.grand@senat.fr",
+    "twitter": "JeanPierreGrand",
+    "facebook": "https://www.facebook.com/profile.php?id=100003784918881",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19565D",
+    "civilite": "Mme",
+    "nom": "Gréaume",
+    "prenom": "Michelle",
+    "fullName": "Mme Michelle Gréaume",
+    "email": "m.greaume@senat.fr",
+    "twitter": "michellegreaume",
+    "facebook": "https://www.facebook.com/profile.php?id=100064202014423",
+    "commissions": [
+      "Vice-Présidente de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14033T",
+    "civilite": "M.",
+    "nom": "Gremillet",
+    "prenom": "Daniel",
+    "fullName": "M. Daniel Gremillet",
+    "email": "d.gremillet@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Vice-Président  de la Commission des affaires économiques",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14123H",
+    "civilite": "M.",
+    "nom": "Grosperrin",
+    "prenom": "Jacques",
+    "fullName": "M. Jacques Grosperrin",
+    "email": "j.grosperrin@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100066851857850",
+    "commissions": [
+      "Vice-Président  de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21066J",
+    "civilite": "M.",
+    "nom": "Grosvalet",
+    "prenom": "Philippe",
+    "fullName": "M. Philippe Grosvalet",
+    "email": "p.grosvalet@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Vice-Président  de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14026U",
+    "civilite": "Mme",
+    "nom": "Gruny",
+    "prenom": "Pascale",
+    "fullName": "Mme Pascale Gruny",
+    "email": "p.gruny@senat.fr",
+    "twitter": "PascaleGruny02",
+    "facebook": "https://www.facebook.com/profile.php?id=100000736606812",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Vice-Présidente de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20068G",
+    "civilite": "M.",
+    "nom": "Gueret",
+    "prenom": "Daniel",
+    "fullName": "M. Daniel Gueret",
+    "email": "d.gueret@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100056621176185",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21092L",
+    "civilite": "Mme",
+    "nom": "Guhl",
+    "prenom": "Antoinette",
+    "fullName": "Mme Antoinette Guhl",
+    "email": null,
+    "twitter": "antoinetteguhl",
+    "facebook": "https://www.facebook.com/antoinetteguhl",
+    "commissions": [
+      "Vice-Présidente de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19691J",
+    "civilite": "Mme",
+    "nom": "Guidez",
+    "prenom": "Jocelyne",
+    "fullName": "Mme Jocelyne Guidez",
+    "email": "j.guidez@senat.fr",
+    "twitter": "JocelyneGuidez",
+    "facebook": "https://www.facebook.com/profile.php?id=100013697561509",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20072C",
+    "civilite": "M.",
+    "nom": "Guiol",
+    "prenom": "André",
+    "fullName": "M. André Guiol",
+    "email": "a.guiol@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100064751168753",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19725B",
+    "civilite": "Mme",
+    "nom": "Harribey",
+    "prenom": "Laurence",
+    "fullName": "Mme Laurence Harribey",
+    "email": "l.harribey@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=1609743481",
+    "commissions": [
+      "Vice-Présidente de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20106U",
+    "civilite": "Mme",
+    "nom": "Havet",
+    "prenom": "Nadège",
+    "fullName": "Mme Nadège Havet",
+    "email": "n.havet@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Vice-Présidente de la Commission de l'aménagement du territoire et du développement durable",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20128B",
+    "civilite": "M.",
+    "nom": "Haye",
+    "prenom": "Ludovic",
+    "fullName": "M. Ludovic Haye",
+    "email": "l.haye@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100064162956438",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19569H",
+    "civilite": "M.",
+    "nom": "Henno",
+    "prenom": "Olivier",
+    "fullName": "M. Olivier Henno",
+    "email": "o.henno@senat.fr",
+    "twitter": "OHenno",
+    "facebook": "https://www.facebook.com/profile.php?id=1516694139",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Vice-Président  de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14179A",
+    "civilite": "M.",
+    "nom": "Hervé",
+    "prenom": "Loïc",
+    "fullName": "M. Loïc Hervé",
+    "email": "l.herve@senat.fr",
+    "twitter": "loichervepublic",
+    "facebook": "https://www.facebook.com/profile.php?id=100058025893615",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": "Vice-président du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19685L",
+    "civilite": "Mme",
+    "nom": "Herzog",
+    "prenom": "Christine",
+    "fullName": "Mme Christine Herzog",
+    "email": "c.herzog@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100063569657337",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20048C",
+    "civilite": "M.",
+    "nom": "Hingray",
+    "prenom": "Jean",
+    "fullName": "M. Jean Hingray",
+    "email": "j.hingray@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=575063842",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21085M",
+    "civilite": "M.",
+    "nom": "Hochart",
+    "prenom": "Joshua",
+    "fullName": "M. Joshua Hochart",
+    "email": null,
+    "twitter": "joshuaHochart",
+    "facebook": "https://www.facebook.com/JoshuaHochart",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08069G",
+    "civilite": "M.",
+    "nom": "Houpert",
+    "prenom": "Alain",
+    "fullName": "M. Alain Houpert",
+    "email": "a.houpert@senat.fr",
+    "twitter": "alainhoupert",
+    "facebook": "https://www.facebook.com/profile.php?id=100063547937935",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21415K",
+    "civilite": "Mme",
+    "nom": "Housseau",
+    "prenom": "Marie-Lise",
+    "fullName": "Mme Marie-Lise Housseau",
+    "email": "ml.housseau@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19399H",
+    "civilite": "M.",
+    "nom": "Hugonet",
+    "prenom": "Jean-Raymond",
+    "fullName": "M. Jean-Raymond Hugonet",
+    "email": "jr.hugonet@senat.fr",
+    "twitter": "jrhugonet",
+    "facebook": "https://www.facebook.com/profile.php?id=100058110818127",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11048N",
+    "civilite": "M.",
+    "nom": "Husson",
+    "prenom": "Jean-François",
+    "fullName": "M. Jean-François Husson",
+    "email": "jf.husson@senat.fr",
+    "twitter": "jf_husson",
+    "facebook": "https://www.facebook.com/profile.php?id=100063871803630",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19591F",
+    "civilite": "M.",
+    "nom": "Iacovelli",
+    "prenom": "Xavier",
+    "fullName": "M. Xavier Iacovelli",
+    "email": "x.iacovelli@senat.fr",
+    "twitter": "iacovellixavier",
+    "facebook": "https://www.facebook.com/profile.php?id=596443558",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": "Vice-président du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14213J",
+    "civilite": "Mme",
+    "nom": "Imbert",
+    "prenom": "Corinne",
+    "fullName": "Mme Corinne Imbert",
+    "email": "c.imbert@senat.fr",
+    "twitter": "imbertcorinne17",
+    "facebook": "https://www.facebook.com/profile.php?id=100000259359868",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20066E",
+    "civilite": "Mme",
+    "nom": "Jacquemet",
+    "prenom": "Annick",
+    "fullName": "Mme Annick Jacquemet",
+    "email": "a.jacquemet@senat.fr",
+    "twitter": "JacquemetAnnick",
+    "facebook": "https://www.facebook.com/profile.php?id=100064112110078",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20034V",
+    "civilite": "Mme",
+    "nom": "Jacques",
+    "prenom": "Micheline",
+    "fullName": "Mme Micheline Jacques",
+    "email": "m.jacques@senat.fr",
+    "twitter": "micheline_jacqu",
+    "facebook": "https://www.facebook.com/profile.php?id=100064316880925",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19551W",
+    "civilite": "M.",
+    "nom": "Jacquin",
+    "prenom": "Olivier",
+    "fullName": "M. Olivier Jacquin",
+    "email": "o.jacquin@senat.fr",
+    "twitter": "Jacquin_Olivier",
+    "facebook": "https://www.facebook.com/profile.php?id=100004069132238",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21093M",
+    "civilite": "M.",
+    "nom": "Jadot",
+    "prenom": "Yannick",
+    "fullName": "M. Yannick Jadot",
+    "email": "y.jadot@senat.fr",
+    "twitter": "yjadot",
+    "facebook": "https://www.facebook.com/yjadot",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14121F",
+    "civilite": "M.",
+    "nom": "Jeansannetas",
+    "prenom": "Éric",
+    "fullName": "M. Éric Jeansannetas",
+    "email": "e.jeansannetas@senat.fr",
+    "twitter": "ejeansannetas",
+    "facebook": "https://www.facebook.com/profile.php?id=100057907155185",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19531S",
+    "civilite": "M.",
+    "nom": "Joly",
+    "prenom": "Patrice",
+    "fullName": "M. Patrice Joly",
+    "email": "p.joly@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19683J",
+    "civilite": "M.",
+    "nom": "Jomier",
+    "prenom": "Bernard",
+    "fullName": "M. Bernard Jomier",
+    "email": "b.jomier@senat.fr",
+    "twitter": "BernardJomier",
+    "facebook": "https://www.facebook.com/profile.php?id=100057960404447",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires sociales",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21044C",
+    "civilite": "Mme",
+    "nom": "Josende",
+    "prenom": "Lauriane",
+    "fullName": "Mme Lauriane Josende",
+    "email": "l.josende@senat.fr",
+    "twitter": "LaurianeJosende",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20056C",
+    "civilite": "Mme",
+    "nom": "Joseph",
+    "prenom": "Else",
+    "fullName": "Mme Else Joseph",
+    "email": "e.joseph@senat.fr",
+    "twitter": "ElseJOSEPH",
+    "facebook": "https://www.facebook.com/profile.php?id=649413515",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14097Y",
+    "civilite": "Mme",
+    "nom": "Jourda",
+    "prenom": "Gisèle",
+    "fullName": "Mme Gisèle Jourda",
+    "email": "g.jourda@senat.fr",
+    "twitter": "GiseleJourda",
+    "facebook": "https://www.facebook.com/profile.php?id=100058003124263",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19447X",
+    "civilite": "Mme",
+    "nom": "Jourda",
+    "prenom": "Muriel",
+    "fullName": "Mme Muriel Jourda",
+    "email": "m.jourda@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057969106426",
+    "commissions": [
+      "Présidente de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14241N",
+    "civilite": "Mme",
+    "nom": "Jouve",
+    "prenom": "Mireille",
+    "fullName": "Mme Mireille Jouve",
+    "email": "m.jouve@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=61559573139922",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "95041E",
+    "civilite": "M.",
+    "nom": "Joyandet",
+    "prenom": "Alain",
+    "fullName": "M. Alain Joyandet",
+    "email": "a.joyandet@senat.fr",
+    "twitter": "AJoyandet",
+    "facebook": "https://www.facebook.com/profile.php?id=100058280671994",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14021P",
+    "civilite": "M.",
+    "nom": "Kanner",
+    "prenom": "Patrick",
+    "fullName": "M. Patrick Kanner",
+    "email": "p.kanner@senat.fr",
+    "twitter": "PatrickKanner",
+    "facebook": "https://www.facebook.com/profile.php?id=100057824419392",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "99004R",
+    "civilite": "M.",
+    "nom": "Karoutchi",
+    "prenom": "Roger",
+    "fullName": "M. Roger Karoutchi",
+    "email": "r.karoutchi@senat.fr",
+    "twitter": "Rkaroutchi",
+    "facebook": "https://www.facebook.com/profile.php?id=564970768",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14073Q",
+    "civilite": "M.",
+    "nom": "Kern",
+    "prenom": "Claude",
+    "fullName": "M. Claude Kern",
+    "email": "c.kern@senat.fr",
+    "twitter": "claude_kern",
+    "facebook": "https://www.facebook.com/profile.php?id=606424719",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19489J",
+    "civilite": "M.",
+    "nom": "Kerrouche",
+    "prenom": "Éric",
+    "fullName": "M. Éric Kerrouche",
+    "email": "e.kerrouche@senat.fr",
+    "twitter": "EricKerrouche",
+    "facebook": "https://www.facebook.com/profile.php?id=752244486",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21081H",
+    "civilite": "M.",
+    "nom": "Khalifé",
+    "prenom": "Khalifé",
+    "fullName": "M. Khalifé Khalifé",
+    "email": "k.khalife@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/khalife.khalife",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20126Y",
+    "civilite": "M.",
+    "nom": "Klinger",
+    "prenom": "Christian",
+    "fullName": "M. Christian Klinger",
+    "email": "c.klinger@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20016T",
+    "civilite": "M.",
+    "nom": "Kulimoetoke",
+    "prenom": "Mikaele",
+    "fullName": "M. Mikaele Kulimoetoke",
+    "email": "m.kulimoetoke@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100064514996694",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19611R",
+    "civilite": "M.",
+    "nom": "Lafon",
+    "prenom": "Laurent",
+    "fullName": "M. Laurent Lafon",
+    "email": "l.lafon@senat.fr",
+    "twitter": "L_Lafon",
+    "facebook": "https://www.facebook.com/profile.php?id=100058103108525",
+    "commissions": [
+      "Président  de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20102Q",
+    "civilite": "M.",
+    "nom": "Lahellec",
+    "prenom": "Gérard",
+    "fullName": "M. Gérard Lahellec",
+    "email": "g.lahellec@senat.fr",
+    "twitter": "LahellecG",
+    "facebook": "https://www.facebook.com/profile.php?id=100060089481173",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "07029T",
+    "civilite": "M.",
+    "nom": "Laménie",
+    "prenom": "Marc",
+    "fullName": "M. Marc Laménie",
+    "email": "m.lamenie@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21078N",
+    "civilite": "M.",
+    "nom": "Laouedj",
+    "prenom": "Ahmed",
+    "fullName": "M. Ahmed Laouedj",
+    "email": "a.laouedj@senat.fr",
+    "twitter": "Ahmedlaouedj68",
+    "facebook": "https://www.facebook.com/ahmed.laouedj.7/",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "86034E",
+    "civilite": "M.",
+    "nom": "Larcher",
+    "prenom": "Gérard",
+    "fullName": "M. Gérard Larcher",
+    "email": "g.larcher@senat.fr",
+    "twitter": "gerard_larcher",
+    "facebook": "https://www.facebook.com/profile.php?id=100060710991349",
+    "commissions": [],
+    "fonction": "Président du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19723Y",
+    "civilite": "Mme",
+    "nom": "Lassarade",
+    "prenom": "Florence",
+    "fullName": "Mme Florence Lassarade",
+    "email": "f.lassarade@senat.fr",
+    "twitter": "flolassarade",
+    "facebook": "https://www.facebook.com/profile.php?id=100051158921189",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19699S",
+    "civilite": "M.",
+    "nom": "Laugier",
+    "prenom": "Michel",
+    "fullName": "M. Michel Laugier",
+    "email": "m.laugier@senat.fr",
+    "twitter": "LaugierMichel",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08015R",
+    "civilite": "M.",
+    "nom": "Laurent",
+    "prenom": "Daniel",
+    "fullName": "M. Daniel Laurent",
+    "email": "cab.daniel.laurent@orange.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19711U",
+    "civilite": "Mme",
+    "nom": "Lavarde",
+    "prenom": "Christine",
+    "fullName": "Mme Christine Lavarde",
+    "email": "c.lavarde@senat.fr",
+    "twitter": "LavardeC",
+    "facebook": "https://www.facebook.com/profile.php?id=677306056",
+    "commissions": [
+      "Membre de la Commission des finances",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19709B",
+    "civilite": "M.",
+    "nom": "Le Gleut",
+    "prenom": "Ronan",
+    "fullName": "M. Ronan Le Gleut",
+    "email": "r.le-gleut@senat.fr",
+    "twitter": "ronan_legleut",
+    "facebook": "https://www.facebook.com/profile.php?id=717598083",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "18193Q",
+    "civilite": "Mme",
+    "nom": "Le Houerou",
+    "prenom": "Annie",
+    "fullName": "Mme Annie Le Houerou",
+    "email": "a.le-houerou@senat.fr",
+    "twitter": "LeHouerouA",
+    "facebook": "https://www.facebook.com/profile.php?id=100057838970118",
+    "commissions": [
+      "Vice-Présidente de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20108W",
+    "civilite": "M.",
+    "nom": "Le Rudulier",
+    "prenom": "Stéphane",
+    "fullName": "M. Stéphane Le Rudulier",
+    "email": "s.le-rudulier@senat.fr",
+    "twitter": "slerudulier",
+    "facebook": "https://www.facebook.com/profile.php?id=1662971306",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08010L",
+    "civilite": "M.",
+    "nom": "Lefèvre",
+    "prenom": "Antoine",
+    "fullName": "M. Antoine Lefèvre",
+    "email": "a.lefevre@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100058089369863",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": "Questeur du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14037X",
+    "civilite": "M.",
+    "nom": "Lemoyne",
+    "prenom": "Jean-Baptiste",
+    "fullName": "M. Jean-Baptiste Lemoyne",
+    "email": "jb.lemoyne@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21087P",
+    "civilite": "Mme",
+    "nom": "Lermytte",
+    "prenom": "Marie-Claude",
+    "fullName": "Mme Marie-Claude Lermytte",
+    "email": "mc.lermytte@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19729F",
+    "civilite": "M.",
+    "nom": "Leroy",
+    "prenom": "Henri",
+    "fullName": "M. Henri Leroy",
+    "email": "h.leroy@senat.fr",
+    "twitter": "senateurleroy",
+    "facebook": "https://www.facebook.com/profile.php?id=100000124342640",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20052X",
+    "civilite": "M.",
+    "nom": "Levi",
+    "prenom": "Pierre-Antoine",
+    "fullName": "M. Pierre-Antoine Levi",
+    "email": "pa.levi@senat.fr",
+    "twitter": "PALevisenat",
+    "facebook": "https://www.facebook.com/profile.php?id=100063970422324",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19697Q",
+    "civilite": "M.",
+    "nom": "Lévrier",
+    "prenom": "Martin",
+    "fullName": "M. Martin Lévrier",
+    "email": "m.levrier@senat.fr",
+    "twitter": "LevrierMartin",
+    "facebook": "https://www.facebook.com/profile.php?id=100057916635915",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "18207D",
+    "civilite": "Mme",
+    "nom": "Linkenheld",
+    "prenom": "Audrey",
+    "fullName": "Mme Audrey Linkenheld",
+    "email": "a.linkenheld@senat.fr",
+    "twitter": "a_linkenheld",
+    "facebook": "https://www.facebook.com/audreylinkenheld59/",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14205J",
+    "civilite": "Mme",
+    "nom": "Loisier",
+    "prenom": "Anne-Catherine",
+    "fullName": "Mme Anne-Catherine Loisier",
+    "email": "ac.loisier@senat.fr",
+    "twitter": "ac_loisier",
+    "facebook": "https://www.facebook.com/profile.php?id=100058276531132",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14219Q",
+    "civilite": "M.",
+    "nom": "Longeot",
+    "prenom": "Jean-François",
+    "fullName": "M. Jean-François Longeot",
+    "email": "jf.longeot@senat.fr",
+    "twitter": "jf_longeot",
+    "facebook": "https://www.facebook.com/profile.php?id=100058128217566",
+    "commissions": [
+      "Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14059S",
+    "civilite": "Mme",
+    "nom": "Lopez",
+    "prenom": "Vivette",
+    "fullName": "Mme Vivette Lopez",
+    "email": "v.lopez@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100051594191958",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21054E",
+    "civilite": "M.",
+    "nom": "Louault",
+    "prenom": "Vincent",
+    "fullName": "M. Vincent Louault",
+    "email": "v.louault@senat.fr",
+    "twitter": "vincent_louault",
+    "facebook": "https://www.facebook.com/vince.louault",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Vice-Président  de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08012N",
+    "civilite": "M.",
+    "nom": "Lozach",
+    "prenom": "Jean-Jacques",
+    "fullName": "M. Jean-Jacques Lozach",
+    "email": "jjlozach@jjlozach.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100058215094569",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "17779H",
+    "civilite": "Mme",
+    "nom": "Lubin",
+    "prenom": "Monique",
+    "fullName": "Mme Monique Lubin",
+    "email": "m.lubin@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100022490543308",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "12016W",
+    "civilite": "M.",
+    "nom": "Lurel",
+    "prenom": "Victorin",
+    "fullName": "M. Victorin Lurel",
+    "email": "v.lurel@senat.fr",
+    "twitter": "VictorinLurel",
+    "facebook": "https://www.facebook.com/profile.php?id=100050168873514",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19657G",
+    "civilite": "Mme",
+    "nom": "Malet",
+    "prenom": "Viviane",
+    "fullName": "Mme Viviane Malet",
+    "email": "v.malet@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14251Q",
+    "civilite": "M.",
+    "nom": "Malhuret",
+    "prenom": "Claude",
+    "fullName": "M. Claude Malhuret",
+    "email": "c.malhuret@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057729474461",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14031R",
+    "civilite": "M.",
+    "nom": "Mandelli",
+    "prenom": "Didier",
+    "fullName": "M. Didier Mandelli",
+    "email": "d.mandelli@senat.fr",
+    "twitter": "DidierMandelli",
+    "facebook": "https://www.facebook.com/profile.php?id=100000728637910",
+    "commissions": [
+      "Premier Vice-Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": "Vice-président du Sénat",
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14111D",
+    "civilite": "M.",
+    "nom": "Marc",
+    "prenom": "Alain",
+    "fullName": "M. Alain Marc",
+    "email": "a.marc@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100003067449922",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": "Vice-président du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21075K",
+    "civilite": "Mme",
+    "nom": "Margaté",
+    "prenom": "Marianne",
+    "fullName": "Mme Marianne Margaté",
+    "email": "m.margate@senat.fr",
+    "twitter": "MargateMarianne",
+    "facebook": "https://www.facebook.com/margate77",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21486B",
+    "civilite": "M.",
+    "nom": "Margueritte",
+    "prenom": "David",
+    "fullName": "M. David Margueritte",
+    "email": "d.margueritte@senat.fr",
+    "twitter": "DMARGUERITTE",
+    "facebook": "https://www.facebook.com/david.margueritte.9/",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14001X",
+    "civilite": "M.",
+    "nom": "Marie",
+    "prenom": "Didier",
+    "fullName": "M. Didier Marie",
+    "email": "d.marie@senat.fr",
+    "twitter": "Didier_Marie76",
+    "facebook": "https://www.facebook.com/profile.php?id=100064255712160",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11085T",
+    "civilite": "M.",
+    "nom": "Marseille",
+    "prenom": "Hervé",
+    "fullName": "M. Hervé Marseille",
+    "email": "h.marseille@senat.fr",
+    "twitter": "hervemarseille",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19826F",
+    "civilite": "M.",
+    "nom": "Martin",
+    "prenom": "Pascal",
+    "fullName": "M. Pascal Martin",
+    "email": "p.martin@senat.fr",
+    "twitter": "Pasc_Martin",
+    "facebook": "https://www.facebook.com/profile.php?id=100057628916285",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21058J",
+    "civilite": "Mme",
+    "nom": "Martin",
+    "prenom": "Pauline",
+    "fullName": "Mme Pauline Martin",
+    "email": "pauline.martin@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21040X",
+    "civilite": "M.",
+    "nom": "Masset",
+    "prenom": "Michel",
+    "fullName": "M. Michel Masset",
+    "email": "m.masset@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=61553676331171",
+    "commissions": [
+      "Vice-Président  de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21512K",
+    "civilite": "Mme",
+    "nom": "Matray",
+    "prenom": "Paulette",
+    "fullName": "Mme Paulette Matray",
+    "email": "p.matray@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08009T",
+    "civilite": "M.",
+    "nom": "Maurey",
+    "prenom": "Hervé",
+    "fullName": "M. Hervé Maurey",
+    "email": "h.maurey@senat.fr",
+    "twitter": "HMaurey",
+    "facebook": "https://www.facebook.com/profile.php?id=100000825785840",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14221J",
+    "civilite": "M.",
+    "nom": "Médevielle",
+    "prenom": "Pierre",
+    "fullName": "M. Pierre Médevielle",
+    "email": "p.medevielle@senat.fr",
+    "twitter": "p_medevielle",
+    "facebook": "https://www.facebook.com/profile.php?id=747541906",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20252E",
+    "civilite": "M.",
+    "nom": "Meignen",
+    "prenom": "Thierry",
+    "fullName": "M. Thierry Meignen",
+    "email": null,
+    "twitter": "ThierryMeignen",
+    "facebook": "https://www.facebook.com/profile.php?id=100057822859263",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21073H",
+    "civilite": "M.",
+    "nom": "Mellouli",
+    "prenom": "Akli",
+    "fullName": "M. Akli Mellouli",
+    "email": "a.mellouli@senat.fr",
+    "twitter": "aklimellouli",
+    "facebook": "https://www.facebook.com/profile.php?id=100057136281344",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": "75",
+    "deptName": "Paris"
+  },
+  {
+    "id": "19563B",
+    "civilite": "M.",
+    "nom": "Menonville",
+    "prenom": "Franck",
+    "fullName": "M. Franck Menonville",
+    "email": "f.menonville@senat.fr",
+    "twitter": "F_Menonville",
+    "facebook": "https://www.facebook.com/profile.php?id=100063789469689",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14147R",
+    "civilite": "Mme",
+    "nom": "Mercier",
+    "prenom": "Marie",
+    "fullName": "Mme Marie Mercier",
+    "email": "marie.mercier@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057734875332",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20028X",
+    "civilite": "M.",
+    "nom": "Mérillou",
+    "prenom": "Serge",
+    "fullName": "M. Serge Mérillou",
+    "email": "s.merillou@senat.fr",
+    "twitter": "MerillouSerge",
+    "facebook": "https://www.facebook.com/profile.php?id=100053924259632",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21080G",
+    "civilite": "M.",
+    "nom": "Michallet",
+    "prenom": "Damien",
+    "fullName": "M. Damien Michallet",
+    "email": "d.michallet@senat.fr",
+    "twitter": "DMichallet",
+    "facebook": "https://www.facebook.com/profile.php?id=100009146313984",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20018V",
+    "civilite": "M.",
+    "nom": "Michau",
+    "prenom": "Jean-Jacques",
+    "fullName": "M. Jean-Jacques Michau",
+    "email": "jj.michau@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100063877743752",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14223L",
+    "civilite": "Mme",
+    "nom": "Micouleau",
+    "prenom": "Brigitte",
+    "fullName": "Mme Brigitte Micouleau",
+    "email": "b.micouleau@senat.fr",
+    "twitter": "bmicouleau",
+    "facebook": "https://www.facebook.com/profile.php?id=1091086152",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "04092N",
+    "civilite": "M.",
+    "nom": "Milon",
+    "prenom": "Alain",
+    "fullName": "M. Alain Milon",
+    "email": "a.milon@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100064117114258",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19335Q",
+    "civilite": "M.",
+    "nom": "Mizzon",
+    "prenom": "Jean-Marie",
+    "fullName": "M. Jean-Marie Mizzon",
+    "email": "jm.mizzon@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057752514659",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11072N",
+    "civilite": "M.",
+    "nom": "Mohamed Soilihi",
+    "prenom": "Thani",
+    "fullName": "M. Thani Mohamed Soilihi",
+    "email": "t.mohamed-soilihi@senat.fr",
+    "twitter": "TMohamedSoilihi",
+    "facebook": "https://www.facebook.com/profile.php?id=100003090871052",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14109K",
+    "civilite": "Mme",
+    "nom": "Monier",
+    "prenom": "Marie-Pierre",
+    "fullName": "Mme Marie-Pierre Monier",
+    "email": "mp.monier@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057951104992",
+    "commissions": [
+      "Vice-Présidente de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14257W",
+    "civilite": "M.",
+    "nom": "Montaugé",
+    "prenom": "Franck",
+    "fullName": "M. Franck Montaugé",
+    "email": "f.montauge@senat.fr",
+    "twitter": "FranckMontauge",
+    "facebook": null,
+    "commissions": [
+      "Vice-Président  de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "04070G",
+    "civilite": "Mme",
+    "nom": "Morin-Desailly",
+    "prenom": "Catherine",
+    "fullName": "Mme Catherine Morin-Desailly",
+    "email": "c.morin-desailly@senat.fr",
+    "twitter": "C_MorinDesailly",
+    "facebook": "https://www.facebook.com/profile.php?id=100057881865916",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14071N",
+    "civilite": "M.",
+    "nom": "Mouiller",
+    "prenom": "Philippe",
+    "fullName": "M. Philippe Mouiller",
+    "email": "p.mouiller@senat.fr",
+    "twitter": "Mouiller_P",
+    "facebook": "https://www.facebook.com/profile.php?id=100057976483030",
+    "commissions": [
+      "Président  de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21534R",
+    "civilite": "Mme",
+    "nom": "Mouton",
+    "prenom": "Marie-Pierre",
+    "fullName": "Mme Marie-Pierre Mouton",
+    "email": "mp.mouton@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20096L",
+    "civilite": "Mme",
+    "nom": "Muller-Bronn",
+    "prenom": "Laurence",
+    "fullName": "Mme Laurence Muller-Bronn",
+    "email": "l.muller-bronn@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100005101215154",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21097R",
+    "civilite": "Mme",
+    "nom": "Nadille",
+    "prenom": "Solanges",
+    "fullName": "Mme Solanges Nadille",
+    "email": "s.nadille@senat.fr",
+    "twitter": "https://x.com/SolangesNADILLE?s=20",
+    "facebook": "https://www.facebook.com/p/Solanges-Nadille-Vala-s%C3%A9natrice-de-la-Guadeloupe-61558475723513/",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "18231D",
+    "civilite": "Mme",
+    "nom": "Narassiguin",
+    "prenom": "Corinne",
+    "fullName": "Mme Corinne Narassiguin",
+    "email": null,
+    "twitter": "CorinneNara",
+    "facebook": "https://www.facebook.com/CorinneNara",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21029D",
+    "civilite": "M.",
+    "nom": "Naturel",
+    "prenom": "Georges",
+    "fullName": "M. Georges Naturel",
+    "email": "g.naturel@senat.fr",
+    "twitter": "georgesNaturel",
+    "facebook": "https://www.facebook.com/georgesnaturel2023",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21039F",
+    "civilite": "Mme",
+    "nom": "Nédélec",
+    "prenom": "Anne-Marie",
+    "fullName": "Mme Anne-Marie Nédélec",
+    "email": "am.nedelec@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19768N",
+    "civilite": "Mme",
+    "nom": "Noël",
+    "prenom": "Sylviane",
+    "fullName": "Mme Sylviane Noël",
+    "email": "s.noel@senat.fr",
+    "twitter": "noel_sylviane",
+    "facebook": "https://www.facebook.com/profile.php?id=835524589",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14253S",
+    "civilite": "M.",
+    "nom": "Nougein",
+    "prenom": "Claude",
+    "fullName": "M. Claude Nougein",
+    "email": "c.nougein@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21037D",
+    "civilite": "Mme",
+    "nom": "Ollivier",
+    "prenom": "Mathilde",
+    "fullName": "Mme Mathilde Ollivier",
+    "email": "m.ollivier@senat.fr",
+    "twitter": "Mat_OLLIVIER",
+    "facebook": "https://www.facebook.com/Mathilde.Ollivier.Circo7",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19331L",
+    "civilite": "M.",
+    "nom": "Omar Oili",
+    "prenom": "Saïd",
+    "fullName": "M. Saïd Omar Oili",
+    "email": "s.omar-oili@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100064592356524",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21060C",
+    "civilite": "M.",
+    "nom": "Ouizille",
+    "prenom": "Alexandre",
+    "fullName": "M. Alexandre Ouizille",
+    "email": "a.ouizille@senat.fr",
+    "twitter": "Aouizille",
+    "facebook": "https://www.facebook.com/AlexandreOuizille/",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19593H",
+    "civilite": "M.",
+    "nom": "Ouzoulias",
+    "prenom": "Pierre",
+    "fullName": "M. Pierre Ouzoulias",
+    "email": "p.ouzoulias@senat.fr",
+    "twitter": "OuzouliasP",
+    "facebook": "https://www.facebook.com/profile.php?id=100058054719947",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": "Vice-président du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19573D",
+    "civilite": "M.",
+    "nom": "Paccaud",
+    "prenom": "Olivier",
+    "fullName": "M. Olivier Paccaud",
+    "email": "o.paccaud@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100007100076552",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21592C",
+    "civilite": "Mme",
+    "nom": "Paire",
+    "prenom": "Sandra",
+    "fullName": "Mme Sandra Paire",
+    "email": "s.paire@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19866P",
+    "civilite": "Mme",
+    "nom": "Pantel",
+    "prenom": "Guylène",
+    "fullName": "Mme Guylène Pantel",
+    "email": "g.pantel@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057980894123",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14191V",
+    "civilite": "M.",
+    "nom": "Panunzi",
+    "prenom": "Jean-Jacques",
+    "fullName": "M. Jean-Jacques Panunzi",
+    "email": "jj.panunzi@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20050V",
+    "civilite": "Mme",
+    "nom": "Paoli-Gagin",
+    "prenom": "Vanina",
+    "fullName": "Mme Vanina Paoli-Gagin",
+    "email": "v.paoli-gagin@senat.fr",
+    "twitter": "GaginPaoli",
+    "facebook": "https://www.facebook.com/profile.php?id=100076010277457",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20036X",
+    "civilite": "M.",
+    "nom": "Parigi",
+    "prenom": "Paul Toussaint",
+    "fullName": "M. Paul Toussaint Parigi",
+    "email": "pt.parigi@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08073C",
+    "civilite": "M.",
+    "nom": "Patient",
+    "prenom": "Georges",
+    "fullName": "M. Georges Patient",
+    "email": "g.patient@senat.fr",
+    "twitter": "GeorgesPatient",
+    "facebook": "https://www.facebook.com/profile.php?id=1844665066",
+    "commissions": [
+      "Membre de la Commission des finances",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08061X",
+    "civilite": "M.",
+    "nom": "Patriat",
+    "prenom": "François",
+    "fullName": "M. François Patriat",
+    "email": "f.patriat@senat.fr",
+    "twitter": "f_patriat",
+    "facebook": "https://www.facebook.com/profile.php?id=100057831827819",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21421H",
+    "civilite": "Mme",
+    "nom": "Patru",
+    "prenom": "Anne-Sophie",
+    "fullName": "Mme Anne-Sophie Patru",
+    "email": "as.patru@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "08047A",
+    "civilite": "M.",
+    "nom": "Paul",
+    "prenom": "Philippe",
+    "fullName": "M. Philippe Paul",
+    "email": "p.paul@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21055F",
+    "civilite": "M.",
+    "nom": "Paumier",
+    "prenom": "Jean-Gérard",
+    "fullName": "M. Jean-Gérard Paumier",
+    "email": null,
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14237S",
+    "civilite": "M.",
+    "nom": "Pellevat",
+    "prenom": "Cyril",
+    "fullName": "M. Cyril Pellevat",
+    "email": "c.pellevat@senat.fr",
+    "twitter": "CyrilPellevat",
+    "facebook": "https://www.facebook.com/profile.php?id=100058283252790",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21047F",
+    "civilite": "M.",
+    "nom": "Pernot",
+    "prenom": "Clément",
+    "fullName": "M. Clément Pernot",
+    "email": "c.pernot@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/clement.pernot.50/?locale=fr_FR",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14193X",
+    "civilite": "M.",
+    "nom": "Perrin",
+    "prenom": "Cédric",
+    "fullName": "M. Cédric Perrin",
+    "email": "cedric.perrin@senat.fr",
+    "twitter": "cperrin90",
+    "facebook": "https://www.facebook.com/profile.php?id=100063778643519",
+    "commissions": [
+      "Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19745F",
+    "civilite": "Mme",
+    "nom": "Perrot",
+    "prenom": "Évelyne",
+    "fullName": "Mme Évelyne Perrot",
+    "email": null,
+    "twitter": null,
+    "facebook": "https://www.facebook.com/EvelynePerrotSenatoriales2017",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20148F",
+    "civilite": "Mme",
+    "nom": "Petrus",
+    "prenom": "Annick",
+    "fullName": "Mme Annick Petrus",
+    "email": "a.petrus@senat.fr",
+    "twitter": "AnnickPetrus",
+    "facebook": "https://www.facebook.com/profile.php?id=100063811999259",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20146D",
+    "civilite": "Mme",
+    "nom": "Phinera-Horth",
+    "prenom": "Marie-Laure",
+    "fullName": "Mme Marie-Laure Phinera-Horth",
+    "email": "ml.phinera-horth@senat.fr",
+    "twitter": "MLPhineraHorth",
+    "facebook": "https://www.facebook.com/profile.php?id=100063737306320",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19533U",
+    "civilite": "M.",
+    "nom": "Piednoir",
+    "prenom": "Stéphane",
+    "fullName": "M. Stéphane Piednoir",
+    "email": "s.piednoir@senat.fr",
+    "twitter": "StephPiednoir",
+    "facebook": "https://www.facebook.com/profile.php?id=100057733554173",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21053D",
+    "civilite": "M.",
+    "nom": "Pillefer",
+    "prenom": "Bernard",
+    "fullName": "M. Bernard Pillefer",
+    "email": "b.pillefer@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/bernard.pillefer.3?locale=fr_FR",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20030R",
+    "civilite": "M.",
+    "nom": "Pla",
+    "prenom": "Sebastien",
+    "fullName": "M. Sebastien Pla",
+    "email": "s.pla@senat.fr",
+    "twitter": "sebastienpla",
+    "facebook": "https://www.facebook.com/profile.php?id=100064131600985",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20118Y",
+    "civilite": "Mme",
+    "nom": "Pluchet",
+    "prenom": "Kristina",
+    "fullName": "Mme Kristina Pluchet",
+    "email": "k.pluchet@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100046018625293",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "05012A",
+    "civilite": "M.",
+    "nom": "Pointereau",
+    "prenom": "Rémy",
+    "fullName": "M. Rémy Pointereau",
+    "email": "r.pointereau@senat.fr",
+    "twitter": "remypointereau",
+    "facebook": "https://www.facebook.com/profile.php?id=100067161412318",
+    "commissions": [
+      "Vice-Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20130U",
+    "civilite": "Mme",
+    "nom": "Poncet Monge",
+    "prenom": "Raymonde",
+    "fullName": "Mme Raymonde Poncet Monge",
+    "email": "r.poncet@senat.fr",
+    "twitter": "PoncetRaymonde",
+    "facebook": "https://www.facebook.com/profile.php?id=100064283641621",
+    "commissions": [
+      "Vice-Présidente de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "17965H",
+    "civilite": "Mme",
+    "nom": "Poumirol",
+    "prenom": "Émilienne",
+    "fullName": "Mme Émilienne Poumirol",
+    "email": "e.poumirol@senat.fr",
+    "twitter": "E_Poumirol",
+    "facebook": "https://www.facebook.com/profile.php?id=100063957911720",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11090Q",
+    "civilite": "Mme",
+    "nom": "Primas",
+    "prenom": "Sophie",
+    "fullName": "Mme Sophie Primas",
+    "email": "s.primas@senat.fr",
+    "twitter": "sophieprimas",
+    "facebook": "https://www.facebook.com/profile.php?id=100042666172565",
+    "commissions": [
+      "Vice-Présidente de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19679N",
+    "civilite": "Mme",
+    "nom": "Puissat",
+    "prenom": "Frédérique",
+    "fullName": "Mme Frédérique Puissat",
+    "email": "f.puissat@senat.fr",
+    "twitter": "f_puissat",
+    "facebook": "https://www.facebook.com/profile.php?id=100001995412975",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19349W",
+    "civilite": "M.",
+    "nom": "Rambaud",
+    "prenom": "Didier",
+    "fullName": "M. Didier Rambaud",
+    "email": "d.rambaud@senat.fr",
+    "twitter": "didier_rambaud",
+    "facebook": "https://www.facebook.com/profile.php?id=100061302296422",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14331P",
+    "civilite": "M.",
+    "nom": "Rapin",
+    "prenom": "Jean-François",
+    "fullName": "M. Jean-François Rapin",
+    "email": "jf.rapin@senat.fr",
+    "twitter": "RAPINJF",
+    "facebook": "https://www.facebook.com/profile.php?id=100058029069647",
+    "commissions": [
+      "Membre de la Commission des finances",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14055N",
+    "civilite": "M.",
+    "nom": "Ravier",
+    "prenom": "Stéphane",
+    "fullName": "M. Stéphane Ravier",
+    "email": "s.ravier@senat.fr",
+    "twitter": "Stephane_Ravier",
+    "facebook": "https://www.facebook.com/profile.php?id=100044635230175",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14225N",
+    "civilite": "M.",
+    "nom": "Raynal",
+    "prenom": "Claude",
+    "fullName": "M. Claude Raynal",
+    "email": "c.raynal@senat.fr",
+    "twitter": "clauderaynal",
+    "facebook": "https://www.facebook.com/profile.php?id=100008491358548",
+    "commissions": [
+      "Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20082E",
+    "civilite": "M.",
+    "nom": "Redon-Sarrazy",
+    "prenom": "Christian",
+    "fullName": "M. Christian Redon-Sarrazy",
+    "email": "c.redon-sarrazy@senat.fr",
+    "twitter": "C_REDON_SARRAZY",
+    "facebook": "https://www.facebook.com/profile.php?id=1521879841",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19705W",
+    "civilite": "Mme",
+    "nom": "Renaud-Garabedian",
+    "prenom": "Évelyne",
+    "fullName": "Mme Évelyne Renaud-Garabedian",
+    "email": "e.renaud-garabedian@senat.fr",
+    "twitter": "e_renaud_G",
+    "facebook": "https://www.facebook.com/profile.php?id=100057984283482",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "04033B",
+    "civilite": "M.",
+    "nom": "Retailleau",
+    "prenom": "Bruno",
+    "fullName": "M. Bruno Retailleau",
+    "email": "b.retailleau@senat.fr",
+    "twitter": "brunoretailleau",
+    "facebook": "https://www.facebook.com/profile.php?id=100044178246660",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21068L",
+    "civilite": "M.",
+    "nom": "Reynaud",
+    "prenom": "Hervé",
+    "fullName": "M. Hervé Reynaud",
+    "email": "h.reynaud@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/herve.reynaud.10",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21038E",
+    "civilite": "Mme",
+    "nom": "Richard",
+    "prenom": "Olivia",
+    "fullName": "Mme Olivia Richard",
+    "email": "o.richard@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19798U",
+    "civilite": "Mme",
+    "nom": "Richer",
+    "prenom": "Marie-Pierre",
+    "fullName": "Mme Marie-Pierre Richer",
+    "email": "mp.richer@senat.fr",
+    "twitter": "MpRicher",
+    "facebook": "https://www.facebook.com/profile.php?id=100000270008620",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20054A",
+    "civilite": "M.",
+    "nom": "Rietmann",
+    "prenom": "Olivier",
+    "fullName": "M. Olivier Rietmann",
+    "email": "o.rietmann@senat.fr",
+    "twitter": "OlivierRietmann",
+    "facebook": "https://www.facebook.com/profile.php?id=100002363208382",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14229S",
+    "civilite": "Mme",
+    "nom": "Robert",
+    "prenom": "Sylvie",
+    "fullName": "Mme Sylvie Robert",
+    "email": "s.robert@senat.fr",
+    "twitter": "Sy_robert",
+    "facebook": "https://www.facebook.com/profile.php?id=1668807611",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": "Vice-présidente du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21070E",
+    "civilite": "M.",
+    "nom": "Rochette",
+    "prenom": "Pierre Jean",
+    "fullName": "M. Pierre Jean Rochette",
+    "email": "pj.rochette@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/pjrochette",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20150Y",
+    "civilite": "M.",
+    "nom": "Rohfritsch",
+    "prenom": "Teva",
+    "fullName": "M. Teva Rohfritsch",
+    "email": "t.rohfritsch@senat.fr",
+    "twitter": "RohfritschTeva",
+    "facebook": "https://www.facebook.com/profile.php?id=100063471800243",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale",
+      "Membre de la Commission des affaires européennes"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21056G",
+    "civilite": "M.",
+    "nom": "Roiron",
+    "prenom": "Pierre-Alain",
+    "fullName": "M. Pierre-Alain Roiron",
+    "email": "pa.roiron@senat.fr",
+    "twitter": "paroiron37",
+    "facebook": "https://www.facebook.com/pierrealain.roiron.16",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20020P",
+    "civilite": "M.",
+    "nom": "Rojouan",
+    "prenom": "Bruno",
+    "fullName": "M. Bruno Rojouan",
+    "email": "b.rojouan@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100063607129465",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21064G",
+    "civilite": "Mme",
+    "nom": "Romagny",
+    "prenom": "Anne-Sophie",
+    "fullName": "Mme Anne-Sophie Romagny",
+    "email": "as.romagny@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21059K",
+    "civilite": "M.",
+    "nom": "Ros",
+    "prenom": "David",
+    "fullName": "M. David Ros",
+    "email": "d.ros@senat.fr",
+    "twitter": "DavidRos_91",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11045K",
+    "civilite": "Mme",
+    "nom": "Rossignol",
+    "prenom": "Laurence",
+    "fullName": "Mme Laurence Rossignol",
+    "email": "l.rossignol@senat.fr",
+    "twitter": "laurossignol",
+    "facebook": "https://www.facebook.com/profile.php?id=100058135596444",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14107H",
+    "civilite": "M.",
+    "nom": "Roux",
+    "prenom": "Jean-Yves",
+    "fullName": "M. Jean-Yves Roux",
+    "email": "jy.roux@senat.fr",
+    "twitter": "rouxjy",
+    "facebook": "https://www.facebook.com/profile.php?id=100075638287528",
+    "commissions": [
+      "Vice-Président  de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21036C",
+    "civilite": "M.",
+    "nom": "Ruelle",
+    "prenom": "Jean-Luc",
+    "fullName": "M. Jean-Luc Ruelle",
+    "email": "jl.ruelle@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19619A",
+    "civilite": "Mme",
+    "nom": "Saint-Pé",
+    "prenom": "Denise",
+    "fullName": "Mme Denise Saint-Pé",
+    "email": "d.saint-pe@senat.fr",
+    "twitter": "DeniseSaintPe",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20092G",
+    "civilite": "M.",
+    "nom": "Salmon",
+    "prenom": "Daniel",
+    "fullName": "M. Daniel Salmon",
+    "email": "d.salmon@senat.fr",
+    "twitter": "Senateur_Salmon",
+    "facebook": "https://www.facebook.com/profile.php?id=100063760915054",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19421M",
+    "civilite": "M.",
+    "nom": "Saury",
+    "prenom": "Hugues",
+    "fullName": "M. Hugues Saury",
+    "email": "h.saury@senat.fr",
+    "twitter": "HSaury",
+    "facebook": "https://www.facebook.com/profile.php?id=1387538804592949",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20044X",
+    "civilite": "M.",
+    "nom": "Sautarel",
+    "prenom": "Stéphane",
+    "fullName": "M. Stéphane Sautarel",
+    "email": "s.sautarel@senat.fr",
+    "twitter": "SautarelS",
+    "facebook": "https://www.facebook.com/profile.php?id=100051467599429",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "11043H",
+    "civilite": "M.",
+    "nom": "Savin",
+    "prenom": "Michel",
+    "fullName": "M. Michel Savin",
+    "email": "m.savin@senat.fr",
+    "twitter": "MichelSavin38",
+    "facebook": "https://www.facebook.com/profile.php?id=100058189864935",
+    "commissions": [
+      "Vice-Président  de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19687N",
+    "civilite": "M.",
+    "nom": "Savoldelli",
+    "prenom": "Pascal",
+    "fullName": "M. Pascal Savoldelli",
+    "email": "p.savoldelli@senat.fr",
+    "twitter": "PSavoldelli94",
+    "facebook": "https://www.facebook.com/profile.php?id=100058135986949",
+    "commissions": [
+      "Vice-Président  de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20098N",
+    "civilite": "Mme",
+    "nom": "Schalck",
+    "prenom": "Elsa",
+    "fullName": "Mme Elsa Schalck",
+    "email": "e.schalck@senat.fr",
+    "twitter": "ElsaSchalck",
+    "facebook": "https://www.facebook.com/profile.php?id=100063880593563",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "04045F",
+    "civilite": "Mme",
+    "nom": "Schillinger",
+    "prenom": "Patricia",
+    "fullName": "Mme Patricia Schillinger",
+    "email": "p.schillinger@senat.fr",
+    "twitter": "PSchillinger68",
+    "facebook": "https://www.facebook.com/profile.php?id=100013735087569",
+    "commissions": [
+      "Vice-Présidente de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21510H",
+    "civilite": "M.",
+    "nom": "Séné",
+    "prenom": "Marc",
+    "fullName": "M. Marc Séné",
+    "email": "m.sene@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21079P",
+    "civilite": "Mme",
+    "nom": "Senée",
+    "prenom": "Ghislaine",
+    "fullName": "Mme Ghislaine Senée",
+    "email": "g.senee@senat.fr",
+    "twitter": "GhislaineSenee",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "01058X",
+    "civilite": "M.",
+    "nom": "Sido",
+    "prenom": "Bruno",
+    "fullName": "M. Bruno Sido",
+    "email": "b.sido@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21049H",
+    "civilite": "Mme",
+    "nom": "Silvani",
+    "prenom": "Silvana",
+    "fullName": "Mme Silvana Silvani",
+    "email": "s.silvani@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/silvana.silvani.1",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19703U",
+    "civilite": "M.",
+    "nom": "Sol",
+    "prenom": "Jean",
+    "fullName": "M. Jean Sol",
+    "email": "j.sol@senat.fr",
+    "twitter": "JeanSOL__",
+    "facebook": "https://www.facebook.com/profile.php?id=100058029250527",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19713W",
+    "civilite": "Mme",
+    "nom": "Sollogoub",
+    "prenom": "Nadia",
+    "fullName": "Mme Nadia Sollogoub",
+    "email": "n.sollogoub@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=1668895538",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20062A",
+    "civilite": "M.",
+    "nom": "Somon",
+    "prenom": "Laurent",
+    "fullName": "M. Laurent Somon",
+    "email": "l.somon@senat.fr",
+    "twitter": "Laurent_Somon",
+    "facebook": "https://www.facebook.com/profile.php?id=100000148684432",
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21094N",
+    "civilite": "Mme",
+    "nom": "Souyris",
+    "prenom": "Anne",
+    "fullName": "Mme Anne Souyris",
+    "email": "a.souyris@senat.fr",
+    "twitter": "annesouyris",
+    "facebook": "https://www.facebook.com/annesouyrisparis",
+    "commissions": [
+      "Membre de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20084G",
+    "civilite": "M.",
+    "nom": "Stanzione",
+    "prenom": "Lucien",
+    "fullName": "M. Lucien Stanzione",
+    "email": "l.stanzione@senat.fr",
+    "twitter": "stanzionelucien",
+    "facebook": "https://www.facebook.com/profile.php?id=731254938",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21069M",
+    "civilite": "M.",
+    "nom": "Szczurek",
+    "prenom": "Christopher",
+    "fullName": "M. Christopher Szczurek",
+    "email": "c.szczurek@senat.fr",
+    "twitter": "C_Szczurek",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21095P",
+    "civilite": "M.",
+    "nom": "Szpiner",
+    "prenom": "Francis",
+    "fullName": "M. Francis Szpiner",
+    "email": "f.szpiner@senat.fr",
+    "twitter": "fszpiner",
+    "facebook": "https://www.facebook.com/profile.php?id=100087130636110",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19669L",
+    "civilite": "M.",
+    "nom": "Temal",
+    "prenom": "Rachid",
+    "fullName": "M. Rachid Temal",
+    "email": "r.temal@senat.fr",
+    "twitter": "RachidTemal",
+    "facebook": "https://www.facebook.com/profile.php?id=100004551222221",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14275Y",
+    "civilite": "Mme",
+    "nom": "Tetuanui",
+    "prenom": "Lana",
+    "fullName": "Mme Lana Tetuanui",
+    "email": "l.tetuanui@senat.fr",
+    "twitter": null,
+    "facebook": "https://www.facebook.com/profile.php?id=100057906977971",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19301E",
+    "civilite": "M.",
+    "nom": "Théophile",
+    "prenom": "Dominique",
+    "fullName": "M. Dominique Théophile",
+    "email": "d.theophile@senat.fr",
+    "twitter": "SenateurDTheoph",
+    "facebook": "https://www.facebook.com/profile.php?id=100057746902049",
+    "commissions": [
+      "Vice-Président  de la Commission des affaires sociales"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19413M",
+    "civilite": "M.",
+    "nom": "Tissot",
+    "prenom": "Jean-Claude",
+    "fullName": "M. Jean-Claude Tissot",
+    "email": "jc.tissot@senat.fr",
+    "twitter": "jctissot42",
+    "facebook": "https://www.facebook.com/profile.php?id=100000102025870",
+    "commissions": [
+      "Membre de la Commission des affaires économiques"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21051B",
+    "civilite": "M.",
+    "nom": "Uzenat",
+    "prenom": "Simon",
+    "fullName": "M. Simon Uzenat",
+    "email": "s.uzenat@senat.fr",
+    "twitter": "SimonUzenat",
+    "facebook": "https://www.facebook.com/s.uzenat",
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21061D",
+    "civilite": "Mme",
+    "nom": "Valente Le Hir",
+    "prenom": "Sylvie",
+    "fullName": "Mme Sylvie Valente Le Hir",
+    "email": null,
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20064C",
+    "civilite": "M.",
+    "nom": "Vallet",
+    "prenom": "Mickaël",
+    "fullName": "M. Mickaël Vallet",
+    "email": "m.vallet@senat.fr",
+    "twitter": "mickaelvallet",
+    "facebook": "https://www.facebook.com/profile.php?id=100058144987225",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": "Secrétaire du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20046A",
+    "civilite": "Mme",
+    "nom": "Varaillas",
+    "prenom": "Marie-Claude",
+    "fullName": "Mme Marie-Claude Varaillas",
+    "email": "mc.varaillas@senat.fr",
+    "twitter": "MVaraillas",
+    "facebook": "https://www.facebook.com/profile.php?id=100068918781826",
+    "commissions": [
+      "Vice-Présidente de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21031W",
+    "civilite": "M.",
+    "nom": "Vayssouze-Faure",
+    "prenom": "Jean-Marc",
+    "fullName": "M. Jean-Marc Vayssouze-Faure",
+    "email": "jm.vayssouze-faure@senat.fr",
+    "twitter": "jmvayssouze",
+    "facebook": "https://www.facebook.com/jeanmarc.vayssouzefaure",
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20026V",
+    "civilite": "Mme",
+    "nom": "Ventalon",
+    "prenom": "Anne",
+    "fullName": "Mme Anne Ventalon",
+    "email": "a.ventalon@senat.fr",
+    "twitter": "anneventalon",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19749K",
+    "civilite": "Mme",
+    "nom": "Vérien",
+    "prenom": "Dominique",
+    "fullName": "Mme Dominique Vérien",
+    "email": "d.verien@senat.fr",
+    "twitter": "verienparent",
+    "facebook": "https://www.facebook.com/profile.php?id=100058233634368",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19479G",
+    "civilite": "Mme",
+    "nom": "Vermeillet",
+    "prenom": "Sylvie",
+    "fullName": "Mme Sylvie Vermeillet",
+    "email": "s.vermeillet@senat.fr",
+    "twitter": "s_vermeillet",
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": "Vice-présidente du Sénat",
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20122U",
+    "civilite": "M.",
+    "nom": "Verzelen",
+    "prenom": "Pierre-Jean",
+    "fullName": "M. Pierre-Jean Verzelen",
+    "email": "pj.verzelen@senat.fr",
+    "twitter": "pjverzelen",
+    "facebook": "https://www.facebook.com/profile.php?id=100063453024506",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20058E",
+    "civilite": "M.",
+    "nom": "Vial",
+    "prenom": "Cédric",
+    "fullName": "M. Cédric Vial",
+    "email": "c.vial@senat.fr",
+    "twitter": "cedricvial",
+    "facebook": "https://www.facebook.com/profile.php?id=1214227894",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "14173T",
+    "civilite": "M.",
+    "nom": "Vogel",
+    "prenom": "Jean Pierre",
+    "fullName": "M. Jean Pierre Vogel",
+    "email": "jp.vogel@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des finances"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21076L",
+    "civilite": "M.",
+    "nom": "Vogel",
+    "prenom": "Louis",
+    "fullName": "M. Louis Vogel",
+    "email": "l.vogel@senat.fr",
+    "twitter": "louisvogel",
+    "facebook": "https://www.facebook.com/lvogel77",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "20266L",
+    "civilite": "Mme",
+    "nom": "Vogel",
+    "prenom": "Mélanie",
+    "fullName": "Mme Mélanie Vogel",
+    "email": "m.vogel@senat.fr",
+    "twitter": "Melanie_Vogel_",
+    "facebook": "https://www.facebook.com/profile.php?id=100078760544031",
+    "commissions": [
+      "Membre de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "19585H",
+    "civilite": "M.",
+    "nom": "Wattebled",
+    "prenom": "Dany",
+    "fullName": "M. Dany Wattebled",
+    "email": "d.wattebled@senat.fr",
+    "twitter": "danywattebled",
+    "facebook": "https://www.facebook.com/profile.php?id=100057902925294",
+    "commissions": [
+      "Vice-Président  de la Commission des lois constitutionnelles, de législation, du suffrage universel, du Règlement et d'administration générale"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21082J",
+    "civilite": "M.",
+    "nom": "Weber",
+    "prenom": "Michaël",
+    "fullName": "M. Michaël Weber",
+    "email": "m.weber@senat.fr",
+    "twitter": "MichaelWeber1",
+    "facebook": "https://www.facebook.com/Michael.Weber.Senat",
+    "commissions": [
+      "Membre de la Commission des affaires européennes",
+      "Membre de la Commission de l'aménagement du territoire et du développement durable"
+    ],
+    "fonction": null,
+    "isEnvCommission": true,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21030V",
+    "civilite": "M.",
+    "nom": "Xowie",
+    "prenom": "Robert Wienie",
+    "fullName": "M. Robert Wienie Xowie",
+    "email": "rw.xowie@senat.fr",
+    "twitter": null,
+    "facebook": null,
+    "commissions": [
+      "Membre de la Commission des affaires étrangères, de la défense et des forces armées"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  },
+  {
+    "id": "21077M",
+    "civilite": "M.",
+    "nom": "Ziane",
+    "prenom": "Adel",
+    "fullName": "M. Adel Ziane",
+    "email": null,
+    "twitter": "adel_ziane",
+    "facebook": "https://www.facebook.com/adel.ziane.senat/",
+    "commissions": [
+      "Membre de la Commission de la culture, de l'éducation, de la communication et du sport"
+    ],
+    "fonction": null,
+    "isEnvCommission": false,
+    "dept": null,
+    "deptName": null
+  }
+]
