@@ -357,8 +357,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "34",
+    "deptName": "Hérault"
   },
   {
     "id": "14030Q",
@@ -374,8 +374,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "85",
+    "deptName": "Vendée"
   },
   {
     "id": "21043B",
@@ -391,8 +391,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "54",
+    "deptName": "Meurthe-et-Moselle"
   },
   {
     "id": "17367Q",
@@ -408,8 +408,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "01",
+    "deptName": "Ain"
   },
   {
     "id": "21048G",
@@ -442,8 +442,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "84",
+    "deptName": "Vaucluse"
   },
   {
     "id": "20094J",
@@ -460,8 +460,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "01",
+    "deptName": "Ain"
   },
   {
     "id": "21050A",
@@ -477,8 +477,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "29",
+    "deptName": "Finistère"
   },
   {
     "id": "21584C",
@@ -511,8 +511,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "47",
+    "deptName": "Lot-et-Garonne"
   },
   {
     "id": "14069U",
@@ -528,8 +528,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "82",
+    "deptName": "Tarn-et-Garonne"
   },
   {
     "id": "20042V",
@@ -546,8 +546,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "16",
+    "deptName": "Charente"
   },
   {
     "id": "08060W",
@@ -563,8 +563,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "16",
+    "deptName": "Charente"
   },
   {
     "id": "20078J",
@@ -580,8 +580,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "11",
+    "deptName": "Aude"
   },
   {
     "id": "20138D",
@@ -597,8 +597,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "06",
+    "deptName": "Alpes-Maritimes"
   },
   {
     "id": "20088L",
@@ -614,8 +614,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "30",
+    "deptName": "Gard"
   },
   {
     "id": "21046E",
@@ -631,8 +631,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "17",
+    "deptName": "Charente-Maritime"
   },
   {
     "id": "20114U",
@@ -648,8 +648,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "34",
+    "deptName": "Hérault"
   },
   {
     "id": "18045D",
@@ -682,8 +682,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "63",
+    "deptName": "Puy-de-Dôme"
   },
   {
     "id": "17737W",
@@ -700,8 +700,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "13",
+    "deptName": "Bouches-du-Rhône"
   },
   {
     "id": "21052C",
@@ -752,8 +752,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "87",
+    "deptName": "Haute-Vienne"
   },
   {
     "id": "19621T",
@@ -769,8 +769,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "64",
+    "deptName": "Pyrénées-Atlantiques"
   },
   {
     "id": "21088Q",
@@ -786,8 +786,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "21089R",
@@ -803,8 +803,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "19758L",
@@ -820,8 +820,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "76",
+    "deptName": "Seine-Maritime"
   },
   {
     "id": "21063F",
@@ -854,8 +854,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "69",
+    "deptName": "Rhône"
   },
   {
     "id": "19782L",
@@ -871,8 +871,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "26",
+    "deptName": "Drôme"
   },
   {
     "id": "20090E",
@@ -888,8 +888,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "30",
+    "deptName": "Gard"
   },
   {
     "id": "21096Q",
@@ -905,8 +905,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "972",
+    "deptName": "Martinique"
   },
   {
     "id": "14207L",
@@ -922,8 +922,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "34",
+    "deptName": "Hérault"
   },
   {
     "id": "20104S",
@@ -940,8 +940,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "22",
+    "deptName": "Côtes-d'Armor"
   },
   {
     "id": "14255U",
@@ -957,8 +957,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "999",
+    "deptName": "Français établis hors de France"
   },
   {
     "id": "21083K",
@@ -974,8 +974,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "04042C",
@@ -991,8 +991,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "94",
+    "deptName": "Val-de-Marne"
   },
   {
     "id": "21045D",
@@ -1025,8 +1025,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "76",
+    "deptName": "Seine-Maritime"
   },
   {
     "id": "14083S",
@@ -1042,8 +1042,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "29",
+    "deptName": "Finistère"
   },
   {
     "id": "11053K",
@@ -1059,8 +1059,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "95",
+    "deptName": "Val-d'Oise"
   },
   {
     "id": "19545Y",
@@ -1076,8 +1076,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "49",
+    "deptName": "Maine-et-Loire"
   },
   {
     "id": "20060X",
@@ -1093,8 +1093,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "80",
+    "deptName": "Somme"
   },
   {
     "id": "12028B",
@@ -1110,8 +1110,8 @@
     ],
     "fonction": "Questeure du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "13",
+    "deptName": "Bouches-du-Rhône"
   },
   {
     "id": "19629C",
@@ -1127,8 +1127,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "65",
+    "deptName": "Hautes-Pyrénées"
   },
   {
     "id": "21090J",
@@ -1144,8 +1144,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "19721W",
@@ -1161,8 +1161,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "19057M",
@@ -1178,8 +1178,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "999",
+    "deptName": "Français établis hors de France"
   },
   {
     "id": "21057H",
@@ -1212,8 +1212,8 @@
     ],
     "fonction": "Vice-présidente du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "77",
+    "deptName": "Seine-et-Marne"
   },
   {
     "id": "14038Y",
@@ -1229,8 +1229,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "01",
+    "deptName": "Ain"
   },
   {
     "id": "20264J",
@@ -1246,8 +1246,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "999",
+    "deptName": "Français établis hors de France"
   },
   {
     "id": "14195A",
@@ -1263,8 +1263,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "19",
+    "deptName": "Corrèze"
   },
   {
     "id": "08028W",
@@ -1297,8 +1297,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "74",
+    "deptName": "Haute-Savoie"
   },
   {
     "id": "21065H",
@@ -1331,8 +1331,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "53",
+    "deptName": "Mayenne"
   },
   {
     "id": "14267Y",
@@ -1348,8 +1348,8 @@
     ],
     "fonction": "Questeur du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "43",
+    "deptName": "Haute-Loire"
   },
   {
     "id": "21072G",
@@ -1382,8 +1382,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "972",
+    "deptName": "Martinique"
   },
   {
     "id": "11027H",
@@ -1399,8 +1399,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "999",
+    "deptName": "Français établis hors de France"
   },
   {
     "id": "21034A",
@@ -1416,8 +1416,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "974",
+    "deptName": "La Réunion"
   },
   {
     "id": "19681G",
@@ -1433,8 +1433,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "62",
+    "deptName": "Pas-de-Calais"
   },
   {
     "id": "11115U",
@@ -1450,8 +1450,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "60",
+    "deptName": "Oise"
   },
   {
     "id": "20070A",
@@ -1467,8 +1467,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "72",
+    "deptName": "Sarthe"
   },
   {
     "id": "11056N",
@@ -1484,8 +1484,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "42",
+    "deptName": "Loire"
   },
   {
     "id": "14357A",
@@ -1502,8 +1502,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "02",
+    "deptName": "Aisne"
   },
   {
     "id": "18395Y",
@@ -1520,8 +1520,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "44",
+    "deptName": "Loire-Atlantique"
   },
   {
     "id": "11065P",
@@ -1537,8 +1537,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "44",
+    "deptName": "Loire-Atlantique"
   },
   {
     "id": "19693L",
@@ -1554,8 +1554,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "92",
+    "deptName": "Hauts-de-Seine"
   },
   {
     "id": "14259Y",
@@ -1571,8 +1571,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "07",
+    "deptName": "Ardèche"
   },
   {
     "id": "21067K",
@@ -1588,8 +1588,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "62",
+    "deptName": "Pas-de-Calais"
   },
   {
     "id": "21041Y",
@@ -1622,8 +1622,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "19701S",
@@ -1640,8 +1640,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "78",
+    "deptName": "Yvelines"
   },
   {
     "id": "19649G",
@@ -1657,8 +1657,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "19735D",
@@ -1674,8 +1674,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "14",
+    "deptName": "Calvados"
   },
   {
     "id": "08034U",
@@ -1692,8 +1692,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "35",
+    "deptName": "Ille-et-Vilaine"
   },
   {
     "id": "20142Y",
@@ -1709,8 +1709,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "08011M",
@@ -1726,8 +1726,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "28",
+    "deptName": "Eure-et-Loir"
   },
   {
     "id": "14169X",
@@ -1744,8 +1744,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "47",
+    "deptName": "Lot-et-Garonne"
   },
   {
     "id": "11070L",
@@ -1761,8 +1761,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "91",
+    "deptName": "Essonne"
   },
   {
     "id": "19719D",
@@ -1778,8 +1778,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "14327T",
@@ -1795,8 +1795,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "15",
+    "deptName": "Cantal"
   },
   {
     "id": "20140W",
@@ -1812,8 +1812,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "05",
+    "deptName": "Hautes-Alpes"
   },
   {
     "id": "17229F",
@@ -1829,8 +1829,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "80",
+    "deptName": "Somme"
   },
   {
     "id": "14217N",
@@ -1846,8 +1846,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "28",
+    "deptName": "Eure-et-Loir"
   },
   {
     "id": "20248J",
@@ -1864,8 +1864,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "19251M",
@@ -1881,8 +1881,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "69",
+    "deptName": "Rhône"
   },
   {
     "id": "15197G",
@@ -1898,8 +1898,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "14215L",
@@ -1915,8 +1915,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "76",
+    "deptName": "Seine-Maritime"
   },
   {
     "id": "14042U",
@@ -1932,8 +1932,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "53",
+    "deptName": "Mayenne"
   },
   {
     "id": "20134Y",
@@ -1949,8 +1949,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "69",
+    "deptName": "Rhône"
   },
   {
     "id": "20124W",
@@ -1966,8 +1966,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "68",
+    "deptName": "Haut-Rhin"
   },
   {
     "id": "20040T",
@@ -1983,8 +1983,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "32",
+    "deptName": "Gers"
   },
   {
     "id": "07033P",
@@ -2000,8 +2000,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "20074E",
@@ -2017,8 +2017,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "83",
+    "deptName": "Var"
   },
   {
     "id": "19507S",
@@ -2034,8 +2034,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "43",
+    "deptName": "Haute-Loire"
   },
   {
     "id": "14249W",
@@ -2051,8 +2051,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "27",
+    "deptName": "Eure"
   },
   {
     "id": "21074J",
@@ -2085,8 +2085,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "77",
+    "deptName": "Seine-et-Marne"
   },
   {
     "id": "11110B",
@@ -2102,8 +2102,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "64",
+    "deptName": "Pyrénées-Atlantiques"
   },
   {
     "id": "14187A",
@@ -2119,8 +2119,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "06",
+    "deptName": "Alpes-Maritimes"
   },
   {
     "id": "19673G",
@@ -2136,8 +2136,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "95",
+    "deptName": "Val-d'Oise"
   },
   {
     "id": "21091K",
@@ -2204,8 +2204,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "79",
+    "deptName": "Deux-Sèvres"
   },
   {
     "id": "19647E",
@@ -2221,8 +2221,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "14281W",
@@ -2238,8 +2238,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "14",
+    "deptName": "Calvados"
   },
   {
     "id": "20100N",
@@ -2256,8 +2256,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "67",
+    "deptName": "Bas-Rhin"
   },
   {
     "id": "20132W",
@@ -2290,8 +2290,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "76",
+    "deptName": "Seine-Maritime"
   },
   {
     "id": "19111A",
@@ -2324,8 +2324,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "50",
+    "deptName": "Manche"
   },
   {
     "id": "21033Y",
@@ -2359,8 +2359,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "06",
+    "deptName": "Alpes-Maritimes"
   },
   {
     "id": "20286Q",
@@ -2377,8 +2377,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "62",
+    "deptName": "Pas-de-Calais"
   },
   {
     "id": "20172F",
@@ -2394,8 +2394,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "44",
+    "deptName": "Loire-Atlantique"
   },
   {
     "id": "19695N",
@@ -2411,8 +2411,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "93",
+    "deptName": "Seine-Saint-Denis"
   },
   {
     "id": "20120S",
@@ -2428,8 +2428,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "43",
+    "deptName": "Haute-Loire"
   },
   {
     "id": "14355X",
@@ -2445,8 +2445,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "87",
+    "deptName": "Haute-Vienne"
   },
   {
     "id": "19820Y",
@@ -2462,8 +2462,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "21032X",
@@ -2496,8 +2496,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "63",
+    "deptName": "Puy-de-Dôme"
   },
   {
     "id": "19347U",
@@ -2513,8 +2513,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "38",
+    "deptName": "Isère"
   },
   {
     "id": "20180F",
@@ -2530,8 +2530,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "50",
+    "deptName": "Manche"
   },
   {
     "id": "07004J",
@@ -2547,8 +2547,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "61",
+    "deptName": "Orne"
   },
   {
     "id": "08056B",
@@ -2564,8 +2564,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "01",
+    "deptName": "Ain"
   },
   {
     "id": "14211G",
@@ -2581,8 +2581,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "34",
+    "deptName": "Hérault"
   },
   {
     "id": "19565D",
@@ -2598,8 +2598,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "14033T",
@@ -2616,8 +2616,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "88",
+    "deptName": "Vosges"
   },
   {
     "id": "14123H",
@@ -2633,8 +2633,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "25",
+    "deptName": "Doubs"
   },
   {
     "id": "21066J",
@@ -2650,8 +2650,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "44",
+    "deptName": "Loire-Atlantique"
   },
   {
     "id": "14026U",
@@ -2668,8 +2668,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "02",
+    "deptName": "Aisne"
   },
   {
     "id": "20068G",
@@ -2685,8 +2685,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "79",
+    "deptName": "Deux-Sèvres"
   },
   {
     "id": "21092L",
@@ -2719,8 +2719,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "51",
+    "deptName": "Marne"
   },
   {
     "id": "20072C",
@@ -2736,8 +2736,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "83",
+    "deptName": "Var"
   },
   {
     "id": "19725B",
@@ -2753,8 +2753,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "20106U",
@@ -2771,8 +2771,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "44",
+    "deptName": "Loire-Atlantique"
   },
   {
     "id": "20128B",
@@ -2788,8 +2788,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "67",
+    "deptName": "Bas-Rhin"
   },
   {
     "id": "19569H",
@@ -2806,8 +2806,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "14179A",
@@ -2823,8 +2823,8 @@
     ],
     "fonction": "Vice-président du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "74",
+    "deptName": "Haute-Savoie"
   },
   {
     "id": "19685L",
@@ -2840,8 +2840,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "57",
+    "deptName": "Moselle"
   },
   {
     "id": "20048C",
@@ -2857,8 +2857,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "88",
+    "deptName": "Vosges"
   },
   {
     "id": "21085M",
@@ -2874,8 +2874,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "08069G",
@@ -2891,8 +2891,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "21",
+    "deptName": "Côte-d'Or"
   },
   {
     "id": "21415K",
@@ -2925,8 +2925,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "91",
+    "deptName": "Essonne"
   },
   {
     "id": "11048N",
@@ -2942,8 +2942,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "54",
+    "deptName": "Meurthe-et-Moselle"
   },
   {
     "id": "19591F",
@@ -2959,8 +2959,8 @@
     ],
     "fonction": "Vice-président du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "92",
+    "deptName": "Hauts-de-Seine"
   },
   {
     "id": "14213J",
@@ -2976,8 +2976,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "17",
+    "deptName": "Charente-Maritime"
   },
   {
     "id": "20066E",
@@ -2993,8 +2993,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "25",
+    "deptName": "Doubs"
   },
   {
     "id": "20034V",
@@ -3027,8 +3027,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "54",
+    "deptName": "Meurthe-et-Moselle"
   },
   {
     "id": "21093M",
@@ -3044,8 +3044,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "14121F",
@@ -3061,8 +3061,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "23",
+    "deptName": "Creuse"
   },
   {
     "id": "19531S",
@@ -3078,8 +3078,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "58",
+    "deptName": "Nièvre"
   },
   {
     "id": "19683J",
@@ -3096,8 +3096,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "21044C",
@@ -3113,8 +3113,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "20056C",
@@ -3148,8 +3148,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "11",
+    "deptName": "Aude"
   },
   {
     "id": "19447X",
@@ -3182,8 +3182,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "13",
+    "deptName": "Bouches-du-Rhône"
   },
   {
     "id": "95041E",
@@ -3199,8 +3199,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "70",
+    "deptName": "Haute-Saône"
   },
   {
     "id": "14021P",
@@ -3216,8 +3216,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "99004R",
@@ -3233,8 +3233,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "92",
+    "deptName": "Hauts-de-Seine"
   },
   {
     "id": "14073Q",
@@ -3251,8 +3251,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "67",
+    "deptName": "Bas-Rhin"
   },
   {
     "id": "19489J",
@@ -3268,8 +3268,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "40",
+    "deptName": "Landes"
   },
   {
     "id": "21081H",
@@ -3285,8 +3285,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "51",
+    "deptName": "Marne"
   },
   {
     "id": "20126Y",
@@ -3302,8 +3302,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "68",
+    "deptName": "Haut-Rhin"
   },
   {
     "id": "20016T",
@@ -3319,8 +3319,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "986",
+    "deptName": "Wallis-et-Futuna"
   },
   {
     "id": "19611R",
@@ -3336,8 +3336,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "94",
+    "deptName": "Val-de-Marne"
   },
   {
     "id": "20102Q",
@@ -3353,8 +3353,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "29",
+    "deptName": "Finistère"
   },
   {
     "id": "07029T",
@@ -3370,8 +3370,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "08",
+    "deptName": "Ardennes"
   },
   {
     "id": "21078N",
@@ -3403,8 +3403,8 @@
     "commissions": [],
     "fonction": "Président du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "78",
+    "deptName": "Yvelines"
   },
   {
     "id": "19723Y",
@@ -3420,8 +3420,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "19699S",
@@ -3437,8 +3437,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "78",
+    "deptName": "Yvelines"
   },
   {
     "id": "08015R",
@@ -3454,8 +3454,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "17",
+    "deptName": "Charente-Maritime"
   },
   {
     "id": "19711U",
@@ -3472,8 +3472,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "92",
+    "deptName": "Hauts-de-Seine"
   },
   {
     "id": "19709B",
@@ -3490,8 +3490,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "999",
+    "deptName": "Français établis hors de France"
   },
   {
     "id": "18193Q",
@@ -3507,8 +3507,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "22",
+    "deptName": "Côtes-d'Armor"
   },
   {
     "id": "20108W",
@@ -3524,8 +3524,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "13",
+    "deptName": "Bouches-du-Rhône"
   },
   {
     "id": "08010L",
@@ -3541,8 +3541,8 @@
     ],
     "fonction": "Questeur du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "02",
+    "deptName": "Aisne"
   },
   {
     "id": "14037X",
@@ -3558,8 +3558,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "89",
+    "deptName": "Yonne"
   },
   {
     "id": "21087P",
@@ -3592,8 +3592,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "06",
+    "deptName": "Alpes-Maritimes"
   },
   {
     "id": "20052X",
@@ -3609,8 +3609,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "31",
+    "deptName": "Haute-Garonne"
   },
   {
     "id": "19697Q",
@@ -3626,8 +3626,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "78",
+    "deptName": "Yvelines"
   },
   {
     "id": "18207D",
@@ -3644,8 +3644,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "14205J",
@@ -3661,8 +3661,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "21",
+    "deptName": "Côte-d'Or"
   },
   {
     "id": "14219Q",
@@ -3678,8 +3678,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "25",
+    "deptName": "Doubs"
   },
   {
     "id": "14059S",
@@ -3695,8 +3695,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "34",
+    "deptName": "Hérault"
   },
   {
     "id": "21054E",
@@ -3713,8 +3713,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "37",
+    "deptName": "Indre-et-Loire"
   },
   {
     "id": "08012N",
@@ -3730,8 +3730,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "23",
+    "deptName": "Creuse"
   },
   {
     "id": "17779H",
@@ -3747,8 +3747,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "40",
+    "deptName": "Landes"
   },
   {
     "id": "12016W",
@@ -3764,8 +3764,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "971",
+    "deptName": "Guadeloupe"
   },
   {
     "id": "19657G",
@@ -3781,8 +3781,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "974",
+    "deptName": "La Réunion"
   },
   {
     "id": "14251Q",
@@ -3798,8 +3798,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "03",
+    "deptName": "Allier"
   },
   {
     "id": "14031R",
@@ -3815,8 +3815,8 @@
     ],
     "fonction": "Vice-président du Sénat",
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "85",
+    "deptName": "Vendée"
   },
   {
     "id": "14111D",
@@ -3832,8 +3832,8 @@
     ],
     "fonction": "Vice-président du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "12",
+    "deptName": "Aveyron"
   },
   {
     "id": "21075K",
@@ -3884,8 +3884,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "76",
+    "deptName": "Seine-Maritime"
   },
   {
     "id": "11085T",
@@ -3901,8 +3901,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "94",
+    "deptName": "Val-de-Marne"
   },
   {
     "id": "19826F",
@@ -3918,8 +3918,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "76",
+    "deptName": "Seine-Maritime"
   },
   {
     "id": "21058J",
@@ -3986,8 +3986,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "27",
+    "deptName": "Eure"
   },
   {
     "id": "14221J",
@@ -4003,8 +4003,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "31",
+    "deptName": "Haute-Garonne"
   },
   {
     "id": "20252E",
@@ -4054,8 +4054,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "55",
+    "deptName": "Meuse"
   },
   {
     "id": "14147R",
@@ -4071,8 +4071,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "71",
+    "deptName": "Saône-et-Loire"
   },
   {
     "id": "20028X",
@@ -4088,8 +4088,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "24",
+    "deptName": "Dordogne"
   },
   {
     "id": "21080G",
@@ -4139,8 +4139,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "31",
+    "deptName": "Haute-Garonne"
   },
   {
     "id": "04092N",
@@ -4156,8 +4156,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "84",
+    "deptName": "Vaucluse"
   },
   {
     "id": "19335Q",
@@ -4173,8 +4173,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "57",
+    "deptName": "Moselle"
   },
   {
     "id": "11072N",
@@ -4190,8 +4190,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "976",
+    "deptName": "Mayotte"
   },
   {
     "id": "14109K",
@@ -4207,8 +4207,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "26",
+    "deptName": "Drôme"
   },
   {
     "id": "14257W",
@@ -4224,8 +4224,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "32",
+    "deptName": "Gers"
   },
   {
     "id": "04070G",
@@ -4242,8 +4242,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "76",
+    "deptName": "Seine-Maritime"
   },
   {
     "id": "14071N",
@@ -4259,8 +4259,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "79",
+    "deptName": "Deux-Sèvres"
   },
   {
     "id": "21534R",
@@ -4293,8 +4293,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "67",
+    "deptName": "Bas-Rhin"
   },
   {
     "id": "21097R",
@@ -4310,8 +4310,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "971",
+    "deptName": "Guadeloupe"
   },
   {
     "id": "18231D",
@@ -4378,8 +4378,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "74",
+    "deptName": "Haute-Savoie"
   },
   {
     "id": "14253S",
@@ -4395,8 +4395,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "19",
+    "deptName": "Corrèze"
   },
   {
     "id": "21037D",
@@ -4413,8 +4413,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "33",
+    "deptName": "Gironde"
   },
   {
     "id": "19331L",
@@ -4430,8 +4430,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "976",
+    "deptName": "Mayotte"
   },
   {
     "id": "21060C",
@@ -4447,8 +4447,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "95",
+    "deptName": "Val-d'Oise"
   },
   {
     "id": "19593H",
@@ -4464,8 +4464,8 @@
     ],
     "fonction": "Vice-président du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "92",
+    "deptName": "Hauts-de-Seine"
   },
   {
     "id": "19573D",
@@ -4481,8 +4481,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "01",
+    "deptName": "Ain"
   },
   {
     "id": "21592C",
@@ -4515,8 +4515,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "48",
+    "deptName": "Lozère"
   },
   {
     "id": "14191V",
@@ -4532,8 +4532,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "2A",
+    "deptName": "Corse-du-Sud"
   },
   {
     "id": "20050V",
@@ -4549,8 +4549,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "10",
+    "deptName": "Aube"
   },
   {
     "id": "20036X",
@@ -4566,8 +4566,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "2B",
+    "deptName": "Haute-Corse"
   },
   {
     "id": "08073C",
@@ -4584,8 +4584,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "973",
+    "deptName": "Guyane"
   },
   {
     "id": "08061X",
@@ -4601,8 +4601,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "21",
+    "deptName": "Côte-d'Or"
   },
   {
     "id": "21421H",
@@ -4635,8 +4635,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "29",
+    "deptName": "Finistère"
   },
   {
     "id": "21055F",
@@ -4670,8 +4670,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "74",
+    "deptName": "Haute-Savoie"
   },
   {
     "id": "21047F",
@@ -4687,8 +4687,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "39",
+    "deptName": "Jura"
   },
   {
     "id": "14193X",
@@ -4704,8 +4704,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "90",
+    "deptName": "Territoire de Belfort"
   },
   {
     "id": "19745F",
@@ -4721,8 +4721,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "10",
+    "deptName": "Aube"
   },
   {
     "id": "20148F",
@@ -4755,8 +4755,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "973",
+    "deptName": "Guyane"
   },
   {
     "id": "19533U",
@@ -4772,8 +4772,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "49",
+    "deptName": "Maine-et-Loire"
   },
   {
     "id": "21053D",
@@ -4789,8 +4789,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "60",
+    "deptName": "Oise"
   },
   {
     "id": "20030R",
@@ -4806,8 +4806,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "11",
+    "deptName": "Aude"
   },
   {
     "id": "20118Y",
@@ -4823,8 +4823,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "27",
+    "deptName": "Eure"
   },
   {
     "id": "05012A",
@@ -4840,8 +4840,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "18",
+    "deptName": "Cher"
   },
   {
     "id": "20130U",
@@ -4857,8 +4857,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "69",
+    "deptName": "Rhône"
   },
   {
     "id": "17965H",
@@ -4874,8 +4874,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "31",
+    "deptName": "Haute-Garonne"
   },
   {
     "id": "11090Q",
@@ -4891,8 +4891,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "78",
+    "deptName": "Yvelines"
   },
   {
     "id": "19679N",
@@ -4908,8 +4908,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "38",
+    "deptName": "Isère"
   },
   {
     "id": "19349W",
@@ -4925,8 +4925,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "38",
+    "deptName": "Isère"
   },
   {
     "id": "14331P",
@@ -4943,8 +4943,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "62",
+    "deptName": "Pas-de-Calais"
   },
   {
     "id": "14055N",
@@ -4960,8 +4960,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "13",
+    "deptName": "Bouches-du-Rhône"
   },
   {
     "id": "14225N",
@@ -4977,8 +4977,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "31",
+    "deptName": "Haute-Garonne"
   },
   {
     "id": "20082E",
@@ -4994,8 +4994,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "87",
+    "deptName": "Haute-Vienne"
   },
   {
     "id": "19705W",
@@ -5011,8 +5011,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "999",
+    "deptName": "Français établis hors de France"
   },
   {
     "id": "04033B",
@@ -5028,8 +5028,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "85",
+    "deptName": "Vendée"
   },
   {
     "id": "21068L",
@@ -5045,8 +5045,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "42",
+    "deptName": "Loire"
   },
   {
     "id": "21038E",
@@ -5079,8 +5079,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "18",
+    "deptName": "Cher"
   },
   {
     "id": "20054A",
@@ -5096,8 +5096,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "70",
+    "deptName": "Haute-Saône"
   },
   {
     "id": "14229S",
@@ -5113,8 +5113,8 @@
     ],
     "fonction": "Vice-présidente du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "35",
+    "deptName": "Ille-et-Vilaine"
   },
   {
     "id": "21070E",
@@ -5148,8 +5148,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "987",
+    "deptName": "Polynésie française"
   },
   {
     "id": "21056G",
@@ -5165,8 +5165,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "37",
+    "deptName": "Indre-et-Loire"
   },
   {
     "id": "20020P",
@@ -5233,8 +5233,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "60",
+    "deptName": "Oise"
   },
   {
     "id": "14107H",
@@ -5250,8 +5250,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "04",
+    "deptName": "Alpes-de-Haute-Provence"
   },
   {
     "id": "21036C",
@@ -5284,8 +5284,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "64",
+    "deptName": "Pyrénées-Atlantiques"
   },
   {
     "id": "20092G",
@@ -5301,8 +5301,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "35",
+    "deptName": "Ille-et-Vilaine"
   },
   {
     "id": "19421M",
@@ -5318,8 +5318,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "19",
+    "deptName": "Corrèze"
   },
   {
     "id": "20044X",
@@ -5335,8 +5335,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "15",
+    "deptName": "Cantal"
   },
   {
     "id": "11043H",
@@ -5352,8 +5352,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "38",
+    "deptName": "Isère"
   },
   {
     "id": "19687N",
@@ -5369,8 +5369,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "94",
+    "deptName": "Val-de-Marne"
   },
   {
     "id": "20098N",
@@ -5387,8 +5387,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "67",
+    "deptName": "Bas-Rhin"
   },
   {
     "id": "04045F",
@@ -5404,8 +5404,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "68",
+    "deptName": "Haut-Rhin"
   },
   {
     "id": "21510H",
@@ -5455,8 +5455,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "52",
+    "deptName": "Haute-Marne"
   },
   {
     "id": "21049H",
@@ -5473,8 +5473,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "2B",
+    "deptName": "Haute-Corse"
   },
   {
     "id": "19703U",
@@ -5490,8 +5490,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "66",
+    "deptName": "Pyrénées-Orientales"
   },
   {
     "id": "19713W",
@@ -5507,8 +5507,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "58",
+    "deptName": "Nièvre"
   },
   {
     "id": "20062A",
@@ -5524,8 +5524,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "80",
+    "deptName": "Somme"
   },
   {
     "id": "21094N",
@@ -5541,8 +5541,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "75",
+    "deptName": "Paris"
   },
   {
     "id": "20084G",
@@ -5558,8 +5558,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "84",
+    "deptName": "Vaucluse"
   },
   {
     "id": "21069M",
@@ -5609,8 +5609,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "95",
+    "deptName": "Val-d'Oise"
   },
   {
     "id": "14275Y",
@@ -5626,8 +5626,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "987",
+    "deptName": "Polynésie française"
   },
   {
     "id": "19301E",
@@ -5643,8 +5643,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "971",
+    "deptName": "Guadeloupe"
   },
   {
     "id": "19413M",
@@ -5660,8 +5660,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "42",
+    "deptName": "Loire"
   },
   {
     "id": "21051B",
@@ -5711,8 +5711,8 @@
     ],
     "fonction": "Secrétaire du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "17",
+    "deptName": "Charente-Maritime"
   },
   {
     "id": "20046A",
@@ -5728,8 +5728,8 @@
     ],
     "fonction": null,
     "isEnvCommission": true,
-    "dept": null,
-    "deptName": null
+    "dept": "24",
+    "deptName": "Dordogne"
   },
   {
     "id": "21031W",
@@ -5745,8 +5745,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "46",
+    "deptName": "Lot"
   },
   {
     "id": "20026V",
@@ -5762,8 +5762,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "07",
+    "deptName": "Ardèche"
   },
   {
     "id": "19749K",
@@ -5779,8 +5779,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "89",
+    "deptName": "Yonne"
   },
   {
     "id": "19479G",
@@ -5796,8 +5796,8 @@
     ],
     "fonction": "Vice-présidente du Sénat",
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "39",
+    "deptName": "Jura"
   },
   {
     "id": "20122U",
@@ -5813,8 +5813,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "02",
+    "deptName": "Aisne"
   },
   {
     "id": "20058E",
@@ -5830,8 +5830,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "73",
+    "deptName": "Savoie"
   },
   {
     "id": "14173T",
@@ -5847,8 +5847,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "72",
+    "deptName": "Sarthe"
   },
   {
     "id": "21076L",
@@ -5882,8 +5882,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "999",
+    "deptName": "Français établis hors de France"
   },
   {
     "id": "19585H",
@@ -5899,8 +5899,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "59",
+    "deptName": "Nord"
   },
   {
     "id": "21082J",
@@ -5934,8 +5934,8 @@
     ],
     "fonction": null,
     "isEnvCommission": false,
-    "dept": null,
-    "deptName": null
+    "dept": "988",
+    "deptName": "Nouvelle-Calédonie"
   },
   {
     "id": "21077M",
