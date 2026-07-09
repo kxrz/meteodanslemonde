@@ -22,18 +22,17 @@ interface Senator {
 
 const EMAIL_TEMPLATE = `Madame la Sénatrice, Monsieur le Sénateur,
 
-En tant que citoyen(ne), je souhaitais vous écrire au sujet d'une réalité que les données climatiques rendent désormais incontestable.
+Je vous écris en tant que citoyen(ne), pour vous alerter sur une réalité que les données scientifiques rendent désormais incontournable : le dérèglement climatique n'est plus une projection lointaine, il est mesurable aujourd'hui, dans nos villes, jour après jour.
 
-Le site cestchaud.fr — qui s'appuie sur les données ERA5 de Copernicus et les projections du GIEC — permet de visualiser les anomalies de température dans les grandes villes françaises. Ce que nous observons est préoccupant : des ressentis qui dépassent régulièrement les normales de 10 à 15°C, des records historiques battus chaque été, et des projections à 2050 qui annoncent +2 à +4°C supplémentaires sur ces pics de chaleur.
+Le site cestchaud.fr, qui s'appuie sur les données ERA5 de Copernicus (programme européen d'observation de la Terre) et les modèles CMIP6 du GIEC, permet de visualiser en temps réel les anomalies de température dans les grandes villes françaises. Les chiffres sont édifiants : des ressentis thermiques qui dépassent régulièrement la normale de 8 à 15°C, des records battus presque chaque été, et des projections qui annoncent entre +2°C et +4°C supplémentaires sur ces pics de chaleur d'ici 2050.
 
-Ces données ne sont pas des projections abstraites. Elles concernent la santé, la qualité de vie, et l'économie de nos territoires dès aujourd'hui.
+Ces écarts ne sont pas des abstractions statistiques. Ils représentent des nuits sans sommeil, des personnes âgées en danger, des travailleurs en plein air épuisés, des agriculteurs qui voient leurs récoltes brûler. La chaleur extrême tue davantage en France que tous les autres événements climatiques réunis.
 
-Je vous encourage vivement à :
-— Soutenir des mesures ambitieuses d'adaptation au changement climatique à l'échelle locale et nationale
-— Favoriser la transparence des données climatiques accessibles à tous les citoyens
-— Porter ces enjeux comme une priorité dans vos travaux au Sénat
+En tant que représentant(e) de notre territoire au Sénat, vous avez le pouvoir d'agir sur les politiques d'adaptation, sur les normes de construction, sur la protection des espaces verts urbains, sur les plans de prévention canicule. Ces décisions se prennent maintenant, pour un impact dans dix ans.
 
-Vous pouvez consulter les données pour votre territoire sur cestchaud.fr.
+Je vous encourage à prendre connaissance des données disponibles sur votre territoire via cestchaud.fr, et à faire de la résilience climatique un axe prioritaire de votre travail législatif.
+
+Merci de l'attention que vous porterez à ce message.
 
 Avec mes cordiales salutations,
 [Votre prénom et nom]

@@ -58,8 +58,34 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
   const mapRef = useRef<LeafletMap | null>(null)
   const markersRef = useRef<globalThis.Map<string, CircleMarker>>(new globalThis.Map())
   const [selectedCity, setSelectedCity] = useState<CityWithAnomaly | null>(null)
+  const [shareState, setShareState] = useState<"idle" | "copied">("idle")
 
   const dateStr = new Date(fetchedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
+
+  function buildTop3Text(cities: CityWithAnomaly[], month: number): string {
+    const top3 = [...cities]
+      .filter(c => c.anomaly !== null && c.anomaly > 0)
+      .sort((a, b) => (b.anomaly ?? 0) - (a.anomaly ?? 0))
+      .slice(0, 3)
+    const lines = top3.map((c, i) => {
+      const sign = (c.anomaly ?? 0) > 0 ? "+" : ""
+      return `${i + 1}. ${c.name} : ${sign}${c.anomaly?.toFixed(1)}°C (ressenti ${c.apparent_temp_max}°C)`
+    })
+    return `Anomalies de chaleur en France ce ${dateStr} :\n${lines.join("\n")}\n\nVersus la normale de ${MONTHS_FR[month]}. Données ERA5 / GIEC sur cestchaud.fr`
+  }
+
+  async function shareTop3() {
+    const text = buildTop3Text(cities, month)
+    if (navigator.share) {
+      try {
+        await navigator.share({ text, url: "https://cestchaud.fr/carte" })
+      } catch {}
+      return
+    }
+    await navigator.clipboard.writeText(text + "\nhttps://cestchaud.fr/carte")
+    setShareState("copied")
+    setTimeout(() => setShareState("idle"), 2500)
+  }
 
   useEffect(() => {
     if (typeof window === "undefined" || mapRef.current) return
@@ -155,8 +181,8 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
           </div>
 
           {/* Legend */}
-          <div className="px-5 lg:px-6 pb-4">
-            <div className="flex gap-1 flex-wrap">
+          <div className="px-5 lg:px-6 pb-3">
+            <div className="flex gap-1 flex-wrap mb-3">
               {LEGEND.map(({ label, color }) => (
                 <div key={label} className="flex items-center gap-1">
                   <span
@@ -167,45 +193,63 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
                 </div>
               ))}
             </div>
+
+            {/* Share top 3 */}
+            <button
+              onClick={shareTop3}
+              className="w-full flex items-center justify-center gap-2 bg-neutral-900 hover:bg-neutral-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors"
+            >
+              {shareState === "copied" ? (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  Texte copié !
+                </>
+              ) : (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                  Partager le top 3 des anomalies
+                </>
+              )}
+            </button>
           </div>
 
           {/* Selected city detail */}
           {selectedCity && (
-            <div className="mx-4 mb-4 bg-neutral-950 rounded-2xl p-4">
-              <div className="flex justify-between items-start">
+            <div className="mx-4 mb-4 bg-white rounded-2xl p-4 shadow-sm border border-neutral-100">
+              <div className="flex justify-between items-start mb-3">
                 <div>
-                  <p className="text-xs text-white/50">{selectedCity.region}</p>
-                  <p className="text-lg font-black text-white">{selectedCity.name}</p>
+                  <p className="text-[10px] text-neutral-400 uppercase tracking-wider font-semibold">{selectedCity.region}</p>
+                  <p className="text-lg font-black text-neutral-900">{selectedCity.name}</p>
                 </div>
                 <button
                   onClick={() => setSelectedCity(null)}
-                  className="text-white/40 hover:text-white text-sm transition-colors"
+                  className="text-neutral-300 hover:text-neutral-700 text-sm transition-colors"
                 >
                   ✕
                 </button>
               </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                <div className="bg-white/5 rounded-xl p-2.5">
-                  <p className="text-[10px] text-white/40">Ressenti max</p>
-                  <p className="text-xl font-black mt-0.5" style={{ color: anomalyColor(selectedCity.anomaly) }}>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-neutral-50 rounded-xl p-2.5">
+                  <p className="text-[10px] text-neutral-400">Ressenti max</p>
+                  <p className="text-2xl font-black mt-0.5" style={{ color: anomalyColor(selectedCity.anomaly) }}>
                     {selectedCity.apparent_temp_max}°C
                   </p>
                 </div>
-                <div className="bg-white/5 rounded-xl p-2.5">
-                  <p className="text-[10px] text-white/40">Normale {MONTHS_FR[month]}</p>
-                  <p className="text-xl font-black text-white mt-0.5">
-                    {selectedCity.normal !== null ? `${selectedCity.normal}°C` : "—"}
+                <div className="bg-neutral-50 rounded-xl p-2.5">
+                  <p className="text-[10px] text-neutral-400">Normale {MONTHS_FR[month]}</p>
+                  <p className="text-2xl font-black text-neutral-700 mt-0.5">
+                    {selectedCity.normal !== null ? `${selectedCity.normal}°C` : "N/A"}
                   </p>
                 </div>
               </div>
               {selectedCity.anomaly !== null && (
-                <p className={`mt-2 text-sm font-bold ${selectedCity.anomaly > 0 ? "text-orange-400" : "text-blue-400"}`}>
-                  {selectedCity.anomaly > 0 ? "+" : ""}{selectedCity.anomaly.toFixed(1)}°C vs normale
+                <p className={`mt-2.5 text-sm font-bold ${selectedCity.anomaly > 0 ? "text-orange-600" : "text-blue-600"}`}>
+                  {selectedCity.anomaly > 0 ? "+" : ""}{selectedCity.anomaly.toFixed(1)}°C par rapport à la normale
                 </p>
               )}
               <Link
                 href={`/a/${selectedCity.id}`}
-                className="mt-3 inline-flex items-center gap-1 text-xs text-white/60 hover:text-white transition-colors"
+                className="mt-3 inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-900 transition-colors font-medium"
               >
                 Voir la fiche complète →
               </Link>

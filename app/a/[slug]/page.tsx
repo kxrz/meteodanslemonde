@@ -110,9 +110,21 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
   const pageUrl = `https://cestchaud.fr/a/${slug}`
-  const shareText = proj2050 !== null
-    ? `À ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d’ici 2050. `
-    : `Découvrez les données climatiques de ${city.name} sur cestchaud.fr`
+
+  // Share text: anomalie du jour en priorité, sinon projection 2050
+  let shareText: string
+  if (weather && anomaly !== null) {
+    const sign = anomaly > 0 ? "+" : ""
+    shareText = `À ${city.name} aujourd’hui, le ressenti max atteint ${weather.apparent_temp_max}°C, soit ${sign}${anomaly}°C par rapport à la normale de ${monthName}.`
+    if (proj2050 !== null) {
+      shareText += ` Et d’ici 2050, le GIEC projette encore ${fmtDelta(proj2050)}°C de plus.`
+    }
+    shareText += ` `
+  } else if (proj2050 !== null) {
+    shareText = `À ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d’ici 2050. `
+  } else {
+    shareText = `Données climatiques de ${city.name} sur `
+  }
   const shareTextEncoded = encodeURIComponent(shareText + pageUrl)
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?text=${shareTextEncoded}`,
