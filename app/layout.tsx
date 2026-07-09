@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { Analytics } from "@vercel/analytics/react"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -35,8 +36,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="dns-prefetch" href="https://api.open-meteo.com" />
         <link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
         <link rel="dns-prefetch" href="https://api.resend.com" />
+        <meta name="geo.region" content="FR" />
+        <meta name="geo.placename" content="France" />
+        <meta name="geo.position" content="46.5;2.5" />
+        <meta name="ICBM" content="46.5, 2.5" />
       </head>
-      <body className="h-full">{children}</body>
+      <body className="h-full">{children}<Analytics /></body>
     </html>
   )
 }

@@ -32,7 +32,7 @@ export default function SiteHeader({ asLink = false }: Props) {
         )}
         <div className="text-sm text-neutral-500 mt-2 leading-snug">
           <p>Nous sommes le {dateStr}.</p>
-          <p>Le ressenti d’aujourd’hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030-2050.</p>
+          <p>Le ressenti d’aujourd’hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.</p>
         </div>
       </div>
       <SiteHeaderMenu />

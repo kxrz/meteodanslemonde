@@ -7,12 +7,14 @@
     "fetch-weather": "node scripts/fetch-weather.mjs",
     "fetch-climate": "npx tsx scripts/fetch-climate.ts",
     "fetch-climate-scenarios": "npx tsx scripts/fetch-climate-scenarios.ts",
+    "fetch-year-extremes": "npx tsx scripts/fetch-year-extremes.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
     "@types/leaflet": "^1.9.21",
+    "@vercel/analytics": "^2.0.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
     "next": "16.2.9",

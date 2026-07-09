@@ -1,0 +1,33 @@
+name: Daily year extremes
+
+on:
+  schedule:
+    - cron: '30 5 * * *'   # 5h30 UTC (7h30 Paris en été) — après le build météo
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install tsx
+        run: npm install -g tsx
+
+      - name: Fetch year extremes
+        run: npx tsx scripts/fetch-year-extremes.ts
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/year-extremes.json
+          git diff --cached --quiet || git commit -m "chore: update year extremes [skip ci]"
+          git push

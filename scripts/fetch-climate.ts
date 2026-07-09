@@ -10,25 +10,14 @@
 import fs from "fs"
 import path from "path"
 
-const envPath = path.join(process.cwd(), ".env.local")
-if (fs.existsSync(envPath)) {
-  for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
-    const [k, ...rest] = line.split("=")
-    if (k?.trim() && !k.startsWith("#")) process.env[k.trim()] = rest.join("=").trim()
-  }
-}
-
-const API_KEY    = process.env.OPEN_METEO_API_KEY ?? ""
-const API_SUFFIX = API_KEY ? `&apikey=${API_KEY}` : ""
-
-if (!API_KEY) console.warn("⚠ OPEN_METEO_API_KEY not set — running without auth (rate limits apply)")
-
 const DATA_DIR = path.join(process.cwd(), "data")
 const CLIMATE_PATH = path.join(DATA_DIR, "climate.json")
-const BATCH_SIZE = 1           // 1 ville à la fois — moins de pression sur l'API
-const BETWEEN_CALLS_MS = 8000  // 8s entre archive et climate pour la même ville
-const BETWEEN_BATCHES_MS = 12000 // 12s entre chaque ville
-const MAX_RETRIES = 5          // on insiste davantage avant d'abandonner
+const BATCH_SIZE = 3
+const BETWEEN_CALLS_MS = 3000
+const BETWEEN_BATCHES_MS = 5000
+// Low retry count: fail fast and move on rather than spending minutes on one blocked batch.
+// Re-run the script later (different IP / after rate-limit reset) to fill gaps.
+const MAX_RETRIES = 2
 
 interface ClimateEntry {
   normal: (number | null)[]
@@ -85,19 +74,7 @@ function computeEntry(
   if (!ad.length) return null
 
   const cd = (clim?.daily?.time as string[]) ?? []
-
-  // Average across all model columns present in the response
-  const modelKeys = clim?.daily
-    ? Object.keys(clim.daily).filter((k) => k.startsWith("temperature_2m_max") && k !== "temperature_2m_max")
-    : []
-  // Fallback: single-model response uses bare key
-  if (!modelKeys.length && clim?.daily?.temperature_2m_max) modelKeys.push("temperature_2m_max")
-
-  function ensembleAvg(dates: string[], daily: Record<string, string[] | (number | null)[]>, month: number, y1: number, y2: number): number | null {
-    const colVals = modelKeys.map((k) => monthAvg(dates, daily[k] as (number | null)[], month, y1, y2)).filter((v): v is number => v != null)
-    if (!colVals.length) return null
-    return colVals.reduce((a, b) => a + b, 0) / colVals.length
-  }
+  const cv = (clim?.daily?.temperature_2m_max as (number | null)[]) ?? []
 
   const normal: (number | null)[] = [], trend: (number | null)[] = []
   const proj2030: (number | null)[] = [], proj2040: (number | null)[] = [], proj2050: (number | null)[] = []
@@ -109,13 +86,11 @@ function computeEntry(
     const recent = monthAvg(ad, av, m, 2015, 2024)
     trend.push(base != null && recent != null ? Math.round((recent - base) * 10) / 10 : null)
 
-    if (cd.length && modelKeys.length && clim?.daily) {
-      // Baseline 2000-2020 from same CMIP6 ensemble
-      const cb = ensembleAvg(cd, clim.daily as Record<string, string[] | (number | null)[]>, m, 2000, 2020)
-      // Wide 20-year windows centred on each horizon to smooth inter-annual noise
-      const c30 = ensembleAvg(cd, clim.daily as Record<string, string[] | (number | null)[]>, m, 2021, 2039)
-      const c40 = ensembleAvg(cd, clim.daily as Record<string, string[] | (number | null)[]>, m, 2031, 2050)
-      const c50 = ensembleAvg(cd, clim.daily as Record<string, string[] | (number | null)[]>, m, 2041, 2050)
+    if (cd.length && cv.length) {
+      const cb = monthAvg(cd, cv, m, 2000, 2020)
+      const c30 = monthAvg(cd, cv, m, 2028, 2032)
+      const c40 = monthAvg(cd, cv, m, 2036, 2044)
+      const c50 = monthAvg(cd, cv, m, 2043, 2050)
       proj2030.push(cb != null && c30 != null ? Math.round((c30 - cb) * 10) / 10 : null)
       proj2040.push(cb != null && c40 != null ? Math.round((c40 - cb) * 10) / 10 : null)
       proj2050.push(cb != null && c50 != null ? Math.round((c50 - cb) * 10) / 10 : null)
@@ -151,7 +126,7 @@ async function fetchOne(url: string): Promise<Response> {
     if (res.status === 429) {
       if (attempt === MAX_RETRIES) break
       const retryAfter = res.headers.get("Retry-After")
-      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 30000 * (attempt + 1)
+      const delay = retryAfter ? parseInt(retryAfter) * 1000 : 15000 * (attempt + 1)
       console.warn(`    [429, waiting ${Math.round(delay / 1000)}s]`)
       await new Promise((r) => setTimeout(r, delay))
       continue
@@ -174,7 +149,7 @@ async function fetchClimateBatch(
       `https://archive-api.open-meteo.com/v1/archive` +
       `?latitude=${lats}&longitude=${lons}` +
       `&start_date=1991-01-01&end_date=2024-12-31` +
-      `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC` + API_SUFFIX
+      `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC`
     )
     if (!archRes.ok) {
       console.warn(`    [fail] archive HTTP ${archRes.status}`)
@@ -196,7 +171,7 @@ async function fetchClimateBatch(
       `https://climate-api.open-meteo.com/v1/climate` +
       `?latitude=${lats}&longitude=${lons}` +
       `&start_date=2000-01-01&end_date=2050-12-31` +
-      `&models=EC_Earth3P_HR,MPI_ESM1_2_XR,NICAM16_8S&daily=temperature_2m_max` + API_SUFFIX
+      `&models=MRI_AGCM3_2_S&daily=temperature_2m_max`
     )
     if (climRes.ok) {
       const data = await climRes.json()

@@ -1,24 +1,41 @@
 # cestchaud.fr
 
-> Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.
+> Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques, anomalies en temps réel et projections GIEC.
 
-Ce site compare le ressenti maximal journalièr de villes françaises et mondiales pour identifier des « jumeaux climatiques » - des villes qui vivent aujourd’hui les températures qu’une ville française vivra demain sous l’effet du réchauffement.
+Ce site visualise le dérèglement climatique en France à travers des données scientifiques ouvertes. Il compare le ressenti maximal journalier de villes françaises et mondiales pour identifier des « jumeaux climatiques » — des villes qui vivent aujourd'hui les températures qu'une ville française vivra demain sous l'effet du réchauffement climatique.
 
-Aucun contenu n’est généré par IA générative. Toutes les données proviennent de sources scientifiques ouvertes.
+Aucun contenu n'est généré par IA générative. Toutes les données proviennent de sources scientifiques ouvertes et vérifiables.
 
 ## Sources de données
 
 - Open-Meteo : températures ressenties en temps réel (apparent_temperature_max)
-- ERA5 (ECMWF) : normales climatiques 1991-2020 et tendances sur 30 ans
-- CMIP6 / GIEC AR6 : projections climatiques 2030, 2040, 2050 (scénario SSP2-4.5)
+- ERA5 (ECMWF / Copernicus) : normales climatiques 1991–2020 et tendances sur 30 ans
+- CMIP6 / GIEC AR6 : projections climatiques 2030, 2040, 2050 (scénario SSP2-4.5 et SSP5-8.5)
+- VoxPublic : contacts des sénatrices et sénateurs français (emails, réseaux sociaux, commissions)
 
 ## Pages
 
-- / : accueil, carte interactive, jumeaux climatiques
-- /en/france : vue d’ensemble de la chaleur en France (36 villes)
-- /a/[slug] : fiche climatique par ville française
-- /a-propos : méthodologie, sources et outils
+- / : accueil, carte interactive mondiale, jumeaux climatiques, anomalie du jour
+- /en/france : vue d'ensemble de la chaleur en France (36 villes, classement par anomalie)
+- /a/[slug] : fiche climatique par ville française — ressenti max, normale historique, anomalie, tendance 30 ans, projections GIEC 2030/2040/2050, records de l'année, partage sur réseaux sociaux
+- /carte : carte de chaleur interactive — anomalies du jour pour 36 villes françaises, colorées par écart à la normale, classement en temps réel
+- /citoyens : page d'action citoyenne — contacter les 333 sénateurs joignables par email, dont 49 membres de la commission Aménagement du territoire et développement durable, filtrage par département et commission, email pré-rédigé sur le changement climatique
+- /a-propos : méthodologie détaillée, sources et outils
 - /contact : formulaire de contact
+
+## Fonctionnalités clés
+
+- Jumeaux climatiques : algorithme de correspondance entre villes françaises et mondiales à ±4°C de ressenti
+- Anomalie du jour : écart entre le ressenti observé et la normale historique ERA5 1991–2020
+- Projections GIEC : modèles CMIP6 AR6, scénario SSP2-4.5 (émissions modérées) et SSP5-8.5 (émissions élevées)
+- Carte de chaleur : visualisation spatiale des anomalies françaises du jour
+- Action citoyenne : mailto pré-rempli vers les sénateurs avec contexte climatique pédagogique
+- Partage social : texte pré-généré incluant l'anomalie du jour et le lien vers la page
+
+## Couverture géographique
+
+France métropolitaine : 36 villes de Lille à Ajaccio.
+Monde : plus de 100 villes sur tous les continents pour la comparaison climatique.
 
 ## Contact
 

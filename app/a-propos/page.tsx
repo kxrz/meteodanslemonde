@@ -6,9 +6,9 @@ import PageFooter from "@/components/PageFooter"
 export const revalidate = 604800
 
 export const metadata: Metadata = {
-  title: "A propos - cestchaud.fr",
+  title: "À propos · cestchaud.fr",
   description: "Comment cestchaud.fr collecte, calcule et présente les données de température, les anomalies et les projections climatiques GIEC.",
-  alternates: { canonical: "https://www.cestchaud.fr/a-propos" },
+  alternates: { canonical: "https://cestchaud.fr/a-propos" },
 }
 
 export default function AProposPage() {
@@ -19,7 +19,7 @@ export default function AProposPage() {
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
         {/* Left */}
-        <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 border-black/[0.06]">
+        <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col justify-between border-b lg:border-b-0 border-black/[0.06]">
           <div>
             <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
               À propos
@@ -31,6 +31,7 @@ export default function AProposPage() {
               Des données ouvertes, des calculs transparents, zéro contenu inventé. Un outil pédagogique pour rendre la crise climatique lisible.
             </p>
           </div>
+          <PageFooter />
         </div>
 
         {/* Right */}
@@ -66,9 +67,9 @@ export default function AProposPage() {
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-2">
                 Normales &amp; tendances
               </p>
-              <h2 className="text-lg font-black text-green-900 mb-3">ERA5 - 1991-2020</h2>
+              <h2 className="text-lg font-black text-green-900 mb-3">ERA5 · 1991–2020</h2>
               <p className="text-sm text-green-900/70 leading-relaxed">
-                Les normales mensuelles <em>(1991-2020)</em> et la tendance sur 30 ans sont calculées à partir des réanalyses <strong>ERA5</strong> du Centre européen de prévision météorologique <em>(ECMWF)</em>.
+                Les normales mensuelles <em>(1991–2020)</em> et la tendance sur 30 ans sont calculées à partir des réanalyses <strong>ERA5</strong> du Centre européen de prévision météorologique <em>(ECMWF)</em>.
                 L'anomalie affichée est la différence entre le ressenti aujourd'hui et la normale historique du même mois.
               </p>
             </section>
@@ -78,10 +79,10 @@ export default function AProposPage() {
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-2">
                 Projections climatiques
               </p>
-              <h2 className="text-lg font-black text-purple-900 mb-3">CMIP6 - GIEC AR6</h2>
+              <h2 className="text-lg font-black text-purple-900 mb-3">CMIP6 · GIEC AR6</h2>
               <p className="text-sm text-purple-900/70 leading-relaxed">
                 Les projections 2030, 2040 et 2050 s'appuient sur les modèles <strong>CMIP6</strong> utilisés dans le 6e rapport du GIEC <em>(AR6)</em>, scénario <strong>SSP2-4.5</strong> <em>(trajectoire intermédiaire, si rien ne change drastiquement)</em>.
-                Les valeurs représentent l'écart de température projeté par rapport à la période de référence <em>(2000-2020)</em>.
+                Les valeurs représentent l'écart de température projeté par rapport à la période de référence <em>(2000–2020)</em>.
               </p>
             </section>
 
@@ -148,16 +149,15 @@ export default function AProposPage() {
               </p>
               <h2 className="text-lg font-black text-neutral-900 mb-3">Ce que ce site ne fait pas</h2>
               <ul className="text-sm text-neutral-600 leading-relaxed space-y-2">
-                <li>- Les projections sont des tendances, pas des prévisions.</li>
-                <li>- Le ressenti dépend du contexte local <em>(îlots de chaleur urbains, etc.)</em>.</li>
-                <li>- Les données ERA5/CMIP6 sont précalculées et mises à jour manuellement.</li>
+                <li>· Les projections sont des tendances, pas des prévisions.</li>
+                <li>· Le ressenti dépend du contexte local <em>(îlots de chaleur urbains, etc.)</em>.</li>
+                <li>· Les données ERA5/CMIP6 sont précalculées et mises à jour manuellement.</li>
               </ul>
             </section>
 
           </div>
         </div>
       </div>
-      <PageFooter className="px-5 lg:px-8" />
     </div>
   )
 }

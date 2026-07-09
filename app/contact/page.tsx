@@ -6,9 +6,9 @@ import ContactForm from "@/components/ContactForm"
 export const revalidate = 604800
 
 export const metadata: Metadata = {
-  title: "Contact - cestchaud.fr",
+  title: "Contact · cestchaud.fr",
   description: "Contactez l’équipe cestchaud.fr pour toute question, suggestion ou partenariat.",
-  alternates: { canonical: "https://www.cestchaud.fr/contact" },
+  alternates: { canonical: "https://cestchaud.fr/contact" },
 }
 
 export default function ContactPage() {
@@ -19,7 +19,7 @@ export default function ContactPage() {
       <div className="flex-1 flex flex-col lg:flex-row">
 
         {/* Left */}
-        <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 lg:sticky lg:top-0 lg:h-screen flex flex-col border-b lg:border-b-0 lg:border-r border-black/[0.06]">
+        <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 lg:sticky lg:top-0 lg:h-screen flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-black/[0.06]">
           <div>
             <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
               Contact
@@ -40,6 +40,7 @@ export default function ContactPage() {
               LinkedIn
             </a>
           </div>
+          <PageFooter />
         </div>
 
         {/* Right */}
@@ -49,7 +50,6 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
-      <PageFooter className="px-5 lg:px-8" />
     </div>
   )
 }

@@ -128,7 +128,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-5">
                     En ce moment
                   </p>
-                  <div className="flex flex-col gap-3">
+                  <div className="flex items-end justify-between gap-4">
                     <div>
                       <p className="text-neutral-500 text-sm mb-0.5">il fait</p>
                       <div className="flex items-baseline gap-1.5 leading-none">
@@ -145,12 +145,12 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         >
                           {heroCity.name}
                         </Link>
-                        <span className="text-neutral-400"> - {getWeather(heroCity.weathercode).emoji}</span>
+                        <span className="text-neutral-400"> · {getWeather(heroCity.weathercode).emoji}</span>
                       </p>
                     </div>
                     <button
                       onClick={() => handleCityClick(heroCity.id)}
-                      className="self-start flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group"
+                      className="shrink-0 flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group"
                     >
                       <span className="text-sm font-bold text-white">En savoir plus sur {heroCity.name}</span>
                       <span className="text-white/50 group-hover:text-white transition-colors">→</span>
@@ -189,25 +189,21 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-xs text-blue-900/50 truncate">{coldestCity.region}</p>
                 </div>
 
-                {/* Compteur FR */}
-                <div className="bg-[#dbeafe] rounded-3xl p-5">
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800">France</span>
-                  </div>
-                  <div className="text-5xl font-black text-blue-900 leading-none">{citiesFR.length}</div>
-                  <div className="text-xs text-blue-700 mt-1.5">villes</div>
-                </div>
+                {/* Carte de chaleur */}
+                <Link href="/carte" className="bg-[#fff1e6] rounded-3xl p-5 hover:bg-[#ffe0c8] transition-colors group">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">Carte</p>
+                  <p className="text-base font-black text-orange-900 leading-snug mb-1.5">Carte de chaleur</p>
+                  <p className="text-xs text-orange-900/60 leading-relaxed">Anomalies du jour sur toute la France.</p>
+                  <span className="text-orange-400 group-hover:text-orange-600 text-lg transition-colors mt-3 block">→</span>
+                </Link>
 
-                {/* Compteur Monde */}
-                <div className="bg-[#d1fae5] rounded-3xl p-5">
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-emerald-800">Monde</span>
-                  </div>
-                  <div className="text-5xl font-black text-emerald-900 leading-none">{citiesWorld.length}</div>
-                  <div className="text-xs text-emerald-700 mt-1.5">villes</div>
-                </div>
+                {/* Écrire aux élus */}
+                <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Action</p>
+                  <p className="text-base font-black text-white leading-snug mb-1.5">Écrire à vos élus</p>
+                  <p className="text-xs text-white/50 leading-relaxed">Contactez vos sénateurs, email pré-rédigé.</p>
+                  <span className="text-white/30 group-hover:text-white text-lg transition-colors mt-3 block">→</span>
+                </Link>
 
                 {/* Comment ça marche */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
@@ -215,9 +211,9 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     Comment ça marche
                   </p>
                   <p className="text-sm text-neutral-600 leading-relaxed mb-4">
-                    On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
-                    Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
-                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
+                    On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville française
+                    avec sa normale historique (ERA5 1991–2020) et les projections GIEC (CMIP6 2030–2050).
+                    Les villes mondiales à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
                   </p>
                   <Link
                     href="/a-propos"
@@ -248,7 +244,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                           <Link
                             href={`/a/${slugify(selectedCity.name)}`}
                             className="shrink-0 flex flex-col items-center gap-0.5 text-black/25 hover:text-black/70 transition-colors mt-0.5"
-                            title={`Fiche complète - ${selectedCity.name}`}
+                            title={`Fiche complète · ${selectedCity.name}`}
                           >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="11" cy="11" r="8" />
@@ -282,7 +278,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                       </div>
                       <p className="text-xs text-neutral-500 mt-1.5">
                         {getWeather(selectedCity.weathercode).emoji}{" "}
-                        ressenti max - {getWeather(selectedCity.weathercode).label}
+                        ressenti max · {getWeather(selectedCity.weathercode).label}
                       </p>
                     </div>
                     <div className="text-right text-xs text-neutral-500 space-y-1">
@@ -298,10 +294,10 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   {climateNormal !== null ? (
                     <>
                       <div className="text-4xl font-black text-green-900 leading-none">{fmt(climateNormal)}°C</div>
-                      <p className="text-xs text-green-900/50 mt-2">moy. {monthName} 1991-2020</p>
+                      <p className="text-xs text-green-900/50 mt-2">moy. {monthName} 1991–2020</p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-green-900/30">-</p>
+                    <p className="text-2xl font-black text-green-900/30">—</p>
                   )}
                 </div>
 
@@ -322,13 +318,13 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                       </p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-black/20">-</p>
+                    <p className="text-2xl font-black text-black/20">—</p>
                   )}
                 </div>
 
                 {/* Tendance 30 ans */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance observée - 30 ans</p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance observée — 30 ans</p>
                   {climateTrend !== null ? (
                     <p className="font-black text-xl text-neutral-900">
                       {fmtDelta(climateTrend)}°C
@@ -342,7 +338,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 {/* Projections GIEC */}
                 <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">Si rien ne change…</p>
-                  <p className="text-[10px] text-purple-900/60 mb-4">Modèle CMIP6 (GIEC AR6) - écart vs. 2000-2020</p>
+                  <p className="text-[10px] text-purple-900/60 mb-4">Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020</p>
                   <div className="space-y-2.5">
                     {([
                       { year: 2030, val: climateProj2030 },
