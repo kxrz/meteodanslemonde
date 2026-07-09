@@ -41,6 +41,7 @@ export default function SiteHeaderMenu() {
             <ul className="space-y-4">
               {[
                 { href: "/en/france", label: "La France en chiffres" },
+                { href: "/carte", label: "Carte de chaleur" },
                 { href: "/citoyens", label: "Écrire à vos élus" },
                 { href: "/a-propos", label: "À propos" },
                 { href: "/contact", label: "Contact" },
