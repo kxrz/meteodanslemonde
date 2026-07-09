@@ -189,25 +189,21 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                   <p className="text-xs text-blue-900/50 truncate">{coldestCity.region}</p>
                 </div>
 
-                {/* Compteur FR */}
-                <div className="bg-[#dbeafe] rounded-3xl p-5">
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800">France</span>
-                  </div>
-                  <div className="text-5xl font-black text-blue-900 leading-none">{citiesFR.length}</div>
-                  <div className="text-xs text-blue-700 mt-1.5">villes</div>
-                </div>
+                {/* Carte de chaleur */}
+                <Link href="/carte" className="bg-[#fff1e6] rounded-3xl p-5 hover:bg-[#ffe0c8] transition-colors group">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">Carte</p>
+                  <p className="text-base font-black text-orange-900 leading-snug mb-1.5">Carte de chaleur</p>
+                  <p className="text-xs text-orange-900/60 leading-relaxed">Anomalies du jour sur toute la France.</p>
+                  <span className="text-orange-400 group-hover:text-orange-600 text-lg transition-colors mt-3 block">→</span>
+                </Link>
 
-                {/* Compteur Monde */}
-                <div className="bg-[#d1fae5] rounded-3xl p-5">
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-emerald-800">Monde</span>
-                  </div>
-                  <div className="text-5xl font-black text-emerald-900 leading-none">{citiesWorld.length}</div>
-                  <div className="text-xs text-emerald-700 mt-1.5">villes</div>
-                </div>
+                {/* Écrire aux élus */}
+                <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Action</p>
+                  <p className="text-base font-black text-white leading-snug mb-1.5">Écrire à vos élus</p>
+                  <p className="text-xs text-white/50 leading-relaxed">Contactez vos sénateurs, email pré-rédigé.</p>
+                  <span className="text-white/30 group-hover:text-white text-lg transition-colors mt-3 block">→</span>
+                </Link>
 
                 {/* Comment ça marche */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
@@ -215,9 +211,9 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                     Comment ça marche
                   </p>
                   <p className="text-sm text-neutral-600 leading-relaxed mb-4">
-                    On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville.
-                    Les villes à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
-                    En plus : données historiques ERA5 et projections GIEC (CMIP6).
+                    On compare le <strong className="text-neutral-900">ressenti maximal journalier</strong> de chaque ville française
+                    avec sa normale historique (ERA5 1991–2020) et les projections GIEC (CMIP6 2030–2050).
+                    Les villes mondiales à ±4°C deviennent des <strong className="text-neutral-900">jumeaux climatiques</strong>.
                   </p>
                   <Link
                     href="/a-propos"
