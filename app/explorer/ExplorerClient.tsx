@@ -11,6 +11,7 @@ import { fmt, fmtDelta } from "@/lib/format"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
+import CitySearch from "@/components/CitySearch"
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -121,6 +122,14 @@ export default function ExplorerClient({ citiesFR, citiesWorld, fetchedAt, clima
 
         {/* Bento panel */}
         <div className="flex-1 p-3 lg:p-4 lg:overflow-y-auto">
+          <div className="mb-3">
+            <CitySearch
+              cities={citiesFR}
+              placeholder="Chercher une ville française…"
+              variant="select"
+              onSelect={(city) => handleCityClick(city.id)}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-3 pb-4">
 
             {!selectedCity ? (
