@@ -1,4 +1,10 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run fetch-weather && next build --webpack"
+  "buildCommand": "npm run fetch-weather && next build --webpack",
+  "crons": [
+    {
+      "path": "/api/push/send",
+      "schedule": "0 7 * * *"
+    }
+  ]
 }

@@ -12,6 +12,7 @@ import Breadcrumb from "@/components/Breadcrumb"
 import ShareButton from "@/components/ShareButton"
 import TempSparkline from "@/components/TempSparkline"
 import { getWeatherData } from "@/lib/weather-data"
+import PushOptIn from "@/components/PushOptIn"
 
 export const revalidate = 86400
 
@@ -465,6 +466,13 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     ))}
                   </div>
                   <p className="text-[10px] text-neutral-400 mt-3">Ressenti max du jour · ±4°C</p>
+                </div>
+              )}
+
+              {/* Push opt-in — uniquement villes FR */}
+              {!city.isWorld && (
+                <div className="col-span-2">
+                  <PushOptIn cityId={city.id} cityName={city.name} />
                 </div>
               )}
 

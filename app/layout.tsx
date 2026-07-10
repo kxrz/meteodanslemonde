@@ -1,11 +1,27 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/react"
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration"
 import "./globals.css"
+
+export const viewport: Viewport = {
+  themeColor: "#f5f4f0",
+  width: "device-width",
+  initialScale: 1,
+}
 
 export const metadata: Metadata = {
   title: "En vrai, c'est chaud — cestchaud.fr",
   description: "Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.",
   metadataBase: new URL("https://cestchaud.fr"),
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "cestchaud",
+  },
+  icons: {
+    apple: "/icons/icon-192.png",
+  },
   openGraph: {
     title: "En vrai, c'est chaud — cestchaud.fr",
     description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
@@ -41,7 +57,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="geo.position" content="46.5;2.5" />
         <meta name="ICBM" content="46.5, 2.5" />
       </head>
-      <body className="h-full">{children}<Analytics /></body>
+      <body className="h-full">
+        {children}
+        <Analytics />
+        <ServiceWorkerRegistration />
+      </body>
     </html>
   )
 }
