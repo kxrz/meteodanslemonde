@@ -11,6 +11,7 @@ import CityMapWrapper from "@/components/CityMapWrapper"
 import Breadcrumb from "@/components/Breadcrumb"
 import ShareButton from "@/components/ShareButton"
 import TempSparkline from "@/components/TempSparkline"
+import { getWeatherData } from "@/lib/weather-data"
 
 export const revalidate = 86400
 
@@ -33,23 +34,21 @@ interface YearExtreme { max: number; max_date: string; min: number; min_date: st
 let yearExtremesMap: Record<string, YearExtreme> = {}
 try { yearExtremesMap = require("@/data/year-extremes.json") } catch {}
 
-function findClimateTwins(
-  cityId: string,
-  normal: number | null,
+type TwinResult = { id: string; name: string; label: string; temp: number; slug: string }
+
+function findLiveTwins(
+  cityTemp: number,
   isWorld: boolean,
-  climateMap: Record<string, NonNullable<import("@/lib/climate").ClimateEntry>>,
-  m: number
-): Array<{ id: string; name: string; label: string; normal: number; slug: string }> {
-  if (normal === null) return []
-  const pool = isWorld ? citiesFR : citiesWorld
+  allFR: import("@/lib/types").CityFR[],
+  allWorld: import("@/lib/types").CityWorld[],
+): TwinResult[] {
+  const pool = isWorld ? allFR : allWorld
   return pool
     .map((c) => {
-      const n = climateMap[c.id]?.normal?.[m] ?? null
-      if (n === null) return null
-      const label = isWorld ? (c as typeof citiesFR[0]).region : (c as typeof citiesWorld[0]).country
-      return { id: c.id, name: c.name, label, normal: n, slug: slugify(c.name), diff: Math.abs(n - normal) }
+      const label = isWorld ? (c as import("@/lib/types").CityFR).region : (c as import("@/lib/types").CityWorld).country
+      return { id: c.id, name: c.name, label, temp: c.apparent_temp_max, slug: slugify(c.name), diff: Math.abs(c.apparent_temp_max - cityTemp) }
     })
-    .filter((x): x is NonNullable<typeof x> => x !== null && x.diff <= 3)
+    .filter((x) => x.diff <= 4)
     .sort((a, b) => a.diff - b.diff)
     .slice(0, 4)
 }
@@ -173,11 +172,14 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const city = getCityBySlug(slug)
   if (!city) notFound()
 
-  const climateMap = loadClimateMap()
+  const [climateMap, { citiesFR: allFR, citiesWorld: allWorld }, weather] = await Promise.all([
+    Promise.resolve(loadClimateMap()),
+    getWeatherData(),
+    fetchCityWeather(city.lat, city.lon),
+  ])
   const climate = (climateMap[city.id] ?? null) as ClimateEntry
   const narrative = narratives[city.id] ?? null
   const yearExtremes = yearExtremesMap[city.id] ?? null
-  const weather = await fetchCityWeather(city.lat, city.lon)
   const m = new Date().getMonth()
 
   const normal = climate?.normal?.[m] ?? null
@@ -195,7 +197,8 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const pageUrl = `https://www.cestchaud.fr/a/${slug}`
 
   const cityLocation = city.isWorld ? city.country : city.region
-  const twins = findClimateTwins(city.id, normal, !!city.isWorld, climateMap, m)
+  const cityTodayTemp = weather?.apparent_temp_max ?? null
+  const twins = cityTodayTemp !== null ? findLiveTwins(cityTodayTemp, !!city.isWorld, allFR, allWorld) : []
   const projectionParagraph = city.isWorld ? null : buildProjectionParagraph(
     city.name, city.region, monthName,
     normal, trend, proj2030, proj2040, proj2050
@@ -444,7 +447,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {twins.length > 0 && (
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
-                    {city.isWorld ? `Villes françaises similaires en ${monthName}` : `Jumeaux climatiques en ${monthName}`}
+                    {city.isWorld ? "Villes françaises similaires aujourd'hui" : "Jumeaux climatiques aujourd'hui"}
                   </p>
                   <div className="flex flex-col gap-2">
                     {twins.map((twin) => (
@@ -457,13 +460,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                           <div className="font-bold text-sm text-neutral-900 group-hover:underline">{twin.name}</div>
                           <div className="text-[11px] text-neutral-400">{twin.label}</div>
                         </div>
-                        <div className="font-black text-lg text-neutral-700">{twin.normal.toFixed(1)}&deg;C</div>
+                        <div className="font-black text-lg text-neutral-700">{twin.temp}&deg;C</div>
                       </Link>
                     ))}
                   </div>
-                  {!city.isWorld && (
-                    <p className="text-[10px] text-neutral-400 mt-3">Normales ERA5 1991–2020, à ±3°C</p>
-                  )}
+                  <p className="text-[10px] text-neutral-400 mt-3">Ressenti max du jour · ±4°C</p>
                 </div>
               )}
 
