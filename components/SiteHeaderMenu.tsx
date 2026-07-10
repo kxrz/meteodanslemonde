@@ -40,8 +40,9 @@ export default function SiteHeaderMenu() {
             </p>
             <ul className="space-y-4">
               {[
-                { href: "/en/france", label: "La France en chiffres" },
+                { href: "/explorer", label: "Jumeaux climatiques" },
                 { href: "/carte", label: "Carte de chaleur" },
+                { href: "/en/france", label: "France en chiffres" },
                 { href: "/citoyens", label: "Écrire à vos élus" },
                 { href: "/a-propos", label: "À propos" },
                 { href: "/contact", label: "Contact" },

@@ -3,9 +3,10 @@ import SiteHeaderMenu from "@/components/SiteHeaderMenu"
 
 interface Props {
   asLink?: boolean
+  subtitle?: string
 }
 
-export default function SiteHeader({ asLink = false }: Props) {
+export default function SiteHeader({ asLink = false, subtitle }: Props) {
   const now = new Date()
   const dateStr = now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
 
@@ -32,7 +33,7 @@ export default function SiteHeader({ asLink = false }: Props) {
         )}
         <div className="text-sm text-neutral-500 mt-2 leading-snug">
           <p>Nous sommes le {dateStr}.</p>
-          <p>Le ressenti d’aujourd’hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050.</p>
+          <p>{subtitle ?? "Le ressenti d’aujourd’hui, les villes jumelles dans le monde, et ce que le GIEC prédit pour 2030–2050."}</p>
         </div>
       </div>
       <SiteHeaderMenu />
