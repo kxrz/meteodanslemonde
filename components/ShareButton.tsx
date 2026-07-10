@@ -6,7 +6,7 @@ interface Props {
   text: string
   url: string
   label?: string
-  variant?: "inline" | "nudge" | "prominent"
+  variant?: "inline" | "nudge" | "prominent" | "copy-grid"
 }
 
 export default function ShareButton({ text, url, label = "Partager", variant = "inline" }: Props) {
@@ -77,6 +77,31 @@ export default function ShareButton({ text, url, label = "Partager", variant = "
           )}
         </button>
       </div>
+    )
+  }
+
+  if (variant === "copy-grid") {
+    return (
+      <button
+        onClick={handleShare}
+        className="col-span-2 flex items-center justify-center gap-1.5 bg-neutral-900 text-white rounded-xl py-2 px-2 text-xs font-semibold hover:bg-neutral-700 transition-colors"
+      >
+        {state === "copied" ? (
+          <>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Copié dans le presse-papiers
+          </>
+        ) : (
+          <>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </svg>
+            Copier le texte
+          </>
+        )}
+      </button>
     )
   }
 
