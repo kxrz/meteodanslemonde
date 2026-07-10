@@ -121,6 +121,18 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
       cities.forEach((city) => {
         const color = anomalyColor(city.anomaly)
         const label = anomalyLabel(city.anomaly)
+
+        // Glow blob
+        L.circleMarker([city.lat, city.lon], {
+          radius: isMobile ? 28 : 38,
+          fillColor: color,
+          color: "transparent",
+          weight: 0,
+          fillOpacity: 0.13,
+          interactive: false,
+        }).addTo(map)
+
+        // Dot
         const marker = L.circleMarker([city.lat, city.lon], {
           radius: isMobile ? 10 : 13,
           fillColor: color,
