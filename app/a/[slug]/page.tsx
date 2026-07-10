@@ -420,29 +420,66 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </div>
               )}
 
-              {/* Projections GIEC */}
-              <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                  Si rien ne change...
-                </p>
-                <p className="text-[10px] text-purple-900/60 mb-4">
-                  Modele CMIP6 (GIEC AR6) · ecart vs. 2000–2020
-                </p>
-                <div className="space-y-2.5">
-                  {([
-                    { year: 2030, val: proj2030 },
-                    { year: 2040, val: proj2040 },
-                    { year: 2050, val: proj2050 },
-                  ] as { year: number; val: number | null }[]).map(({ year, val }) => (
-                    <div key={year} className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-purple-900/60">{year}</span>
-                      <span className="font-black text-2xl text-purple-900">
-                        {fmtDelta(val)}&deg;C
-                      </span>
-                    </div>
-                  ))}
+              {/* Projections GIEC + Push opt-in côte à côte (villes FR) / plein largeur (villes monde) */}
+              {city.isWorld ? (
+                <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
+                    Si rien ne change...
+                  </p>
+                  <p className="text-[10px] text-purple-900/60 mb-4">
+                    Modele CMIP6 (GIEC AR6) · ecart vs. 2000–2020
+                  </p>
+                  <div className="space-y-2.5">
+                    {([
+                      { year: 2030, val: proj2030 },
+                      { year: 2040, val: proj2040 },
+                      { year: 2050, val: proj2050 },
+                    ] as { year: number; val: number | null }[]).map(({ year, val }) => (
+                      <div key={year} className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-purple-900/60">{year}</span>
+                        <span className="font-black text-2xl text-purple-900">{fmtDelta(val)}&deg;C</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="col-span-2 grid grid-cols-2 gap-3">
+                  <div className="bg-[#c4b8d4] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
+                      Si rien ne change...
+                    </p>
+                    <p className="text-[10px] text-purple-900/60 mb-4">
+                      CMIP6 (GIEC AR6) · écart vs. 2000–2020
+                    </p>
+                    <div className="space-y-2.5">
+                      {([
+                        { year: 2030, val: proj2030 },
+                        { year: 2040, val: proj2040 },
+                        { year: 2050, val: proj2050 },
+                      ] as { year: number; val: number | null }[]).map(({ year, val }) => (
+                        <div key={year} className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-purple-900/60">{year}</span>
+                          <span className="font-black text-2xl text-purple-900">{fmtDelta(val)}&deg;C</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col justify-between">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-2">Notifications</p>
+                      <p className="text-sm font-black text-white leading-snug mb-2">
+                        Le ressenti de {city.name} chaque matin
+                      </p>
+                      <p className="text-xs text-white/50 leading-relaxed">
+                        Ressenti max, anomalie vs normale, jumeau climatique du jour.
+                      </p>
+                    </div>
+                    <div className="mt-4">
+                      <PushOptIn cityId={city.id} cityName={city.name} />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Jumeaux climatiques */}
               {twins.length > 0 && (
@@ -466,13 +503,6 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     ))}
                   </div>
                   <p className="text-[10px] text-neutral-400 mt-3">Ressenti max du jour · ±4°C</p>
-                </div>
-              )}
-
-              {/* Push opt-in — uniquement villes FR */}
-              {!city.isWorld && (
-                <div className="col-span-2">
-                  <PushOptIn cityId={city.id} cityName={city.name} />
                 </div>
               )}
 
