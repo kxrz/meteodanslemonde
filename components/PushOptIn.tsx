@@ -20,8 +20,15 @@ export default function PushOptIn({ cityId, cityName }: Props) {
   const [status, setStatus] = useState<Status>("idle")
 
   useEffect(() => {
-    if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    if (!("serviceWorker" in navigator)) {
       setStatus("unsupported")
+      return
+    }
+    // PushManager absent = Safari non installé ou navigateur incompatible
+    if (!("PushManager" in window)) {
+      // Sur iOS Safari hors PWA, on indique qu'il faut installer l'app
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent)
+      setStatus(isIOS ? "unsupported" : "unsupported")
       return
     }
     if (Notification.permission === "denied") {
@@ -71,7 +78,17 @@ export default function PushOptIn({ cityId, cityName }: Props) {
     }
   }
 
-  if (status === "unsupported") return null
+  if (status === "unsupported") {
+    const isIOS = typeof navigator !== "undefined" && /iphone|ipad|ipod/i.test(navigator.userAgent)
+    if (isIOS) {
+      return (
+        <p className="text-xs text-white/50 leading-relaxed">
+          Installe l&apos;app via <strong className="text-white/70">Partager &rsaquo; Sur l&apos;écran d&apos;accueil</strong> pour activer les alertes.
+        </p>
+      )
+    }
+    return null
+  }
 
   return (
     <button
@@ -82,7 +99,7 @@ export default function PushOptIn({ cityId, cityName }: Props) {
           ? "bg-green-100 text-green-800 hover:bg-green-200"
           : status === "denied"
           ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
-          : "bg-[#f5f4f0] text-neutral-700 hover:bg-neutral-200"
+          : "bg-white/10 text-white hover:bg-white/20"
       }`}
     >
       <span className="text-base">{status === "active" ? "🔔" : "🔕"}</span>

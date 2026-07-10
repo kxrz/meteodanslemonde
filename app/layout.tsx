@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/react"
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration"
+import PWAInstallBanner from "@/components/PWAInstallBanner"
 import "./globals.css"
 
 export const viewport: Viewport = {
@@ -61,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <Analytics />
         <ServiceWorkerRegistration />
+        <PWAInstallBanner />
       </body>
     </html>
   )
