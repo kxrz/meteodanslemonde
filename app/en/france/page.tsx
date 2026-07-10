@@ -1,5 +1,4 @@
 import Link from "next/link"
-import dynamic from "next/dynamic"
 import { Metadata } from "next"
 import { slugify } from "@/lib/slugify"
 import { getWeatherData } from "@/lib/weather-data"
@@ -10,16 +9,8 @@ import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import ShareButton from "@/components/ShareButton"
 import CitySearch from "@/components/CitySearch"
+import FranceCitiesMapWrapper from "@/components/FranceCitiesMapWrapper"
 import type { ClimateEntry } from "@/lib/climate"
-
-const FranceCitiesMap = dynamic(() => import("@/components/FranceCitiesMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-neutral-200/40 rounded-3xl">
-      <span className="text-neutral-400 text-sm">Chargement de la carte…</span>
-    </div>
-  ),
-})
 
 export const revalidate = 86400
 
@@ -193,7 +184,7 @@ export default async function FrancePage() {
           {/* Left panel — map */}
           <div className="h-[55vw] max-h-[400px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative p-3 lg:p-4 lg:sticky lg:top-0 lg:h-[calc(100vh-80px)]">
             <div className="w-full h-full rounded-3xl overflow-hidden">
-              <FranceCitiesMap cities={citiesForMap} />
+              <FranceCitiesMapWrapper cities={citiesForMap} />
             </div>
 
             {/* Title overlay */}
