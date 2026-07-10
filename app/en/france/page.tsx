@@ -188,7 +188,7 @@ export default async function FrancePage() {
             </div>
 
             {/* Title overlay */}
-            <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-sm max-w-[200px]">
+            <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-sm max-w-[220px]">
               <p className="text-[9px] uppercase tracking-[0.15em] font-semibold text-neutral-400 leading-none mb-1">
                 France · {dataLabel}
               </p>
@@ -196,15 +196,15 @@ export default async function FrancePage() {
                 La chaleur en France
               </h1>
             </div>
-
-            {/* Search overlay */}
-            <div className="absolute bottom-6 left-6 right-6 z-[1000]">
-              <CitySearch cities={citiesForSearch} />
-            </div>
           </div>
 
           {/* Right panel */}
           <div className="flex-1 lg:overflow-y-auto p-3 lg:p-4">
+            {/* Search */}
+            <div className="mb-3">
+              <CitySearch cities={citiesForSearch} />
+            </div>
+
             {/* KPI tiles */}
             <div className="grid grid-cols-3 gap-3 mb-3">
               <div className="col-span-3 bg-[#dbeafe] rounded-2xl px-4 py-3 flex items-center justify-between">
