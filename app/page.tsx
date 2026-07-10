@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import CitySearch from "@/components/CitySearch"
+import GeolocateButton from "@/components/GeolocateButton"
 import { getWeatherData } from "@/lib/weather-data"
 import { loadClimateMap } from "@/lib/climate"
 import { fmtDelta } from "@/lib/format"
@@ -238,8 +239,11 @@ export default async function Home() {
         <div className="space-y-3">
 
           {/* ── 0. Recherche ── */}
-          <div className="max-w-sm">
-            <CitySearch cities={citiesForSearch} />
+          <div className="flex items-center gap-2 max-w-lg">
+            <div className="flex-1">
+              <CitySearch cities={citiesForSearch} />
+            </div>
+            <GeolocateButton cities={citiesForSearch} />
           </div>
 
           {/* ── 1. Records du jour ── */}
