@@ -173,7 +173,7 @@ export default async function FrancePage() {
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
           {/* Left panel — 40% */}
-          <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col justify-between border-b lg:border-b-0 border-black/[0.06]">
+          <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 border-black/[0.06]">
             <div>
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
                 France · {dataLabel}
@@ -210,7 +210,6 @@ export default async function FrancePage() {
                 </div>
               </div>
             </div>
-            <PageFooter />
           </div>
 
           {/* Right panel — 60% scrollable */}
@@ -369,6 +368,7 @@ export default async function FrancePage() {
             </div>
           </div>
         </div>
+        <PageFooter className="px-5 py-3" />
       </div>
     </>
   )
