@@ -10,6 +10,7 @@ import PageFooter from "@/components/PageFooter"
 import CityMapWrapper from "@/components/CityMapWrapper"
 import Breadcrumb from "@/components/Breadcrumb"
 import ShareButton from "@/components/ShareButton"
+import TempSparkline from "@/components/TempSparkline"
 
 export const revalidate = 86400
 
@@ -335,6 +336,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     <p className="text-2xl font-black text-neutral-300">N/A</p>
                   )}
                 </div>
+              </div>
+
+              {/* Sparkline 30 jours */}
+              <div className="col-span-2 bg-white rounded-3xl p-5">
+                <TempSparkline lat={city.lat} lon={city.lon} normal={normal} />
               </div>
 
               {/* Second paragraph — projection narrative */}
