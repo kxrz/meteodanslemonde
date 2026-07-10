@@ -33,6 +33,27 @@ interface YearExtreme { max: number; max_date: string; min: number; min_date: st
 let yearExtremesMap: Record<string, YearExtreme> = {}
 try { yearExtremesMap = require("@/data/year-extremes.json") } catch {}
 
+function findClimateTwins(
+  cityId: string,
+  normal: number | null,
+  isWorld: boolean,
+  climateMap: Record<string, NonNullable<import("@/lib/climate").ClimateEntry>>,
+  m: number
+): Array<{ id: string; name: string; label: string; normal: number; slug: string }> {
+  if (normal === null) return []
+  const pool = isWorld ? citiesFR : citiesWorld
+  return pool
+    .map((c) => {
+      const n = climateMap[c.id]?.normal?.[m] ?? null
+      if (n === null) return null
+      const label = isWorld ? (c as typeof citiesFR[0]).region : (c as typeof citiesWorld[0]).country
+      return { id: c.id, name: c.name, label, normal: n, slug: slugify(c.name), diff: Math.abs(n - normal) }
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null && x.diff <= 3)
+    .sort((a, b) => a.diff - b.diff)
+    .slice(0, 4)
+}
+
 function getCityBySlug(slug: string): AnyCity | null {
   const fr = citiesFR.find((c) => slugify(c.name) === slug)
   if (fr) return fr
@@ -174,6 +195,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const pageUrl = `https://www.cestchaud.fr/a/${slug}`
 
   const cityLocation = city.isWorld ? city.country : city.region
+  const twins = findClimateTwins(city.id, normal, !!city.isWorld, climateMap, m)
   const projectionParagraph = city.isWorld ? null : buildProjectionParagraph(
     city.name, city.region, monthName,
     normal, trend, proj2030, proj2040, proj2050
@@ -417,6 +439,33 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   ))}
                 </div>
               </div>
+
+              {/* Jumeaux climatiques */}
+              {twins.length > 0 && (
+                <div className="col-span-2 bg-white rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
+                    {city.isWorld ? `Villes françaises similaires en ${monthName}` : `Jumeaux climatiques en ${monthName}`}
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {twins.map((twin) => (
+                      <Link
+                        key={twin.id}
+                        href={`/a/${twin.slug}`}
+                        className="flex items-center justify-between rounded-2xl bg-[#f5f4f0] hover:bg-neutral-100 transition-colors px-4 py-3 group"
+                      >
+                        <div>
+                          <div className="font-bold text-sm text-neutral-900 group-hover:underline">{twin.name}</div>
+                          <div className="text-[11px] text-neutral-400">{twin.label}</div>
+                        </div>
+                        <div className="font-black text-lg text-neutral-700">{twin.normal.toFixed(1)}&deg;C</div>
+                      </Link>
+                    ))}
+                  </div>
+                  {!city.isWorld && (
+                    <p className="text-[10px] text-neutral-400 mt-3">Normales ERA5 1991–2020, à ±3°C</p>
+                  )}
+                </div>
+              )}
 
               {/* Lien France */}
               <Link
