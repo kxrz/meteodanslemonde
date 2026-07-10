@@ -1,4 +1,5 @@
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import { Metadata } from "next"
 import { slugify } from "@/lib/slugify"
 import { getWeatherData } from "@/lib/weather-data"
@@ -10,6 +11,15 @@ import Breadcrumb from "@/components/Breadcrumb"
 import ShareButton from "@/components/ShareButton"
 import CitySearch from "@/components/CitySearch"
 import type { ClimateEntry } from "@/lib/climate"
+
+const FranceCitiesMap = dynamic(() => import("@/components/FranceCitiesMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-neutral-200/40 rounded-3xl">
+      <span className="text-neutral-400 text-sm">Chargement de la carte…</span>
+    </div>
+  ),
+})
 
 export const revalidate = 86400
 
@@ -148,13 +158,22 @@ export default async function FrancePage() {
 
   const narrativeParagraphs = buildFranceNarrative()
 
-  // Pass cities in a serializable format for the client CitySearch
   const citiesForSearch = citiesFR.map(c => ({
     id: c.id,
     name: c.name,
     lat: c.lat,
     lon: c.lon,
     region: c.region,
+  }))
+
+  const citiesForMap = withClimate.map(c => ({
+    id: c.id,
+    name: c.name,
+    lat: c.lat,
+    lon: c.lon,
+    region: c.region,
+    apparent_temp_max: c.apparent_temp_max,
+    anomaly: c.anomaly,
   }))
 
   return (
@@ -171,59 +190,60 @@ export default async function FrancePage() {
 
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
-          {/* Left panel */}
-          <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 border-black/[0.06]">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-              France · {dataLabel}
-            </p>
-            <h1 className="text-3xl font-black text-neutral-900 leading-tight">
-              La chaleur en France
-            </h1>
-            <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
-              Ressenti maximal journalier pour {citiesFR.length} villes. Anomalies vs. normales ERA5, tendances 30 ans et projections GIEC CMIP6.
-            </p>
-
-            {/* Search */}
-            <div className="mt-5">
-              <CitySearch cities={citiesForSearch} />
+          {/* Left panel — map */}
+          <div className="h-[55vw] max-h-[400px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative p-3 lg:p-4 lg:sticky lg:top-0 lg:h-[calc(100vh-80px)]">
+            <div className="w-full h-full rounded-3xl overflow-hidden">
+              <FranceCitiesMap cities={citiesForMap} />
             </div>
 
-            {/* KPI tiles */}
-            <div className="mt-5 space-y-3">
-              <div className="bg-[#dbeafe] rounded-2xl p-4">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-1">Ressenti moyen · {citiesFR.length} villes</p>
-                <div className="text-3xl font-black text-blue-900">{avgTemp}&deg;C</div>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="bg-[#fed7aa]/70 rounded-2xl p-3">
-                  <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-1">Plus de 30°C</p>
-                  <div className="text-xl font-black text-orange-900">{above30}</div>
-                  <p className="text-[10px] text-orange-900/40">villes</p>
-                </div>
-                <div className="bg-[#fecaca]/70 rounded-2xl p-3">
-                  <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-red-900/50 mb-1">Plus de 35°C</p>
-                  <div className="text-xl font-black text-red-900">{above35}</div>
-                  <p className="text-[10px] text-red-900/40">villes</p>
-                </div>
-                {biggestAnomaly ? (
-                  <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
-                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
-                    <div className="text-xl font-black text-yellow-900">{fmtDelta(biggestAnomaly.anomaly)}&deg;</div>
-                    <Link href={`/a/${slugify(biggestAnomaly.name)}`} className="text-[10px] font-bold text-yellow-900/70 hover:underline block truncate">{biggestAnomaly.name}</Link>
-                  </div>
-                ) : (
-                  <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
-                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
-                    <div className="text-xl font-black text-yellow-900/30">N/A</div>
-                  </div>
-                )}
-              </div>
+            {/* Title overlay */}
+            <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-sm max-w-[200px]">
+              <p className="text-[9px] uppercase tracking-[0.15em] font-semibold text-neutral-400 leading-none mb-1">
+                France · {dataLabel}
+              </p>
+              <h1 className="text-base font-black text-neutral-900 leading-tight">
+                La chaleur en France
+              </h1>
+            </div>
+
+            {/* Search overlay */}
+            <div className="absolute bottom-6 left-6 right-6 z-[1000]">
+              <CitySearch cities={citiesForSearch} />
             </div>
           </div>
 
           {/* Right panel */}
           <div className="flex-1 lg:overflow-y-auto p-3 lg:p-4">
-            <div className="grid grid-cols-2 gap-3 pb-4">
+            {/* KPI tiles */}
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="col-span-3 bg-[#dbeafe] rounded-2xl px-4 py-3 flex items-center justify-between">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60">Ressenti moyen · {citiesFR.length} villes</p>
+                <div className="text-3xl font-black text-blue-900">{avgTemp}&deg;C</div>
+              </div>
+              <div className="bg-[#fed7aa]/70 rounded-2xl p-3">
+                <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-1">Plus de 30°C</p>
+                <div className="text-xl font-black text-orange-900">{above30}</div>
+                <p className="text-[10px] text-orange-900/40">villes</p>
+              </div>
+              <div className="bg-[#fecaca]/70 rounded-2xl p-3">
+                <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-red-900/50 mb-1">Plus de 35°C</p>
+                <div className="text-xl font-black text-red-900">{above35}</div>
+                <p className="text-[10px] text-red-900/40">villes</p>
+              </div>
+              {biggestAnomaly ? (
+                <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
+                  <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
+                  <div className="text-xl font-black text-yellow-900">{fmtDelta(biggestAnomaly.anomaly)}&deg;</div>
+                  <Link href={`/a/${slugify(biggestAnomaly.name)}`} className="text-[10px] font-bold text-yellow-900/70 hover:underline block truncate">{biggestAnomaly.name}</Link>
+                </div>
+              ) : (
+                <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
+                  <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
+                  <div className="text-xl font-black text-yellow-900/30">N/A</div>
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3 pb-4 mt-0">
 
               {/* Top 3 anomalies */}
               {top3Anomaly.length > 0 && (
