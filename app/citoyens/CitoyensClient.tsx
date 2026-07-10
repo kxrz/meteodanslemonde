@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
+import Breadcrumb from "@/components/Breadcrumb"
 
 interface Senator {
   id: string
@@ -150,6 +151,7 @@ export default function CitoyensClient({ senators }: { senators: Senator[] }) {
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
       <SiteHeader asLink />
+      <Breadcrumb crumbs={[{ label: "Écrire à vos élus" }]} />
 
       <div className="flex-1 flex flex-col lg:flex-row">
 

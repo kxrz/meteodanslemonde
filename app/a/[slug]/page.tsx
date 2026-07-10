@@ -8,6 +8,8 @@ import type { ClimateEntry } from "@/lib/climate"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import CityMapWrapper from "@/components/CityMapWrapper"
+import Breadcrumb from "@/components/Breadcrumb"
+import ShareButton from "@/components/ShareButton"
 
 export const revalidate = 86400
 
@@ -165,6 +167,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
 
         <SiteHeader asLink />
+        <Breadcrumb crumbs={[{ label: "France en chiffres", href: "/en/france" }, { label: city.name }]} />
 
         {/* Main — map left, bento right */}
         <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
@@ -221,6 +224,14 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                         {fmtDelta(anomaly)}°C vs. normale {monthName}
                       </p>
                     )}
+                    <div className="mt-4">
+                      <ShareButton
+                        text={shareText}
+                        url={pageUrl}
+                        label="Partager cette anomalie"
+                        variant="prominent"
+                      />
+                    </div>
                   </div>
                 )}
                 <div className="grid grid-cols-2 gap-3">

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
+import Breadcrumb from "@/components/Breadcrumb"
 import type { Map as LeafletMap, CircleMarker } from "leaflet"
 
 interface CityWithAnomaly {
@@ -161,6 +162,7 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
       <SiteHeader asLink />
+      <Breadcrumb crumbs={[{ label: "Carte de chaleur" }]} />
 
       <div className="flex-1 flex flex-col lg:flex-row min-h-0">
 

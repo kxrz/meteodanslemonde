@@ -6,6 +6,8 @@ import { loadClimateMap } from "@/lib/climate"
 import { fmtDelta } from "@/lib/format"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
+import Breadcrumb from "@/components/Breadcrumb"
+import ShareButton from "@/components/ShareButton"
 import type { ClimateEntry } from "@/lib/climate"
 
 export const revalidate = 86400
@@ -166,6 +168,7 @@ export default async function FrancePage() {
       <div className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col bg-[#f5f4f0]">
 
         <SiteHeader asLink />
+        <Breadcrumb crumbs={[{ label: "France en chiffres" }]} />
 
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
@@ -351,6 +354,16 @@ export default async function FrancePage() {
                     )
                   })}
                 </div>
+              </div>
+
+              {/* Nudge partage */}
+              <div className="col-span-2">
+                <ShareButton
+                  text={`La France en ${monthName} : ressenti moyen ${avgTemp}°C sur ${citiesFR.length} villes${biggestAnomaly ? `. Anomalie max : ${biggestAnomaly.name} à ${biggestAnomaly.anomaly !== null ? (biggestAnomaly.anomaly > 0 ? "+" : "") + biggestAnomaly.anomaly.toFixed(1) + "°C" : ""}` : ""}. Données ERA5 / GIEC sur cestchaud.fr`}
+                  url="https://www.cestchaud.fr/en/france"
+                  label="Partager ce classement"
+                  variant="nudge"
+                />
               </div>
 
             </div>

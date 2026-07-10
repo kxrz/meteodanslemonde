@@ -10,6 +10,7 @@ import { ClimateEntry } from "@/lib/climate"
 import { fmt, fmtDelta } from "@/lib/format"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
+import Breadcrumb from "@/components/Breadcrumb"
 
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
@@ -101,6 +102,7 @@ export default function ExplorerClient({ citiesFR, citiesWorld, fetchedAt, clima
     <div className="min-h-screen lg:h-screen lg:overflow-hidden flex flex-col bg-[#f5f4f0]">
 
       <SiteHeader asLink={true} subtitle="Cliquez une ville pour découvrir ses jumeaux climatiques dans le monde entier." />
+      <Breadcrumb crumbs={[{ label: "Jumeaux climatiques" }]} />
 
       <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 

@@ -6,6 +6,7 @@ import { fmtDelta } from "@/lib/format"
 import { slugify } from "@/lib/slugify"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
+import ShareButton from "@/components/ShareButton"
 import type { ClimateEntry } from "@/lib/climate"
 
 export const revalidate = 86400
@@ -453,12 +454,20 @@ export default async function Home() {
                   <div className="text-sm text-black/30 mt-1">ressenti max</div>
                 </div>
               </div>
-              <Link
-                href={`/a/${slugify(spotlightCity.name)}`}
-                className="mt-5 inline-flex items-center gap-1.5 text-sm font-black text-neutral-900 hover:underline"
-              >
-                Fiche complète de {spotlightCity.name} &rarr;
-              </Link>
+              <div className="mt-5 flex items-center gap-3 flex-wrap">
+                <Link
+                  href={`/a/${slugify(spotlightCity.name)}`}
+                  className="inline-flex items-center gap-1.5 text-sm font-black text-neutral-900 hover:underline"
+                >
+                  Fiche complète &rarr;
+                </Link>
+                <ShareButton
+                  text={`${spotlightCity.name} aujourd'hui : ${spotlightCity.apparent_temp_max}°C de ressenti${spotlightCity.anomaly !== null ? `, soit ${spotlightCity.anomaly > 0 ? "+" : ""}${spotlightCity.anomaly.toFixed(1)}°C vs la normale de ${MONTHS_DISPLAY[month]}` : ""}${spotlightProj2050 !== null ? `. GIEC 2050 : +${spotlightProj2050.toFixed(1)}°C supplémentaires.` : "."} cestchaud.fr`}
+                  url="https://www.cestchaud.fr"
+                  label="Partager"
+                  variant="inline"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-3">
@@ -495,7 +504,15 @@ export default async function Home() {
             </div>
           )}
 
-          {/* ── 5. Pages du site ── */}
+          {/* ── 5. Nudge partage du jour ── */}
+          <ShareButton
+            text={`En France ce ${dataLabel} : ressenti moyen ${avgTemp}°C${avgAnomaly !== null ? `, soit ${avgAnomaly > 0 ? "+" : ""}${avgAnomaly.toFixed(1)}°C vs la normale ERA5` : ""}${top3Anomaly[0] ? `. Anomalie max : ${top3Anomaly[0].name} à ${top3Anomaly[0].anomaly !== null ? (top3Anomaly[0].anomaly > 0 ? "+" : "") + top3Anomaly[0].anomaly.toFixed(1) + "°C" : ""}` : ""}.`}
+            url="https://www.cestchaud.fr"
+            label="Partager l'état du jour"
+            variant="nudge"
+          />
+
+          {/* ── 6. Pages du site ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group flex flex-col">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Explorer</p>
