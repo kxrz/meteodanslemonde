@@ -1,4 +1,4 @@
-import { put, list } from "@vercel/blob"
+import { put, list, getDownloadUrl } from "@vercel/blob"
 
 const PATHNAME = "push-subscriptions.json"
 
@@ -9,11 +9,12 @@ export async function loadSubs(): Promise<SubStore> {
     const { blobs } = await list({ prefix: PATHNAME })
     const blob = blobs.find((b) => b.pathname === PATHNAME)
     if (!blob) return {}
-    const res = await fetch(blob.url, { cache: "no-store" })
+    const signedUrl = await getDownloadUrl(blob.url)
+    const res = await fetch(signedUrl, { cache: "no-store" })
     return await res.json()
   } catch { return {} }
 }
 
 export async function saveSubs(db: SubStore) {
-  await put(PATHNAME, JSON.stringify(db), { access: "public", addRandomSuffix: false })
+  await put(PATHNAME, JSON.stringify(db), { access: "private", addRandomSuffix: false })
 }
