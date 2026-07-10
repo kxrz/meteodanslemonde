@@ -4,12 +4,6 @@ import { join } from "path"
 import webpush from "web-push"
 import { loadClimateMap } from "@/lib/climate"
 
-webpush.setVapidDetails(
-  process.env.VAPID_EMAIL!,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!,
-)
-
 const FILE = join(process.cwd(), "data/subscriptions.json")
 const citiesWorld = require("@/data/cities-world.json") as Array<{ id: string; name: string }>
 
@@ -36,6 +30,12 @@ export async function POST(req: NextRequest) {
   if (secret !== process.env.PUSH_SECRET) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
   }
+
+  webpush.setVapidDetails(
+    process.env.VAPID_EMAIL!,
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+    process.env.VAPID_PRIVATE_KEY!,
+  )
 
   const db = load()
   const climateMap = loadClimateMap()
