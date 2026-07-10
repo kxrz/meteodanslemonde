@@ -232,7 +232,7 @@ export default async function Home() {
       <SiteHeader subtitle={`Données du ${dataLabel}. Ressenti max, anomalies ERA5, projections GIEC 2030-2050.`} />
 
       <main className="flex-1 px-3 lg:px-4 pb-4">
-        <div className="max-w-5xl mx-auto space-y-3">
+        <div className="space-y-3">
 
           {/* ── 1. Records du jour ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
