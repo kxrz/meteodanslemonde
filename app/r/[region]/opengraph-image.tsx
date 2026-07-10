@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og"
-import { readFileSync } from "fs"
-import { join } from "path"
 import { loadClimateMap } from "@/lib/climate"
+import { loadOgFonts } from "@/lib/og-fonts"
 import { fmtDelta } from "@/lib/format"
 
 export const runtime = "nodejs"
@@ -29,23 +28,25 @@ const REGION_LABELS: Record<string, string> = {
   "corse": "Corse",
 }
 
-function loadFonts() {
-  const regular = readFileSync(join(process.cwd(), "public/fonts/DMSans-Regular.ttf"))
-  const semibold = readFileSync(join(process.cwd(), "public/fonts/DMSans-SemiBold.ttf"))
-  return { regular, semibold }
-}
-
 export default async function Image({ params }: { params: Promise<{ region: string }> }) {
   const { region } = await params
   const label = REGION_LABELS[region]
-  const fonts = loadFonts()
+
+  const fonts = await loadOgFonts().catch(() => null)
+  const fontConfig = fonts
+    ? [
+        { name: "DM Sans", data: fonts.regular, weight: 400 as const },
+        { name: "DM Sans", data: fonts.semibold, weight: 700 as const },
+      ]
+    : []
+  const fontFamily = fonts ? "DM Sans" : "sans-serif"
 
   if (!label) {
     return new ImageResponse(
-      <div style={{ width: 1200, height: 630, background: "#f5f4f0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "DM Sans" }}>
+      <div style={{ width: 1200, height: 630, background: "#f5f4f0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily }}>
         <span style={{ fontSize: 48, fontWeight: 700, color: "#171717" }}>cestchaud.fr</span>
       </div>,
-      { ...size, fonts: [{ name: "DM Sans", data: fonts.semibold, weight: 700 }] }
+      { ...size, fonts: fontConfig }
     )
   }
 
@@ -74,9 +75,8 @@ export default async function Image({ params }: { params: Promise<{ region: stri
       display: "flex", flexDirection: "column",
       justifyContent: "space-between",
       padding: "52px 72px",
-      fontFamily: "DM Sans",
+      fontFamily,
     }}>
-
       {/* Top */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span style={{ fontSize: 13, fontWeight: 400, letterSpacing: "0.18em", textTransform: "uppercase", color: "#a3a3a3" }}>
@@ -129,20 +129,12 @@ export default async function Image({ params }: { params: Promise<{ region: stri
             </div>
           )}
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
           <span style={{ fontSize: 22, fontWeight: 700, color: "#171717" }}>cestchaud.fr</span>
           <span style={{ fontSize: 13, color: "#a3a3a3", marginTop: 2 }}>ERA5 · CMIP6</span>
         </div>
       </div>
-
     </div>,
-    {
-      ...size,
-      fonts: [
-        { name: "DM Sans", data: fonts.regular, weight: 400 },
-        { name: "DM Sans", data: fonts.semibold, weight: 700 },
-      ],
-    }
+    { ...size, fonts: fontConfig }
   )
 }
