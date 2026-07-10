@@ -8,17 +8,18 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import ShareButton from "@/components/ShareButton"
+import CitySearch from "@/components/CitySearch"
 import type { ClimateEntry } from "@/lib/climate"
 
 export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "La chaleur en France · cestchaud.fr",
-  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour les 36 principales villes françaises.",
+  description: "Vue d'ensemble de la chaleur en France : ressenti max, anomalies, tendances ERA5 sur 30 ans et projections GIEC CMIP6 pour 60 villes françaises.",
   alternates: { canonical: "https://cestchaud.fr/en/france" },
   openGraph: {
     title: "La chaleur en France · cestchaud.fr",
-    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 36 villes françaises.",
+    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 60 villes françaises.",
     url: "https://cestchaud.fr/en/france",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "La chaleur en France · cestchaud.fr",
-    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 36 villes françaises.",
+    description: "Ressenti max, anomalies et projections GIEC CMIP6 2030–2050 pour 60 villes françaises.",
     images: ["/og/france.png"],
   },
 }
@@ -38,12 +39,8 @@ const jsonLd = {
   "@type": "WebPage",
   name: "La chaleur en France",
   url: "https://cestchaud.fr/en/france",
-  description: "Vue d'ensemble climatique de la France : températures actuelles et projections GIEC pour les 36 principales villes.",
-  about: {
-    "@type": "Country",
-    name: "France",
-    sameAs: "https://www.wikidata.org/wiki/Q142",
-  },
+  description: "Vue d'ensemble climatique de la France : temperatures actuelles et projections GIEC pour 60 villes.",
+  about: { "@type": "Country", name: "France", sameAs: "https://www.wikidata.org/wiki/Q142" },
 }
 
 export default async function FrancePage() {
@@ -57,6 +54,7 @@ export default async function FrancePage() {
   const coolest = sorted[sorted.length - 1]
   const avgTemp = Math.round(citiesFR.reduce((s, c) => s + c.apparent_temp_max, 0) / citiesFR.length)
   const above30 = citiesFR.filter((c) => c.apparent_temp_max >= 30).length
+  const above35 = citiesFR.filter((c) => c.apparent_temp_max >= 35).length
 
   const m = new Date().getMonth()
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
@@ -65,14 +63,16 @@ export default async function FrancePage() {
     proj2050: number | null
     normal: number | null
     anomaly: number | null
+    trend: number | null
   }
 
   const withClimate: CityWithClimate[] = citiesFR.map((c) => {
     const entry = (climateMap[c.id] ?? null) as ClimateEntry
     const proj2050 = entry?.proj2050?.[m] ?? null
     const normal = entry?.normal?.[m] ?? null
+    const trend = entry?.trend?.[m] ?? null
     const anomaly = normal !== null ? Math.round((c.apparent_temp_max - normal) * 10) / 10 : null
-    return { ...c, proj2050, normal, anomaly }
+    return { ...c, proj2050, normal, anomaly, trend }
   })
 
   const withProj = withClimate.filter((c) => c.proj2050 !== null)
@@ -87,9 +87,13 @@ export default async function FrancePage() {
   const biggestAnomaly = withAnomaly.length > 0
     ? withAnomaly.reduce((a, b) => (Math.abs(b.anomaly!) > Math.abs(a.anomaly!) ? b : a))
     : null
+  const top3Anomaly = withAnomaly
+    .filter((c) => c.anomaly !== null && c.anomaly > 0)
+    .sort((a, b) => b.anomaly! - a.anomaly!)
+    .slice(0, 3)
 
-  const trendsThisMonth = citiesFR
-    .map((c) => ((climateMap[c.id] ?? null) as ClimateEntry)?.trend?.[m] ?? null)
+  const trendsThisMonth = withClimate
+    .map((c) => c.trend)
     .filter((t): t is number => t !== null)
   const avgTrend = trendsThisMonth.length > 0
     ? trendsThisMonth.reduce((a, b) => a + b, 0) / trendsThisMonth.length
@@ -108,55 +112,50 @@ export default async function FrancePage() {
   function buildFranceNarrative() {
     const parts: string[] = []
 
-    // Paragraph 1 — today's snapshot
     {
-      const tempDesc = avgTemp >= 35 ? "une vague de chaleur intense" : avgTemp >= 30 ? "une chaleur estivale prononcée" : avgTemp >= 25 ? "des températures estivales" : "des températures modérées"
+      const tempDesc = avgTemp >= 35 ? "une vague de chaleur intense" : avgTemp >= 30 ? "une chaleur estivale prononcee" : avgTemp >= 25 ? "des temperatures estivales" : "des temperatures moderees"
       const spread = above30 > 0
-        ? ` On compte ${above30} ville${above30 > 1 ? "s" : ""} au-dessus de 30°C, de ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le thermomètre s’arrête à ${coolest.apparent_temp_max}°C.`
-        : ` De ${hottest.name} (${hottest.region}) à ${coolest.name} (${coolest.region}) où le ressenti plafonne à ${coolest.apparent_temp_max}°C, l’amplitude reste sensible.`
-      parts.push(
-        `En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l’ensemble du territoire.${spread}`
-      )
+        ? ` On compte ${above30} ville${above30 > 1 ? "s" : ""} au-dessus de 30 degres${above35 > 0 ? ` dont ${above35} au-dessus de 35` : ""}, de ${hottest.name} (${hottest.region}) a ${coolest.name} (${coolest.region}) ou le thermometre s'arrete a ${coolest.apparent_temp_max} degres.`
+        : ` De ${hottest.name} (${hottest.region}) a ${coolest.name} (${coolest.region}) ou le ressenti plafonne a ${coolest.apparent_temp_max} degres, l'amplitude reste sensible.`
+      parts.push(`En ce mois de ${monthName}, la France traverse ${tempDesc} avec un ressenti moyen de ${avgTemp}°C sur l'ensemble du territoire.${spread}`)
     }
 
-    // Paragraph 2 — anomaly vs ERA5 normal
     if (biggestAnomaly) {
       const sign = biggestAnomaly.anomaly! > 0 ? "au-dessus" : "en dessous"
       const absAnomaly = Math.abs(biggestAnomaly.anomaly!)
       const trendStr = avgTrend !== null
-        ? ` À l’échelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois, une trajectoire qui s’accélère.`
+        ? ` A l'echelle nationale, les données ERA5 montrent une hausse moyenne de ${fmtDelta(avgTrend)}°C depuis 1990 pour ce mois : une trajectoire qui s'accelere.`
         : ""
-      parts.push(
-        `C’est à ${biggestAnomaly.name} que l’écart par rapport aux normales saisonnières est le plus marqué : ${absAnomaly}°C ${sign} de la référence ERA5. Des anomalies de cette amplitude ne sont plus des exceptions. Elles témoignent d’un glissement durable des repères climatiques.${trendStr}`
-      )
+      parts.push(`C'est a ${biggestAnomaly.name} que l'ecart par rapport aux normales saisonnieres est le plus marque : ${absAnomaly}°C ${sign} de la reference ERA5. Des anomalies de cette amplitude ne sont plus des exceptions.${trendStr}`)
     } else if (avgTrend !== null) {
-      parts.push(
-        `Les données ERA5 révèlent une tendance de ${fmtDelta(avgTrend)}°C sur 30 ans pour ce mois à l’échelle nationale. Ce chiffre, stable et mesuré sur des décennies, illustre une mutation profonde du climat français.`
-      )
+      parts.push(`Les données ERA5 revelent une tendance de ${fmtDelta(avgTrend)}°C sur 30 ans pour ce mois a l'echelle nationale. Ce chiffre illustre une mutation profonde du climat francais.`)
     }
 
-    // Paragraph 3 — GIEC projections
     if (mostImpacted && leastImpacted) {
-      parts.push(
-        `Les projections GIEC CMIP6 dessinent des trajectoires très contrastées selon les territoires. ${mostImpacted.name} (${mostImpacted.region}) est la ville la plus exposée au scénario 2050, avec une hausse projetée de ${fmtDelta(mostImpacted.proj2050!)}°C. ${leastImpacted.name} (${leastImpacted.region}) figure parmi les moins impactées, à ${fmtDelta(leastImpacted.proj2050!)}°C. Ces écarts rappellent que le réchauffement ne sera pas uniforme : le Sud et les plaines continentales seront frappés plus tôt et plus fort que les façades atlantiques ou alpines.`
-      )
+      parts.push(`Les projections GIEC CMIP6 dessinent des trajectoires tres contrastees selon les territoires. ${mostImpacted.name} (${mostImpacted.region}) est la ville la plus exposee au scenario 2050, avec une hausse projetee de ${fmtDelta(mostImpacted.proj2050!)}°C. ${leastImpacted.name} (${leastImpacted.region}) figure parmi les moins impactees, a ${fmtDelta(leastImpacted.proj2050!)}°C. Le Sud et les plaines continentales seront frappe es plus tot et plus fort que les facades atlantiques.`)
     }
 
-    // Paragraph 4 — top 6 projection summary
     if (avgProj2040 !== null || avgProj2050 !== null) {
       const proj40Str = avgProj2040 !== null ? `${fmtDelta(Math.round(avgProj2040 * 10) / 10)}°C en 2040` : null
       const proj50Str = avgProj2050 !== null ? `${fmtDelta(Math.round(avgProj2050 * 10) / 10)}°C en 2050` : null
       const projStr = [proj40Str, proj50Str].filter(Boolean).join(", ")
-      const top6Names = top6.map(c => c.name).slice(0, 3).join(", ")
-      parts.push(
-        `Pour les six villes les plus chaudes aujourd’hui, dont ${top6Names}, le scénario médian CMIP6 anticipe une augmentation de ${projStr} par rapport aux normales actuelles. Ces villes concentrent déjà les ressentis les plus élevés du pays. Leur trajectoire climatique exige une adaptation urgente des espaces urbains, de la végétalisation aux plans de gestion des canicules.`
-      )
+      const top3Names = top6.map(c => c.name).slice(0, 3).join(", ")
+      parts.push(`Pour les six villes les plus chaudes du pays, dont ${top3Names}, le scenario median CMIP6 anticipe ${projStr} de hausse supplementaire. Ces villes concentrent deja les ressentis les plus eleves. Leur trajectoire exige une adaptation urgente : vegetalisation, plans canicule, gestion de l'eau.`)
     }
 
     return parts
   }
 
   const narrativeParagraphs = buildFranceNarrative()
+
+  // Pass cities in a serializable format for the client CitySearch
+  const citiesForSearch = citiesFR.map(c => ({
+    id: c.id,
+    name: c.name,
+    lat: c.lat,
+    lon: c.lon,
+    region: c.region,
+  }))
 
   return (
     <>
@@ -172,112 +171,142 @@ export default async function FrancePage() {
 
         <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
 
-          {/* Left panel — 40% */}
+          {/* Left panel */}
           <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 border-black/[0.06]">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                France · {dataLabel}
-              </p>
-              <h1 className="text-3xl font-black text-neutral-900 leading-tight">
-                La chaleur en France
-              </h1>
-              <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
-                Ressenti maximal journalier pour {citiesFR.length} villes françaises. Anomalies, tendances ERA5 et projections GIEC CMIP6.
-              </p>
-              <div className="mt-6 space-y-3">
-                <div className="bg-[#dbeafe] rounded-2xl p-4">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-1">Ressenti moyen</p>
-                  <div className="text-3xl font-black text-blue-900">{avgTemp}°C</div>
+            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+              France · {dataLabel}
+            </p>
+            <h1 className="text-3xl font-black text-neutral-900 leading-tight">
+              La chaleur en France
+            </h1>
+            <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
+              Ressenti maximal journalier pour {citiesFR.length} villes. Anomalies vs. normales ERA5, tendances 30 ans et projections GIEC CMIP6.
+            </p>
+
+            {/* Search */}
+            <div className="mt-5">
+              <CitySearch cities={citiesForSearch} />
+            </div>
+
+            {/* KPI tiles */}
+            <div className="mt-5 space-y-3">
+              <div className="bg-[#dbeafe] rounded-2xl p-4">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-1">Ressenti moyen · {citiesFR.length} villes</p>
+                <div className="text-3xl font-black text-blue-900">{avgTemp}&deg;C</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-[#fed7aa]/70 rounded-2xl p-3">
+                  <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-1">Plus de 30°C</p>
+                  <div className="text-xl font-black text-orange-900">{above30}</div>
+                  <p className="text-[10px] text-orange-900/40">villes</p>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#fed7aa]/70 rounded-2xl p-3">
-                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-orange-900/50 mb-1">≥ 30°C</p>
-                    <div className="text-xl font-black text-orange-900">{above30}</div>
-                    <p className="text-[10px] text-orange-900/50">villes</p>
+                <div className="bg-[#fecaca]/70 rounded-2xl p-3">
+                  <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-red-900/50 mb-1">Plus de 35°C</p>
+                  <div className="text-xl font-black text-red-900">{above35}</div>
+                  <p className="text-[10px] text-red-900/40">villes</p>
+                </div>
+                {biggestAnomaly ? (
+                  <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
+                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
+                    <div className="text-xl font-black text-yellow-900">{fmtDelta(biggestAnomaly.anomaly)}&deg;</div>
+                    <Link href={`/a/${slugify(biggestAnomaly.name)}`} className="text-[10px] font-bold text-yellow-900/70 hover:underline block truncate">{biggestAnomaly.name}</Link>
                   </div>
-                  {biggestAnomaly ? (
-                    <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
-                      <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
-                      <div className="text-xl font-black text-yellow-900">{fmtDelta(biggestAnomaly.anomaly)}°C</div>
-                      <Link href={`/a/${slugify(biggestAnomaly.name)}`} className="text-[10px] font-bold text-yellow-900/70 hover:underline block truncate">{biggestAnomaly.name}</Link>
-                    </div>
-                  ) : (
-                    <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
-                      <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
-                      <div className="text-xl font-black text-yellow-900/30">—</div>
-                    </div>
-                  )}
-                </div>
+                ) : (
+                  <div className="bg-[#fef9c3]/80 rounded-2xl p-3">
+                    <p className="text-[9px] uppercase tracking-[0.1em] font-semibold text-yellow-900/50 mb-1">Anomalie max</p>
+                    <div className="text-xl font-black text-yellow-900/30">N/A</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Right panel — 60% scrollable */}
+          {/* Right panel */}
           <div className="flex-1 lg:overflow-y-auto p-3 lg:p-4">
             <div className="grid grid-cols-2 gap-3 pb-4">
 
-              {/* GIEC 2050 plus exposée */}
+              {/* Top 3 anomalies */}
+              {top3Anomaly.length > 0 && (
+                <div className="col-span-2 bg-[#fff7ed] rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/60 mb-3">
+                    Top 3 anomalies du jour
+                  </p>
+                  <div className="space-y-2">
+                    {top3Anomaly.map((c, i) => (
+                      <Link
+                        key={c.id}
+                        href={`/a/${slugify(c.name)}`}
+                        className="flex items-center gap-3 py-2 hover:opacity-80 transition-opacity group"
+                      >
+                        <span className="text-xs font-black text-orange-900/40 w-4">{i + 1}</span>
+                        <span className="flex-1 text-sm font-semibold text-orange-900">{c.name}</span>
+                        <span className="text-xs text-orange-900/50">{c.apparent_temp_max}&deg;C</span>
+                        <span className="font-black text-base text-orange-700">{fmtDelta(c.anomaly)}&deg;</span>
+                        <span className="text-orange-300 group-hover:text-orange-600 text-sm transition-colors">&rarr;</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* GIEC 2050 : plus et moins exposee */}
               <div className="bg-purple-50 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/60 mb-3">
-                  GIEC 2050 · plus exposée
+                  GIEC 2050 · plus exposee
                 </p>
                 {mostImpacted ? (
                   <>
                     <div className="text-4xl font-black text-purple-900 leading-none">
-                      {fmtDelta(mostImpacted.proj2050)}°C
+                      {fmtDelta(mostImpacted.proj2050)}&deg;C
                     </div>
-                    <Link
-                      href={`/a/${slugify(mostImpacted.name)}`}
-                      className="text-sm font-bold text-purple-900/80 mt-1.5 block hover:underline"
-                    >
+                    <Link href={`/a/${slugify(mostImpacted.name)}`} className="text-sm font-bold text-purple-900/80 mt-1.5 block hover:underline">
                       {mostImpacted.name}
                     </Link>
                     <p className="text-xs text-purple-900/50">{mostImpacted.region}</p>
                   </>
                 ) : (
-                  <p className="text-2xl font-black text-purple-900/20">—</p>
+                  <p className="text-2xl font-black text-purple-900/20">N/A</p>
                 )}
               </div>
 
-              {/* GIEC 2050 moins exposée */}
               <div className="bg-indigo-50 rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-indigo-900/60 mb-3">
-                  GIEC 2050 · moins exposée
+                  GIEC 2050 · moins exposee
                 </p>
                 {leastImpacted ? (
                   <>
                     <div className="text-4xl font-black text-indigo-900 leading-none">
-                      {fmtDelta(leastImpacted.proj2050)}°C
+                      {fmtDelta(leastImpacted.proj2050)}&deg;C
                     </div>
-                    <Link
-                      href={`/a/${slugify(leastImpacted.name)}`}
-                      className="text-sm font-bold text-indigo-900/80 mt-1.5 block hover:underline"
-                    >
+                    <Link href={`/a/${slugify(leastImpacted.name)}`} className="text-sm font-bold text-indigo-900/80 mt-1.5 block hover:underline">
                       {leastImpacted.name}
                     </Link>
                     <p className="text-xs text-indigo-900/50">{leastImpacted.region}</p>
                   </>
                 ) : (
-                  <p className="text-2xl font-black text-indigo-900/20">—</p>
+                  <p className="text-2xl font-black text-indigo-900/20">N/A</p>
                 )}
               </div>
 
-              {/* Tendance 30 ans */}
+              {/* Tendance nationale */}
               {avgTrend !== null && (
                 <div className="col-span-2 bg-white rounded-3xl p-5">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
                     Tendance 30 ans · moyenne France
                   </p>
                   <p className="font-black text-2xl text-neutral-900">
-                    {fmtDelta(avgTrend)}°C
+                    {fmtDelta(avgTrend)}&deg;C
                     <span className="text-sm font-normal text-neutral-400 ml-2">
                       depuis 1990 · {monthName}
                     </span>
                   </p>
+                  <p className="text-xs text-neutral-400 mt-2">
+                    Moyenne calculee sur les {trendsThisMonth.length} villes avec données ERA5 disponibles
+                  </p>
                 </div>
               )}
 
-              {/* Editorial narrative */}
+              {/* Editorial */}
               {narrativeParagraphs.length > 0 && (
                 <div className="col-span-2 bg-neutral-950 rounded-3xl p-6">
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/50 mb-5">
@@ -301,11 +330,11 @@ export default async function FrancePage() {
                 <div className="flex gap-8 mb-4">
                   <div>
                     <p className="text-xs font-semibold text-purple-900/50 mb-1">2040</p>
-                    <p className="font-black text-3xl text-purple-900">{fmtDelta(avgProj2040)}°C</p>
+                    <p className="font-black text-3xl text-purple-900">{fmtDelta(avgProj2040)}&deg;C</p>
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-purple-900/50 mb-1">2050</p>
-                    <p className="font-black text-3xl text-purple-900">{fmtDelta(avgProj2050)}°C</p>
+                    <p className="font-black text-3xl text-purple-900">{fmtDelta(avgProj2050)}&deg;C</p>
                   </div>
                 </div>
                 <div className="border-t border-purple-900/10 pt-3 flex flex-wrap gap-x-4 gap-y-1">
@@ -324,30 +353,37 @@ export default async function FrancePage() {
               {/* Toutes les villes */}
               <div className="col-span-2 bg-white rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
-                  Toutes les villes · du plus chaud au plus frais
+                  {citiesFR.length} villes · du plus chaud au plus frais
                 </p>
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {sorted.map((city) => {
                     const entry = (climateMap[city.id] ?? null) as ClimateEntry
                     const proj2050 = entry?.proj2050?.[m] ?? null
+                    const normal = entry?.normal?.[m] ?? null
+                    const anomaly = normal !== null ? Math.round((city.apparent_temp_max - normal) * 10) / 10 : null
                     return (
                       <Link
                         key={city.id}
                         href={`/a/${slugify(city.name)}`}
-                        className="flex items-center justify-between py-2.5 px-3 rounded-2xl hover:bg-neutral-50 transition-colors group"
+                        className="flex items-center justify-between py-2 px-3 rounded-2xl hover:bg-neutral-50 transition-colors group"
                       >
                         <div className="flex-1 min-w-0">
                           <span className="font-semibold text-sm text-neutral-800 group-hover:text-neutral-900">{city.name}</span>
-                          <span className="text-xs text-neutral-400 ml-2">{city.region}</span>
+                          <span className="text-xs text-neutral-400 ml-2 hidden sm:inline">{city.region}</span>
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
-                          <span className="font-black text-sm text-neutral-700">{city.apparent_temp_max}°C</span>
+                          <span className="font-black text-sm text-neutral-700">{city.apparent_temp_max}&deg;C</span>
+                          {anomaly !== null && (
+                            <span className={`text-xs font-semibold hidden sm:block ${anomaly > 0 ? "text-orange-600" : "text-blue-600"}`}>
+                              {fmtDelta(anomaly)}&deg;
+                            </span>
+                          )}
                           {proj2050 !== null && (
-                            <span className="text-xs text-purple-700/70 hidden sm:block">
+                            <span className="text-xs text-purple-700/60 hidden lg:block">
                               2050 : {fmtDelta(proj2050)}
                             </span>
                           )}
-                          <span className="text-neutral-300 group-hover:text-neutral-500 transition-colors text-sm">→</span>
+                          <span className="text-neutral-300 group-hover:text-neutral-500 transition-colors text-sm">&rarr;</span>
                         </div>
                       </Link>
                     )
@@ -358,7 +394,7 @@ export default async function FrancePage() {
               {/* Nudge partage */}
               <div className="col-span-2">
                 <ShareButton
-                  text={`La France en ${monthName} : ressenti moyen ${avgTemp}°C sur ${citiesFR.length} villes${biggestAnomaly ? `. Anomalie max : ${biggestAnomaly.name} à ${biggestAnomaly.anomaly !== null ? (biggestAnomaly.anomaly > 0 ? "+" : "") + biggestAnomaly.anomaly.toFixed(1) + "°C" : ""}` : ""}. Données ERA5 / GIEC sur cestchaud.fr`}
+                  text={`La France en ${monthName} : ressenti moyen ${avgTemp}°C sur ${citiesFR.length} villes${biggestAnomaly ? `. Anomalie max : ${biggestAnomaly.name} a ${biggestAnomaly.anomaly !== null ? (biggestAnomaly.anomaly > 0 ? "+" : "") + biggestAnomaly.anomaly.toFixed(1) + " degres" : ""}` : ""}. Données ERA5 / GIEC sur cestchaud.fr`}
                   url="https://www.cestchaud.fr/en/france"
                   label="Partager ce classement"
                   variant="nudge"

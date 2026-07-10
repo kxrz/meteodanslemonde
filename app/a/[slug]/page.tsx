@@ -86,6 +86,52 @@ async function fetchCityWeather(lat: number, lon: number) {
   }
 }
 
+function buildProjectionParagraph(
+  cityName: string,
+  region: string,
+  monthName: string,
+  normal: number | null,
+  trend: number | null,
+  proj2030: number | null,
+  proj2040: number | null,
+  proj2050: number | null,
+): string | null {
+  if (proj2050 === null && trend === null) return null
+
+  const parts: string[] = []
+
+  if (trend !== null) {
+    const trendWord = trend > 0 ? "hausse" : "baisse"
+    const trendAbs = Math.abs(trend)
+    parts.push(
+      `Sur les 30 dernières années, le ressenti de ${monthName} à ${cityName} a connu une ${trendWord} de ${trendAbs.toFixed(1)}°C selon les données ERA5. Ce chiffre, mesuré et stable, n'est pas une anomalie ponctuelle : c'est la signature d'une mutation durable du climat local.`
+    )
+  }
+
+  if (proj2030 !== null || proj2040 !== null || proj2050 !== null) {
+    const projParts: string[] = []
+    if (proj2030 !== null) projParts.push(`${fmtDelta(proj2030)}°C en 2030`)
+    if (proj2040 !== null) projParts.push(`${fmtDelta(proj2040)}°C en 2040`)
+    if (proj2050 !== null) projParts.push(`${fmtDelta(proj2050)}°C en 2050`)
+
+    const baseDesc = normal !== null ? ` par rapport à la normale actuelle de ${fmt(normal)}°C` : ""
+
+    const impact = proj2050 !== null
+      ? proj2050 >= 3
+        ? `Un écart de cette ampleur transforme concrètement les conditions de vie estivales, le stress hydrique, et les besoins en climatisation.`
+        : proj2050 >= 1.5
+        ? `Un tel décalage est déjà perceptible sur l'agriculture locale, la santé des personnes vulnérables et la gestion de l'eau.`
+        : `Même modeste en apparence, ce réchauffement décale les saisons et fragilise les écosystèmes locaux sur la durée.`
+      : ""
+
+    parts.push(
+      `Le scénario intermédiaire CMIP6 (SSP2-4.5) projette pour ${cityName} : ${projParts.join(", ")}${baseDesc}. ${impact}`
+    )
+  }
+
+  return parts.join(" ")
+}
+
 export default async function CityPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const city = getCityBySlug(slug)
@@ -110,29 +156,32 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       : null
 
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
-
   const pageUrl = `https://cestchaud.fr/a/${slug}`
 
-  // Share text: anomalie du jour en priorité, sinon projection 2050
+  const projectionParagraph = buildProjectionParagraph(
+    city.name, city.region, monthName,
+    normal, trend, proj2030, proj2040, proj2050
+  )
+
   let shareText: string
   if (weather && anomaly !== null) {
     const sign = anomaly > 0 ? "+" : ""
-    shareText = `À ${city.name} aujourd’hui, le ressenti max atteint ${weather.apparent_temp_max}°C, soit ${sign}${anomaly}°C par rapport à la normale de ${monthName}.`
+    shareText = `A ${city.name} aujourd'hui, le ressenti max atteint ${weather.apparent_temp_max}°C, soit ${sign}${anomaly}°C par rapport a la normale de ${monthName}.`
     if (proj2050 !== null) {
-      shareText += ` Et d’ici 2050, le GIEC projette encore ${fmtDelta(proj2050)}°C de plus.`
+      shareText += ` Et d'ici 2050, le GIEC projette encore ${fmtDelta(proj2050)}°C de plus.`
     }
-    shareText += ` `
   } else if (proj2050 !== null) {
-    shareText = `À ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d’ici 2050. `
+    shareText = `A ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d'ici 2050.`
   } else {
-    shareText = `Données climatiques de ${city.name} sur `
+    shareText = `Donnees climatiques de ${city.name} sur`
   }
-  const shareTextEncoded = encodeURIComponent(shareText + pageUrl)
+
+  const shareTextEncoded = encodeURIComponent(shareText + " " + pageUrl)
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?text=${shareTextEncoded}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
     whatsapp: `https://api.whatsapp.com/send?text=${shareTextEncoded}`,
-    email: `mailto:?subject=${encodeURIComponent(`${city.name} · données climatiques`)}&body=${shareTextEncoded}`,
+    email: `mailto:?subject=${encodeURIComponent(`${city.name} · donnees climatiques`)}&body=${shareTextEncoded}`,
   }
 
   const jsonLd = {
@@ -144,11 +193,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
     about: {
       "@type": "Place",
       name: city.name,
-      geo: {
-        "@type": "GeoCoordinates",
-        latitude: city.lat,
-        longitude: city.lon,
-      },
+      geo: { "@type": "GeoCoordinates", latitude: city.lat, longitude: city.lon },
       containedInPlace: {
         "@type": "AdministrativeArea",
         name: city.region,
@@ -169,27 +214,22 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         <SiteHeader asLink />
         <Breadcrumb crumbs={[{ label: "France en chiffres", href: "/en/france" }, { label: city.name }]} />
 
-        {/* Main — map left, bento right */}
         <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
-          {/* Left: Leaflet map (40%) full height */}
+          {/* Left: map (40%) */}
           <div className="h-[50vw] max-h-[360px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative p-3 lg:p-4">
             <div className="w-full h-full rounded-3xl overflow-hidden">
               <CityMapWrapper lat={city.lat} lon={city.lon} name={city.name} />
             </div>
-
-            {/* Overlay: city name + region */}
             <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 leading-none mb-0.5">
                 {city.region}
               </p>
               <h1 className="text-base font-black text-neutral-900 leading-tight">{city.name}</h1>
             </div>
-
-            {/* Overlay: coordinates */}
             <div className="absolute bottom-6 left-6 z-[1000]">
               <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
-                {city.lat.toFixed(2)}°N · {Math.abs(city.lon).toFixed(2)}°{city.lon >= 0 ? "E" : "O"}
+                {city.lat.toFixed(2)}N · {Math.abs(city.lon).toFixed(2)}{city.lon >= 0 ? "E" : "O"}
               </p>
             </div>
           </div>
@@ -208,65 +248,104 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </article>
               )}
 
-              {/* Température max + Normale + Tendance — grouped to guarantee stacking */}
-              <div className="col-span-2 space-y-3">
-                {weather && (
+              {/* Temp + Share — two side-by-side blocks */}
+              {weather && (
+                <div className="col-span-2 grid grid-cols-2 gap-3">
+                  {/* Temp info */}
                   <div className="bg-[#dbeafe] rounded-3xl p-6">
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
-                      Ressenti max aujourd’hui
+                      Ressenti max aujourd&apos;hui
                     </p>
                     <div className="flex items-baseline gap-1.5 leading-none">
-                      <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}°</span>
+                      <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}&deg;</span>
                       <span className="text-2xl font-black text-blue-400">C</span>
                     </div>
                     {anomaly !== null && (
                       <p className="text-sm text-blue-800/60 mt-2">
-                        {fmtDelta(anomaly)}°C vs. normale {monthName}
+                        {fmtDelta(anomaly)}&deg;C vs. normale {monthName}
                       </p>
                     )}
-                    <div className="mt-4">
-                      <ShareButton
-                        text={shareText}
-                        url={pageUrl}
-                        label="Partager cette anomalie"
-                        variant="prominent"
-                      />
+                  </div>
+                  {/* Share */}
+                  <div className="bg-white rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+                        Partager
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <a href={shareLinks.twitter} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-1.5 bg-black text-white rounded-xl py-2 px-2 text-xs font-semibold hover:bg-neutral-800 transition-colors">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.733-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" /></svg>
+                          X
+                        </a>
+                        <a href={shareLinks.linkedin} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-1.5 bg-[#0A66C2] text-white rounded-xl py-2 px-2 text-xs font-semibold hover:bg-[#0958a8] transition-colors">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+                          LinkedIn
+                        </a>
+                        <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-1.5 bg-[#25D366] text-white rounded-xl py-2 px-2 text-xs font-semibold hover:bg-[#1fbb56] transition-colors">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg>
+                          WhatsApp
+                        </a>
+                        <a href={shareLinks.email}
+                          className="flex items-center justify-center gap-1.5 bg-neutral-100 text-neutral-700 rounded-xl py-2 px-2 text-xs font-semibold hover:bg-neutral-200 transition-colors">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+                          Email
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                )}
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Normale */}
-                  <div className="bg-[#b8d4b0] rounded-3xl p-5">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
-                      Normalement en {monthName}
-                    </p>
-                    {normal !== null ? (
-                      <>
-                        <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}°C</div>
-                        <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
-                      </>
-                    ) : (
-                      <p className="text-2xl font-black text-green-900/30">—</p>
-                    )}
-                  </div>
-                  {/* Tendance 30 ans */}
-                  <div className="bg-white rounded-3xl p-5">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                      Tendance 30 ans
-                    </p>
-                    {trend !== null ? (
-                      <>
-                        <div className="text-4xl font-black text-neutral-900 leading-none">
-                          {fmtDelta(trend)}°C
-                        </div>
-                        <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
-                      </>
-                    ) : (
-                      <p className="text-2xl font-black text-neutral-300">—</p>
-                    )}
+                    <ShareButton
+                      text={shareText}
+                      url={pageUrl}
+                      label="Copier le texte"
+                      variant="inline"
+                    />
                   </div>
                 </div>
+              )}
+
+              {/* Normale + Tendance */}
+              <div className="grid grid-cols-2 gap-3 col-span-2">
+                <div className="bg-[#b8d4b0] rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
+                    Normalement en {monthName}
+                  </p>
+                  {normal !== null ? (
+                    <>
+                      <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}&deg;C</div>
+                      <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
+                    </>
+                  ) : (
+                    <p className="text-2xl font-black text-green-900/30">N/A</p>
+                  )}
+                </div>
+                <div className="bg-white rounded-3xl p-5">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+                    Tendance 30 ans
+                  </p>
+                  {trend !== null ? (
+                    <>
+                      <div className="text-4xl font-black text-neutral-900 leading-none">
+                        {fmtDelta(trend)}&deg;C
+                      </div>
+                      <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
+                    </>
+                  ) : (
+                    <p className="text-2xl font-black text-neutral-300">N/A</p>
+                  )}
+                </div>
               </div>
+
+              {/* Second paragraph — projection narrative */}
+              {projectionParagraph && (
+                <article className="col-span-2 bg-[#1a1a2e] rounded-3xl p-6">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
+                    Ce que disent les modeles
+                  </p>
+                  <p className="text-sm text-white/75 leading-relaxed">{projectionParagraph}</p>
+                </article>
+              )}
 
               {/* Extrêmes de l'année */}
               {yearExtremes && (
@@ -275,7 +354,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-900/50 mb-3">
                       Record chaud {new Date().getFullYear()}
                     </p>
-                    <div className="text-4xl font-black text-red-900 leading-none">{yearExtremes.max}°C</div>
+                    <div className="text-4xl font-black text-red-900 leading-none">{yearExtremes.max}&deg;C</div>
                     <p className="text-xs text-red-900/50 mt-2">
                       {new Date(yearExtremes.max_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     </p>
@@ -284,7 +363,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
                       Record froid {new Date().getFullYear()}
                     </p>
-                    <div className="text-4xl font-black text-blue-900 leading-none">{yearExtremes.min}°C</div>
+                    <div className="text-4xl font-black text-blue-900 leading-none">{yearExtremes.min}&deg;C</div>
                     <p className="text-xs text-blue-900/50 mt-2">
                       {new Date(yearExtremes.min_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     </p>
@@ -295,10 +374,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {/* Projections GIEC */}
               <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                  Si rien ne change…
+                  Si rien ne change...
                 </p>
                 <p className="text-[10px] text-purple-900/60 mb-4">
-                  Modèle CMIP6 (GIEC AR6) · écart vs. 2000–2020
+                  Modele CMIP6 (GIEC AR6) · ecart vs. 2000–2020
                 </p>
                 <div className="space-y-2.5">
                   {([
@@ -309,53 +388,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     <div key={year} className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-purple-900/60">{year}</span>
                       <span className="font-black text-2xl text-purple-900">
-                        {fmtDelta(val)}°C
+                        {fmtDelta(val)}&deg;C
                       </span>
                     </div>
                   ))}
-                </div>
-              </div>
-
-              {/* Share */}
-              <div className="col-span-2 bg-white rounded-3xl p-5">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
-                  Partager
-                </p>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                  <a
-                    href={shareLinks.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-black text-white rounded-2xl py-3 px-3 text-sm font-semibold hover:bg-neutral-800 transition-colors"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.733-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" /></svg>
-                    X
-                  </a>
-                  <a
-                    href={shareLinks.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-[#0A66C2] text-white rounded-2xl py-3 px-3 text-sm font-semibold hover:bg-[#0958a8] transition-colors"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-                    LinkedIn
-                  </a>
-                  <a
-                    href={shareLinks.whatsapp}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-[#25D366] text-white rounded-2xl py-3 px-3 text-sm font-semibold hover:bg-[#1fbb56] transition-colors"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg>
-                    WhatsApp
-                  </a>
-                  <a
-                    href={shareLinks.email}
-                    className="flex items-center justify-center gap-2 bg-neutral-100 text-neutral-700 rounded-2xl py-3 px-3 text-sm font-semibold hover:bg-neutral-200 transition-colors"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
-                    Email
-                  </a>
                 </div>
               </div>
 
@@ -366,11 +402,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               >
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
-                    Vue d’ensemble
+                    Vue d&apos;ensemble
                   </p>
                   <p className="text-base font-black text-neutral-900">La France en chiffres</p>
                 </div>
-                <span className="text-neutral-400 group-hover:text-neutral-700 text-2xl transition-colors">→</span>
+                <span className="text-neutral-400 group-hover:text-neutral-700 text-2xl transition-colors">&rarr;</span>
               </Link>
 
               <PageFooter className="col-span-2" />
