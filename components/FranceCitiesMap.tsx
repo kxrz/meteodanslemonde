@@ -66,6 +66,17 @@ export default function FranceCitiesMap({ cities }: Props) {
           ? `<br><span style="color:${city.anomaly > 0 ? "#ea580c" : "#2563eb"}">${city.anomaly > 0 ? "+" : ""}${city.anomaly.toFixed(1)}°C vs normale</span>`
           : ""
 
+        // Glow blob
+        L.circleMarker([city.lat, city.lon], {
+          radius: isMobile ? 26 : 36,
+          fillColor: color,
+          color: "transparent",
+          weight: 0,
+          fillOpacity: 0.13,
+          interactive: false,
+        }).addTo(map!)
+
+        // Dot
         L.circleMarker([city.lat, city.lon], {
           radius: isMobile ? 9 : 11,
           fillColor: color,
