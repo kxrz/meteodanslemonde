@@ -74,7 +74,6 @@ const UNLISTED_COORDS: Record<string, [number, number]> = {
   "narbonne": [43.18, 3.0],
   "beziers": [43.34, 3.22],
   "sete": [43.4, 3.69],
-  "narbonne": [43.18, 3.0],
   "castres": [43.6, 2.24],
   "tarbes": [43.23, 0.08],
   "auch": [43.65, 0.59],
