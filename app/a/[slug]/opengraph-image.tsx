@@ -1,8 +1,7 @@
 import { ImageResponse } from "next/og"
-import { readFileSync } from "fs"
-import { join } from "path"
 import { slugify } from "@/lib/slugify"
 import { loadClimateMap } from "@/lib/climate"
+import { loadOgFonts } from "@/lib/og-fonts"
 import { fmtDelta } from "@/lib/format"
 import type { ClimateEntry } from "@/lib/climate"
 
@@ -27,23 +26,25 @@ async function fetchApparentTemp(lat: number, lon: number): Promise<number | nul
   } catch { return null }
 }
 
-function loadFonts() {
-  const regular = readFileSync(join(process.cwd(), "public/fonts/DMSans-Regular.ttf"))
-  const semibold = readFileSync(join(process.cwd(), "public/fonts/DMSans-SemiBold.ttf"))
-  return { regular, semibold }
-}
-
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const city = citiesFR.find((c) => slugify(c.name) === slug)
-  const fonts = loadFonts()
+
+  const fonts = await loadOgFonts().catch(() => null)
+  const fontConfig = fonts
+    ? [
+        { name: "DM Sans", data: fonts.regular, weight: 400 as const },
+        { name: "DM Sans", data: fonts.semibold, weight: 700 as const },
+      ]
+    : []
+  const fontFamily = fonts ? "DM Sans" : "sans-serif"
 
   if (!city) {
     return new ImageResponse(
-      <div style={{ width: 1200, height: 630, background: "#f5f4f0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "DM Sans" }}>
+      <div style={{ width: 1200, height: 630, background: "#f5f4f0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily }}>
         <span style={{ fontSize: 48, fontWeight: 700, color: "#171717" }}>cestchaud.fr</span>
       </div>,
-      { ...size, fonts: [{ name: "DM Sans", data: fonts.semibold, weight: 700 }] }
+      { ...size, fonts: fontConfig }
     )
   }
 
@@ -66,15 +67,14 @@ export default async function Image({ params }: { params: Promise<{ slug: string
       display: "flex", flexDirection: "column",
       justifyContent: "space-between",
       padding: "52px 72px",
-      fontFamily: "DM Sans",
+      fontFamily,
     }}>
-
       {/* Top: breadcrumb */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span style={{ fontSize: 13, fontWeight: 400, letterSpacing: "0.18em", textTransform: "uppercase", color: "#a3a3a3" }}>
           {city.region}
         </span>
-        <span style={{ color: "#d4d4d4", fontSize: 13 }}>·</span>
+        <span style={{ color: "#d4d4d4" }}>·</span>
         <span style={{ fontSize: 13, fontWeight: 400, letterSpacing: "0.18em", textTransform: "uppercase", color: "#a3a3a3" }}>
           cestchaud.fr
         </span>
@@ -125,20 +125,12 @@ export default async function Image({ params }: { params: Promise<{ slug: string
             </div>
           )}
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
           <span style={{ fontSize: 22, fontWeight: 700, color: "#171717" }}>cestchaud.fr</span>
           <span style={{ fontSize: 13, color: "#a3a3a3", marginTop: 2 }}>ERA5 · CMIP6 · Open-Meteo</span>
         </div>
       </div>
-
     </div>,
-    {
-      ...size,
-      fonts: [
-        { name: "DM Sans", data: fonts.regular, weight: 400 },
-        { name: "DM Sans", data: fonts.semibold, weight: 700 },
-      ],
-    }
+    { ...size, fonts: fontConfig }
   )
 }
