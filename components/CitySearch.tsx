@@ -63,7 +63,6 @@ const UNLISTED_COORDS: Record<string, [number, number]> = {
   "angouleme": [45.65, 0.16],
   "rochefort": [45.94, -0.96],
   "niort": [46.32, -0.46],
-  "gap": [44.56, 6.08],
   "digne": [44.09, 6.24],
   "draguignan": [43.54, 6.46],
   "menton": [43.78, 7.5],
