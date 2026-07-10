@@ -238,7 +238,9 @@ export default async function Home() {
         <div className="space-y-3">
 
           {/* ── 0. Recherche ── */}
-          <CitySearch cities={citiesForSearch} />
+          <div className="max-w-sm">
+            <CitySearch cities={citiesForSearch} />
+          </div>
 
           {/* ── 1. Records du jour ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
