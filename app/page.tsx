@@ -564,7 +564,7 @@ export default async function Home() {
           </div>
 
           {/* ── Bloc push ── */}
-          <div className="bg-white rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center gap-5">
+          <div className="bg-white rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center gap-5 opacity-50">
             <div className="flex-1">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Notifications</p>
               <p className="text-base font-black text-neutral-900 leading-snug mb-1">Le ressenti de ta ville, chaque matin</p>
@@ -572,12 +572,9 @@ export default async function Home() {
                 Choisis une ville française et reçois chaque matin son ressenti max, son anomalie vs la normale ERA5, et son jumeau climatique du jour. Aucun compte requis.
               </p>
             </div>
-            <Link
-              href="/en/france"
-              className="shrink-0 inline-flex items-center gap-2 bg-neutral-900 hover:bg-neutral-700 transition-colors text-white font-semibold text-sm rounded-2xl px-5 py-3"
-            >
-              Choisir ma ville &rarr;
-            </Link>
+            <span className="shrink-0 inline-flex items-center gap-2 bg-neutral-200 text-neutral-400 font-semibold text-sm rounded-2xl px-5 py-3 cursor-not-allowed">
+              Bientôt disponible
+            </span>
           </div>
 
           {/* ── 6. Bloc pédagogique élus ── */}
