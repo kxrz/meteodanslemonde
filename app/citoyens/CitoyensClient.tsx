@@ -156,7 +156,7 @@ export default function CitoyensClient({ senators }: { senators: Senator[] }) {
       <div className="flex-1 flex flex-col lg:flex-row">
 
         {/* Left panel */}
-        <div className="lg:w-[36%] shrink-0 p-5 lg:p-8 flex flex-col justify-between border-b lg:border-b-0 border-black/[0.06] lg:sticky lg:top-0 lg:h-screen">
+        <div className="lg:w-[36%] shrink-0 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 border-black/[0.06] lg:sticky lg:top-0 lg:h-screen">
           <div className="space-y-5">
             <div>
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
@@ -222,8 +222,6 @@ export default function CitoyensClient({ senators }: { senators: Senator[] }) {
               En cliquant sur "Écrire un email", votre messagerie s'ouvre avec l'objet et le corps pré-remplis. Vous gardez la main avant d'envoyer.
             </p>
           </div>
-
-          <PageFooter />
         </div>
 
         {/* Right panel */}
@@ -309,6 +307,7 @@ export default function CitoyensClient({ senators }: { senators: Senator[] }) {
           </div>
         </div>
       </div>
+      <PageFooter className="px-5 py-3" />
     </div>
   )
 }

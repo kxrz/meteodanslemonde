@@ -294,9 +294,6 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
             ))}
           </div>
 
-          <div className="px-5 lg:px-6 pb-4 border-t border-black/[0.04] pt-4">
-            <PageFooter />
-          </div>
         </div>
 
         {/* Map */}
@@ -304,6 +301,7 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
           <div ref={containerRef} className="absolute inset-0" />
         </div>
       </div>
+      <PageFooter className="px-5 py-3" />
     </div>
   )
 }
