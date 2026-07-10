@@ -6,6 +6,7 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import type { Map as LeafletMap, CircleMarker } from "leaflet"
+import CitySearch from "@/components/CitySearch"
 
 interface CityWithAnomaly {
   id: string
@@ -216,6 +217,23 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
                 </>
               )}
             </button>
+          </div>
+
+          {/* City search */}
+          <div className="px-5 lg:px-6 pb-4">
+            <CitySearch
+              cities={cities}
+              placeholder="Chercher une ville…"
+              variant="select"
+              onSelect={(city) => {
+                const found = cities.find((c) => c.id === city.id)
+                if (found) {
+                  setSelectedCity(found)
+                  mapRef.current?.panTo([found.lat, found.lon])
+                  mapRef.current?.setZoom(8)
+                }
+              }}
+            />
           </div>
 
           {/* Selected city detail */}

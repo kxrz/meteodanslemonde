@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useRef, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { slugify } from "@/lib/slugify"
 
@@ -12,18 +12,19 @@ interface City {
   region: string
 }
 
-interface Props {
-  cities: City[]
-  placeholder?: string
+interface GeoCommune {
+  nom: string
+  centre: { coordinates: [number, number] } // [lon, lat]
+  departement?: { code: string; nom: string }
+  region?: { nom: string }
 }
 
-function normalize(s: string): string {
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[-_']/g, " ")
-    .trim()
+interface SearchResult {
+  label: string        // display name
+  sublabel: string     // dept / region
+  city: City           // nearest referenced city
+  distanceKm: number   // 0 if exact match
+  isExact: boolean
 }
 
 function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -36,153 +37,129 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): nu
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-// Rough coords of common French cities not in our list → to power fallback suggestions
-const UNLISTED_COORDS: Record<string, [number, number]> = {
-  "valenciennes": [50.36, 3.52],
-  "douai": [50.37, 3.08],
-  "lens": [50.43, 2.83],
-  "bethune": [50.53, 2.63],
-  "maubeuge": [50.28, 3.97],
-  "saint-quentin": [49.84, 3.28],
-  "laon": [49.56, 3.62],
-  "soissons": [49.38, 3.32],
-  "compiegne": [49.41, 2.83],
-  "saint-nazaire": [47.27, -2.21],
-  "laval": [48.07, -0.77],
-  "cholet": [47.06, -0.88],
-  "saumur": [47.26, -0.07],
-  "saint-brieuc": [48.51, -2.77],
-  "lannion": [48.73, -3.46],
-  "brive": [45.16, 1.53],
-  "tulle": [45.27, 1.77],
-  "aurillac": [44.93, 2.44],
-  "rodez": [44.35, 2.57],
-  "cahors": [44.45, 1.44],
-  "agen": [44.2, 0.62],
-  "perigueux": [45.18, 0.72],
-  "angouleme": [45.65, 0.16],
-  "rochefort": [45.94, -0.96],
-  "niort": [46.32, -0.46],
-  "digne": [44.09, 6.24],
-  "draguignan": [43.54, 6.46],
-  "menton": [43.78, 7.5],
-  "antibes": [43.58, 7.12],
-  "cannes": [43.55, 7.01],
-  "frejus": [43.43, 6.74],
-  "carcassonne": [43.21, 2.35],
-  "narbonne": [43.18, 3.0],
-  "beziers": [43.34, 3.22],
-  "sete": [43.4, 3.69],
-  "castres": [43.6, 2.24],
-  "tarbes": [43.23, 0.08],
-  "auch": [43.65, 0.59],
-  "foix": [42.97, 1.61],
-  "privas": [44.74, 4.6],
-  "mende": [44.52, 3.5],
-  "montlucon": [46.34, 2.6],
-  "vichy": [46.12, 3.42],
-  "thiers": [45.86, 3.54],
-  "moulins": [46.56, 3.33],
-  "bourg-en-bresse": [46.2, 5.23],
-  "roanne": [46.04, 4.07],
-  "vienne": [45.52, 4.87],
-  "annonay": [45.24, 4.67],
-  "romans-sur-isere": [45.05, 5.05],
-  "gap": [44.56, 6.08],
-  "albertville": [45.67, 6.39],
-  "cluses": [46.06, 6.58],
-  "thonon": [46.37, 6.48],
-  "evian": [46.4, 6.59],
-  "pontarlier": [46.9, 6.35],
-  "dole": [47.09, 5.49],
-  "vesoul": [47.62, 6.15],
-  "lons-le-saunier": [46.67, 5.56],
-  "montbeliard": [47.51, 6.8],
-  "auxerre": [47.8, 3.57],
-  "sens": [48.2, 3.29],
-  "nevers": [46.99, 3.16],
-  "macon": [46.31, 4.83],
-  "autun": [46.95, 4.3],
-  "blois": [47.59, 1.34],
-  "vendome": [47.79, 1.07],
-  "chateauroux": [46.81, 1.69],
-  "cherbourg": [49.63, -1.62],
-  "lisieux": [49.14, 0.23],
-  "evreux": [49.03, 1.15],
-  "alençon": [48.43, 0.09],
-  "saint-lo": [49.11, -1.09],
-  "coutances": [49.05, -1.44],
-  "dieppe": [49.92, 1.08],
-  "elbeuf": [49.28, 1.01],
-  "fecamp": [49.76, 0.38],
-  "chartres": [48.45, 1.49],
+function normalize(s: string): string {
+  return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[-_']/g, " ").trim()
 }
 
-export default function CitySearch({ cities, placeholder = "Chercher une ville ou une région…" }: Props) {
+function nearestCity(lat: number, lon: number, cities: City[]): { city: City; km: number } {
+  let best = cities[0]
+  let bestKm = haversineKm(lat, lon, best.lat, best.lon)
+  for (const c of cities) {
+    const km = haversineKm(lat, lon, c.lat, c.lon)
+    if (km < bestKm) { best = c; bestKm = km }
+  }
+  return { city: best, km: bestKm }
+}
+
+interface Props {
+  cities: City[]
+  placeholder?: string
+  onSelect?: (city: City) => void  // optional: called instead of navigating
+  variant?: "navigate" | "select"  // navigate = link to /a/[slug], select = callback
+}
+
+export default function CitySearch({
+  cities,
+  placeholder = "Chercher une ville ou une région…",
+  onSelect,
+  variant = "navigate",
+}: Props) {
   const [query, setQuery] = useState("")
+  const [results, setResults] = useState<SearchResult[]>([])
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const result = useMemo(() => {
-    const q = normalize(query)
-    if (q.length < 2) return null
+  const search = useCallback(async (q: string) => {
+    if (q.length < 2) { setResults([]); return }
 
-    // 1. Exact or prefix match on city name or region
-    const exactMatches = cities.filter(
-      (c) => normalize(c.name).startsWith(q) || normalize(c.region).startsWith(q)
-    )
-    const containsMatches = cities.filter(
-      (c) =>
-        !exactMatches.includes(c) &&
-        (normalize(c.name).includes(q) || normalize(c.region).includes(q))
-    )
-    const matched = [...exactMatches, ...containsMatches]
+    setLoading(true)
+    try {
+      // 1. First try direct match against our city list (instant, no API)
+      const nq = normalize(q)
+      const direct = cities.filter(
+        (c) => normalize(c.name).startsWith(nq) || normalize(c.region).startsWith(nq)
+      )
+      const contains = cities.filter(
+        (c) => !direct.includes(c) && (normalize(c.name).includes(nq) || normalize(c.region).includes(nq))
+      )
+      const localMatches: SearchResult[] = [...direct, ...contains].slice(0, 4).map((c) => ({
+        label: c.name,
+        sublabel: c.region,
+        city: c,
+        distanceKm: 0,
+        isExact: true,
+      }))
 
-    if (matched.length > 0) {
-      return { type: "match" as const, cities: matched.slice(0, 6) }
-    }
+      // 2. Call geo.api.gouv.fr for any French commune
+      const url = `https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(q)}&fields=nom,centre,departement,region&boost=population&limit=6`
+      const res = await fetch(url)
+      const communes: GeoCommune[] = res.ok ? await res.json() : []
 
-    // 2. Check if query matches an unlisted city we know coords for
-    const knownCoords = Object.entries(UNLISTED_COORDS).find(([key]) =>
-      normalize(key).startsWith(q) || q.startsWith(normalize(key).substring(0, 4))
-    )
-    if (knownCoords) {
-      const [cityName, [lat, lon]] = knownCoords
-      // Find 3 nearest referenced cities
-      const nearest = cities
-        .map((c) => ({ city: c, km: haversineKm(lat, lon, c.lat, c.lon) }))
-        .sort((a, b) => a.km - b.km)
-        .slice(0, 3)
-      return {
-        type: "fallback" as const,
-        queriedName: cityName.charAt(0).toUpperCase() + cityName.slice(1),
-        nearest,
+      const geoResults: SearchResult[] = []
+      for (const commune of communes) {
+        const [lon, lat] = commune.centre.coordinates
+        // Check if this commune is in our list already
+        const inList = cities.find((c) => normalize(c.name) === normalize(commune.nom))
+        if (inList) {
+          if (!localMatches.some((r) => r.city.id === inList.id)) {
+            geoResults.push({ label: commune.nom, sublabel: commune.departement?.nom ?? commune.region?.nom ?? "", city: inList, distanceKm: 0, isExact: true })
+          }
+        } else {
+          // Find nearest referenced city
+          const { city: nearest, km } = nearestCity(lat, lon, cities)
+          const deptLabel = commune.departement ? `${commune.departement.code} · ${commune.departement.nom}` : commune.region?.nom ?? ""
+          geoResults.push({ label: commune.nom, sublabel: deptLabel, city: nearest, distanceKm: Math.round(km), isExact: false })
+        }
       }
-    }
 
-    // 3. No match at all
-    return { type: "nomatch" as const }
-  }, [query, cities])
+      // Merge: local exact first, then geo (deduplicated)
+      const seen = new Set(localMatches.map((r) => r.city.id + r.label))
+      const merged = [...localMatches]
+      for (const r of geoResults) {
+        const key = r.city.id + r.label
+        if (!seen.has(key)) { seen.add(key); merged.push(r) }
+      }
+
+      setResults(merged.slice(0, 6))
+    } catch {
+      setResults([])
+    } finally {
+      setLoading(false)
+    }
+  }, [cities])
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (query.length < 2) { setResults([]); setLoading(false); return }
+    debounceRef.current = setTimeout(() => search(query), 280)
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
+  }, [query, search])
 
   useEffect(() => {
     function handler(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false)
     }
     document.addEventListener("mousedown", handler)
     return () => document.removeEventListener("mousedown", handler)
   }, [])
 
-  const showDropdown = open && query.length >= 2 && result !== null
+  const showDropdown = open && query.length >= 2
+
+  function handleSelect(result: SearchResult) {
+    setQuery("")
+    setOpen(false)
+    if (variant === "select" && onSelect) {
+      onSelect(result.city)
+    }
+  }
 
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-        >
+        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <circle cx="11" cy="11" r="6" /><path strokeLinecap="round" d="M21 21l-4.35-4.35" />
         </svg>
         <input
@@ -194,11 +171,12 @@ export default function CitySearch({ cities, placeholder = "Chercher une ville o
           autoComplete="off"
           className="w-full pl-9 pr-9 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition-colors"
         />
-        {query && (
-          <button
-            onClick={() => { setQuery(""); setOpen(false) }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-600 transition-colors"
-          >
+        {loading && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-neutral-200 border-t-neutral-400 rounded-full animate-spin" />
+        )}
+        {!loading && query && (
+          <button onClick={() => { setQuery(""); setOpen(false); setResults([]) }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-600 transition-colors">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -206,68 +184,42 @@ export default function CitySearch({ cities, placeholder = "Chercher une ville o
         )}
       </div>
 
-      {showDropdown && result && (
+      {showDropdown && results.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 overflow-hidden">
-
-          {result.type === "match" && (
-            <div className="py-1">
-              {result.cities.map((city) => (
-                <Link
-                  key={city.id}
-                  href={`/a/${slugify(city.name)}`}
-                  onClick={() => { setQuery(""); setOpen(false) }}
-                  className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors group"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-900">{city.name}</p>
-                    <p className="text-xs text-neutral-400">{city.region}</p>
+          <div className="py-1">
+            {results.map((result, i) => {
+              const content = (
+                <div className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors group cursor-pointer">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-neutral-900 truncate">{result.label}</p>
+                    <p className="text-xs text-neutral-400 truncate">
+                      {result.isExact ? result.sublabel : (
+                        <>
+                          <span className="text-amber-600">{result.sublabel}</span>
+                          {" · "}<span className="text-neutral-500">ville proche : {result.city.name} ({result.distanceKm} km)</span>
+                        </>
+                      )}
+                    </p>
                   </div>
-                  <span className="text-neutral-300 group-hover:text-neutral-500 text-sm transition-colors">→</span>
+                  <span className="text-neutral-300 group-hover:text-neutral-500 text-sm ml-3 shrink-0 transition-colors">&rarr;</span>
+                </div>
+              )
+
+              return variant === "select" ? (
+                <div key={i} onClick={() => handleSelect(result)}>{content}</div>
+              ) : (
+                <Link key={i} href={`/a/${slugify(result.city.name)}`} onClick={() => handleSelect(result)}>
+                  {content}
                 </Link>
-              ))}
-            </div>
-          )}
+              )
+            })}
+          </div>
+        </div>
+      )}
 
-          {result.type === "fallback" && (
-            <>
-              <div className="px-4 py-2.5 bg-amber-50 border-b border-amber-100">
-                <p className="text-xs text-amber-800 font-medium">
-                  {result.queriedName} n'est pas encore dans notre liste — villes référencées les plus proches :
-                </p>
-              </div>
-              <div className="py-1">
-                {result.nearest.map(({ city, km }) => (
-                  <Link
-                    key={city.id}
-                    href={`/a/${slugify(city.name)}`}
-                    onClick={() => { setQuery(""); setOpen(false) }}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors group"
-                  >
-                    <div>
-                      <p className="text-sm font-semibold text-neutral-900">{city.name}</p>
-                      <p className="text-xs text-neutral-400">{city.region}</p>
-                    </div>
-                    <span className="text-xs text-neutral-400 group-hover:text-neutral-600 shrink-0 ml-2">
-                      {Math.round(km)} km
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </>
-          )}
-
-          {result.type === "nomatch" && (
-            <div className="p-4 text-center">
-              <p className="text-sm text-neutral-500 mb-2">Ville non couverte</p>
-              <Link
-                href="/en/france"
-                onClick={() => { setQuery(""); setOpen(false) }}
-                className="text-xs text-blue-600 hover:underline"
-              >
-                Voir toutes les villes disponibles →
-              </Link>
-            </div>
-          )}
+      {showDropdown && !loading && query.length >= 2 && results.length === 0 && (
+        <div className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 p-4 text-center">
+          <p className="text-sm text-neutral-400">Aucune commune trouvée</p>
         </div>
       )}
     </div>
