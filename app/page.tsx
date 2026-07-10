@@ -6,14 +6,13 @@ import { fmtDelta } from "@/lib/format"
 import { slugify } from "@/lib/slugify"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
-import MiniHeatMap from "@/components/MiniHeatMap"
 import type { ClimateEntry } from "@/lib/climate"
 
 export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: "En vrai, c'est chaud - cestchaud.fr",
-  description: "Tableau de bord climatique du jour : anomalies, records, projections GIEC. La météo de la France vue par les données ERA5 et CMIP6.",
+  description: "Tableau de bord climatique du jour : anomalies, records, tendances ERA5 et projections GIEC 2050 pour les grandes villes francaises.",
   metadataBase: new URL("https://www.cestchaud.fr"),
   openGraph: {
     title: "En vrai, c'est chaud - cestchaud.fr",
@@ -32,27 +31,46 @@ export const metadata: Metadata = {
   },
 }
 
-const MONTHS_FR = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+const MONTHS_FR = ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "decembre"]
+const MONTHS_DISPLAY = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
+
+// Couleur de fond selon anomalie
+function anomalyBg(a: number | null): string {
+  if (a === null) return "bg-neutral-200"
+  if (a > 5) return "bg-[#ef4444]/20"
+  if (a > 3) return "bg-[#f4a27a]"
+  if (a > 1) return "bg-[#fde68a]"
+  if (a < -3) return "bg-[#60a5fa]/30"
+  if (a < -1) return "bg-[#a5f3fc]/50"
+  return "bg-neutral-100"
+}
+
+// Couleur hex pour la barre spectre
+function anomalyHex(a: number | null): string {
+  if (a === null) return "#cbd5e1"
+  if (a <= -6) return "#1d4ed8"
+  if (a <= -3) return "#60a5fa"
+  if (a <= 0) return "#a5f3fc"
+  if (a <= 3) return "#fde68a"
+  if (a <= 6) return "#fb923c"
+  if (a <= 10) return "#ef4444"
+  return "#7f1d1d"
+}
+
+// Seed déterministe par jour -- change chaque jour, stable dans la journée
+function daySeed() {
+  return Math.floor(Date.now() / 86_400_000)
+}
 
 function buildInsights(params: {
-  citiesWithClimate: Array<{
-    id: string
-    name: string
-    region: string
-    apparent_temp_max: number
-    normal: number | null
-    anomaly: number | null
-    trend: number | null
-    proj2030: number | null
-    proj2050: number | null
-  }>
+  citiesWithClimate: CityWithClimate[]
   month: number
   avgTemp: number
   avgAnomaly: number | null
   avgTrend: number | null
 }) {
   const { citiesWithClimate, month, avgTemp, avgAnomaly, avgTrend } = params
-  const monthName = MONTHS_FR[month]
+  const monthName = MONTHS_DISPLAY[month]
   const withAnomaly = citiesWithClimate.filter((c) => c.anomaly !== null)
   const withProj = citiesWithClimate.filter((c) => c.proj2050 !== null)
   const sorted = [...citiesWithClimate].sort((a, b) => b.apparent_temp_max - a.apparent_temp_max)
@@ -62,117 +80,101 @@ function buildInsights(params: {
   const above30 = citiesWithClimate.filter((c) => c.apparent_temp_max >= 30).length
   const above35 = citiesWithClimate.filter((c) => c.apparent_temp_max >= 35).length
 
-  const topAnomaly = withAnomaly.length > 0
-    ? withAnomaly.reduce((a, b) => Math.abs(b.anomaly!) > Math.abs(a.anomaly!) ? b : a)
-    : null
-
-  const hotAnomaly = withAnomaly.filter((c) => c.anomaly! > 0)
-  const topHotAnomaly = hotAnomaly.length > 0
-    ? hotAnomaly.reduce((a, b) => b.anomaly! > a.anomaly! ? b : a)
-    : null
-
-  const coldAnomaly = withAnomaly.filter((c) => c.anomaly! < 0)
-  const topColdAnomaly = coldAnomaly.length > 0
-    ? coldAnomaly.reduce((a, b) => b.anomaly! < a.anomaly! ? b : a)
-    : null
-
-  const mostImpacted2050 = withProj.length > 0
-    ? withProj.reduce((a, b) => b.proj2050! > a.proj2050! ? b : a)
-    : null
+  const topHotAnomaly = withAnomaly.filter((c) => c.anomaly! > 0).reduce<CityWithClimate | null>(
+    (a, b) => (a === null || b.anomaly! > a.anomaly!) ? b : a, null
+  )
+  const topColdAnomaly = withAnomaly.filter((c) => c.anomaly! < 0).reduce<CityWithClimate | null>(
+    (a, b) => (a === null || b.anomaly! < a.anomaly!) ? b : a, null
+  )
+  const mostImpacted2050 = withProj.reduce<CityWithClimate | null>(
+    (a, b) => (a === null || b.proj2050! > a.proj2050!) ? b : a, null
+  )
 
   const insights: Array<{ label: string; value: string; detail: string; color: string; slug?: string }> = []
 
-  // Insight 1 — Anomalie dominante du jour
   if (topHotAnomaly && topHotAnomaly.anomaly! >= 1.5) {
     const a = topHotAnomaly.anomaly!
-    const intensity = a >= 6 ? "un écart exceptionnel" : a >= 4 ? "une anomalie marquée" : "un léger excès de chaleur"
+    const intensity = a >= 6 ? "un ecart exceptionnel" : a >= 4 ? "une anomalie marquee" : "un leger exces de chaleur"
     insights.push({
       label: "Anomalie du jour",
       value: `+${a.toFixed(1)}°C`,
-      detail: `${topHotAnomaly.name} (${topHotAnomaly.region}) affiche ${intensity} par rapport à la normale ERA5 de ${monthName}.`,
+      detail: `${topHotAnomaly.name} (${topHotAnomaly.region}) affiche ${intensity} par rapport a la normale ERA5 de ${monthName}.`,
       color: a >= 5 ? "bg-[#f4a27a]" : "bg-[#fde68a]",
       slug: slugify(topHotAnomaly.name),
     })
   } else if (topColdAnomaly && topColdAnomaly.anomaly! <= -1.5) {
     const a = topColdAnomaly.anomaly!
     insights.push({
-      label: "Fraîcheur du jour",
+      label: "Fraicheur du jour",
       value: `${a.toFixed(1)}°C`,
-      detail: `${topColdAnomaly.name} (${topColdAnomaly.region}) est en dessous de la normale ERA5 de ${monthName}. Un répit bienvenu.`,
+      detail: `${topColdAnomaly.name} (${topColdAnomaly.region}) est en dessous de la normale ERA5 de ${monthName}. Un repit bienvenu.`,
       color: "bg-[#a8c4d4]",
       slug: slugify(topColdAnomaly.name),
     })
-  } else if (topAnomaly) {
-    const a = topAnomaly.anomaly!
-    const sign = a > 0 ? "+" : ""
-    insights.push({
-      label: "Anomalie du jour",
-      value: `${sign}${a.toFixed(1)}°C`,
-      detail: `${topAnomaly.name} (${topAnomaly.region}) s'écarte le plus des normales de ${monthName}.`,
-      color: "bg-neutral-200",
-      slug: slugify(topAnomaly.name),
-    })
   }
 
-  // Insight 2 — Amplitude nationale
   if (hottest && coolest) {
     const spread = hottest.apparent_temp_max - coolest.apparent_temp_max
-    const spreadDesc = spread >= 15 ? "un gradient nord-sud très marqué" : spread >= 10 ? "un écart notable" : "une homogénéité relative"
+    const spreadDesc = spread >= 15 ? "un gradient nord-sud tres marque" : spread >= 10 ? "un ecart notable" : "une relative homogeneite"
     insights.push({
       label: "Amplitude nationale",
       value: `${spread.toFixed(0)}°C`,
-      detail: `De ${coolest.apparent_temp_max}°C à ${coolest.name} jusqu'à ${hottest.apparent_temp_max}°C à ${hottest.name} — ${spreadDesc} ce ${monthName}.`,
+      detail: `De ${coolest.apparent_temp_max}°C a ${coolest.name} jusqu'a ${hottest.apparent_temp_max}°C a ${hottest.name}. ${spreadDesc} ce ${monthName}.`,
       color: "bg-[#dbeafe]",
     })
   }
 
-  // Insight 3 — Tendance 30 ans
   if (avgTrend !== null) {
     const trendAbs = Math.abs(avgTrend)
-    const trendDesc = trendAbs >= 2 ? "une hausse très rapide" : trendAbs >= 1 ? "une hausse significative" : "un réchauffement régulier"
     insights.push({
-      label: "Tendance ERA5 — 30 ans",
+      label: "Tendance ERA5 - 30 ans",
       value: `${fmtDelta(avgTrend)}°C`,
-      detail: `En moyenne nationale, ${monthName} a gagné ${fmtDelta(avgTrend)}°C depuis 1990. ${trendAbs >= 1.5 ? "Une tendance qui s'accélère et dépasse les moyennes mondiales." : "Une évolution mesurée, mais continue et documentée."}`,
+      detail: `En moyenne nationale, ${monthName} a gagne ${fmtDelta(avgTrend)}°C depuis 1990. ${trendAbs >= 1.5 ? "Une tendance qui s'accelere et depasse les moyennes mondiales." : "Une evolution measuree, mais continue et documentee."}`,
       color: "bg-[#d1fae5]",
     })
   }
 
-  // Insight 4 — Projection 2050
   if (mostImpacted2050) {
     const delta = mostImpacted2050.proj2050!
-    const city2050Desc = delta >= 3 ? "une transformation climatique radicale" : delta >= 2 ? "un réchauffement sensible" : "une évolution notable"
     insights.push({
       label: "Projection GIEC 2050",
       value: `+${delta.toFixed(1)}°C`,
-      detail: `${mostImpacted2050.name} (${mostImpacted2050.region}) est la ville la plus impactée d'ici 2050 selon le scénario SSP2-4.5 — ${city2050Desc} attendu pour ce mois.`,
+      detail: `${mostImpacted2050.name} (${mostImpacted2050.region}) est la ville la plus impactee d'ici 2050 selon le scenario SSP2-4.5.`,
       color: "bg-[#c4b8d4]",
       slug: slugify(mostImpacted2050.name),
     })
   }
 
-  // Insight 5 — Contexte du jour (chaleur ou fraîcheur générale)
-  if (avgAnomaly !== null) {
-    const absAvg = Math.abs(avgAnomaly)
+  if (avgAnomaly !== null && Math.abs(avgAnomaly) >= 0.5) {
     const avgSign = avgAnomaly > 0 ? "+" : ""
-    if (absAvg >= 0.5) {
-      const ctx = avgAnomaly > 0
-        ? above35 > 0
-          ? `${above35} ville${above35 > 1 ? "s" : ""} dépass${above35 > 1 ? "ent" : "e"} 35°C.`
-          : above30 > 0
-            ? `${above30} ville${above30 > 1 ? "s" : ""} sont au-dessus de 30°C.`
-            : "Les températures restent en dessous de 30°C malgré l'excédent."
-        : "Les températures sont en retrait par rapport aux normales."
-      insights.push({
-        label: "Vue d'ensemble",
-        value: `${avgSign}${avgAnomaly.toFixed(1)}°C`,
-        detail: `La France est en moyenne ${avgSign}${avgAnomaly.toFixed(1)}°C ${avgAnomaly > 0 ? "au-dessus" : "en dessous"} des normales de ${monthName}. ${ctx}`,
-        color: avgAnomaly > 1 ? "bg-[#fff1e6]" : "bg-[#e0f2fe]",
-      })
-    }
+    const ctx = avgAnomaly > 0
+      ? above35 > 0 ? `${above35} ville${above35 > 1 ? "s" : ""} depass${above35 > 1 ? "ent" : "e"} 35°C.`
+        : above30 > 0 ? `${above30} ville${above30 > 1 ? "s" : ""} sont au-dessus de 30°C.`
+        : "Les temperatures restent sous 30°C malgre l'exces."
+      : "Les temperatures sont en retrait par rapport aux normales."
+    insights.push({
+      label: "Vue d'ensemble",
+      value: `${avgSign}${avgAnomaly.toFixed(1)}°C`,
+      detail: `La France est en moyenne ${avgSign}${avgAnomaly.toFixed(1)}°C ${avgAnomaly > 0 ? "au-dessus" : "en dessous"} des normales de ${monthName}. ${ctx}`,
+      color: avgAnomaly > 1 ? "bg-[#fff1e6]" : "bg-[#e0f2fe]",
+    })
   }
 
   return insights
+}
+
+type CityWithClimate = {
+  id: string
+  name: string
+  region: string
+  lat: number
+  lon: number
+  apparent_temp_max: number
+  normal: number | null
+  anomaly: number | null
+  trend: number | null
+  proj2030: number | null
+  proj2050: number | null
 }
 
 export default async function Home() {
@@ -180,9 +182,9 @@ export default async function Home() {
   const climateMap = loadClimateMap()
 
   const month = new Date(fetchedAt).getMonth()
-  const monthName = MONTHS_FR[month]
+  const monthName = MONTHS_DISPLAY[month]
 
-  const citiesWithClimate = citiesFR.map((c) => {
+  const citiesWithClimate: CityWithClimate[] = citiesFR.map((c) => {
     const entry = climateMap[c.id] as ClimateEntry
     const normal = entry?.normal?.[month] ?? null
     const anomaly = normal !== null ? Math.round((c.apparent_temp_max - normal) * 10) / 10 : null
@@ -213,69 +215,59 @@ export default async function Home() {
     ? Math.round((trendValues.reduce((a, b) => a + b, 0) / trendValues.length) * 10) / 10
     : null
 
-  const citiesForMap = citiesWithClimate.map(({ id, name, lat, lon, region, apparent_temp_max, normal, anomaly }) => ({
-    id, name, lat, lon, region, apparent_temp_max, normal, anomaly,
-  }))
-
   const insights = buildInsights({ citiesWithClimate, month, avgTemp, avgAnomaly, avgTrend })
+
+  // Spectre: villes triees par anomalie
+  const spectreSorted = [...citiesWithClimate].sort((a, b) => (a.anomaly ?? 0) - (b.anomaly ?? 0))
+  const spectreMax = spectreSorted[spectreSorted.length - 1]
+  const spectreMin = spectreSorted[0]
+
+  // Ville du jour -- deterministe par jour, change chaque matin
+  const seed = daySeed()
+  const spotlightCity = citiesWithClimate[seed % citiesWithClimate.length]
+  const spotlightEntry = climateMap[spotlightCity.id] as ClimateEntry
+  const spotlightNormal = spotlightEntry?.normal?.[month] ?? null
+  const spotlightProj2050 = spotlightEntry?.proj2050?.[month] ?? null
+
+  // Ville "decouverte" -- decale de moitie du tableau pour ne pas repeter
+  const discoverCity = citiesWithClimate[(seed + Math.floor(citiesWithClimate.length / 2)) % citiesWithClimate.length]
 
   const dataLabel = new Date(fetchedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
-      <SiteHeader subtitle={`Tableau de bord climatique du ${dataLabel} — données ERA5, CMIP6 / GIEC.`} />
+      <SiteHeader subtitle={`Donnees du ${dataLabel}. Ressenti max, anomalies ERA5, projections GIEC 2030-2050.`} />
 
       <main className="flex-1 px-3 lg:px-4 pb-4">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto space-y-3">
 
-          {/* ── Ligne 1 : records + mini-carte ── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-
-            {/* Plus chaud */}
-            <Link
-              href={`/a/${slugify(hottest.name)}`}
-              className="bg-[#fed7aa]/80 hover:bg-[#fbbf77]/80 transition-colors rounded-3xl p-5 group"
-            >
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">
-                Plus chaud aujourd'hui
-              </p>
-              <div className="text-4xl font-black text-orange-900 leading-none">
-                {hottest.apparent_temp_max}°C
-              </div>
+          {/* ── 1. Records du jour ── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <Link href={`/a/${slugify(hottest.name)}`} className="bg-[#fed7aa]/80 hover:bg-[#fbbf77]/80 transition-colors rounded-3xl p-5 group">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">Plus chaud aujourd'hui</p>
+              <div className="text-4xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}&deg;C</div>
               <p className="text-sm font-bold text-orange-900/80 mt-1.5 truncate group-hover:underline">{hottest.name}</p>
               <p className="text-xs text-orange-900/50 truncate">{hottest.region}</p>
             </Link>
 
-            {/* Plus frais */}
-            <Link
-              href={`/a/${slugify(coolest.name)}`}
-              className="bg-[#bfdbfe]/70 hover:bg-[#93c5fd]/60 transition-colors rounded-3xl p-5 group"
-            >
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
-                Plus frais aujourd'hui
-              </p>
-              <div className="text-4xl font-black text-blue-900 leading-none">
-                {coolest.apparent_temp_max}°C
-              </div>
+            <Link href={`/a/${slugify(coolest.name)}`} className="bg-[#bfdbfe]/70 hover:bg-[#93c5fd]/60 transition-colors rounded-3xl p-5 group">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">Plus frais aujourd'hui</p>
+              <div className="text-4xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}&deg;C</div>
               <p className="text-sm font-bold text-blue-900/80 mt-1.5 truncate group-hover:underline">{coolest.name}</p>
               <p className="text-xs text-blue-900/50 truncate">{coolest.region}</p>
             </Link>
 
-            {/* Moyenne France */}
             <div className="bg-white rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                Moyenne France
-              </p>
-              <div className="text-4xl font-black text-neutral-900 leading-none">{avgTemp}°C</div>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Moyenne France</p>
+              <div className="text-4xl font-black text-neutral-900 leading-none">{avgTemp}&deg;C</div>
               <p className="text-xs text-neutral-400 mt-1.5">ressenti max · {monthName}</p>
               {avgAnomaly !== null && (
                 <p className={`text-xs font-semibold mt-1 ${avgAnomaly > 0 ? "text-orange-600" : "text-blue-600"}`}>
-                  {fmtDelta(avgAnomaly)}°C vs normale
+                  {fmtDelta(avgAnomaly)}&deg;C vs normale
                 </p>
               )}
             </div>
 
-            {/* Anomalie nationale */}
             <div className={`rounded-3xl p-5 ${
               avgAnomaly !== null && avgAnomaly > 2 ? "bg-[#f4a27a]"
               : avgAnomaly !== null && avgAnomaly > 0 ? "bg-[#fde68a]"
@@ -283,52 +275,118 @@ export default async function Home() {
               : avgAnomaly !== null ? "bg-[#d1fae5]"
               : "bg-neutral-200"
             }`}>
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">
-                Anomalie nationale
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">Anomalie nationale</p>
               {avgAnomaly !== null ? (
                 <>
-                  <div className="text-4xl font-black text-neutral-900 leading-none">{fmtDelta(avgAnomaly)}°C</div>
+                  <div className="text-4xl font-black text-neutral-900 leading-none">{fmtDelta(avgAnomaly)}&deg;C</div>
                   <p className="text-xs text-black/50 mt-1.5">
-                    {avgAnomaly > 2 ? "nettement au-dessus" : avgAnomaly > 0 ? "légèrement au-dessus" : avgAnomaly < -2 ? "nettement en dessous" : "dans la normale"} de la normale ERA5
+                    {avgAnomaly > 2 ? "nettement au-dessus" : avgAnomaly > 0 ? "legerement au-dessus" : avgAnomaly < -2 ? "nettement en dessous" : "dans la normale"} de la normale ERA5
                   </p>
                 </>
               ) : (
-                <div className="text-2xl font-black text-black/20">—</div>
+                <div className="text-2xl font-black text-black/20">-</div>
               )}
             </div>
           </div>
 
-          {/* ── Ligne 2 : mini-carte + top 3 anomalies ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-3">
+          {/* ── 2. Spectre + Top 3 ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
 
-            {/* Mini-carte cliquable */}
-            <Link href="/carte" className="lg:col-span-2 rounded-3xl overflow-hidden relative group block" style={{ minHeight: 260 }}>
-              <div className="absolute inset-0 z-10 rounded-3xl ring-1 ring-black/5 pointer-events-none" />
-              <MiniHeatMap cities={citiesForMap} />
-              <div className="absolute bottom-4 left-4 z-20 bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-sm">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-0.5">Carte de chaleur</p>
-                <p className="text-sm font-black text-neutral-900 group-hover:underline">Voir les anomalies du jour →</p>
+            {/* Spectre de chaleur */}
+            <div className="lg:col-span-2 bg-white rounded-3xl p-5">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
+                Spectre de chaleur - {citiesWithClimate.length} villes
+              </p>
+              <p className="text-xs text-neutral-400 mb-4">Anomalie vs normale ERA5 de {monthName}, de la plus froide a la plus chaude</p>
+
+              {/* Barre spectre */}
+              <div className="flex rounded-xl overflow-hidden h-10 mb-3">
+                {spectreSorted.map((city) => (
+                  <div
+                    key={city.id}
+                    title={`${city.name} : ${city.anomaly !== null ? (city.anomaly > 0 ? "+" : "") + city.anomaly.toFixed(1) + "°C" : "N/A"}`}
+                    style={{
+                      flex: 1,
+                      backgroundColor: anomalyHex(city.anomaly),
+                    }}
+                  />
+                ))}
               </div>
-            </Link>
+
+              {/* Labels extremes */}
+              <div className="flex justify-between text-xs text-neutral-500 mb-5">
+                <span>
+                  {spectreMin.anomaly !== null ? `${spectreMin.anomaly > 0 ? "+" : ""}${spectreMin.anomaly.toFixed(1)}°C` : "?"} &middot; {spectreMin.name}
+                </span>
+                <span>
+                  {spectreMax.name} &middot; {spectreMax.anomaly !== null ? `${spectreMax.anomaly > 0 ? "+" : ""}${spectreMax.anomaly.toFixed(1)}°C` : "?"}
+                </span>
+              </div>
+
+              {/* 3 stats chocs */}
+              <div className="grid grid-cols-3 gap-3">
+                {/* Anomalie max */}
+                {top3Anomaly[0] && (
+                  <Link href={`/a/${slugify(top3Anomaly[0].name)}`} className={`rounded-2xl p-4 ${anomalyBg(top3Anomaly[0].anomaly)} group`}>
+                    <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-black/40 mb-1">Anomalie max</p>
+                    <p className="text-2xl font-black text-neutral-900 leading-none">{fmtDelta(top3Anomaly[0].anomaly)}&deg;C</p>
+                    <p className="text-xs text-black/50 mt-1 group-hover:underline truncate">{top3Anomaly[0].name}</p>
+                    <p className="text-xs text-black/30 truncate">{top3Anomaly[0].apparent_temp_max}&deg;C ressenti</p>
+                  </Link>
+                )}
+
+                {/* Tendance nationale */}
+                <div className="rounded-2xl p-4 bg-[#d1fae5]">
+                  <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-green-900/40 mb-1">Tendance 30 ans</p>
+                  {avgTrend !== null ? (
+                    <>
+                      <p className="text-2xl font-black text-green-900 leading-none">{fmtDelta(avgTrend)}&deg;C</p>
+                      <p className="text-xs text-green-900/50 mt-1">depuis 1990 en {monthName}</p>
+                      <p className="text-xs text-green-900/30">moyenne nationale ERA5</p>
+                    </>
+                  ) : (
+                    <p className="text-xl font-black text-green-900/20">N/A</p>
+                  )}
+                </div>
+
+                {/* Projection 2050 */}
+                {top3Anomaly[0] && (
+                  <div className="rounded-2xl p-4 bg-[#c4b8d4]">
+                    <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-purple-900/40 mb-1">GIEC 2050</p>
+                    {top3Anomaly[0].proj2050 !== null ? (
+                      <>
+                        <p className="text-2xl font-black text-purple-900 leading-none">+{top3Anomaly[0].proj2050.toFixed(1)}&deg;C</p>
+                        <p className="text-xs text-purple-900/50 mt-1">supplementaires</p>
+                        <p className="text-xs text-purple-900/30 truncate">a {top3Anomaly[0].name}</p>
+                      </>
+                    ) : (
+                      <p className="text-xl font-black text-purple-900/20">N/A</p>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* CTA elus */}
+              <Link
+                href="/citoyens"
+                className="mt-4 flex items-center justify-between bg-neutral-900 hover:bg-neutral-800 transition-colors rounded-2xl px-4 py-3 group"
+              >
+                <p className="text-sm font-semibold text-white">Ces chiffres changent chaque jour. La tendance, elle, ne change pas.</p>
+                <span className="shrink-0 text-white/40 group-hover:text-white ml-3 transition-colors">Ecrire a vos elus &rarr;</span>
+              </Link>
+            </div>
 
             {/* Top 3 anomalies */}
             <div className="bg-white rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
-                Top anomalies du jour
-              </p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">Top anomalies du jour</p>
               {top3Anomaly.length === 0 ? (
-                <p className="text-sm text-neutral-400">Données insuffisantes.</p>
+                <p className="text-sm text-neutral-400">Donnees insuffisantes.</p>
               ) : (
                 <div className="space-y-3">
                   {top3Anomaly.map((city, i) => {
                     const a = city.anomaly!
                     return (
-                      <Link
-                        key={city.id}
-                        href={`/a/${slugify(city.name)}`}
-                        className="flex items-center gap-3 group"
-                      >
+                      <Link key={city.id} href={`/a/${slugify(city.name)}`} className="flex items-center gap-3 group">
                         <span className="shrink-0 w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-black text-neutral-500">
                           {i + 1}
                         </span>
@@ -338,42 +396,115 @@ export default async function Home() {
                         </div>
                         <div className="shrink-0 text-right">
                           <p className={`text-sm font-black ${a > 4 ? "text-red-600" : a > 2 ? "text-orange-500" : "text-neutral-700"}`}>
-                            {fmtDelta(a)}°C
+                            {fmtDelta(a)}&deg;C
                           </p>
-                          <p className="text-[10px] text-neutral-400">{city.apparent_temp_max}°C ressenti</p>
+                          <p className="text-[10px] text-neutral-400">{city.apparent_temp_max}&deg;C ressenti</p>
                         </div>
                       </Link>
                     )
                   })}
                 </div>
               )}
-              <Link
-                href="/carte"
-                className="mt-5 block text-xs font-semibold text-neutral-400 hover:text-neutral-700 transition-colors"
-              >
-                Voir toutes les anomalies →
+              <Link href="/carte" className="mt-5 block text-xs font-semibold text-neutral-400 hover:text-neutral-700 transition-colors">
+                Carte des anomalies &rarr;
               </Link>
+
+              {/* Ville aleatoire du jour -- decouverte */}
+              <div className="mt-5 pt-5 border-t border-neutral-100">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Decouverte du jour</p>
+                <Link href={`/a/${slugify(discoverCity.name)}`} className="group block">
+                  <p className="text-sm font-black text-neutral-900 group-hover:underline">{discoverCity.name}</p>
+                  <p className="text-xs text-neutral-400 mb-2">{discoverCity.region}</p>
+                  <div className="flex gap-2 flex-wrap">
+                    <span className="bg-neutral-100 rounded-xl px-2.5 py-1 text-xs font-semibold text-neutral-700">
+                      {discoverCity.apparent_temp_max}&deg;C aujourd'hui
+                    </span>
+                    {discoverCity.anomaly !== null && (
+                      <span className={`rounded-xl px-2.5 py-1 text-xs font-semibold ${anomalyBg(discoverCity.anomaly)} text-neutral-800`}>
+                        {fmtDelta(discoverCity.anomaly)}&deg;C vs normale
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-neutral-400 mt-2">Voir toutes les projections GIEC &rarr;</p>
+                </Link>
+              </div>
             </div>
           </div>
 
-          {/* ── Ligne 3 : insights dynamiques ── */}
-          {insights.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-              {insights.map((ins, i) => (
-                <div key={i} className={`${ins.color} rounded-3xl p-5`}>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-2">
-                    {ins.label}
-                  </p>
-                  <div className="text-3xl font-black text-neutral-900 leading-none mb-2">
-                    {ins.value}
+          {/* ── 3. Ville du jour (spotlight) ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className={`rounded-3xl p-6 ${anomalyBg(spotlightCity.anomaly)}`}>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-1">Ville du jour</p>
+              <p className="text-xs text-black/40 mb-4">Change chaque matin - ERA5 + GIEC</p>
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-black/40 mb-0.5">{spotlightCity.region}</p>
+                  <h2 className="text-2xl font-black text-neutral-900 leading-tight">{spotlightCity.name}</h2>
+                  <div className="mt-3 space-y-1.5">
+                    <p className="text-sm text-black/70">
+                      Ressenti max : <strong className="text-neutral-900">{spotlightCity.apparent_temp_max}&deg;C</strong>
+                    </p>
+                    {spotlightCity.anomaly !== null && (
+                      <p className="text-sm text-black/70">
+                        Anomalie : <strong className={`${spotlightCity.anomaly > 2 ? "text-orange-700" : spotlightCity.anomaly < -2 ? "text-blue-700" : "text-neutral-900"}`}>
+                          {fmtDelta(spotlightCity.anomaly)}&deg;C
+                        </strong>
+                        {" "}vs normale {monthName}
+                      </p>
+                    )}
+                    {spotlightNormal !== null && (
+                      <p className="text-sm text-black/70">
+                        Normale ERA5 : <strong className="text-neutral-900">{spotlightNormal.toFixed(1)}&deg;C</strong>
+                      </p>
+                    )}
+                    {spotlightProj2050 !== null && (
+                      <p className="text-sm text-black/70">
+                        Projection 2050 : <strong className="text-purple-900">+{spotlightProj2050.toFixed(1)}&deg;C</strong> supplementaires
+                      </p>
+                    )}
                   </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-6xl font-black text-neutral-900 leading-none">{spotlightCity.apparent_temp_max}&deg;</div>
+                  <div className="text-sm text-black/30 mt-1">ressenti max</div>
+                </div>
+              </div>
+              <Link
+                href={`/a/${slugify(spotlightCity.name)}`}
+                className="mt-5 inline-flex items-center gap-1.5 text-sm font-black text-neutral-900 hover:underline"
+              >
+                Fiche complete de {spotlightCity.name} &rarr;
+              </Link>
+            </div>
+
+            {/* Insights dynamiques - 2 premiers */}
+            <div className="grid grid-cols-1 gap-3">
+              {insights.slice(0, 2).map((ins, i) => (
+                <div key={i} className={`${ins.color} rounded-3xl p-5`}>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-2">{ins.label}</p>
+                  <div className="text-3xl font-black text-neutral-900 leading-none mb-2">{ins.value}</div>
                   <p className="text-xs text-black/60 leading-relaxed">{ins.detail}</p>
                   {ins.slug && (
-                    <Link
-                      href={`/a/${ins.slug}`}
-                      className="mt-3 text-xs font-semibold text-black/40 hover:text-black/70 transition-colors block"
-                    >
-                      Fiche de la ville →
+                    <Link href={`/a/${ins.slug}`} className="mt-2 text-xs font-semibold text-black/40 hover:text-black/70 transition-colors block">
+                      Fiche de la ville &rarr;
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── 4. Insights restants ── */}
+          {insights.length > 2 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {insights.slice(2).map((ins, i) => (
+                <div key={i} className={`${ins.color} rounded-3xl p-5`}>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-2">{ins.label}</p>
+                  <div className="text-3xl font-black text-neutral-900 leading-none mb-2">{ins.value}</div>
+                  <p className="text-xs text-black/60 leading-relaxed">{ins.detail}</p>
+                  {ins.slug && (
+                    <Link href={`/a/${ins.slug}`} className="mt-2 text-xs font-semibold text-black/40 hover:text-black/70 transition-colors block">
+                      Fiche de la ville &rarr;
                     </Link>
                   )}
                 </div>
@@ -381,35 +512,67 @@ export default async function Home() {
             </div>
           )}
 
-          {/* ── Ligne 4 : entrées vers les pages ── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
-            <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Explorer</p>
-              <p className="text-base font-black text-neutral-900 leading-snug mb-1">Jumeaux climatiques</p>
-              <p className="text-xs text-neutral-500 leading-relaxed">Votre ville et ses équivalents dans le monde.</p>
-              <span className="text-neutral-300 group-hover:text-neutral-700 text-lg transition-colors mt-3 block">→</span>
+          {/* ── 5. Pages du site ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+            <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Explorer</p>
+              <p className="text-base font-black text-neutral-900 leading-snug mb-2">Jumeaux climatiques</p>
+              <p className="text-xs text-neutral-500 leading-relaxed flex-1">
+                Cliquez une ville francaise et decouvrez ses equivalents dans le monde entier. Ces villes vivent aujourd'hui ce que la France vivra demain.
+              </p>
+              <span className="text-neutral-300 group-hover:text-neutral-700 text-lg transition-colors mt-4 block">&rarr;</span>
             </Link>
 
-            <Link href="/carte" className="bg-[#fff1e6] rounded-3xl p-5 hover:bg-[#ffe0c8] transition-colors group">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">Carte</p>
-              <p className="text-base font-black text-orange-900 leading-snug mb-1">Carte de chaleur</p>
-              <p className="text-xs text-orange-900/60 leading-relaxed">Anomalies du jour sur toute la France.</p>
-              <span className="text-orange-400 group-hover:text-orange-600 text-lg transition-colors mt-3 block">→</span>
+            <Link href="/carte" className="bg-[#fff1e6] rounded-3xl p-5 hover:bg-[#ffe0c8] transition-colors group flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-2">Carte</p>
+              <p className="text-base font-black text-orange-900 leading-snug mb-2">Carte de chaleur</p>
+              <p className="text-xs text-orange-900/60 leading-relaxed flex-1">
+                Visualisez les anomalies thermiques du jour sur toute la France en un coup d'oeil. Ou fait-il anormalement chaud aujourd'hui ?
+              </p>
+              <span className="text-orange-400 group-hover:text-orange-600 text-lg transition-colors mt-4 block">&rarr;</span>
             </Link>
 
-            <Link href="/en/france" className="bg-[#dbeafe] rounded-3xl p-5 hover:bg-[#bfdbfe] transition-colors group">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">France</p>
-              <p className="text-base font-black text-blue-900 leading-snug mb-1">France en chiffres</p>
-              <p className="text-xs text-blue-900/60 leading-relaxed">36 villes, anomalies et projections GIEC.</p>
-              <span className="text-blue-400 group-hover:text-blue-600 text-lg transition-colors mt-3 block">→</span>
+            <Link href="/en/france" className="bg-[#dbeafe] rounded-3xl p-5 hover:bg-[#bfdbfe] transition-colors group flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-2">France</p>
+              <p className="text-base font-black text-blue-900 leading-snug mb-2">France en chiffres</p>
+              <p className="text-xs text-blue-900/60 leading-relaxed flex-1">
+                36 villes, leurs anomalies du jour, leurs tendances sur 30 ans et ce que le GIEC predit pour 2030, 2040 et 2050.
+              </p>
+              <span className="text-blue-400 group-hover:text-blue-600 text-lg transition-colors mt-4 block">&rarr;</span>
             </Link>
 
-            <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Agir</p>
-              <p className="text-base font-black text-white leading-snug mb-1">Écrire à vos élus</p>
-              <p className="text-xs text-white/50 leading-relaxed">Contactez vos sénateurs, email pré-rédigé.</p>
-              <span className="text-white/30 group-hover:text-white text-lg transition-colors mt-3 block">→</span>
+            <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-2">Agir</p>
+              <p className="text-base font-black text-white leading-snug mb-2">Ecrire a vos elus</p>
+              <p className="text-xs text-white/50 leading-relaxed flex-1">
+                Contactez vos senateurs, email pre-redige et fonde sur les donnees scientifiques. Parce que la prise de conscience ne suffit pas.
+              </p>
+              <span className="text-white/30 group-hover:text-white text-lg transition-colors mt-4 block">&rarr;</span>
             </Link>
+          </div>
+
+          {/* ── 6. Bloc pedagogique contact elus ── */}
+          <div className="bg-neutral-900 rounded-3xl p-6 lg:p-8">
+            <div className="max-w-2xl">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Pourquoi agir</p>
+              <h2 className="text-2xl font-black text-white leading-tight mb-4">
+                La science mesure. Le Senat legifere.
+              </h2>
+              <p className="text-sm text-white/70 leading-relaxed mb-3">
+                Les donnees ERA5 et CMIP6 documentent ce qui se passe et ce qui viendra. Mais transformer ces courbes en politiques publiques, c'est le role des elus.
+                Les senateurs siegent dans les commissions qui definissent les normes de construction, les plans canicule, les codes de l'urbanisme, la gestion de l'eau.
+              </p>
+              <p className="text-sm text-white/70 leading-relaxed mb-5">
+                Un email personnel, factuel, cite par plusieurs citoyens d'une meme region a plus d'impact qu'une petition. C'est documentable, tracable, et ca reste dans les archives parlementaires.
+              </p>
+              <Link
+                href="/citoyens"
+                className="inline-flex items-center gap-2 bg-white hover:bg-neutral-100 transition-colors text-neutral-900 font-black text-sm rounded-2xl px-5 py-3"
+              >
+                Trouver mon senateur et envoyer un email &rarr;
+              </Link>
+            </div>
           </div>
 
           <PageFooter />
