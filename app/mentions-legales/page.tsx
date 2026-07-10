@@ -6,7 +6,7 @@ export const revalidate = 604800
 
 export const metadata: Metadata = {
   title: "Mentions légales · cestchaud.fr",
-  alternates: { canonical: "https://cestchaud.fr/mentions-legales" },
+  alternates: { canonical: "https://www.cestchaud.fr/mentions-legales" },
 }
 
 export default function MentionsLegalesPage() {

@@ -49,11 +49,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${city.name} · Chaleur & projections climatiques · cestchaud.fr`,
     description,
-    alternates: { canonical: `https://cestchaud.fr/a/${slug}` },
+    alternates: { canonical: `https://www.cestchaud.fr/a/${slug}` },
     openGraph: {
       title: `${city.name} · Chaleur & projections GIEC`,
       description,
-      url: `https://cestchaud.fr/a/${slug}`,
+      url: `https://www.cestchaud.fr/a/${slug}`,
       siteName: "cestchaud.fr",
       locale: "fr_FR",
       type: "website",
@@ -157,7 +157,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       : null
 
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
-  const pageUrl = `https://cestchaud.fr/a/${slug}`
+  const pageUrl = `https://www.cestchaud.fr/a/${slug}`
 
   const projectionParagraph = buildProjectionParagraph(
     city.name, city.region, monthName,

@@ -5,11 +5,11 @@ import senators from "@/data/senators.json"
 export const metadata: Metadata = {
   title: "Écrire à vos élus · cestchaud.fr",
   description: "Contactez vos sénatrices et sénateurs sur le climat. 333 élus joignables, email pré-rédigé, filtrage par commission ou département.",
-  alternates: { canonical: "https://cestchaud.fr/citoyens" },
+  alternates: { canonical: "https://www.cestchaud.fr/citoyens" },
   openGraph: {
     title: "Écrire à vos élus sur le climat · cestchaud.fr",
     description: "333 sénateurs joignables, dont 49 membres de la commission Environnement. Email pré-rédigé, données climatiques à l'appui.",
-    url: "https://cestchaud.fr/citoyens",
+    url: "https://www.cestchaud.fr/citoyens",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",

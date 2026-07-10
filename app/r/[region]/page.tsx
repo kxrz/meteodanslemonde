@@ -93,11 +93,11 @@ export async function generateMetadata({ params }: { params: Promise<{ region: s
   return {
     title,
     description,
-    alternates: { canonical: `https://cestchaud.fr/r/${region}` },
+    alternates: { canonical: `https://www.cestchaud.fr/r/${region}` },
     openGraph: {
       title,
       description,
-      url: `https://cestchaud.fr/r/${region}`,
+      url: `https://www.cestchaud.fr/r/${region}`,
       siteName: "cestchaud.fr",
       locale: "fr_FR",
       type: "website",
@@ -116,20 +116,28 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
 
   const climateMap = loadClimateMap()
   const m = new Date().getMonth()
+  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
   const citiesWithClimate = cities.map((city) => {
     const climate = climateMap[city.id] ?? null
     const normal = climate?.normal?.[m] ?? null
-    const trend = climate?.trend?.[m] ?? null
+    // trend for current month (for per-city display, labeled with month)
+    const trendMonth = climate?.trend?.[m] ?? null
+    // annual average trend (all 12 months) - used for region KPI
+    const trendAnnual = climate?.trend
+      ? climate.trend.filter((v): v is number => v !== null).reduce((s, v) => s + v, 0) /
+        climate.trend.filter((v): v is number => v !== null).length
+      : null
     const proj2050 = climate?.proj2050?.[m] ?? null
-    return { ...city, normal, trend, proj2050 }
+    return { ...city, normal, trendMonth, trendAnnual, proj2050 }
   })
 
   const citiesSorted = [...citiesWithClimate].sort((a, b) => (b.normal ?? -99) - (a.normal ?? -99))
 
-  const validTrends = citiesWithClimate.filter((c) => c.trend !== null)
-  const avgTrend = validTrends.length
-    ? validTrends.reduce((s, c) => s + (c.trend ?? 0), 0) / validTrends.length
+  // Region KPI: annual average (not month-specific) to avoid misleading seasonal spikes
+  const validAnnualTrends = citiesWithClimate.filter((c) => c.trendAnnual !== null)
+  const avgTrendAnnual = validAnnualTrends.length
+    ? validAnnualTrends.reduce((s, c) => s + (c.trendAnnual ?? 0), 0) / validAnnualTrends.length
     : null
 
   const hottest = citiesSorted[0]
@@ -140,7 +148,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
     lat: c.lat,
     lon: c.lon,
     normal: c.normal,
-    trend: c.trend,
+    trend: c.trendMonth,
   }))
 
   return (
@@ -180,11 +188,14 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
             </div>
 
             <div className="bg-white rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance ERA5 moy.</p>
-              {avgTrend !== null ? (
-                <p className="text-4xl font-black" style={{ color: avgTrend > 0 ? "#ef4444" : "#3b82f6" }}>
-                  {fmtDelta(avgTrend)}°C
-                </p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance ERA5 annuelle</p>
+              {avgTrendAnnual !== null ? (
+                <>
+                  <p className="text-4xl font-black" style={{ color: avgTrendAnnual > 0 ? "#ef4444" : "#3b82f6" }}>
+                    {fmtDelta(avgTrendAnnual)}°C
+                  </p>
+                  <p className="text-xs text-neutral-400 mt-1">moy. toutes saisons · depuis 1990</p>
+                </>
               ) : (
                 <p className="text-4xl font-black text-neutral-300">—</p>
               )}
@@ -194,7 +205,10 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
               <div className="col-span-2 bg-[#fff7ed] rounded-3xl p-5">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-400 mb-2">Ville la plus chaude</p>
                 <p className="text-2xl font-black text-neutral-900">{hottest.name}</p>
-                <p className="text-sm text-neutral-500 mt-0.5">Normale : {fmt(hottest.normal)}°C · Tendance : {fmtDelta(hottest.trend)}°C</p>
+                <p className="text-sm text-neutral-500 mt-0.5">
+                  Normale {monthName} : {fmt(hottest.normal)}°C
+                  {hottest.trendAnnual !== null && ` · ERA5 annuel : ${fmtDelta(hottest.trendAnnual)}°C`}
+                </p>
               </div>
             )}
 
@@ -211,17 +225,20 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                     <div>
                       <p className="font-black text-neutral-900 group-hover:text-orange-500 transition-colors">{city.name}</p>
                       {city.normal !== null && (
-                        <p className="text-xs text-neutral-400 mt-0.5">Normale : {fmt(city.normal)}°C</p>
+                        <p className="text-xs text-neutral-400 mt-0.5">Normale {monthName} : {fmt(city.normal)}°C</p>
                       )}
                     </div>
                     <div className="text-right shrink-0 ml-3">
-                      {city.trend !== null && (
-                        <p className="text-lg font-black" style={{ color: city.trend > 0 ? "#ef4444" : "#3b82f6" }}>
-                          {fmtDelta(city.trend)}°C
-                        </p>
+                      {city.trendMonth !== null && (
+                        <>
+                          <p className="text-lg font-black" style={{ color: city.trendMonth > 0 ? "#ef4444" : "#3b82f6" }}>
+                            {fmtDelta(city.trendMonth)}°C
+                          </p>
+                          <p className="text-[10px] text-neutral-400">tendance {monthName}</p>
+                        </>
                       )}
                       {city.proj2050 !== null && (
-                        <p className="text-[10px] text-neutral-400">2050 : {fmtDelta(city.proj2050)}°C</p>
+                        <p className="text-[10px] text-neutral-400 mt-0.5">2050 : {fmtDelta(city.proj2050)}°C</p>
                       )}
                     </div>
                   </Link>

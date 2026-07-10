@@ -9,11 +9,11 @@ export const revalidate = 86400
 export const metadata: Metadata = {
   title: "Chaleur par région · cestchaud.fr",
   description: "Données ERA5 et projections GIEC 2050 pour les 13 régions métropolitaines françaises. Tendances de chaleur, anomalies et villes les plus exposées.",
-  alternates: { canonical: "https://cestchaud.fr/r" },
+  alternates: { canonical: "https://www.cestchaud.fr/r" },
   openGraph: {
     title: "Chaleur par région · cestchaud.fr",
     description: "ERA5 et projections GIEC 2050 pour les 13 régions françaises.",
-    url: "https://cestchaud.fr/r",
+    url: "https://www.cestchaud.fr/r",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",

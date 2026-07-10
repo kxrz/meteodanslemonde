@@ -8,7 +8,7 @@ export const revalidate = 604800
 export const metadata: Metadata = {
   title: "Contact · cestchaud.fr",
   description: "Contactez l'équipe cestchaud.fr pour toute question, suggestion ou partenariat.",
-  alternates: { canonical: "https://cestchaud.fr/contact" },
+  alternates: { canonical: "https://www.cestchaud.fr/contact" },
 }
 
 export default function ContactPage() {
