@@ -100,8 +100,11 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
         center: [46.5, 2.5],
         zoom: isMobile ? 5 : 6,
         zoomControl: false,
-        scrollWheelZoom: true,
+        scrollWheelZoom: !isMobile,
       })
+
+      // Force Leaflet to recalculate container size after layout settles
+      setTimeout(() => map.invalidateSize(), 100)
 
       L.control.zoom({ position: "bottomright" }).addTo(map)
 
