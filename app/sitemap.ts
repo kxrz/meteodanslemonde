@@ -31,5 +31,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }))
 
-  return [...staticRoutes, ...frCityRoutes, ...worldCityRoutes]
+  const regionSlugs = [
+    "bretagne", "occitanie", "provence-alpes-cote-d-azur", "auvergne-rhone-alpes",
+    "nouvelle-aquitaine", "hauts-de-france", "ile-de-france", "grand-est",
+    "pays-de-la-loire", "bourgogne-franche-comte", "normandie", "centre-val-de-loire", "corse",
+  ]
+  const regionRoutes: MetadataRoute.Sitemap = [
+    { url: `${BASE}/r`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.85 },
+    ...regionSlugs.map((slug) => ({
+      url: `${BASE}/r/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+  ]
+
+  return [...staticRoutes, ...regionRoutes, ...frCityRoutes, ...worldCityRoutes]
 }
