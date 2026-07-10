@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import CitySearch from "@/components/CitySearch"
 import { getWeatherData } from "@/lib/weather-data"
 import { loadClimateMap } from "@/lib/climate"
 import { fmtDelta } from "@/lib/format"
@@ -227,12 +228,17 @@ export default async function Home() {
 
   const dataLabel = new Date(fetchedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })
 
+  const citiesForSearch = citiesFR.map(c => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon, region: c.region }))
+
   return (
     <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
       <SiteHeader subtitle={`Données du ${dataLabel}. Ressenti max, anomalies ERA5, projections GIEC 2030-2050.`} />
 
       <main className="flex-1 px-3 lg:px-4 pb-4">
         <div className="space-y-3">
+
+          {/* ── 0. Recherche ── */}
+          <CitySearch cities={citiesForSearch} />
 
           {/* ── 1. Records du jour ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -536,7 +542,7 @@ export default async function Home() {
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-2">France</p>
               <p className="text-base font-black text-blue-900 leading-snug mb-2">France en chiffres</p>
               <p className="text-xs text-blue-900/60 leading-relaxed flex-1">
-                36 villes, leurs anomalies du jour, leurs tendances sur 30 ans et ce que le GIEC prédit pour 2030, 2040 et 2050.
+                60 villes, leurs anomalies du jour, leurs tendances sur 30 ans et ce que le GIEC prédit pour 2030, 2040 et 2050.
               </p>
               <span className="text-blue-400 group-hover:text-blue-600 text-lg transition-colors mt-4 block">&rarr;</span>
             </Link>
