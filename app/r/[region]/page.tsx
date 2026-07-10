@@ -7,6 +7,7 @@ import { fmt, fmtDelta } from "@/lib/format"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
+import RegionCitiesMapWrapper from "@/components/RegionCitiesMapWrapper"
 
 export const revalidate = 86400
 
@@ -17,7 +18,7 @@ const citiesFR = require("@/data/cities-fr.json") as Array<{
 const REGIONS: Record<string, { label: string; description: string }> = {
   "bretagne": {
     label: "Bretagne",
-    description: "La Bretagne est historiquement l'une des régions les plus tempérées de France, mais les étés s'y réchauffent rapidement. Découvrez les données climatiques de Rennes, Brest, Lorient, Vannes, Quimper et Saint-Malo.",
+    description: "La Bretagne est historiquement l'une des régions les plus tempérées de France, mais les étés s'y réchauffent rapidement. Rennes, Brest, Lorient, Vannes, Quimper et Saint-Malo voient leurs normales estivales progresser selon les données ERA5.",
   },
   "occitanie": {
     label: "Occitanie",
@@ -87,7 +88,7 @@ export async function generateMetadata({ params }: { params: Promise<{ region: s
   if (!meta) return {}
 
   const title = `${meta.label} · Chaleur & projections climatiques · cestchaud.fr`
-  const description = `Données de chaleur, anomalies ERA5 et projections GIEC 2050 pour les villes de ${meta.label}. ${meta.description.slice(0, 100)}...`
+  const description = `Données ERA5 et projections GIEC 2050 pour les villes de ${meta.label}. ${meta.description.slice(0, 120)}`
 
   return {
     title,
@@ -124,121 +125,133 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
     return { ...city, normal, trend, proj2050 }
   })
 
-  const avgAnomaly =
-    citiesWithClimate.filter((c) => c.trend !== null).reduce((sum, c) => sum + (c.trend ?? 0), 0) /
-    (citiesWithClimate.filter((c) => c.trend !== null).length || 1)
+  const citiesSorted = [...citiesWithClimate].sort((a, b) => (b.normal ?? -99) - (a.normal ?? -99))
 
-  const hottest = [...citiesWithClimate].sort((a, b) => (b.normal ?? -99) - (a.normal ?? -99))[0]
+  const validTrends = citiesWithClimate.filter((c) => c.trend !== null)
+  const avgTrend = validTrends.length
+    ? validTrends.reduce((s, c) => s + (c.trend ?? 0), 0) / validTrends.length
+    : null
+
+  const hottest = citiesSorted[0]
+
+  const citiesForMap = citiesWithClimate.map((c) => ({
+    id: c.id,
+    name: c.name,
+    lat: c.lat,
+    lon: c.lon,
+    normal: c.normal,
+    trend: c.trend,
+  }))
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
+    <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
       <SiteHeader asLink subtitle={`Données climatiques de la région ${meta.label}`} />
       <Breadcrumb crumbs={[{ label: "Régions", href: "/r" }, { label: meta.label }]} />
 
-      <main className="flex-1 px-5 py-6 max-w-4xl mx-auto w-full">
-        {/* Hero */}
-        <div className="mb-8">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 mb-1">Région</p>
-          <h1 className="text-4xl font-black text-neutral-900 leading-tight mb-4">{meta.label}</h1>
-          <p className="text-sm text-neutral-600 leading-relaxed max-w-2xl">{meta.description}</p>
+      <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
+
+        {/* Left: map (40%) */}
+        <div className="h-[50vw] max-h-[360px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative p-3 lg:p-4">
+          <div className="w-full h-full rounded-3xl overflow-hidden">
+            <RegionCitiesMapWrapper cities={citiesForMap} />
+          </div>
+          <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
+            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 leading-none mb-0.5">
+              France
+            </p>
+            <h1 className="text-base font-black text-neutral-900 leading-tight">{meta.label}</h1>
+          </div>
         </div>
 
-        {/* KPI synthèse région */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
-          <div className="bg-white rounded-2xl p-4">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">Villes suivies</p>
-            <p className="text-3xl font-black text-neutral-900">{cities.length}</p>
-          </div>
-          <div className="bg-white rounded-2xl p-4">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">Tendance moy. ERA5</p>
-            <p className="text-3xl font-black" style={{ color: avgAnomaly > 0 ? "#ef4444" : "#3b82f6" }}>
-              {fmtDelta(avgAnomaly)}°C
-            </p>
-          </div>
-          {hottest && hottest.normal !== null && (
-            <div className="bg-white rounded-2xl p-4 col-span-2 sm:col-span-1">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">Ville la plus chaude</p>
-              <p className="text-3xl font-black text-neutral-900">{hottest.name}</p>
-              <p className="text-xs text-neutral-400 mt-0.5">{fmt(hottest.normal)}°C en normale</p>
+        {/* Right: content (60%) */}
+        <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto p-3 lg:p-4 lg:w-[60%]">
+          <div className="grid grid-cols-2 gap-3 pb-4">
+
+            {/* Description */}
+            <div className="col-span-2 bg-neutral-900 rounded-3xl p-6">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Région</p>
+              <p className="text-sm text-white/80 leading-relaxed">{meta.description}</p>
             </div>
-          )}
-        </div>
 
-        {/* Liste des villes */}
-        <h2 className="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 mb-3">
-          Villes de la région
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
-          {citiesWithClimate
-            .sort((a, b) => (b.normal ?? -99) - (a.normal ?? -99))
-            .map((city) => (
-              <Link
-                key={city.id}
-                href={`/a/${slugify(city.name)}`}
-                className="bg-white rounded-2xl p-4 flex items-center justify-between hover:shadow-md transition-shadow group"
-              >
-                <div>
-                  <p className="font-black text-neutral-900 group-hover:text-orange-500 transition-colors">{city.name}</p>
-                  {city.normal !== null && (
-                    <p className="text-xs text-neutral-400 mt-0.5">Normale : {fmt(city.normal)}°C</p>
-                  )}
-                </div>
-                <div className="text-right shrink-0 ml-3">
-                  {city.trend !== null && (
-                    <p className="text-lg font-black" style={{ color: city.trend > 0 ? "#ef4444" : "#3b82f6" }}>
-                      {fmtDelta(city.trend)}°C
-                    </p>
-                  )}
-                  {city.proj2050 !== null && (
-                    <p className="text-[10px] text-neutral-400">2050 : {fmtDelta(city.proj2050)}°C</p>
-                  )}
-                </div>
-              </Link>
-            ))}
-        </div>
+            {/* KPIs */}
+            <div className="bg-white rounded-3xl p-5">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Villes suivies</p>
+              <p className="text-4xl font-black text-neutral-900">{cities.length}</p>
+            </div>
 
-        {/* Bloc éditorial */}
-        <div className="bg-white rounded-3xl p-6 mb-6">
-          <h2 className="text-base font-black text-neutral-900 mb-3">
-            Le réchauffement en {meta.label} : ce que disent les données
-          </h2>
-          <div className="text-sm text-neutral-600 leading-relaxed space-y-3">
-            <p>
-              Les données ERA5 couvrent 30 ans d'observations satellitaires et de remplissage de modèle.
-              La tendance que vous voyez ici est le delta entre la normale actuelle (1991-2020) et celle de référence (1961-1990),
-              calculée mois par mois pour chaque ville de la région {meta.label}.
-            </p>
-            <p>
-              Les projections GIEC 2050 sont issues des scénarios CMIP6 SSP2-4.5 (emissions modérées) et SSP5-8.5 (scénario haut).
-              Elles donnent une fourchette probable du ressenti max estival d'ici 25 ans.
-            </p>
-            <p>
-              Pour comparer avec d'autres régions ou explorer les villes jumelles climatiques dans le monde,
-              utilisez les outils disponibles sur cestchaud.fr.
-            </p>
+            <div className="bg-white rounded-3xl p-5">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance ERA5 moy.</p>
+              {avgTrend !== null ? (
+                <p className="text-4xl font-black" style={{ color: avgTrend > 0 ? "#ef4444" : "#3b82f6" }}>
+                  {fmtDelta(avgTrend)}°C
+                </p>
+              ) : (
+                <p className="text-4xl font-black text-neutral-300">—</p>
+              )}
+            </div>
+
+            {hottest && hottest.normal !== null && (
+              <div className="col-span-2 bg-[#fff7ed] rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-400 mb-2">Ville la plus chaude</p>
+                <p className="text-2xl font-black text-neutral-900">{hottest.name}</p>
+                <p className="text-sm text-neutral-500 mt-0.5">Normale : {fmt(hottest.normal)}°C · Tendance : {fmtDelta(hottest.trend)}°C</p>
+              </div>
+            )}
+
+            {/* Liste des villes */}
+            <div className="col-span-2">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Villes de la région</p>
+              <div className="grid grid-cols-1 gap-2">
+                {citiesSorted.map((city) => (
+                  <Link
+                    key={city.id}
+                    href={`/a/${slugify(city.name)}`}
+                    className="bg-white rounded-2xl px-4 py-3 flex items-center justify-between hover:shadow-md transition-shadow group"
+                  >
+                    <div>
+                      <p className="font-black text-neutral-900 group-hover:text-orange-500 transition-colors">{city.name}</p>
+                      {city.normal !== null && (
+                        <p className="text-xs text-neutral-400 mt-0.5">Normale : {fmt(city.normal)}°C</p>
+                      )}
+                    </div>
+                    <div className="text-right shrink-0 ml-3">
+                      {city.trend !== null && (
+                        <p className="text-lg font-black" style={{ color: city.trend > 0 ? "#ef4444" : "#3b82f6" }}>
+                          {fmtDelta(city.trend)}°C
+                        </p>
+                      )}
+                      {city.proj2050 !== null && (
+                        <p className="text-[10px] text-neutral-400">2050 : {fmtDelta(city.proj2050)}°C</p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Autres régions */}
+            <div className="col-span-2">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Autres régions</p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(REGIONS)
+                  .filter(([slug]) => slug !== region)
+                  .map(([slug, r]) => (
+                    <Link
+                      key={slug}
+                      href={`/r/${slug}`}
+                      className="text-xs bg-white border border-neutral-200 hover:border-neutral-400 hover:text-neutral-800 text-neutral-500 rounded-xl px-3 py-1.5 transition-colors"
+                    >
+                      {r.label}
+                    </Link>
+                  ))}
+              </div>
+            </div>
+
           </div>
+          <PageFooter className="px-0 py-3" />
         </div>
 
-        {/* Navigation régions */}
-        <div className="mt-6">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 mb-3">Autres régions</p>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(REGIONS)
-              .filter(([slug]) => slug !== region)
-              .map(([slug, r]) => (
-                <Link
-                  key={slug}
-                  href={`/r/${slug}`}
-                  className="text-xs bg-white border border-neutral-200 hover:border-neutral-400 hover:text-neutral-800 text-neutral-500 rounded-xl px-3 py-1.5 transition-colors"
-                >
-                  {r.label}
-                </Link>
-              ))}
-          </div>
-        </div>
-      </main>
-
-      <PageFooter className="px-5 py-4" />
+      </div>
     </div>
   )
 }

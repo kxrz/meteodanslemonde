@@ -213,7 +213,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
 
         <SiteHeader asLink />
-        <Breadcrumb crumbs={[{ label: "France en chiffres", href: "/en/france" }, { label: city.name }]} />
+        <Breadcrumb crumbs={[
+          { label: "Régions", href: "/r" },
+          { label: city.region, href: `/r/${slugify(city.region)}` },
+          { label: city.name },
+        ]} />
 
         <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
