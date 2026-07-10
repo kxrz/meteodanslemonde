@@ -1,24 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
-import { head } from "@vercel/blob"
+import { loadSubs } from "@/lib/blob-subscriptions"
 import webpush from "web-push"
 import { loadClimateMap } from "@/lib/climate"
 import { slugify } from "@/lib/slugify"
 
-const BLOB_KEY = "push-subscriptions.json"
-
-type SubStore = Record<string, { subscription: PushSubscriptionJSON; cityId: string }>
-
 const citiesFR = require("@/data/cities-fr.json") as Array<{ id: string; name: string; lat: number; lon: number }>
 const citiesWorld = require("@/data/cities-world.json") as Array<{ id: string; name: string; lat: number; lon: number }>
-
-async function load(): Promise<SubStore> {
-  try {
-    const existing = await head(BLOB_KEY).catch(() => null)
-    if (!existing) return {}
-    const res = await fetch(existing.url)
-    return await res.json()
-  } catch { return {} }
-}
 
 async function fetchTemp(lat: number, lon: number): Promise<number | null> {
   try {
@@ -43,7 +30,7 @@ export async function POST(req: NextRequest) {
     process.env.VAPID_PRIVATE_KEY!,
   )
 
-  const db = await load()
+  const db = await loadSubs()
   const climateMap = loadClimateMap()
   const m = new Date().getMonth()
   let sent = 0
