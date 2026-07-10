@@ -18,6 +18,14 @@ const citiesFR = require("@/data/cities-fr.json") as Array<{
   id: string; name: string; lat: number; lon: number; region: string
 }>
 
+const citiesWorld = require("@/data/cities-world.json") as Array<{
+  id: string; name: string; lat: number; lon: number; country: string
+}>
+
+type CityFR = { id: string; name: string; lat: number; lon: number; region: string; isWorld?: false }
+type CityWorld = { id: string; name: string; lat: number; lon: number; country: string; isWorld: true }
+type AnyCity = CityFR | CityWorld
+
 let narratives: Record<string, string> = {}
 try { narratives = require("@/data/narratives.json") } catch {}
 
@@ -25,12 +33,19 @@ interface YearExtreme { max: number; max_date: string; min: number; min_date: st
 let yearExtremesMap: Record<string, YearExtreme> = {}
 try { yearExtremesMap = require("@/data/year-extremes.json") } catch {}
 
-function getCityBySlug(slug: string) {
-  return citiesFR.find((c) => slugify(c.name) === slug) ?? null
+function getCityBySlug(slug: string): AnyCity | null {
+  const fr = citiesFR.find((c) => slugify(c.name) === slug)
+  if (fr) return fr
+  const world = citiesWorld.find((c) => slugify(c.name) === slug)
+  if (world) return { ...world, isWorld: true as const }
+  return null
 }
 
 export async function generateStaticParams() {
-  return citiesFR.map((c) => ({ slug: slugify(c.name) }))
+  return [
+    ...citiesFR.map((c) => ({ slug: slugify(c.name) })),
+    ...citiesWorld.map((c) => ({ slug: slugify(c.name) })),
+  ]
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -44,7 +59,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const proj2050 = climate?.proj2050?.[m] ?? null
   const proj2050Str = proj2050 !== null ? ` GIEC 2050 : ${fmtDelta(proj2050)}°C.` : ""
 
-  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030–2050 pour ${city.name} (${city.region}).${proj2050Str}`
+  const location = city.isWorld ? city.country : city.region
+  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030–2050 pour ${city.name} (${location}).${proj2050Str}`
 
   return {
     title: `${city.name} · Chaleur & projections climatiques · cestchaud.fr`,
@@ -157,7 +173,8 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
   const pageUrl = `https://www.cestchaud.fr/a/${slug}`
 
-  const projectionParagraph = buildProjectionParagraph(
+  const cityLocation = city.isWorld ? city.country : city.region
+  const projectionParagraph = city.isWorld ? null : buildProjectionParagraph(
     city.name, city.region, monthName,
     normal, trend, proj2030, proj2040, proj2050
   )
@@ -188,15 +205,15 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
     "@type": "WebPage",
     name: `${city.name} · Chaleur & projections climatiques`,
     url: pageUrl,
-    description: `Données climatiques et projections GIEC pour ${city.name}, ${city.region}.`,
+    description: `Données climatiques et projections GIEC pour ${city.name}, ${cityLocation}.`,
     about: {
       "@type": "Place",
       name: city.name,
       geo: { "@type": "GeoCoordinates", latitude: city.lat, longitude: city.lon },
       containedInPlace: {
         "@type": "AdministrativeArea",
-        name: city.region,
-        containedInPlace: { "@type": "Country", name: "France" },
+        name: cityLocation,
+        containedInPlace: { "@type": "Country", name: city.isWorld ? city.country : "France" },
       },
     },
   }
@@ -211,11 +228,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
       <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
 
         <SiteHeader asLink />
-        <Breadcrumb crumbs={[
-          { label: "Régions", href: "/r" },
-          { label: city.region, href: `/r/${slugify(city.region)}` },
-          { label: city.name },
-        ]} />
+        <Breadcrumb crumbs={
+          city.isWorld
+            ? [{ label: "Monde" }, { label: city.name }]
+            : [{ label: "Régions", href: "/r" }, { label: city.region, href: `/r/${slugify(city.region)}` }, { label: city.name }]
+        } />
 
         <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
@@ -226,7 +243,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             </div>
             <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 leading-none mb-0.5">
-                {city.region}
+                {cityLocation}
               </p>
               <h1 className="text-base font-black text-neutral-900 leading-tight">{city.name}</h1>
             </div>
