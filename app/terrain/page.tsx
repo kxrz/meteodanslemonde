@@ -50,10 +50,32 @@ const ZONE_CONTENT = {
     ],
     link: { href: "/a/bordeaux", label: "Données climatiques de Bordeaux" },
   },
+  montbel: {
+    tag: "Ariège · Sécheresse 2022",
+    title: "Le lac de Montbel à sec",
+    body: `Le lac de Montbel, réservoir artificiel de l'Ariège qui alimente en eau potable plus de 100 000 habitants, a atteint en 2022 son niveau le plus bas depuis sa création. La sécheresse historique de cet été a réduit sa superficie de moitié : les berges argileuses habituellement immergées sont apparues à nu, révélant une vaste étendue de boue craquelée. Ce lac est un cas d'école : construit précisément pour sécuriser l'approvisionnement en eau, il illustre que les infrastructures conçues pour le climat du XXe siècle ne suffisent plus.`,
+    stats: [
+      { val: "-50%", label: "de superficie en août 2022" },
+      { val: "100 000", label: "habitants dépendants de ce réservoir" },
+      { val: "2022", label: "niveau le plus bas depuis la création du lac" },
+    ],
+    link: { href: "/a/toulouse", label: "Données climatiques de Toulouse" },
+  },
+  camargue: {
+    tag: "Bouches-du-Rhône · Assèchement",
+    title: "La Camargue se dessèche",
+    body: `La Camargue, plus grand delta d'Europe occidentale et réserve de biosphère UNESCO, subit un assèchement progressif accéléré par les étés de plus en plus chauds. Entre 2016 et 2022, les étangs temporaires ont reculé, les roselières se sont réduites et les zones humides vitales pour les flamants roses et les oiseaux migrateurs ont perdu en superficie. La hausse du niveau de la mer aggrave par ailleurs l'intrusion saline, menaçant les marais d'eau douce qui font l'identité de ce territoire.`,
+    stats: [
+      { val: "+1.5°C", label: "réchauffement local depuis 1950" },
+      { val: "400", label: "espèces d'oiseaux recensées, menacées par l'assèchement" },
+      { val: "2050", label: "scénario de submersion partielle si RCP8.5" },
+    ],
+    link: { href: "/a/arles", label: "Données climatiques d'Arles" },
+  },
   "serre-poncon": {
     tag: "Hautes-Alpes · Sécheresse 2022",
     title: "30 mètres d'eau disparus",
-    body: `Serre-Ponçon est le plus grand lac artificiel de France. En 2022, son niveau a chuté de 30 mètres sous l'effet d'une sécheresse historique : les berges argileuses, d'habitude immergées, sont apparues comme une "marque de baignoire" visible depuis l'espace. Le lac alimente en eau potable et en irrigation une grande partie des Alpes du Sud — sa vidange partielle a révélé l'ampleur de la dépendance aux précipitations neigeuses, elles-mêmes en forte baisse.`,
+    body: `Serre-Ponçon est le plus grand lac artificiel de France. En 2022, son niveau a chuté de 30 mètres sous l'effet d'une sécheresse historique : les berges argileuses, d'habitude immergées, sont apparues comme une "marque de baignoire" visible depuis l'espace. Sa vidange partielle a révélé l'ampleur de la dépendance aux précipitations neigeuses, elles-mêmes en forte baisse.`,
     stats: [
       { val: "-30m", label: "chute du niveau d'eau" },
       { val: "180", label: "millions de m³ manquants" },
@@ -99,7 +121,7 @@ const URBAN_CONTENT = {
 export default function TerrainPage() {
   const manifest = loadManifest()
 
-  const zoneIds = ["landes", "serre-poncon", "mer-de-glace", "loire"] as const
+  const zoneIds = ["landes", "montbel", "camargue", "serre-poncon", "mer-de-glace", "loire"] as const
   const availableZones = zoneIds.filter(
     (id) => manifest[id]?.before && manifest[id]?.after
   )
@@ -154,12 +176,10 @@ export default function TerrainPage() {
           const content = ZONE_CONTENT[id]
           const entry = manifest[id]
           return (
-            <section key={id}>
-              <div className="mb-6">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-400 mb-2">{content.tag}</p>
-                <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4">{content.title}</h2>
-                <p className="text-neutral-600 leading-relaxed text-base">{content.body}</p>
-              </div>
+            <section key={id} className="border-b border-neutral-200 pb-20 last:border-0">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-400 mb-3">{content.tag}</p>
+              <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4 leading-tight">{content.title}</h2>
+              <p className="text-neutral-600 leading-relaxed text-base mb-8 max-w-2xl">{content.body}</p>
 
               <BeforeAfterSlider
                 before={`/satellite/${id}-before.jpg`}
@@ -169,19 +189,21 @@ export default function TerrainPage() {
                 alt={content.title}
               />
 
-              <div className="mt-5 flex flex-wrap gap-6">
+              <div className="mt-6 flex flex-wrap gap-8">
                 {content.stats.map(({ val, label }) => (
-                  <div key={label}>
-                    <p className="text-2xl font-black text-neutral-900">{val}</p>
-                    <p className="text-xs text-neutral-400 mt-0.5">{label}</p>
+                  <div key={label} className="min-w-[80px]">
+                    <p className="text-2xl font-black text-neutral-900 leading-none">{val}</p>
+                    <p className="text-xs text-neutral-400 mt-1 leading-snug">{label}</p>
                   </div>
                 ))}
-              </div>
-
-              <div className="mt-4">
-                <Link href={content.link.href} className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors underline underline-offset-2">
-                  {content.link.label} &rarr;
-                </Link>
+                <div className="ml-auto flex items-end">
+                  <Link
+                    href={content.link.href}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors bg-white rounded-xl px-4 py-2 border border-neutral-200 hover:border-neutral-400"
+                  >
+                    {content.link.label} &rarr;
+                  </Link>
+                </div>
               </div>
             </section>
           )
