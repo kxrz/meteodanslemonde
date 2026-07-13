@@ -315,6 +315,25 @@ export default async function Home() {
                 ))}
               </div>
 
+              {(() => {
+                const segments = [
+                  { label: "< -2°C", color: "#3b82f6", count: spectreSorted.filter(c => (c.anomaly ?? 0) < -2).length },
+                  { label: "-2 à 0°C", color: "#93c5fd", count: spectreSorted.filter(c => { const a = c.anomaly ?? 0; return a >= -2 && a < 0 }).length },
+                  { label: "0 à +2°C", color: "#fca5a5", count: spectreSorted.filter(c => { const a = c.anomaly ?? 0; return a >= 0 && a < 2 }).length },
+                  { label: "> +2°C", color: "#ef4444", count: spectreSorted.filter(c => (c.anomaly ?? 0) >= 2).length },
+                ]
+                return (
+                  <div className="flex gap-4 mt-2 mb-1 flex-wrap">
+                    {segments.filter(s => s.count > 0).map(s => (
+                      <span key={s.label} className="flex items-center gap-1.5 text-xs text-neutral-500">
+                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                        {s.label} &middot; <strong className="text-neutral-700">{s.count} ville{s.count > 1 ? "s" : ""}</strong>
+                      </span>
+                    ))}
+                  </div>
+                )
+              })()}
+
               <div className="flex justify-between text-xs text-neutral-500 mb-5">
                 <span>
                   {spectreMin.anomaly !== null ? `${spectreMin.anomaly > 0 ? "+" : ""}${spectreMin.anomaly.toFixed(1)}°C` : "?"} &middot; {spectreMin.name}
