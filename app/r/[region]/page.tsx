@@ -209,7 +209,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
 
             {/* Description */}
             <div className="col-span-2 bg-neutral-900 rounded-3xl p-6">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Région</p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">Région</p>
               <p className="text-sm text-white/80 leading-relaxed">{meta.description}</p>
             </div>
 
@@ -229,7 +229,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                   <p className="text-xs text-neutral-400 mt-1">moy. toutes saisons · depuis 1990</p>
                 </>
               ) : (
-                <p className="text-4xl font-black text-neutral-300">—</p>
+                <p className="text-4xl font-black text-neutral-500">—</p>
               )}
             </div>
 

@@ -123,7 +123,7 @@ export default function SpectreBar({ cities, monthName }: { cities: City[]; mont
               </span>
             ))}
             {active.cities.length > 10 && (
-              <span className="text-neutral-300">+{active.cities.length - 10} autres</span>
+              <span className="text-neutral-500">+{active.cities.length - 10} autres</span>
             )}
           </p>
         </div>

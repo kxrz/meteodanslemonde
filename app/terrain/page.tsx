@@ -152,11 +152,11 @@ export default async function TerrainPage() {
       {/* Hero */}
       <div className="bg-neutral-900 px-5 py-16 md:py-20">
         <div className="max-w-3xl mx-auto">
-        <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-white/30 mb-4">Images satellite</p>
+        <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-white/60 mb-4">Images satellite</p>
         <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-5 max-w-2xl">
           Ce que les chiffres<br />annoncent, les images<br />le confirment.
         </h1>
-        <p className="text-white/50 text-base leading-relaxed max-w-xl mb-12">
+        <p className="text-white/70 text-base leading-relaxed max-w-xl mb-12">
           Incendies, lacs asséchés, glaciers en recul, fleuves à sec. Ces images satellite avant/après montrent ce que les données ERA5 et les projections GIEC 2050 décrivent en degrés.
         </p>
 
@@ -171,7 +171,7 @@ export default async function TerrainPage() {
               <p className="text-3xl font-black text-red-400 leading-none">
                 {val}<span className="text-xl">{unit}</span>
               </p>
-              <p className="text-xs text-white/40 mt-1 leading-snug">{label}</p>
+              <p className="text-xs text-white/70 mt-1 leading-snug">{label}</p>
             </div>
           ))}
         </div>
@@ -226,14 +226,14 @@ export default async function TerrainPage() {
                 ))}
 
                 <div className="ml-auto bg-neutral-900 rounded-2xl px-5 py-3 flex flex-col items-end min-w-[200px]">
-                  <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-white/30 mb-2">
+                  <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-white/60 mb-2">
                     Aujourd&apos;hui · {region.label}
                   </p>
                   {regionCities.length > 0 ? (
                     <div className="flex flex-col gap-1.5 items-end w-full">
                       {regionCities.map(({ cityId, name, temp, anomaly }) => (
                         <Link key={cityId} href={`/a/${cityId}`} className="flex items-baseline justify-between gap-3 w-full group">
-                          <span className="text-xs text-white/40 group-hover:text-white/60 transition-colors">{name}</span>
+                          <span className="text-xs text-white/70 group-hover:text-white/60 transition-colors">{name}</span>
                           <span className="flex items-baseline gap-1">
                             <span className="text-sm font-bold text-white">{temp}&deg;</span>
                             {anomaly !== null && (
@@ -246,11 +246,11 @@ export default async function TerrainPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-white/30">Données en cours</p>
+                    <p className="text-xs text-white/60">Données en cours</p>
                   )}
                   <Link
                     href={`/r/${region.slug}`}
-                    className="text-xs text-white/30 hover:text-white/60 transition-colors mt-3 self-end"
+                    className="text-xs text-white/60 hover:text-white/60 transition-colors mt-3 self-end"
                   >
                     Voir la région &rarr;
                   </Link>
@@ -298,7 +298,7 @@ export default async function TerrainPage() {
 
         {/* Conclusion / lien site */}
         <section className="bg-neutral-900 rounded-3xl p-8 md:p-10">
-          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Et maintenant ?</p>
+          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">Et maintenant ?</p>
           <h2 className="text-2xl font-black text-white mb-4">Ces images ont un pendant chiffré.</h2>
           <p className="text-white/60 leading-relaxed mb-8">
             Chacun des phénomènes visibles ici (sécheresse, canicule, recul glaciaire) est mesuré dans les données ERA5 que le site affiche pour chaque ville. Le ressenti du jour, l'anomalie vs la normale, les projections GIEC 2030-2050 : c'est le même réchauffement, sous une autre forme.

@@ -407,7 +407,7 @@ export default async function Home() {
           {/* ── Séparateur ── */}
           <div className="flex items-center gap-3 py-1">
             <div className="flex-1 h-px bg-neutral-200" />
-            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Focus</span>
+            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Focus</span>
             <div className="flex-1 h-px bg-neutral-200" />
           </div>
 
@@ -509,44 +509,44 @@ export default async function Home() {
               <>
                 <div className="flex items-center gap-3 py-1">
                   <div className="flex-1 h-px bg-neutral-200" />
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Alertes du jour</span>
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Alertes du jour</span>
                   <div className="flex-1 h-px bg-neutral-200" />
                 </div>
                 <div className={`grid gap-3 ${hotNightCities.length > 0 && heatwaveCities.length > 0 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
                   {hotNightCities.length > 0 && (
                     <div className="bg-[#1e293b] rounded-3xl p-5">
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/60 mb-3">Nuits tropicales</p>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-300 mb-3">Nuits tropicales</p>
                       <div className="flex items-baseline gap-2 mb-2">
                         <span className="text-4xl font-black text-white leading-none">{hotNightCities.length}</span>
-                        <span className="text-sm text-sky-300/50">ville{hotNightCities.length > 1 ? "s" : ""} &gt; 20°C cette nuit</span>
+                        <span className="text-sm text-sky-200/80">ville{hotNightCities.length > 1 ? "s" : ""} &gt; 20°C cette nuit</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-3">
                         {hotNightCities.slice(0, 6).map(c => (
-                          <span key={c.id} className="bg-sky-900/40 text-sky-200 text-xs rounded-lg px-2 py-1">
+                          <span key={c.id} className="bg-sky-900/60 text-sky-100 text-xs rounded-lg px-2 py-1">
                             {c.name} {c.temp_min}°
                           </span>
                         ))}
                         {hotNightCities.length > 6 && (
-                          <span className="text-xs text-slate-500 py-1">+{hotNightCities.length - 6} autres</span>
+                          <span className="text-xs text-slate-400 py-1">+{hotNightCities.length - 6} autres</span>
                         )}
                       </div>
                     </div>
                   )}
                   {heatwaveCities.length > 0 && (
                     <div className="bg-[#7f1d1d] rounded-3xl p-5">
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-300/50 mb-3">Canicule aujourd&apos;hui</p>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-300 mb-3">Canicule aujourd&apos;hui</p>
                       <div className="flex items-baseline gap-2 mb-2">
                         <span className="text-4xl font-black text-white leading-none">{heatwaveCities.length}</span>
-                        <span className="text-sm text-red-200/50">ville{heatwaveCities.length > 1 ? "s" : ""} au-dessus de 35°C</span>
+                        <span className="text-sm text-red-200/80">ville{heatwaveCities.length > 1 ? "s" : ""} au-dessus de 35°C</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-3">
                         {heatwaveCities.slice(0, 6).map(c => (
-                          <span key={c.id} className="bg-red-900/40 text-red-200 text-xs rounded-lg px-2 py-1">
+                          <span key={c.id} className="bg-red-900/60 text-red-100 text-xs rounded-lg px-2 py-1">
                             {c.name} {c.apparent_temp_max}°
                           </span>
                         ))}
                         {heatwaveCities.length > 6 && (
-                          <span className="text-xs text-red-400/40 py-1">+{heatwaveCities.length - 6} autres</span>
+                          <span className="text-xs text-red-300 py-1">+{heatwaveCities.length - 6} autres</span>
                         )}
                       </div>
                     </div>
@@ -559,9 +559,9 @@ export default async function Home() {
           {/* ── 5. Ces données vous ont surpris ? + Notifications ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-2">Ces données vous ont surpris ?</p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-2">Ces données vous ont surpris ?</p>
               <p className="text-base font-black text-white leading-snug mb-3">Partagez l&apos;état du jour</p>
-              <p className="text-xs text-white/50 leading-relaxed flex-1 mb-4">
+              <p className="text-xs text-white/70 leading-relaxed flex-1 mb-4">
                 Anomalies ERA5, tendance sur 30 ans, projections GIEC 2050 : ces données méritent d&apos;être vues.
               </p>
               <ShareButton
@@ -571,13 +571,13 @@ export default async function Home() {
                 variant="inline"
               />
             </div>
-            <div className="bg-white rounded-3xl p-5 flex flex-col opacity-60">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Notifications</p>
+            <div className="bg-white rounded-3xl p-5 flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">Notifications</p>
               <p className="text-base font-black text-neutral-900 leading-snug mb-2">Le ressenti de ta ville, chaque matin</p>
               <p className="text-xs text-neutral-500 leading-relaxed flex-1">
                 Choisis une ville française et reçois chaque matin son ressenti max, son anomalie vs la normale ERA5, et son jumeau climatique du jour. Aucun compte requis.
               </p>
-              <span className="mt-4 inline-flex items-center gap-2 bg-neutral-200 text-neutral-400 font-semibold text-sm rounded-2xl px-5 py-3 cursor-not-allowed self-start">
+              <span className="mt-4 inline-flex items-center gap-2 bg-neutral-200 text-neutral-600 font-semibold text-sm rounded-2xl px-5 py-3 cursor-not-allowed self-start">
                 Bientôt disponible
               </span>
             </div>
@@ -586,7 +586,7 @@ export default async function Home() {
           {/* ── Séparateur ── */}
           <div className="flex items-center gap-3 py-1">
             <div className="flex-1 h-px bg-neutral-200" />
-            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Explorer</span>
+            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Explorer</span>
             <div className="flex-1 h-px bg-neutral-200" />
           </div>
 
@@ -654,21 +654,21 @@ export default async function Home() {
 
             <Link href="/alertes" className="bg-[#1e293b] rounded-3xl p-5 hover:bg-[#0f172a] transition-colors group flex flex-col">
               <div className="flex items-start justify-between mb-3">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/50">Alertes</p>
-                <svg className="w-5 h-5 text-sky-400/40 group-hover:text-sky-400 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-300">Alertes</p>
+                <svg className="w-5 h-5 text-sky-300 group-hover:text-sky-400 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
               </div>
               <p className="text-base font-black text-white leading-snug mb-2">Nuits tropicales & canicule</p>
-              <p className="text-xs text-sky-100/40 leading-relaxed flex-1">
+              <p className="text-xs text-sky-100/70 leading-relaxed flex-1">
                 Quelles villes ne dorment pas ? Où la canicule dure depuis plusieurs jours ? Le tableau complet des 62 villes.
               </p>
-              <span className="text-sky-400/40 group-hover:text-sky-300 text-sm transition-colors mt-4 block">Voir les alertes &rarr;</span>
+              <span className="text-sky-300 group-hover:text-sky-200 text-sm transition-colors mt-4 block">Voir les alertes &rarr;</span>
             </Link>
           </div>
 
           {/* ── Bloc pédagogique élus ── */}
           <div className="bg-neutral-900 rounded-3xl p-6 lg:p-8">
             <div className="max-w-2xl">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Pourquoi agir</p>
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">Pourquoi agir</p>
               <h2 className="text-2xl font-black text-white leading-tight mb-4">
                 La science mesure. Le Sénat légifère.
               </h2>

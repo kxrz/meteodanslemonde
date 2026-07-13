@@ -332,7 +332,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {/* Narrative */}
               {narrative && (
                 <article className="col-span-2 bg-neutral-900 rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">
                     En quelques mots
                   </p>
                   <p className="text-sm text-white/80 leading-relaxed">{narrative}</p>
@@ -434,7 +434,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-neutral-300">N/A</p>
+                    <p className="text-2xl font-black text-neutral-500">N/A</p>
                   )}
                 </div>
               </div>
@@ -447,7 +447,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {/* Second paragraph — projection narrative */}
               {projectionParagraph && (
                 <article className="col-span-2 bg-[#1a1a2e] rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">
                     Ce que disent les modeles
                   </p>
                   <p className="text-sm text-white/75 leading-relaxed">{projectionParagraph}</p>
@@ -593,7 +593,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   </div>
                   <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col justify-between">
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-2">Notifications</p>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-2">Notifications</p>
                       <p className="text-sm font-black text-white leading-snug mb-2">
                         Le ressenti de {city.name} chaque matin
                       </p>

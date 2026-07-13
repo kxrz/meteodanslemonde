@@ -74,7 +74,7 @@ export default function CityPanel({ city, twins, onTwinClick, onClose }: Props) 
         <div className="text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-1">
           {isFR ? "Jumeaux climatiques du jour" : "Villes françaises similaires"}
         </div>
-        <div className="text-[10px] text-neutral-300 mb-3">
+        <div className="text-[10px] text-neutral-500 mb-3">
           Basé sur le ressenti max - ±4°C
         </div>
         {twins.length === 0 ? (

@@ -126,8 +126,8 @@ export default async function AlertesPage() {
   const streakColor = isSummer ? "bg-red-400" : "bg-blue-500"
   const nightBg = isSummer ? "bg-[#1e293b]" : "bg-[#1e3a5f]"
   const streakBg = isSummer ? "bg-[#7f1d1d]" : "bg-[#1e3a8a]"
-  const nightTextColor = isSummer ? "text-sky-400/60" : "text-blue-300/60"
-  const streakTextColor = isSummer ? "text-red-300/50" : "text-blue-200/50"
+  const nightTextColor = isSummer ? "text-sky-300" : "text-blue-200"
+  const streakTextColor = isSummer ? "text-red-300" : "text-blue-200"
   const nightCountColor = isSummer ? "text-sky-600" : "text-blue-500"
   const streakCountColor = isSummer ? "text-red-500" : "text-blue-500"
 
@@ -157,13 +157,13 @@ export default async function AlertesPage() {
       {/* Hero */}
       <div className="bg-neutral-900 px-5 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
-          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-white/30 mb-4">
+          <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-white/60 mb-4">
             {isSummer ? "Été · alertes chaleur" : "Hiver · alertes froid"}
           </p>
           <h1 className="text-3xl md:text-4xl font-black text-white leading-tight mb-4">
             {isSummer ? "Nuits sans fraîcheur & jours de canicule" : "Nuits de gel & vagues de froid"}
           </h1>
-          <p className="text-white/50 text-sm leading-relaxed max-w-xl mb-8">
+          <p className="text-white/70 text-sm leading-relaxed max-w-xl mb-8">
             {isSummer
               ? "Deux signaux d'alerte estivaux pour les 62 grandes villes françaises : les nuits où le corps ne récupère pas et les épisodes de canicule qui s'allongent."
               : "Deux signaux d'alerte hivernaux pour les 62 grandes villes françaises : les nuits de gel et les épisodes de froid persistant. Données Open-Meteo, actualisées quotidiennement."
@@ -172,19 +172,19 @@ export default async function AlertesPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             <div>
               <p className={`text-3xl font-black leading-none ${isSummer ? "text-sky-400" : "text-blue-300"}`}>{totalNights}</p>
-              <p className="text-xs text-white/30 mt-1">villes · {nightLabel.toLowerCase()}</p>
+              <p className="text-xs text-white/60 mt-1">villes · {nightLabel.toLowerCase()}</p>
             </div>
             <div>
               <p className={`text-3xl font-black leading-none ${isSummer ? "text-sky-300" : "text-blue-200"}`}>{maxNights}</p>
-              <p className="text-xs text-white/30 mt-1">nuits max ce mois ({monthName})</p>
+              <p className="text-xs text-white/60 mt-1">nuits max ce mois ({monthName})</p>
             </div>
             <div>
               <p className={`text-3xl font-black leading-none ${isSummer ? "text-red-400" : "text-blue-500"}`}>{totalStreak}</p>
-              <p className="text-xs text-white/30 mt-1">villes · {streakLabel.toLowerCase()} active</p>
+              <p className="text-xs text-white/60 mt-1">villes · {streakLabel.toLowerCase()} active</p>
             </div>
             <div>
               <p className={`text-3xl font-black leading-none ${isSummer ? "text-red-300" : "text-blue-400"}`}>{maxStreak}j</p>
-              <p className="text-xs text-white/30 mt-1">streak max en cours</p>
+              <p className="text-xs text-white/60 mt-1">streak max en cours</p>
             </div>
           </div>
         </div>
@@ -235,7 +235,7 @@ export default async function AlertesPage() {
                     <tbody className="divide-y divide-neutral-50">
                       {byNights.slice(0, 20).map((city, i) => (
                         <tr key={city.id} className="hover:bg-neutral-50 transition-colors">
-                          <td className="px-4 py-3 text-xs text-neutral-300 font-mono w-7">{i + 1}</td>
+                          <td className="px-4 py-3 text-xs text-neutral-500 font-mono w-7">{i + 1}</td>
                           <td className="px-4 py-3">
                             <Link href={`/a/${slugify(city.name)}`} className="font-semibold text-neutral-900 hover:underline">
                               {city.name}
@@ -266,7 +266,7 @@ export default async function AlertesPage() {
                     </tbody>
                   </table>
                 </div>
-                <p className="px-4 py-3 text-xs text-neutral-300 border-t border-neutral-100">
+                <p className="px-4 py-3 text-xs text-neutral-500 border-t border-neutral-100">
                   {byNights.length > 20
                     ? `${byNights.length} villes touchées · ${cities.length - byNights.length} sans ${isSummer ? "nuit tropicale" : "nuit de gel"} ce mois.`
                     : `${cities.length - byNights.length} villes sans ${isSummer ? "nuit tropicale" : "nuit de gel"} ce mois.`
@@ -321,7 +321,7 @@ export default async function AlertesPage() {
                     <tbody className="divide-y divide-neutral-50">
                       {byStreak.slice(0, 20).map((city, i) => (
                         <tr key={city.id} className={`hover:bg-neutral-50 transition-colors ${city.streakCount >= 5 ? (isSummer ? "bg-red-50/50" : "bg-blue-50/50") : ""}`}>
-                          <td className="px-4 py-3 text-xs text-neutral-300 font-mono w-7">{i + 1}</td>
+                          <td className="px-4 py-3 text-xs text-neutral-500 font-mono w-7">{i + 1}</td>
                           <td className="px-4 py-3">
                             <Link href={`/a/${slugify(city.name)}`} className="font-semibold text-neutral-900 hover:underline">
                               {city.name}
@@ -348,7 +348,7 @@ export default async function AlertesPage() {
                     </tbody>
                   </table>
                 </div>
-                <p className="px-4 py-3 text-xs text-neutral-300 border-t border-neutral-100">
+                <p className="px-4 py-3 text-xs text-neutral-500 border-t border-neutral-100">
                   {byStreak.length > 20
                     ? `${byStreak.length} villes en épisode actif · ${cities.length - byStreak.length} sous le seuil (${streakDesc}).`
                     : `${cities.length - byStreak.length} villes sous le seuil (${streakDesc}).`
@@ -362,7 +362,7 @@ export default async function AlertesPage() {
         {/* CTA réutilisant le pattern sombre du site */}
         <div className="bg-neutral-900 rounded-3xl p-6 lg:p-8">
           <div className="max-w-2xl">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Aller plus loin</p>
+            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">Aller plus loin</p>
             <h2 className="text-2xl font-black text-white leading-tight mb-4">
               Ces alertes ont un pendant chiffré.
             </h2>
