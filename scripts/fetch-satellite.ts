@@ -26,28 +26,64 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
   process.exit(1)
 }
 
-// Zones : bbox = [lon_min, lat_min, lon_max, lat_max]
-const ZONES = [
+// Une image JPEG valide (1000×700, vraie couleur) fait >50 KB.
+// En dessous de ce seuil : données manquantes, nuages totaux, ou zone noire.
+const MIN_VALID_BYTES = 50_000
+
+type DateRange = { from: string; to: string }
+
+const ZONES: Array<{
+  id: string
+  label: string
+  bbox: number[]
+  before: DateRange
+  beforeFallbacks: DateRange[]
+  after: DateRange
+  afterFallbacks: DateRange[]
+}> = [
   {
     id: "landes",
     label: "Les Landes — Incendies 2022",
     bbox: [-0.85, 44.55, -0.35, 44.85],
     before: { from: "2021-07-01", to: "2021-08-31" },
-    after:  { from: "2022-08-15", to: "2022-09-30" },
+    beforeFallbacks: [
+      { from: "2020-07-01", to: "2020-08-31" },
+      { from: "2019-07-01", to: "2019-08-31" },
+    ],
+    after: { from: "2022-08-15", to: "2022-09-30" },
+    afterFallbacks: [
+      { from: "2022-09-01", to: "2022-10-31" },
+    ],
   },
   {
     id: "montbel",
     label: "Lac de Montbel — Sécheresse 2022",
     bbox: [1.76, 42.86, 1.97, 42.99],
     before: { from: "2019-07-01", to: "2019-08-31" },
-    after:  { from: "2022-07-15", to: "2022-09-15" },
+    beforeFallbacks: [
+      { from: "2018-07-01", to: "2018-08-31" },
+      { from: "2017-07-01", to: "2017-08-31" },
+    ],
+    after: { from: "2022-07-15", to: "2022-09-15" },
+    afterFallbacks: [
+      { from: "2022-08-01", to: "2022-10-01" },
+    ],
   },
   {
     id: "camargue",
     label: "Camargue — Assèchement",
     bbox: [4.20, 43.30, 4.80, 43.70],
     before: { from: "2016-07-01", to: "2016-08-31" },
-    after:  { from: "2022-07-01", to: "2022-08-31" },
+    beforeFallbacks: [
+      { from: "2017-06-01", to: "2017-07-31" },
+      { from: "2018-06-01", to: "2018-07-31" },
+      { from: "2019-06-01", to: "2019-07-31" },
+    ],
+    after: { from: "2022-07-01", to: "2022-08-31" },
+    afterFallbacks: [
+      { from: "2022-06-01", to: "2022-09-30" },
+      { from: "2023-07-01", to: "2023-08-31" },
+    ],
   },
 ]
 
@@ -78,11 +114,7 @@ async function getToken(): Promise<string> {
   return data.access_token
 }
 
-async function fetchImage(
-  token: string,
-  bbox: number[],
-  timeRange: { from: string; to: string }
-): Promise<Buffer> {
+async function fetchImage(token: string, bbox: number[], timeRange: DateRange): Promise<Buffer> {
   const body = {
     input: {
       bounds: {
@@ -96,7 +128,7 @@ async function fetchImage(
             from: `${timeRange.from}T00:00:00Z`,
             to: `${timeRange.to}T23:59:59Z`,
           },
-          mosaickingOrder: "leastCC", // image la moins nuageuse de la période
+          mosaickingOrder: "leastCC",
         },
       }],
     },
@@ -110,10 +142,7 @@ async function fetchImage(
 
   const res = await fetch("https://sh.dataspace.copernicus.eu/api/v1/process", {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   })
 
@@ -125,6 +154,31 @@ async function fetchImage(
   return Buffer.from(await res.arrayBuffer())
 }
 
+// Tente la date principale puis les fallbacks jusqu'à obtenir une image valide
+async function fetchWithFallback(
+  token: string,
+  bbox: number[],
+  primary: DateRange,
+  fallbacks: DateRange[],
+  label: string
+): Promise<{ buffer: Buffer; usedRange: DateRange } | null> {
+  for (const range of [primary, ...fallbacks]) {
+    process.stdout.write(`    essai ${range.from} → ${range.to} ... `)
+    try {
+      const buf = await fetchImage(token, bbox, range)
+      if (buf.length < MIN_VALID_BYTES) {
+        console.log(`⚠  image suspecte (${buf.length} bytes < ${MIN_VALID_BYTES}), on essaie la suivante`)
+        continue
+      }
+      console.log(`✓  ${buf.length} bytes`)
+      return { buffer: buf, usedRange: range }
+    } catch (err) {
+      console.log(`✗  ${err}`)
+    }
+  }
+  return null
+}
+
 async function main() {
   console.log("Obtention du token Copernicus...")
   const token = await getToken()
@@ -133,25 +187,36 @@ async function main() {
   const outDir = path.join(process.cwd(), "public/satellite")
   fs.mkdirSync(outDir, { recursive: true })
 
+  // Manifest : indique quelles images sont disponibles (pour le front)
+  const manifest: Record<string, { before: boolean; after: boolean; beforeDate?: string; afterDate?: string }> = {}
+
   for (const zone of ZONES) {
     console.log(`[${zone.id}] ${zone.label}`)
+    manifest[zone.id] = { before: false, after: false }
 
-    for (const [key, range] of [["before", zone.before], ["after", zone.after]] as const) {
-      const filename = `${zone.id}-${key}.jpg`
-      const outPath = path.join(outDir, filename)
-      process.stdout.write(`  ${key} (${range.from} → ${range.to}) ... `)
-      try {
-        const img = await fetchImage(token, zone.bbox, range)
-        fs.writeFileSync(outPath, img)
-        console.log(`✓  ${img.length} bytes → public/satellite/${filename}`)
-      } catch (err) {
-        console.log(`✗  ${err}`)
+    for (const [key, primary, fallbacks] of [
+      ["before", zone.before, zone.beforeFallbacks],
+      ["after",  zone.after,  zone.afterFallbacks],
+    ] as const) {
+      const result = await fetchWithFallback(token, zone.bbox, primary, fallbacks, key)
+      if (result) {
+        const filename = `${zone.id}-${key}.jpg`
+        fs.writeFileSync(path.join(outDir, filename), result.buffer)
+        manifest[zone.id][key] = true
+        manifest[zone.id][`${key}Date`] = result.usedRange.from.slice(0, 7)
+      } else {
+        console.log(`    ✗ aucune image valide pour ${zone.id}/${key} — non affiché dans le front`)
       }
     }
     console.log()
   }
 
-  console.log("Terminé. Vérifie public/satellite/ et commite les images.")
+  fs.writeFileSync(
+    path.join(outDir, "manifest.json"),
+    JSON.stringify(manifest, null, 2)
+  )
+  console.log("manifest.json écrit.")
+  console.log("Terminé. Commite public/satellite/ pour déployer les images.")
 }
 
 main().catch((e) => { console.error(e); process.exit(1) })
