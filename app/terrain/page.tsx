@@ -123,8 +123,8 @@ const URBAN_CONTENT = {
 export default async function TerrainPage() {
   const manifest = loadManifest()
   const climateMap = loadClimateMap()
-  const allCities = await getWeatherData()
-  const weatherMap = Object.fromEntries(allCities.map(c => [c.id, c]))
+  const { citiesFR } = await getWeatherData()
+  const weatherMap = Object.fromEntries(citiesFR.map(c => [c.id, c]))
   const m = new Date().getMonth()
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
