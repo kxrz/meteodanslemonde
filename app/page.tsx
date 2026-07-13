@@ -404,6 +404,13 @@ export default async function Home() {
             </div>
           </div>
 
+          {/* ── Séparateur ── */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-neutral-200" />
+            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Focus</span>
+            <div className="flex-1 h-px bg-neutral-200" />
+          </div>
+
           {/* ── 3. Ville du jour ── */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <div className={`rounded-3xl p-6 ${anomalyBg(spotlightCity.anomaly)}`}>
@@ -493,6 +500,52 @@ export default async function Home() {
             </div>
           )}
 
+          {/* ── Séparateur ── */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-neutral-200" />
+            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Cette nuit</span>
+            <div className="flex-1 h-px bg-neutral-200" />
+          </div>
+
+          {/* ── 4b. Nuits tropicales nationales ── */}
+          {(() => {
+            const tropicalCities = citiesWithClimate.filter(c => c.apparent_temp_max >= 28)
+            const hotNightCities = citiesFR.filter(c => c.temp_min >= 20)
+            if (hotNightCities.length === 0) return null
+            return (
+              <div className="bg-[#1e293b] rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center gap-5">
+                <div className="flex-1">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/60 mb-2">Nuits tropicales</p>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-5xl font-black text-white leading-none">{hotNightCities.length}</span>
+                    <span className="text-sm text-sky-300/60">ville{hotNightCities.length > 1 ? "s" : ""} cette nuit</span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                    {hotNightCities.length} ville{hotNightCities.length > 1 ? "s" : ""} ne descend{hotNightCities.length === 1 ? "" : "ent"} pas sous 20°C cette nuit.
+                    {tropicalCities.length > 0 && ` ${tropicalCities.length} villes dépassent 28°C de ressenti aujourd'hui.`}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1.5 max-w-xs">
+                  {hotNightCities.slice(0, 8).map(c => (
+                    <span key={c.id} className="bg-sky-900/40 text-sky-200 text-xs rounded-lg px-2 py-1">
+                      {c.name} {c.temp_min}°C
+                    </span>
+                  ))}
+                  {hotNightCities.length > 8 && (
+                    <span className="text-xs text-slate-500">+{hotNightCities.length - 8} autres</span>
+                  )}
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* ── Séparateur ── */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-neutral-200" />
+            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Partager</span>
+            <div className="flex-1 h-px bg-neutral-200" />
+          </div>
+
           {/* ── 5. Nudge partage du jour ── */}
           <div className="max-w-xl">
             <ShareButton
@@ -503,60 +556,85 @@ export default async function Home() {
             />
           </div>
 
+          {/* ── Séparateur ── */}
+          <div className="flex items-center gap-3 py-1">
+            <div className="flex-1 h-px bg-neutral-200" />
+            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Explorer</span>
+            <div className="flex-1 h-px bg-neutral-200" />
+          </div>
+
           {/* ── 6. Pages du site ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Explorer</p>
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Explorer</p>
+                <svg className="w-5 h-5 text-neutral-300 group-hover:text-neutral-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="m14.5 9-5 2.5L7 17l5-2.5L14.5 9z"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+              </div>
               <p className="text-base font-black text-neutral-900 leading-snug mb-2">Jumeaux climatiques</p>
               <p className="text-xs text-neutral-500 leading-relaxed flex-1">
                 Cliquez une ville française et découvrez ses équivalents dans le monde entier. Ces villes vivent aujourd&apos;hui ce que la France vivra demain.
               </p>
-              <span className="text-neutral-300 group-hover:text-neutral-700 text-lg transition-colors mt-4 block">&rarr;</span>
+              <span className="text-neutral-300 group-hover:text-neutral-700 text-sm transition-colors mt-4 block">Comparer &rarr;</span>
             </Link>
 
             <Link href="/carte" className="bg-[#fff1e6] rounded-3xl p-5 hover:bg-[#ffe0c8] transition-colors group flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-2">Carte</p>
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50">Carte</p>
+                <svg className="w-5 h-5 text-orange-300 group-hover:text-orange-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
               <p className="text-base font-black text-orange-900 leading-snug mb-2">Carte de chaleur</p>
               <p className="text-xs text-orange-900/60 leading-relaxed flex-1">
                 Visualisez les anomalies thermiques du jour sur toute la France en un coup d&apos;oeil. Où fait-il anormalement chaud aujourd&apos;hui ?
               </p>
-              <span className="text-orange-400 group-hover:text-orange-600 text-lg transition-colors mt-4 block">&rarr;</span>
+              <span className="text-orange-400 group-hover:text-orange-600 text-sm transition-colors mt-4 block">Voir la carte &rarr;</span>
             </Link>
 
             <Link href="/terrain" className="bg-[#e8f5e9] rounded-3xl p-5 hover:bg-[#d0ecd2] transition-colors group flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-2">Satellite</p>
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50">Satellite</p>
+                <svg className="w-5 h-5 text-green-400 group-hover:text-green-600 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
               <p className="text-base font-black text-green-900 leading-snug mb-2">Terrain</p>
               <p className="text-xs text-green-900/60 leading-relaxed flex-1">
                 Incendies, lacs asséchés, glaciers en recul. Les images satellite avant/après montrent ce que les chiffres ERA5 décrivent en degrés.
               </p>
-              <span className="text-green-400 group-hover:text-green-700 text-lg transition-colors mt-4 block">&rarr;</span>
+              <span className="text-green-400 group-hover:text-green-700 text-sm transition-colors mt-4 block">Voir les images &rarr;</span>
             </Link>
 
             <Link href="/en/france" className="bg-[#dbeafe] rounded-3xl p-5 hover:bg-[#bfdbfe] transition-colors group flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-2">France</p>
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50">France</p>
+                <svg className="w-5 h-5 text-blue-300 group-hover:text-blue-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+              </div>
               <p className="text-base font-black text-blue-900 leading-snug mb-2">France en chiffres</p>
               <p className="text-xs text-blue-900/60 leading-relaxed flex-1">
                 62 villes, leurs anomalies du jour, leurs tendances sur 30 ans et ce que le GIEC prédit pour 2030, 2040 et 2050.
               </p>
-              <span className="text-blue-400 group-hover:text-blue-600 text-lg transition-colors mt-4 block">&rarr;</span>
+              <span className="text-blue-400 group-hover:text-blue-600 text-sm transition-colors mt-4 block">Toutes les données &rarr;</span>
             </Link>
 
             <Link href="/r" className="bg-[#f3e8ff] rounded-3xl p-5 hover:bg-[#e9d5ff] transition-colors group flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-2">Régions</p>
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50">Régions</p>
+                <svg className="w-5 h-5 text-purple-300 group-hover:text-purple-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              </div>
               <p className="text-base font-black text-purple-900 leading-snug mb-2">Par région</p>
               <p className="text-xs text-purple-900/60 leading-relaxed flex-1">
                 Tendances, villes les plus chaudes et données de sécheresse région par région.
               </p>
-              <span className="text-purple-400 group-hover:text-purple-700 text-lg transition-colors mt-4 block">&rarr;</span>
+              <span className="text-purple-400 group-hover:text-purple-700 text-sm transition-colors mt-4 block">Choisir une région &rarr;</span>
             </Link>
 
             <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-2">Agir</p>
+              <div className="flex items-start justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30">Agir</p>
+                <svg className="w-5 h-5 text-white/20 group-hover:text-white/50 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
               <p className="text-base font-black text-white leading-snug mb-2">Écrire à vos élus</p>
               <p className="text-xs text-white/50 leading-relaxed flex-1">
                 Contactez vos sénateurs, email pré-rédigé et fondé sur les données scientifiques. Parce que la prise de conscience ne suffit pas.
               </p>
-              <span className="text-white/30 group-hover:text-white text-lg transition-colors mt-4 block">&rarr;</span>
+              <span className="text-white/30 group-hover:text-white text-sm transition-colors mt-4 block">Écrire maintenant &rarr;</span>
             </Link>
           </div>
 

@@ -12,7 +12,7 @@ async function fetchBatch(cities: { lat: number; lon: number }[]) {
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${lats}&longitude=${lons}` +
     `&current=temperature_2m,apparent_temperature,weathercode,relative_humidity_2m,wind_speed_10m` +
-    `&daily=temperature_2m_max,apparent_temperature_max,weathercode` +
+    `&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weathercode` +
     `&wind_speed_unit=kmh&forecast_days=1`
   const res = await fetch(url, { next: { revalidate: 86400 } })
   if (!res.ok) throw new Error(`Open-Meteo: ${res.status}`)
@@ -20,12 +20,13 @@ async function fetchBatch(cities: { lat: number; lon: number }[]) {
   return Array.isArray(data) ? data : [data]
 }
 
-function applyWeather<T extends FRBase | WorldBase>(base: T, r: { current: { temperature_2m: number; apparent_temperature: number; weathercode: number; relative_humidity_2m: number; wind_speed_10m: number }; daily: { temperature_2m_max: number[]; apparent_temperature_max: number[] } }): T & Pick<CityFR, "temp" | "apparent_temp" | "temp_max" | "apparent_temp_max" | "weathercode" | "humidity" | "wind"> {
+function applyWeather<T extends FRBase | WorldBase>(base: T, r: { current: { temperature_2m: number; apparent_temperature: number; weathercode: number; relative_humidity_2m: number; wind_speed_10m: number }; daily: { temperature_2m_max: number[]; temperature_2m_min: number[]; apparent_temperature_max: number[] } }): T & Pick<CityFR, "temp" | "apparent_temp" | "temp_max" | "temp_min" | "apparent_temp_max" | "weathercode" | "humidity" | "wind"> {
   return {
     ...base,
     temp: Math.round(r.current.temperature_2m),
     apparent_temp: Math.round(r.current.apparent_temperature),
     temp_max: Math.round(r.daily.temperature_2m_max[0]),
+    temp_min: Math.round(r.daily.temperature_2m_min[0]),
     apparent_temp_max: Math.round(r.daily.apparent_temperature_max[0]),
     weathercode: r.current.weathercode,
     humidity: Math.round(r.current.relative_humidity_2m),
@@ -45,7 +46,7 @@ function loadCache(): { citiesFR: CityFR[]; citiesWorld: CityWorld[]; fetchedAt:
 function emptyResult() {
   const frBase = citiesFRRaw as FRBase[]
   const worldBase = citiesWorldRaw as WorldBase[]
-  const stub = { temp: 0, apparent_temp: 0, temp_max: 0, apparent_temp_max: 0, weathercode: 0, humidity: 0, wind: 0 }
+  const stub = { temp: 0, apparent_temp: 0, temp_max: 0, temp_min: 0, apparent_temp_max: 0, weathercode: 0, humidity: 0, wind: 0 }
   return {
     citiesFR: frBase.map((c) => ({ ...c, ...stub })) as CityFR[],
     citiesWorld: worldBase.map((c) => ({ ...c, ...stub })) as CityWorld[],

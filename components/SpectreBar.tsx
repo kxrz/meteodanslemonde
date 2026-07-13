@@ -58,6 +58,22 @@ export default function SpectreBar({ cities, monthName }: { cities: City[]; mont
         Anomalie vs normale ERA5 de {monthName}, de la plus froide à la plus chaude
       </p>
 
+      {/* Extrêmes au-dessus de la barre */}
+      <div className="flex justify-between text-xs text-neutral-500 mb-1.5">
+        <span>
+          <span className="font-semibold text-neutral-700">{spectreMin.name}</span>
+          {spectreMin.anomaly !== null && (
+            <span className="text-blue-500 ml-1">{spectreMin.anomaly > 0 ? "+" : ""}{spectreMin.anomaly.toFixed(1)}°C</span>
+          )}
+        </span>
+        <span>
+          {spectreMax.anomaly !== null && (
+            <span className="text-red-400 mr-1">{spectreMax.anomaly > 0 ? "+" : ""}{spectreMax.anomaly.toFixed(1)}°C</span>
+          )}
+          <span className="font-semibold text-neutral-700">{spectreMax.name}</span>
+        </span>
+      </div>
+
       {/* Barre */}
       <div className="flex rounded-xl overflow-hidden h-10 mb-3 cursor-pointer">
         {sorted.map((city) => (
@@ -113,14 +129,6 @@ export default function SpectreBar({ cities, monthName }: { cities: City[]; mont
         </div>
       )}
 
-      <div className="flex justify-between text-xs text-neutral-500 mt-3">
-        <span>
-          {spectreMin.anomaly !== null ? `${spectreMin.anomaly > 0 ? "+" : ""}${spectreMin.anomaly.toFixed(1)}°C` : "?"} &middot; {spectreMin.name}
-        </span>
-        <span>
-          {spectreMax.name} &middot; {spectreMax.anomaly !== null ? `${spectreMax.anomaly > 0 ? "+" : ""}${spectreMax.anomaly.toFixed(1)}°C` : "?"}
-        </span>
-      </div>
     </div>
   )
 }

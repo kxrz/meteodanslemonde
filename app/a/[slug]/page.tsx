@@ -103,6 +103,37 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+async function fetchTropicalMetrics(lat: number, lon: number) {
+  const now = new Date()
+  const y = now.getFullYear()
+  const m = String(now.getMonth() + 1).padStart(2, "0")
+  const d = String(now.getDate()).padStart(2, "0")
+  const monthStart = `${y}-${m}-01`
+  const today = `${y}-${m}-${d}`
+  const past30 = new Date(now)
+  past30.setDate(past30.getDate() - 30)
+  const past30Str = past30.toISOString().split("T")[0]
+  try {
+    const res = await fetch(
+      `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}` +
+      `&daily=temperature_2m_min,apparent_temperature_max&start_date=${past30Str}&end_date=${today}`,
+      { next: { revalidate: 86400 } }
+    )
+    if (!res.ok) return null
+    const data = await res.json()
+    const dates = data.daily.time as string[]
+    const minTemps = data.daily.temperature_2m_min as number[]
+    const maxTemps = data.daily.apparent_temperature_max as number[]
+    const tropicalNights = dates.filter((date, i) => date >= monthStart && minTemps[i] > 20).length
+    let heatwaveStreak = 0
+    for (let i = maxTemps.length - 1; i >= 0; i--) {
+      if (maxTemps[i] >= 35) heatwaveStreak++
+      else break
+    }
+    return { tropicalNights, heatwaveStreak, daysInMonth: now.getDate() }
+  } catch { return null }
+}
+
 async function fetchCityWeather(lat: number, lon: number) {
   try {
     const url =
@@ -173,10 +204,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const city = getCityBySlug(slug)
   if (!city) notFound()
 
-  const [climateMap, { citiesFR: allFR, citiesWorld: allWorld }, weather] = await Promise.all([
+  const [climateMap, { citiesFR: allFR, citiesWorld: allWorld }, weather, tropical] = await Promise.all([
     Promise.resolve(loadClimateMap()),
     getWeatherData(),
     fetchCityWeather(city.lat, city.lon),
+    city.isWorld ? Promise.resolve(null) : fetchTropicalMetrics(city.lat, city.lon),
   ])
   const climate = (climateMap[city.id] ?? null) as ClimateEntry
   const narrative = narratives[city.id] ?? null
@@ -429,6 +461,46 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     <p className="text-xs text-blue-900/50 mt-2">
                       {new Date(yearExtremes.min_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Nuits tropicales + jours de canicule (villes FR seulement) */}
+              {tropical && (
+                <div className="col-span-2 grid grid-cols-2 gap-3">
+                  <div className="bg-[#1e293b] rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/60 mb-3">
+                      Nuits tropicales ce mois
+                    </p>
+                    <div className="text-4xl font-black text-white leading-none">{tropical.tropicalNights}</div>
+                    <p className="text-xs text-sky-300/50 mt-2">
+                      nuit{tropical.tropicalNights > 1 ? "s" : ""} &gt; 20°C depuis le 1er
+                    </p>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {tropical.tropicalNights === 0
+                        ? "Aucune nuit tropicale pour l'instant."
+                        : tropical.tropicalNights >= 10
+                        ? "Un mois exceptionnellement étouffant."
+                        : tropical.tropicalNights >= 5
+                        ? "Le sommeil est compromis sur cette période."
+                        : "Des nuits difficiles pour les personnes fragiles."}
+                    </p>
+                  </div>
+                  <div className={`rounded-3xl p-5 ${tropical.heatwaveStreak >= 3 ? "bg-[#7f1d1d]" : tropical.heatwaveStreak >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
+                    <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.heatwaveStreak >= 3 ? "text-red-300/60" : "text-red-900/50"}`}>
+                      Jours de canicule
+                    </p>
+                    <div className={`text-4xl font-black leading-none ${tropical.heatwaveStreak >= 3 ? "text-white" : "text-red-900"}`}>
+                      {tropical.heatwaveStreak > 0 ? `${tropical.heatwaveStreak}j` : "—"}
+                    </div>
+                    <p className={`text-xs mt-2 ${tropical.heatwaveStreak >= 3 ? "text-red-200/50" : "text-red-900/40"}`}>
+                      {tropical.heatwaveStreak > 0
+                        ? `consécutifs au-dessus de 35°C`
+                        : "Pas de canicule en cours"}
+                    </p>
+                    {tropical.heatwaveStreak >= 3 && (
+                      <p className="text-xs text-red-200/40 mt-1">Episode caniculaire actif.</p>
+                    )}
                   </div>
                 </div>
               )}
