@@ -139,7 +139,9 @@ async function fetchTropicalMetrics(lat: number, lon: number) {
       else break
     }
     return { nightCount, streakCount, daysInMonth: now.getDate(), isSummer }
-  } catch { return null }
+  } catch {
+    return { nightCount: 0, streakCount: 0, daysInMonth: now.getDate(), isSummer }
+  }
 }
 
 async function fetchCityWeather(lat: number, lon: number) {
