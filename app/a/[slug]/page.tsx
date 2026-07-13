@@ -483,44 +483,60 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                     </p>
                     <div className="text-4xl font-black text-white leading-none">{tropical.nightCount}</div>
                     <p className={`text-xs mt-2 ${tropical.isSummer ? "text-sky-300/50" : "text-blue-300/50"}`}>
-                      nuit{tropical.nightCount > 1 ? "s" : ""} {tropical.isSummer ? "> 20°C" : "< 0°C"} depuis le 1er
+                      nuit{tropical.nightCount > 1 ? "s" : ""} sur {tropical.daysInMonth} · {tropical.isSummer ? "min > 20°C" : "min < 0°C"}
                     </p>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-xs text-slate-500 mt-2 leading-relaxed">
                       {tropical.isSummer
-                        ? (tropical.nightCount === 0 ? "Aucune nuit tropicale pour l'instant." : tropical.nightCount >= 10 ? "Un mois exceptionnellement étouffant." : tropical.nightCount >= 5 ? "Le sommeil est compromis sur cette période." : "Des nuits difficiles pour les personnes fragiles.")
-                        : (tropical.nightCount === 0 ? "Pas de nuit de gel ce mois." : tropical.nightCount >= 10 ? "Un mois particulièrement froid." : "Risque de gel notable.")}
+                        ? (tropical.nightCount === 0
+                          ? `Toutes les nuits ce mois sont descendues sous 20°C. Le corps a pu récupérer.`
+                          : tropical.nightCount >= 10
+                          ? `${tropical.nightCount} nuits sans fraîcheur : un mois exceptionnellement étouffant. Le sommeil réparateur est impossible.`
+                          : tropical.nightCount >= 5
+                          ? `${tropical.nightCount} nuits sans fraîcheur : le sommeil est compromis sur cette période.`
+                          : `${tropical.nightCount} nuit${tropical.nightCount > 1 ? "s" : ""} où la température n'est pas descendue sous 20°C. Difficile pour les personnes fragiles.`)
+                        : (tropical.nightCount === 0
+                          ? `Pas de nuit de gel ce mois. Les températures nocturnes sont restées positives.`
+                          : `${tropical.nightCount} nuit${tropical.nightCount > 1 ? "s" : ""} de gel (min < 0°C). Risque pour les canalisations et les cultures.`)}
                     </p>
                   </div>
                   {/* Streak */}
                   {tropical.isSummer ? (
                     <div className={`rounded-3xl p-5 ${tropical.streakCount >= 3 ? "bg-[#7f1d1d]" : tropical.streakCount >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
                       <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-red-300/60" : "text-red-900/50"}`}>
-                        Jours de canicule
+                        Canicule · jours consécutifs
                       </p>
                       <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-red-900"}`}>
-                        {tropical.streakCount > 0 ? `${tropical.streakCount}j` : "0"}
+                        {tropical.streakCount}j
                       </div>
                       <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-red-200/50" : "text-red-900/40"}`}>
-                        {tropical.streakCount > 0 ? "consécutifs au-dessus de 35°C" : "Pas de canicule en cours"}
+                        seuil : ressenti max &gt; 35°C
                       </p>
-                      {tropical.streakCount >= 3 && (
-                        <p className="text-xs text-red-200/40 mt-1">Episode caniculaire actif.</p>
-                      )}
+                      <p className={`text-xs mt-2 leading-relaxed ${tropical.streakCount >= 3 ? "text-red-200/60" : "text-red-900/50"}`}>
+                        {tropical.streakCount === 0
+                          ? `Aucun jour récent au-dessus de 35°C de ressenti. En dessous du seuil canicule Météo-France.`
+                          : tropical.streakCount >= 3
+                          ? `${tropical.streakCount} jours consécutifs au-dessus de 35°C : épisode caniculaire actif selon Météo-France.`
+                          : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} au-dessus de 35°C. Pas encore un épisode caniculaire (seuil : 3 jours).`}
+                      </p>
                     </div>
                   ) : (
                     <div className={`rounded-3xl p-5 ${tropical.streakCount >= 3 ? "bg-[#1e3a8a]" : tropical.streakCount >= 1 ? "bg-blue-50" : "bg-white"}`}>
                       <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
-                        Vague de froid
+                        Vague de froid · jours consécutifs
                       </p>
                       <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-blue-900"}`}>
-                        {tropical.streakCount > 0 ? `${tropical.streakCount}j` : "0"}
+                        {tropical.streakCount}j
                       </div>
                       <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-blue-200/50" : "text-blue-900/40"}`}>
-                        {tropical.streakCount > 0 ? "consécutifs sous 5°C de ressenti" : "Pas de vague de froid en cours"}
+                        seuil : ressenti max &lt; 5°C
                       </p>
-                      {tropical.streakCount >= 3 && (
-                        <p className="text-xs text-blue-200/40 mt-1">Episode de froid actif.</p>
-                      )}
+                      <p className={`text-xs mt-2 leading-relaxed ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
+                        {tropical.streakCount === 0
+                          ? `Pas de vague de froid en cours. Le ressenti max reste au-dessus de 5°C.`
+                          : tropical.streakCount >= 3
+                          ? `${tropical.streakCount} jours consécutifs sous 5°C de ressenti : vague de froid active.`
+                          : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} sous 5°C. Pas encore une vague de froid (seuil : 3 jours).`}
+                      </p>
                     </div>
                   )}
                 </div>
