@@ -482,7 +482,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {tropical && (
                 <div className="col-span-2 grid grid-cols-2 gap-3">
                   {/* Nuits */}
-                  <div className={`rounded-3xl p-5 ${tropical.isSummer ? "bg-[#1e293b]" : "bg-[#1e3a5f]"}`}>
+                  <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.isSummer ? "bg-[#1e293b]" : "bg-[#1e3a5f]"}`}>
                     <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.isSummer ? "text-sky-400/60" : "text-blue-300/60"}`}>
                       {tropical.isSummer ? "Nuits tropicales ce mois" : "Nuits de gel ce mois"}
                     </p>
@@ -503,10 +503,10 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                           ? `Pas de nuit de gel ce mois. Les températures nocturnes sont restées positives.`
                           : `${tropical.nightCount} nuit${tropical.nightCount > 1 ? "s" : ""} de gel (min < 0°C). Risque pour les canalisations et les cultures.`)}
                     </p>
-                  </div>
+                  </Link>
                   {/* Streak */}
                   {tropical.isSummer ? (
-                    <div className={`rounded-3xl p-5 ${tropical.streakCount >= 3 ? "bg-[#7f1d1d]" : tropical.streakCount >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
+                    <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.streakCount >= 3 ? "bg-[#7f1d1d]" : tropical.streakCount >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
                       <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-red-300/60" : "text-red-900/50"}`}>
                         Canicule · jours consécutifs
                       </p>
@@ -523,9 +523,9 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                           ? `${tropical.streakCount} jours consécutifs au-dessus de 35°C : épisode caniculaire actif selon Météo-France.`
                           : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} au-dessus de 35°C. Pas encore un épisode caniculaire (seuil : 3 jours).`}
                       </p>
-                    </div>
+                  </Link>
                   ) : (
-                    <div className={`rounded-3xl p-5 ${tropical.streakCount >= 3 ? "bg-[#1e3a8a]" : tropical.streakCount >= 1 ? "bg-blue-50" : "bg-white"}`}>
+                    <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.streakCount >= 3 ? "bg-[#1e3a8a]" : tropical.streakCount >= 1 ? "bg-blue-50" : "bg-white"}`}>
                       <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
                         Vague de froid · jours consécutifs
                       </p>
@@ -542,7 +542,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                           ? `${tropical.streakCount} jours consécutifs sous 5°C de ressenti : vague de froid active.`
                           : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} sous 5°C. Pas encore une vague de froid (seuil : 3 jours).`}
                       </p>
-                    </div>
+                  </Link>
                   )}
                 </div>
               )}
