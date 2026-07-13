@@ -8,9 +8,23 @@
 import fs from "fs"
 import path from "path"
 
+// Load .env.local
+const envPath = path.join(process.cwd(), ".env.local")
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
+    const [k, ...rest] = line.split("=")
+    if (k?.trim() && !k.startsWith("#")) process.env[k.trim()] = rest.join("=").trim()
+  }
+}
+
+const API_KEY = process.env.OPEN_METEO_API_KEY ?? ""
+const API_SUFFIX = API_KEY ? `&apikey=${API_KEY}` : ""
+const ARCHIVE_HOST = API_KEY ? "customer-archive-api.open-meteo.com" : "archive-api.open-meteo.com"
+if (API_KEY) console.log("Open-Meteo API key detected — using premium endpoints")
+
 const DATA_DIR = path.join(process.cwd(), "data")
 const OUTPUT_PATH = path.join(DATA_DIR, "year-extremes.json")
-const DELAY_MS = 2000
+const DELAY_MS = API_KEY ? 300 : 2000
 
 interface CityExtreme {
   max: number
@@ -32,10 +46,10 @@ async function fetchCityExtremes(
   endDate: string
 ): Promise<CityExtreme | null> {
   const url =
-    `https://archive-api.open-meteo.com/v1/archive` +
+    `https://${ARCHIVE_HOST}/v1/archive` +
     `?latitude=${lat}&longitude=${lon}` +
     `&start_date=${startDate}&end_date=${endDate}` +
-    `&daily=apparent_temperature_max&timezone=Europe%2FParis`
+    `&daily=apparent_temperature_max&timezone=Europe%2FParis` + API_SUFFIX
 
   for (let attempt = 0; attempt <= 3; attempt++) {
     try {

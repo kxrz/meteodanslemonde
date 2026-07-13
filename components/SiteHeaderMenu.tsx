@@ -35,9 +35,9 @@ const NAV = [
 const RESOURCES = [
   {
     items: [
-      { href: "/methodologie", label: "Sources de données" },
-      { href: "/methodologie#era5", label: "ERA5 & CMIP6" },
-      { href: "/methodologie#calculs", label: "Calculs d'anomalie" },
+      { href: "/a-propos", label: "Sources de données" },
+      { href: "/a-propos#era5", label: "ERA5 & CMIP6" },
+      { href: "/a-propos#calculs", label: "Calculs d'anomalie" },
     ],
   },
   {

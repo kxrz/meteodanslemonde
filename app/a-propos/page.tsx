@@ -60,7 +60,7 @@ export default function AProposPage() {
             </section>
 
             {/* ERA5 */}
-            <section className="bg-[#b8d4b0] rounded-3xl p-6">
+            <section id="era5" className="bg-[#b8d4b0] rounded-3xl p-6 scroll-mt-20">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-2">
                 Normales &amp; tendances
               </p>
@@ -72,7 +72,7 @@ export default function AProposPage() {
             </section>
 
             {/* GIEC */}
-            <section className="bg-[#c4b8d4] rounded-3xl p-6">
+            <section id="calculs" className="bg-[#c4b8d4] rounded-3xl p-6 scroll-mt-20">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-2">
                 Projections climatiques
               </p>

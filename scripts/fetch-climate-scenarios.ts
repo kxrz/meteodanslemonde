@@ -110,8 +110,9 @@ function ensembleMonthAvg(
 // ─── fetch ERA5 normals + trend (with retry on transient errors) ──────────────
 
 async function fetchNormals(city: { lat: number; lon: number }) {
+  const archHost = API_KEY ? "customer-archive-api.open-meteo.com" : "archive-api.open-meteo.com"
   const url =
-    `https://archive-api.open-meteo.com/v1/archive` +
+    `https://${archHost}/v1/archive` +
     `?latitude=${city.lat}&longitude=${city.lon}` +
     `&start_date=1991-01-01&end_date=2024-12-31` +
     `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC` + API_SUFFIX
@@ -150,8 +151,9 @@ async function fetchNormals(city: { lat: number; lon: number }) {
 // ─── fetch one SSP scenario ───────────────────────────────────────────────────
 
 async function fetchScenario(city: { lat: number; lon: number }, models: string[]) {
+  const climHost = API_KEY ? "customer-climate-api.open-meteo.com" : "climate-api.open-meteo.com"
   const url =
-    `https://climate-api.open-meteo.com/v1/climate` +
+    `https://${climHost}/v1/climate` +
     `?latitude=${city.lat}&longitude=${city.lon}` +
     `&start_date=2000-01-01&end_date=2050-12-31` +
     `&models=${models.join(",")}&daily=temperature_2m_max,apparent_temperature_max` + API_SUFFIX

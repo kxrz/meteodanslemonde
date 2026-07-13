@@ -1,6 +1,19 @@
 import fs from "fs"
 import path from "path"
 
+// Load .env.local
+const envPath = path.join(process.cwd(), ".env.local")
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
+    const [k, ...rest] = line.split("=")
+    if (k?.trim() && !k.startsWith("#")) process.env[k.trim()] = rest.join("=").trim()
+  }
+}
+
+const API_KEY = process.env.OPEN_METEO_API_KEY ?? ""
+const API_SUFFIX = API_KEY ? `&apikey=${API_KEY}` : ""
+const FORECAST_HOST = API_KEY ? "customer-api.open-meteo.com" : "api.open-meteo.com"
+
 const DATA_DIR = path.join(process.cwd(), "data")
 
 interface CityBase {
@@ -29,12 +42,12 @@ async function fetchBatch(cities: CityBase[]): Promise<OpenMeteoResult[]> {
   const lats = cities.map((c) => c.lat).join(",")
   const lons = cities.map((c) => c.lon).join(",")
   const url =
-    `https://api.open-meteo.com/v1/forecast` +
+    `https://${FORECAST_HOST}/v1/forecast` +
     `?latitude=${lats}&longitude=${lons}` +
     `&current=temperature_2m,apparent_temperature,weathercode,relative_humidity_2m,wind_speed_10m` +
     `&daily=temperature_2m_max,apparent_temperature_max,weathercode` +
     `&wind_speed_unit=kmh` +
-    `&forecast_days=1`
+    `&forecast_days=1` + API_SUFFIX
 
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Open-Meteo error: ${res.status} ${await res.text()}`)
