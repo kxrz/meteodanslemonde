@@ -500,42 +500,59 @@ export default async function Home() {
             </div>
           )}
 
-          {/* ── Séparateur ── */}
-          <div className="flex items-center gap-3 py-1">
-            <div className="flex-1 h-px bg-neutral-200" />
-            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Cette nuit</span>
-            <div className="flex-1 h-px bg-neutral-200" />
-          </div>
-
-          {/* ── 4b. Nuits tropicales nationales ── */}
+          {/* ── 4b. Alertes thermiques (nuits tropicales + canicule) ── */}
           {(() => {
-            const tropicalCities = citiesWithClimate.filter(c => c.apparent_temp_max >= 28)
-            const hotNightCities = citiesFR.filter(c => c.temp_min >= 20)
-            if (hotNightCities.length === 0) return null
+            const hotNightCities = citiesFR.filter(c => (c.temp_min ?? 0) >= 20)
+            const heatwaveCities = citiesWithClimate.filter(c => c.apparent_temp_max >= 35)
+            if (hotNightCities.length === 0 && heatwaveCities.length === 0) return null
             return (
-              <div className="bg-[#1e293b] rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center gap-5">
-                <div className="flex-1">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/60 mb-2">Nuits tropicales</p>
-                  <div className="flex items-baseline gap-3">
-                    <span className="text-5xl font-black text-white leading-none">{hotNightCities.length}</span>
-                    <span className="text-sm text-sky-300/60">ville{hotNightCities.length > 1 ? "s" : ""} cette nuit</span>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                    {hotNightCities.length} ville{hotNightCities.length > 1 ? "s" : ""} ne descend{hotNightCities.length === 1 ? "" : "ent"} pas sous 20°C cette nuit.
-                    {tropicalCities.length > 0 && ` ${tropicalCities.length} villes dépassent 28°C de ressenti aujourd'hui.`}
-                  </p>
+              <>
+                <div className="flex items-center gap-3 py-1">
+                  <div className="flex-1 h-px bg-neutral-200" />
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Alertes du jour</span>
+                  <div className="flex-1 h-px bg-neutral-200" />
                 </div>
-                <div className="flex flex-wrap gap-1.5 max-w-xs">
-                  {hotNightCities.slice(0, 8).map(c => (
-                    <span key={c.id} className="bg-sky-900/40 text-sky-200 text-xs rounded-lg px-2 py-1">
-                      {c.name} {c.temp_min}°C
-                    </span>
-                  ))}
-                  {hotNightCities.length > 8 && (
-                    <span className="text-xs text-slate-500">+{hotNightCities.length - 8} autres</span>
+                <div className={`grid gap-3 ${hotNightCities.length > 0 && heatwaveCities.length > 0 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
+                  {hotNightCities.length > 0 && (
+                    <div className="bg-[#1e293b] rounded-3xl p-5">
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/60 mb-3">Nuits tropicales</p>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-4xl font-black text-white leading-none">{hotNightCities.length}</span>
+                        <span className="text-sm text-sky-300/50">ville{hotNightCities.length > 1 ? "s" : ""} &gt; 20°C cette nuit</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {hotNightCities.slice(0, 6).map(c => (
+                          <span key={c.id} className="bg-sky-900/40 text-sky-200 text-xs rounded-lg px-2 py-1">
+                            {c.name} {c.temp_min}°
+                          </span>
+                        ))}
+                        {hotNightCities.length > 6 && (
+                          <span className="text-xs text-slate-500 py-1">+{hotNightCities.length - 6} autres</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {heatwaveCities.length > 0 && (
+                    <div className="bg-[#7f1d1d] rounded-3xl p-5">
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-300/50 mb-3">Canicule aujourd&apos;hui</p>
+                      <div className="flex items-baseline gap-2 mb-2">
+                        <span className="text-4xl font-black text-white leading-none">{heatwaveCities.length}</span>
+                        <span className="text-sm text-red-200/50">ville{heatwaveCities.length > 1 ? "s" : ""} au-dessus de 35°C</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5 mt-3">
+                        {heatwaveCities.slice(0, 6).map(c => (
+                          <span key={c.id} className="bg-red-900/40 text-red-200 text-xs rounded-lg px-2 py-1">
+                            {c.name} {c.apparent_temp_max}°
+                          </span>
+                        ))}
+                        {heatwaveCities.length > 6 && (
+                          <span className="text-xs text-red-400/40 py-1">+{heatwaveCities.length - 6} autres</span>
+                        )}
+                      </div>
+                    </div>
                   )}
                 </div>
-              </div>
+              </>
             )
           })()}
 
@@ -564,7 +581,7 @@ export default async function Home() {
           </div>
 
           {/* ── 6. Pages du site ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="max-w-4xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group flex flex-col">
               <div className="flex items-start justify-between mb-3">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Explorer</p>
