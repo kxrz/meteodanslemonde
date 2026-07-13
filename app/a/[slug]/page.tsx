@@ -105,32 +105,40 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 async function fetchTropicalMetrics(lat: number, lon: number) {
   const now = new Date()
+  const month = now.getMonth()
+  const isSummer = month >= 4 && month <= 9
   const y = now.getFullYear()
-  const m = String(now.getMonth() + 1).padStart(2, "0")
-  const d = String(now.getDate()).padStart(2, "0")
+  const m = String(month + 1).padStart(2, "0")
   const monthStart = `${y}-${m}-01`
-  const today = `${y}-${m}-${d}`
+  const endDate = new Date(now)
+  endDate.setDate(endDate.getDate() - 2)
+  const endStr = endDate.toISOString().split("T")[0]
   const past30 = new Date(now)
-  past30.setDate(past30.getDate() - 30)
+  past30.setDate(past30.getDate() - 32)
   const past30Str = past30.toISOString().split("T")[0]
   try {
     const res = await fetch(
       `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}` +
-      `&daily=temperature_2m_min,apparent_temperature_max&start_date=${past30Str}&end_date=${today}`,
+      `&daily=temperature_2m_min,apparent_temperature_max&start_date=${past30Str}&end_date=${endStr}`,
       { next: { revalidate: 86400 } }
     )
     if (!res.ok) return null
     const data = await res.json()
     const dates = data.daily.time as string[]
-    const minTemps = data.daily.temperature_2m_min as number[]
-    const maxTemps = data.daily.apparent_temperature_max as number[]
-    const tropicalNights = dates.filter((date, i) => date >= monthStart && minTemps[i] > 20).length
-    let heatwaveStreak = 0
+    const minTemps = data.daily.temperature_2m_min as (number | null)[]
+    const maxTemps = data.daily.apparent_temperature_max as (number | null)[]
+    const nightCount = dates.filter((date, i) =>
+      date >= monthStart && minTemps[i] !== null &&
+      (isSummer ? minTemps[i]! > 20 : minTemps[i]! < 0)
+    ).length
+    let streakCount = 0
     for (let i = maxTemps.length - 1; i >= 0; i--) {
-      if (maxTemps[i] >= 35) heatwaveStreak++
+      if (maxTemps[i] === null) break
+      const qualifies = isSummer ? maxTemps[i]! >= 35 : maxTemps[i]! < 5
+      if (qualifies) streakCount++
       else break
     }
-    return { tropicalNights, heatwaveStreak, daysInMonth: now.getDate() }
+    return { nightCount, streakCount, daysInMonth: now.getDate(), isSummer }
   } catch { return null }
 }
 
@@ -465,43 +473,56 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </div>
               )}
 
-              {/* Nuits tropicales + jours de canicule (villes FR seulement) */}
+              {/* Alertes thermiques (villes FR seulement) */}
               {tropical && (
                 <div className="col-span-2 grid grid-cols-2 gap-3">
-                  <div className="bg-[#1e293b] rounded-3xl p-5">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/60 mb-3">
-                      Nuits tropicales ce mois
+                  {/* Nuits */}
+                  <div className={`rounded-3xl p-5 ${tropical.isSummer ? "bg-[#1e293b]" : "bg-[#1e3a5f]"}`}>
+                    <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.isSummer ? "text-sky-400/60" : "text-blue-300/60"}`}>
+                      {tropical.isSummer ? "Nuits tropicales ce mois" : "Nuits de gel ce mois"}
                     </p>
-                    <div className="text-4xl font-black text-white leading-none">{tropical.tropicalNights}</div>
-                    <p className="text-xs text-sky-300/50 mt-2">
-                      nuit{tropical.tropicalNights > 1 ? "s" : ""} &gt; 20°C depuis le 1er
+                    <div className="text-4xl font-black text-white leading-none">{tropical.nightCount}</div>
+                    <p className={`text-xs mt-2 ${tropical.isSummer ? "text-sky-300/50" : "text-blue-300/50"}`}>
+                      nuit{tropical.nightCount > 1 ? "s" : ""} {tropical.isSummer ? "> 20°C" : "< 0°C"} depuis le 1er
                     </p>
                     <p className="text-xs text-slate-500 mt-1">
-                      {tropical.tropicalNights === 0
-                        ? "Aucune nuit tropicale pour l'instant."
-                        : tropical.tropicalNights >= 10
-                        ? "Un mois exceptionnellement étouffant."
-                        : tropical.tropicalNights >= 5
-                        ? "Le sommeil est compromis sur cette période."
-                        : "Des nuits difficiles pour les personnes fragiles."}
+                      {tropical.isSummer
+                        ? (tropical.nightCount === 0 ? "Aucune nuit tropicale pour l'instant." : tropical.nightCount >= 10 ? "Un mois exceptionnellement étouffant." : tropical.nightCount >= 5 ? "Le sommeil est compromis sur cette période." : "Des nuits difficiles pour les personnes fragiles.")
+                        : (tropical.nightCount === 0 ? "Pas de nuit de gel ce mois." : tropical.nightCount >= 10 ? "Un mois particulièrement froid." : "Risque de gel notable.")}
                     </p>
                   </div>
-                  <div className={`rounded-3xl p-5 ${tropical.heatwaveStreak >= 3 ? "bg-[#7f1d1d]" : tropical.heatwaveStreak >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
-                    <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.heatwaveStreak >= 3 ? "text-red-300/60" : "text-red-900/50"}`}>
-                      Jours de canicule
-                    </p>
-                    <div className={`text-4xl font-black leading-none ${tropical.heatwaveStreak >= 3 ? "text-white" : "text-red-900"}`}>
-                      {tropical.heatwaveStreak > 0 ? `${tropical.heatwaveStreak}j` : "—"}
+                  {/* Streak */}
+                  {tropical.isSummer ? (
+                    <div className={`rounded-3xl p-5 ${tropical.streakCount >= 3 ? "bg-[#7f1d1d]" : tropical.streakCount >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
+                      <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-red-300/60" : "text-red-900/50"}`}>
+                        Jours de canicule
+                      </p>
+                      <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-red-900"}`}>
+                        {tropical.streakCount > 0 ? `${tropical.streakCount}j` : "0"}
+                      </div>
+                      <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-red-200/50" : "text-red-900/40"}`}>
+                        {tropical.streakCount > 0 ? "consécutifs au-dessus de 35°C" : "Pas de canicule en cours"}
+                      </p>
+                      {tropical.streakCount >= 3 && (
+                        <p className="text-xs text-red-200/40 mt-1">Episode caniculaire actif.</p>
+                      )}
                     </div>
-                    <p className={`text-xs mt-2 ${tropical.heatwaveStreak >= 3 ? "text-red-200/50" : "text-red-900/40"}`}>
-                      {tropical.heatwaveStreak > 0
-                        ? `consécutifs au-dessus de 35°C`
-                        : "Pas de canicule en cours"}
-                    </p>
-                    {tropical.heatwaveStreak >= 3 && (
-                      <p className="text-xs text-red-200/40 mt-1">Episode caniculaire actif.</p>
-                    )}
-                  </div>
+                  ) : (
+                    <div className={`rounded-3xl p-5 ${tropical.streakCount >= 3 ? "bg-[#1e3a8a]" : tropical.streakCount >= 1 ? "bg-blue-50" : "bg-white"}`}>
+                      <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
+                        Vague de froid
+                      </p>
+                      <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-blue-900"}`}>
+                        {tropical.streakCount > 0 ? `${tropical.streakCount}j` : "0"}
+                      </div>
+                      <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-blue-200/50" : "text-blue-900/40"}`}>
+                        {tropical.streakCount > 0 ? "consécutifs sous 5°C de ressenti" : "Pas de vague de froid en cours"}
+                      </p>
+                      {tropical.streakCount >= 3 && (
+                        <p className="text-xs text-blue-200/40 mt-1">Episode de froid actif.</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 

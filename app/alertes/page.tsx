@@ -191,7 +191,7 @@ export default async function AlertesPage() {
       </div>
 
       {/* Tables */}
-      <div className="max-w-3xl mx-auto px-4 py-10 space-y-6">
+      <div className="px-4 lg:px-8 py-10 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Colonne nuits */}
@@ -201,6 +201,12 @@ export default async function AlertesPage() {
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500">
                 {nightLabel} · {monthName} (sur {daysInMonth} jours)
               </p>
+            </div>
+
+            {/* Pédagogie en premier */}
+            <div className={`mb-4 ${nightBg} rounded-2xl p-5`}>
+              <p className={`text-[10px] uppercase tracking-[0.12em] font-semibold mb-2 ${nightTextColor}`}>Pourquoi c&apos;est important</p>
+              <p className="text-xs text-slate-400 leading-relaxed">{isSummer ? nightPedagoSummer : nightPedagoWinter}</p>
             </div>
 
             {byNights.length === 0 ? (
@@ -215,7 +221,7 @@ export default async function AlertesPage() {
             ) : (
               <div className="bg-white rounded-2xl overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead>
+                  <thead className="sticky top-0 bg-white z-10">
                     <tr className="border-b border-neutral-100">
                       <th className="text-left text-[10px] uppercase tracking-[0.12em] text-neutral-400 font-semibold px-4 py-3 w-7">#</th>
                       <th className="text-left text-[10px] uppercase tracking-[0.12em] text-neutral-400 font-semibold px-4 py-3">Ville</th>
@@ -223,51 +229,51 @@ export default async function AlertesPage() {
                       <th className="text-right text-[10px] uppercase tracking-[0.12em] text-neutral-400 font-semibold px-4 py-3">Min récent</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-50">
-                    {byNights.map((city, i) => (
-                      <tr key={city.id} className="hover:bg-neutral-50 transition-colors">
-                        <td className="px-4 py-3 text-xs text-neutral-300 font-mono">{i + 1}</td>
-                        <td className="px-4 py-3">
-                          <Link href={`/a/${slugify(city.name)}`} className="font-semibold text-neutral-900 hover:underline">
-                            {city.name}
-                          </Link>
-                          <p className="text-xs text-neutral-400">{city.region}</p>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <span className={`font-black text-base ${nightCountColor}`}>{city.nightCount}</span>
-                          <span className="text-xs text-neutral-400 ml-1">/{daysInMonth}j</span>
-                          <div className="flex justify-end mt-1">
-                            <div className="h-1 rounded-full bg-neutral-100 w-16 overflow-hidden">
-                              <div
-                                className={`h-full rounded-full ${isSummer ? "bg-sky-400" : "bg-blue-400"}`}
-                                style={{ width: `${Math.min(100, Math.round((city.nightCount / Math.max(daysInMonth, 1)) * 100))}%` }}
-                              />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          {city.minTemp !== null ? (
-                            <span className={`font-semibold text-sm ${isSummer ? (city.minTemp > 20 ? "text-sky-500" : "text-neutral-400") : (city.minTemp < 0 ? "text-blue-500" : "text-neutral-400")}`}>
-                              {city.minTemp}°
-                            </span>
-                          ) : <span className="text-neutral-300">n/a</span>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
                 </table>
-                {cities.length - byNights.length > 0 && (
-                  <p className="px-4 py-3 text-xs text-neutral-300 border-t border-neutral-100">
-                    {cities.length - byNights.length} villes sans {isSummer ? "nuit tropicale" : "nuit de gel"} ce mois.
-                  </p>
-                )}
+                <div className="overflow-y-auto" style={{ maxHeight: "32rem" }}>
+                  <table className="w-full text-sm">
+                    <tbody className="divide-y divide-neutral-50">
+                      {byNights.slice(0, 20).map((city, i) => (
+                        <tr key={city.id} className="hover:bg-neutral-50 transition-colors">
+                          <td className="px-4 py-3 text-xs text-neutral-300 font-mono w-7">{i + 1}</td>
+                          <td className="px-4 py-3">
+                            <Link href={`/a/${slugify(city.name)}`} className="font-semibold text-neutral-900 hover:underline">
+                              {city.name}
+                            </Link>
+                            <p className="text-xs text-neutral-400">{city.region}</p>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <span className={`font-black text-base ${nightCountColor}`}>{city.nightCount}</span>
+                            <span className="text-xs text-neutral-400 ml-1">/{daysInMonth}j</span>
+                            <div className="flex justify-end mt-1">
+                              <div className="h-1 rounded-full bg-neutral-100 w-16 overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${isSummer ? "bg-sky-400" : "bg-blue-400"}`}
+                                  style={{ width: `${Math.min(100, Math.round((city.nightCount / Math.max(daysInMonth, 1)) * 100))}%` }}
+                                />
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            {city.minTemp !== null ? (
+                              <span className={`font-semibold text-sm ${isSummer ? (city.minTemp > 20 ? "text-sky-500" : "text-neutral-400") : (city.minTemp < 0 ? "text-blue-500" : "text-neutral-400")}`}>
+                                {city.minTemp}°
+                              </span>
+                            ) : <span className="text-neutral-300">n/a</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="px-4 py-3 text-xs text-neutral-300 border-t border-neutral-100">
+                  {byNights.length > 20
+                    ? `${byNights.length} villes touchées · ${cities.length - byNights.length} sans ${isSummer ? "nuit tropicale" : "nuit de gel"} ce mois.`
+                    : `${cities.length - byNights.length} villes sans ${isSummer ? "nuit tropicale" : "nuit de gel"} ce mois.`
+                  }
+                </p>
               </div>
             )}
-
-            <div className={`mt-4 ${nightBg} rounded-2xl p-5`}>
-              <p className={`text-[10px] uppercase tracking-[0.12em] font-semibold mb-2 ${nightTextColor}`}>Pourquoi c&apos;est important</p>
-              <p className="text-xs text-slate-400 leading-relaxed">{isSummer ? nightPedagoSummer : nightPedagoWinter}</p>
-            </div>
           </div>
 
           {/* Colonne streak */}
@@ -277,6 +283,14 @@ export default async function AlertesPage() {
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500">
                 {streakLabel} · épisodes actifs
               </p>
+            </div>
+
+            {/* Pédagogie en premier */}
+            <div className={`mb-4 rounded-2xl p-5 ${isSummer ? "bg-[#7f1d1d]/10" : "bg-[#1e3a8a]/10"}`}>
+              <p className="text-[10px] uppercase tracking-[0.12em] font-semibold mb-2" style={{ color: isSummer ? "rgb(248 113 113 / 0.7)" : "rgb(147 197 253 / 0.7)" }}>
+                Pourquoi c&apos;est important
+              </p>
+              <p className="text-xs text-neutral-500 leading-relaxed">{isSummer ? streakPedagoSummer : streakPedagoWinter}</p>
             </div>
 
             {byStreak.length === 0 ? (
@@ -291,7 +305,7 @@ export default async function AlertesPage() {
             ) : (
               <div className="bg-white rounded-2xl overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead>
+                  <thead className="sticky top-0 bg-white z-10">
                     <tr className="border-b border-neutral-100">
                       <th className="text-left text-[10px] uppercase tracking-[0.12em] text-neutral-400 font-semibold px-4 py-3 w-7">#</th>
                       <th className="text-left text-[10px] uppercase tracking-[0.12em] text-neutral-400 font-semibold px-4 py-3">Ville</th>
@@ -301,49 +315,47 @@ export default async function AlertesPage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-50">
-                    {byStreak.map((city, i) => (
-                      <tr key={city.id} className={`hover:bg-neutral-50 transition-colors ${city.streakCount >= 5 ? (isSummer ? "bg-red-50/50" : "bg-blue-50/50") : ""}`}>
-                        <td className="px-4 py-3 text-xs text-neutral-300 font-mono">{i + 1}</td>
-                        <td className="px-4 py-3">
-                          <Link href={`/a/${slugify(city.name)}`} className="font-semibold text-neutral-900 hover:underline">
-                            {city.name}
-                          </Link>
-                          <p className="text-xs text-neutral-400">{city.region}</p>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <span className={`font-black text-base ${city.streakCount >= 7 ? (isSummer ? "text-red-700" : "text-blue-800") : city.streakCount >= 4 ? (isSummer ? "text-red-500" : "text-blue-600") : (isSummer ? "text-orange-500" : "text-blue-400")}`}>
-                            {city.streakCount}j
-                          </span>
-                          {city.streakCount >= 3 && (
-                            <p className={`text-[10px] ${isSummer ? "text-red-400" : "text-blue-400"}`}>épisode actif</p>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          {city.maxTemp !== null ? (
-                            <span className={`font-semibold text-sm ${isSummer ? (city.maxTemp >= 40 ? "text-red-700" : "text-red-500") : (city.maxTemp < 0 ? "text-blue-700" : "text-blue-500")}`}>
-                              {city.maxTemp}°C
-                            </span>
-                          ) : <span className="text-neutral-300">n/a</span>}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
                 </table>
-                {cities.length - byStreak.length > 0 && (
-                  <p className="px-4 py-3 text-xs text-neutral-300 border-t border-neutral-100">
-                    {cities.length - byStreak.length} villes sous le seuil ({streakDesc}).
-                  </p>
-                )}
+                <div className="overflow-y-auto" style={{ maxHeight: "32rem" }}>
+                  <table className="w-full text-sm">
+                    <tbody className="divide-y divide-neutral-50">
+                      {byStreak.slice(0, 20).map((city, i) => (
+                        <tr key={city.id} className={`hover:bg-neutral-50 transition-colors ${city.streakCount >= 5 ? (isSummer ? "bg-red-50/50" : "bg-blue-50/50") : ""}`}>
+                          <td className="px-4 py-3 text-xs text-neutral-300 font-mono w-7">{i + 1}</td>
+                          <td className="px-4 py-3">
+                            <Link href={`/a/${slugify(city.name)}`} className="font-semibold text-neutral-900 hover:underline">
+                              {city.name}
+                            </Link>
+                            <p className="text-xs text-neutral-400">{city.region}</p>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <span className={`font-black text-base ${city.streakCount >= 7 ? (isSummer ? "text-red-700" : "text-blue-800") : city.streakCount >= 4 ? (isSummer ? "text-red-500" : "text-blue-600") : (isSummer ? "text-orange-500" : "text-blue-400")}`}>
+                              {city.streakCount}j
+                            </span>
+                            {city.streakCount >= 3 && (
+                              <p className={`text-[10px] ${isSummer ? "text-red-400" : "text-blue-400"}`}>épisode actif</p>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            {city.maxTemp !== null ? (
+                              <span className={`font-semibold text-sm ${isSummer ? (city.maxTemp >= 40 ? "text-red-700" : "text-red-500") : (city.maxTemp < 0 ? "text-blue-700" : "text-blue-500")}`}>
+                                {city.maxTemp}°C
+                              </span>
+                            ) : <span className="text-neutral-300">n/a</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="px-4 py-3 text-xs text-neutral-300 border-t border-neutral-100">
+                  {byStreak.length > 20
+                    ? `${byStreak.length} villes en épisode actif · ${cities.length - byStreak.length} sous le seuil (${streakDesc}).`
+                    : `${cities.length - byStreak.length} villes sous le seuil (${streakDesc}).`
+                  }
+                </p>
               </div>
             )}
-
-            <div className={`mt-4 rounded-2xl p-5 ${isSummer ? "bg-[#7f1d1d]/10" : "bg-[#1e3a8a]/10"}`}>
-              <p className={`text-[10px] uppercase tracking-[0.12em] font-semibold mb-2 ${streakTextColor} opacity-100`} style={{ color: isSummer ? "rgb(248 113 113 / 0.7)" : "rgb(147 197 253 / 0.7)" }}>
-                Pourquoi c&apos;est important
-              </p>
-              <p className="text-xs text-neutral-500 leading-relaxed">{isSummer ? streakPedagoSummer : streakPedagoWinter}</p>
-            </div>
           </div>
         </div>
 
