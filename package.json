@@ -8,6 +8,7 @@
     "fetch-climate": "npx tsx scripts/fetch-climate.ts",
     "fetch-climate-scenarios": "npx tsx scripts/fetch-climate-scenarios.ts",
     "fetch-year-extremes": "npx tsx scripts/fetch-year-extremes.ts",
+    "fetch-satellite": "npx tsx scripts/fetch-satellite.ts",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
