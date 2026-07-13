@@ -46,7 +46,7 @@ const ZONES = [
     id: "camargue",
     label: "Camargue — Assèchement",
     bbox: [4.20, 43.30, 4.80, 43.70],
-    before: { from: "2012-07-01", to: "2012-08-31" },
+    before: { from: "2016-07-01", to: "2016-08-31" },
     after:  { from: "2022-07-01", to: "2022-08-31" },
   },
 ]
