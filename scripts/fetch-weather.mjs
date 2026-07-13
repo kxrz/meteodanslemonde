@@ -15,7 +15,7 @@ async function fetchBatch(cities) {
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${lats}&longitude=${lons}` +
     `&current=temperature_2m,apparent_temperature,weathercode,relative_humidity_2m,wind_speed_10m` +
-    `&daily=temperature_2m_max,apparent_temperature_max,weathercode` +
+    `&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weathercode` +
     `&wind_speed_unit=kmh&forecast_days=1`
 
   const res = await fetch(url)
@@ -33,6 +33,7 @@ function applyWeather(base, r) {
     temp: Math.round(r.current.temperature_2m),
     apparent_temp: Math.round(r.current.apparent_temperature),
     temp_max: Math.round(r.daily.temperature_2m_max[0]),
+    temp_min: Math.round(r.daily.temperature_2m_min[0]),
     apparent_temp_max: Math.round(r.daily.apparent_temperature_max[0]),
     weathercode: r.current.weathercode,
     humidity: Math.round(r.current.relative_humidity_2m),

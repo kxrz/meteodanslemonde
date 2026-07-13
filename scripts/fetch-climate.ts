@@ -10,11 +10,25 @@
 import fs from "fs"
 import path from "path"
 
+// Load .env.local
+const envPath = path.join(process.cwd(), ".env.local")
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf-8").split("\n")) {
+    const [k, ...rest] = line.split("=")
+    if (k?.trim() && !k.startsWith("#")) process.env[k.trim()] = rest.join("=").trim()
+  }
+}
+
+const API_KEY = process.env.OPEN_METEO_API_KEY ?? ""
+const API_SUFFIX = API_KEY ? `&apikey=${API_KEY}` : ""
+if (API_KEY) console.log("Open-Meteo API key detected — using premium endpoints")
+else console.warn("No OPEN_METEO_API_KEY — using free endpoints (rate limits apply)")
+
 const DATA_DIR = path.join(process.cwd(), "data")
 const CLIMATE_PATH = path.join(DATA_DIR, "climate.json")
-const BATCH_SIZE = 3
-const BETWEEN_CALLS_MS = 3000
-const BETWEEN_BATCHES_MS = 5000
+const BATCH_SIZE = API_KEY ? 10 : 3
+const BETWEEN_CALLS_MS = API_KEY ? 500 : 3000
+const BETWEEN_BATCHES_MS = API_KEY ? 1000 : 5000
 // Low retry count: fail fast and move on rather than spending minutes on one blocked batch.
 // Re-run the script later (different IP / after rate-limit reset) to fill gaps.
 const MAX_RETRIES = 2
@@ -145,11 +159,12 @@ async function fetchClimateBatch(
   // --- Archive (ERA5) ---
   let archList: ApiResponse[]
   try {
+    const archHost = API_KEY ? "customer-archive-api.open-meteo.com" : "archive-api.open-meteo.com"
     const archRes = await fetchOne(
-      `https://archive-api.open-meteo.com/v1/archive` +
+      `https://${archHost}/v1/archive` +
       `?latitude=${lats}&longitude=${lons}` +
       `&start_date=1991-01-01&end_date=2024-12-31` +
-      `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC`
+      `&daily=temperature_2m_max,apparent_temperature_max&timezone=UTC` + API_SUFFIX
     )
     if (!archRes.ok) {
       console.warn(`    [fail] archive HTTP ${archRes.status}`)
@@ -167,11 +182,12 @@ async function fetchClimateBatch(
   // --- Climate (CMIP6) — failure is non-fatal ---
   let climList: ApiResponse[] | null = null
   try {
+    const climHost = API_KEY ? "customer-climate-api.open-meteo.com" : "climate-api.open-meteo.com"
     const climRes = await fetchOne(
-      `https://climate-api.open-meteo.com/v1/climate` +
+      `https://${climHost}/v1/climate` +
       `?latitude=${lats}&longitude=${lons}` +
       `&start_date=2000-01-01&end_date=2050-12-31` +
-      `&models=MRI_AGCM3_2_S&daily=temperature_2m_max`
+      `&models=MRI_AGCM3_2_S&daily=temperature_2m_max` + API_SUFFIX
     )
     if (climRes.ok) {
       const data = await climRes.json()

@@ -7,6 +7,7 @@ export interface CityFR {
   temp: number
   apparent_temp: number
   temp_max: number
+  temp_min: number
   apparent_temp_max: number
   weathercode: number
   humidity: number

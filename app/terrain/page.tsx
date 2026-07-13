@@ -6,6 +6,8 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import BeforeAfterSlider from "@/components/BeforeAfterSlider"
+import { loadClimateMap } from "@/lib/climate"
+import { getWeatherData } from "@/lib/weather-data"
 
 export const revalidate = 86400
 
@@ -42,7 +44,7 @@ const ZONE_CONTENT = {
   landes: {
     tag: "Gironde · Incendies 2022",
     title: "60 000 hectares en cendres",
-    body: `L'été 2022 a été le plus chaud jamais enregistré en France. Dans les Landes, deux incendies successifs ont consumé 60 000 hectares de forêt de pins, soit la surface de Paris et sa petite couronne réunies. La vague de chaleur exceptionnelle — Bordeaux a affiché +8°C vs sa normale — combinée à une sécheresse record a créé des conditions de combustion inédites depuis 1949. Les cicatrices sont encore visibles depuis l'espace.`,
+    body: `L'été 2022 a été le plus chaud jamais enregistré en France. Dans les Landes, deux incendies successifs ont consumé 60 000 hectares de forêt de pins, soit la surface de Paris et sa petite couronne réunies. La vague de chaleur exceptionnelle (Bordeaux a affiché +8°C vs sa normale) combinée à une sécheresse record a créé des conditions de combustion inédites depuis 1949. Les cicatrices sont encore visibles depuis l'espace.`,
     stats: [
       { val: "60 000", label: "hectares brûlés" },
       { val: "+8°C", label: "anomalie Bordeaux été 2022" },
@@ -50,21 +52,43 @@ const ZONE_CONTENT = {
     ],
     link: { href: "/a/bordeaux", label: "Données climatiques de Bordeaux" },
   },
+  montbel: {
+    tag: "Ariège · Sécheresse 2022",
+    title: "Le lac de Montbel à sec",
+    body: `Le lac de Montbel, réservoir artificiel de l'Ariège qui alimente en eau potable plus de 100 000 habitants, a atteint en 2022 son niveau le plus bas depuis sa création. La sécheresse historique de cet été a réduit sa superficie de moitié : les berges argileuses habituellement immergées sont apparues à nu, révélant une vaste étendue de boue craquelée. Ce lac est un cas d'école : construit précisément pour sécuriser l'approvisionnement en eau, il illustre que les infrastructures conçues pour le climat du XXe siècle ne suffisent plus.`,
+    stats: [
+      { val: "-50%", label: "de superficie en août 2022" },
+      { val: "100 000", label: "habitants dépendants de ce réservoir" },
+      { val: "2022", label: "niveau le plus bas depuis la création du lac" },
+    ],
+    link: { href: "/a/toulouse", label: "Données climatiques de Toulouse" },
+  },
+  camargue: {
+    tag: "Bouches-du-Rhône · Assèchement",
+    title: "La Camargue se dessèche",
+    body: `La Camargue, plus grand delta d'Europe occidentale et réserve de biosphère UNESCO, subit un assèchement progressif accéléré par les étés de plus en plus chauds. Entre 2016 et 2022, les étangs temporaires ont reculé, les roselières se sont réduites et les zones humides vitales pour les flamants roses et les oiseaux migrateurs ont perdu en superficie. La hausse du niveau de la mer aggrave par ailleurs l'intrusion saline, menaçant les marais d'eau douce qui font l'identité de ce territoire.`,
+    stats: [
+      { val: "+1.5°C", label: "réchauffement local depuis 1950" },
+      { val: "400", label: "espèces d'oiseaux recensées, menacées par l'assèchement" },
+      { val: "2050", label: "scénario de submersion partielle si RCP8.5" },
+    ],
+    link: { href: "/a/marseille", label: "Données climatiques de Marseille" },
+  },
   "serre-poncon": {
     tag: "Hautes-Alpes · Sécheresse 2022",
     title: "30 mètres d'eau disparus",
-    body: `Serre-Ponçon est le plus grand lac artificiel de France. En 2022, son niveau a chuté de 30 mètres sous l'effet d'une sécheresse historique : les berges argileuses, d'habitude immergées, sont apparues comme une "marque de baignoire" visible depuis l'espace. Le lac alimente en eau potable et en irrigation une grande partie des Alpes du Sud — sa vidange partielle a révélé l'ampleur de la dépendance aux précipitations neigeuses, elles-mêmes en forte baisse.`,
+    body: `Serre-Ponçon est le plus grand lac artificiel de France. En 2022, son niveau a chuté de 30 mètres sous l'effet d'une sécheresse historique : les berges argileuses, d'habitude immergées, sont apparues comme une "marque de baignoire" visible depuis l'espace. Sa vidange partielle a révélé l'ampleur de la dépendance aux précipitations neigeuses, elles-mêmes en forte baisse.`,
     stats: [
       { val: "-30m", label: "chute du niveau d'eau" },
       { val: "180", label: "millions de m³ manquants" },
       { val: "600 000", label: "habitants dépendants" },
     ],
-    link: { href: "/a/gap", label: "Données climatiques de Gap" },
+    link: { href: "/a/grenoble", label: "Données climatiques de Grenoble" },
   },
   "mer-de-glace": {
     tag: "Chamonix · Recul glaciaire",
     title: "Le glacier qui rétrécit à vue d'oeil",
-    body: `La Mer de Glace, plus grand glacier de France, a perdu plus de 150 mètres d'épaisseur depuis le début du XXe siècle. Entre 2016 et aujourd'hui, le recul est mesurable en quelques années sur Sentinel-2 : la langue glaciaire se rétracte, les moraines latérales s'élargissent, la roche nue prend la place de la glace. Les glaciers alpins sont des thermomètres à long terme — leur recul confirme une hausse de température moyenne de +2°C depuis 1850 dans les Alpes.`,
+    body: `La Mer de Glace, plus grand glacier de France, a perdu plus de 150 mètres d'épaisseur depuis le début du XXe siècle. Entre 2016 et aujourd'hui, le recul est mesurable en quelques années sur Sentinel-2 : la langue glaciaire se rétracte, les moraines latérales s'élargissent, la roche nue prend la place de la glace. Leur recul confirme une hausse de température moyenne de +2°C depuis 1850 dans les Alpes.`,
     stats: [
       { val: "-150m", label: "d'épaisseur depuis 1850" },
       { val: "+2°C", label: "réchauffement alpin moyen" },
@@ -75,7 +99,7 @@ const ZONE_CONTENT = {
   loire: {
     tag: "Nièvre · Étiage 2022",
     title: "Un fleuve devenu banc de sable",
-    body: `En août 2022, la Loire a atteint son débit le plus bas jamais mesuré. À Nevers, Blois, Tours : des bancs de sable s'étiraient sur la largeur entière du lit, les îles se rejoignaient, on traversait à pied. Le fleuve royal est un révélateur particulièrement sensible du réchauffement car il dépend à la fois des précipitations, de la fonte des neiges et de l'évaporation — tous les trois dégradés simultanément par les vagues de chaleur à répétition.`,
+    body: `En août 2022, la Loire a atteint son débit le plus bas jamais mesuré. À Nevers, Blois, Tours : des bancs de sable s'étiraient sur la largeur entière du lit, les îles se rejoignaient, on traversait à pied. Le fleuve royal est un révélateur sensible du réchauffement : il dépend des précipitations, de la fonte des neiges et de l'évaporation, tous trois dégradés simultanément par les vagues de chaleur à répétition.`,
     stats: [
       { val: "-80%", label: "débit vs normale à l'étiage 2022" },
       { val: "3", label: "étés records consécutifs (2019, 2020, 2022)" },
@@ -87,7 +111,7 @@ const ZONE_CONTENT = {
 
 const URBAN_CONTENT = {
   title: "La même ville. Le même jour. 8°C d'écart.",
-  body: `Un parc arboré et un quartier en béton voisins peuvent afficher jusqu'à 8°C d'écart de température de surface le même après-midi d'été. Ce phénomène — l'îlot de chaleur urbain — explique une partie de l'écart entre la température officielle (mesurée en abri météo, souvent en périphérie) et le ressenti réel en ville. Le satellite Sentinel-2 en fausses couleurs infrarouges rend visible cet écart : la végétation apparaît en rouge vif, le béton et l'asphalte en bleu-gris. Plus la surface est sombre et dense, plus elle absorbe et restitue la chaleur.`,
+  body: `Un parc arboré et un quartier en béton voisins peuvent afficher jusqu'à 8°C d'écart de température de surface le même après-midi d'été. Ce phénomène (l'îlot de chaleur urbain) explique une partie de l'écart entre la température officielle (mesurée en abri météo, souvent en périphérie) et le ressenti réel en ville. Le satellite Sentinel-2 en fausses couleurs infrarouges rend visible cet écart : la végétation apparaît en rouge vif, le béton et l'asphalte en bleu-gris. Plus la surface est sombre et dense, plus elle absorbe et restitue la chaleur.`,
   points: [
     "Un arbre adulte refroidit l'équivalent de 10 climatiseurs par évapotranspiration",
     "L'asphalte peut atteindre 70°C en surface lors d'une canicule (vs 30°C sous les arbres)",
@@ -96,15 +120,29 @@ const URBAN_CONTENT = {
   ],
 }
 
-export default function TerrainPage() {
+export default async function TerrainPage() {
   const manifest = loadManifest()
+  const climateMap = loadClimateMap()
+  const { citiesFR } = await getWeatherData()
+  const weatherMap = Object.fromEntries(citiesFR.map(c => [c.id, c]))
+  const m = new Date().getMonth()
+  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
-  const zoneIds = ["landes", "serre-poncon", "mer-de-glace", "loire"] as const
+  const zoneIds = ["landes", "montbel", "camargue", "serre-poncon", "mer-de-glace", "loire"] as const
   const availableZones = zoneIds.filter(
     (id) => manifest[id]?.before && manifest[id]?.after
   )
 
   const hasUrban = manifest["paris-bois"]?.before && manifest["paris-dalle"]?.before
+
+  const ZONE_REGION: Record<string, { slug: string; label: string; cities: string[] }> = {
+    landes:          { slug: "nouvelle-aquitaine",           label: "Nouvelle-Aquitaine",         cities: ["bordeaux", "bayonne", "pau"] },
+    montbel:         { slug: "occitanie",                    label: "Occitanie",                  cities: ["toulouse", "montpellier", "nimes"] },
+    camargue:        { slug: "provence-alpes-cote-d-azur",   label: "Provence-Alpes-Côte d'Azur", cities: ["marseille", "avignon", "toulon"] },
+    "serre-poncon":  { slug: "provence-alpes-cote-d-azur",   label: "Provence-Alpes-Côte d'Azur", cities: ["marseille", "avignon", "toulon"] },
+    "mer-de-glace":  { slug: "auvergne-rhone-alpes",         label: "Auvergne-Rhône-Alpes",       cities: ["lyon", "grenoble", "chamonix"] },
+    loire:           { slug: "centre-val-de-loire",          label: "Centre-Val de Loire",        cities: ["tours", "orleans", "chartres"] },
+  }
 
   return (
     <div className="bg-[#f5f4f0] min-h-screen">
@@ -113,11 +151,12 @@ export default function TerrainPage() {
 
       {/* Hero */}
       <div className="bg-neutral-900 px-5 py-16 md:py-20">
-        <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-white/30 mb-4">Images satellite</p>
+        <div className="max-w-3xl mx-auto">
+        <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-white/60 mb-4">Images satellite</p>
         <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-5 max-w-2xl">
           Ce que les chiffres<br />annoncent, les images<br />le confirment.
         </h1>
-        <p className="text-white/50 text-base leading-relaxed max-w-xl mb-12">
+        <p className="text-white/70 text-base leading-relaxed max-w-xl mb-12">
           Incendies, lacs asséchés, glaciers en recul, fleuves à sec. Ces images satellite avant/après montrent ce que les données ERA5 et les projections GIEC 2050 décrivent en degrés.
         </p>
 
@@ -132,9 +171,10 @@ export default function TerrainPage() {
               <p className="text-3xl font-black text-red-400 leading-none">
                 {val}<span className="text-xl">{unit}</span>
               </p>
-              <p className="text-xs text-white/40 mt-1 leading-snug">{label}</p>
+              <p className="text-xs text-white/70 mt-1 leading-snug">{label}</p>
             </div>
           ))}
+        </div>
         </div>
       </div>
 
@@ -151,13 +191,23 @@ export default function TerrainPage() {
         {availableZones.map((id) => {
           const content = ZONE_CONTENT[id]
           const entry = manifest[id]
+          const region = ZONE_REGION[id]
+          const regionCities = region.cities.map(cityId => {
+            const w = weatherMap[cityId]
+            const cl = climateMap[cityId]
+            if (!w || !cl) return null
+            const normal = cl.normal?.[m] ?? null
+            const temp = w.apparent_temp_max
+            const anomaly = normal !== null ? Math.round((temp - normal) * 10) / 10 : null
+            const name = citiesFR.find(c => c.id === cityId)?.name ?? cityId
+            return { cityId, name, temp, anomaly }
+          }).filter(Boolean) as { cityId: string; name: string; temp: number; anomaly: number | null }[]
+
           return (
-            <section key={id}>
-              <div className="mb-6">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-400 mb-2">{content.tag}</p>
-                <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4">{content.title}</h2>
-                <p className="text-neutral-600 leading-relaxed text-base">{content.body}</p>
-              </div>
+            <section key={id} className="border-b border-neutral-200 pb-20 last:border-0">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-400 mb-3">{content.tag}</p>
+              <h2 className="text-3xl md:text-4xl font-black text-neutral-900 mb-4 leading-tight">{content.title}</h2>
+              <p className="text-neutral-600 leading-relaxed text-base mb-8 max-w-2xl">{content.body}</p>
 
               <BeforeAfterSlider
                 before={`/satellite/${id}-before.jpg`}
@@ -167,19 +217,44 @@ export default function TerrainPage() {
                 alt={content.title}
               />
 
-              <div className="mt-5 flex flex-wrap gap-6">
+              <div className="mt-6 flex flex-wrap gap-8 items-end">
                 {content.stats.map(({ val, label }) => (
-                  <div key={label}>
-                    <p className="text-2xl font-black text-neutral-900">{val}</p>
-                    <p className="text-xs text-neutral-400 mt-0.5">{label}</p>
+                  <div key={label} className="min-w-[80px]">
+                    <p className="text-2xl font-black text-neutral-900 leading-none">{val}</p>
+                    <p className="text-xs text-neutral-400 mt-1 leading-snug">{label}</p>
                   </div>
                 ))}
-              </div>
 
-              <div className="mt-4">
-                <Link href={content.link.href} className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors underline underline-offset-2">
-                  {content.link.label} &rarr;
-                </Link>
+                <div className="ml-auto bg-neutral-900 rounded-2xl px-5 py-3 flex flex-col items-end min-w-[200px]">
+                  <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-white/60 mb-2">
+                    Aujourd&apos;hui · {region.label}
+                  </p>
+                  {regionCities.length > 0 ? (
+                    <div className="flex flex-col gap-1.5 items-end w-full">
+                      {regionCities.map(({ cityId, name, temp, anomaly }) => (
+                        <Link key={cityId} href={`/a/${cityId}`} className="flex items-baseline justify-between gap-3 w-full group">
+                          <span className="text-xs text-white/70 group-hover:text-white/60 transition-colors">{name}</span>
+                          <span className="flex items-baseline gap-1">
+                            <span className="text-sm font-bold text-white">{temp}&deg;</span>
+                            {anomaly !== null && (
+                              <span className={`text-xs font-semibold ${anomaly > 0 ? "text-red-400" : "text-blue-400"}`}>
+                                {anomaly > 0 ? "+" : ""}{anomaly.toFixed(1)}&deg;
+                              </span>
+                            )}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-white/60">Données en cours</p>
+                  )}
+                  <Link
+                    href={`/r/${region.slug}`}
+                    className="text-xs text-white/60 hover:text-white/60 transition-colors mt-3 self-end"
+                  >
+                    Voir la région &rarr;
+                  </Link>
+                </div>
               </div>
             </section>
           )
@@ -196,11 +271,11 @@ export default function TerrainPage() {
           {hasUrban ? (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-2">Canopée — Bois de Vincennes</p>
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-2">Canopée · Bois de Vincennes</p>
                 <img src="/satellite/paris-bois-before.jpg" alt="Paris, Bois de Vincennes en infrarouge" className="w-full rounded-2xl" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-2">Béton — La Défense</p>
+                <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-2">Béton · La Défense</p>
                 <img src="/satellite/paris-dalle-before.jpg" alt="La Défense en infrarouge" className="w-full rounded-2xl" />
               </div>
               <p className="md:col-span-2 text-xs text-neutral-400 text-center">
@@ -223,10 +298,10 @@ export default function TerrainPage() {
 
         {/* Conclusion / lien site */}
         <section className="bg-neutral-900 rounded-3xl p-8 md:p-10">
-          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Et maintenant ?</p>
+          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">Et maintenant ?</p>
           <h2 className="text-2xl font-black text-white mb-4">Ces images ont un pendant chiffré.</h2>
           <p className="text-white/60 leading-relaxed mb-8">
-            Chacun des phénomènes visibles ici — sécheresse, canicule, recul glaciaire — est mesuré dans les données ERA5 que le site affiche pour chaque ville. Le ressenti du jour, l'anomalie vs la normale, les projections GIEC 2030-2050 : c'est le même réchauffement, sous une autre forme.
+            Chacun des phénomènes visibles ici (sécheresse, canicule, recul glaciaire) est mesuré dans les données ERA5 que le site affiche pour chaque ville. Le ressenti du jour, l'anomalie vs la normale, les projections GIEC 2030-2050 : c'est le même réchauffement, sous une autre forme.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/carte" className="bg-white text-neutral-900 font-semibold text-sm rounded-2xl px-5 py-3 hover:bg-neutral-100 transition-colors">

@@ -135,7 +135,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         <span className="text-7xl font-black text-neutral-900">
                           {heroCity.apparent_temp_max}°
                         </span>
-                        <span className="text-3xl font-black text-neutral-300">C</span>
+                        <span className="text-3xl font-black text-neutral-500">C</span>
                       </div>
                       <p className="text-neutral-600 text-sm mt-1.5">
                         à{" "}
@@ -199,10 +199,10 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
 
                 {/* Écrire aux élus */}
                 <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Action</p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">Action</p>
                   <p className="text-base font-black text-white leading-snug mb-1.5">Écrire à vos élus</p>
-                  <p className="text-xs text-white/50 leading-relaxed">Contactez vos sénateurs, email pré-rédigé.</p>
-                  <span className="text-white/30 group-hover:text-white text-lg transition-colors mt-3 block">→</span>
+                  <p className="text-xs text-white/70 leading-relaxed">Contactez vos sénateurs, email pré-rédigé.</p>
+                  <span className="text-white/60 group-hover:text-white text-lg transition-colors mt-3 block">→</span>
                 </Link>
 
                 {/* Comment ça marche */}
@@ -231,7 +231,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                 <div className={`col-span-2 ${isFR ? "bg-[#dbeafe]" : "bg-[#d1fae5]"} rounded-3xl p-6`}>
                   <div className="flex items-start justify-between gap-2 mb-4">
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold opacity-40 mb-1">
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold opacity-70 mb-1">
                         {isFR
                           ? (selectedCity as CityFR).region
                           : (selectedCity as CityWorld).country}
@@ -255,7 +255,7 @@ export default function ClientPage({ citiesFR, citiesWorld, fetchedAt, climateMa
                         )}
                       </div>
                       {!isFR && (
-                        <p className="text-xs opacity-50 mt-0.5">
+                        <p className="text-xs opacity-80 mt-0.5">
                           {(selectedCity as CityWorld).climateLabel}
                         </p>
                       )}

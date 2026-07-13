@@ -103,6 +103,50 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 }
 
+async function fetchTropicalMetrics(lat: number, lon: number) {
+  const now = new Date()
+  const month = now.getMonth()
+  const isSummer = month >= 4 && month <= 9
+  const y = now.getFullYear()
+  const m = String(month + 1).padStart(2, "0")
+  const monthStart = `${y}-${m}-01`
+  const endDate = new Date(now)
+  endDate.setDate(endDate.getDate() - 2)
+  const endStr = endDate.toISOString().split("T")[0]
+  const past30 = new Date(now)
+  past30.setDate(past30.getDate() - 32)
+  const past30Str = past30.toISOString().split("T")[0]
+  try {
+    const res = await fetch(
+      `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}` +
+      `&daily=temperature_2m_min,apparent_temperature_max&start_date=${past30Str}&end_date=${endStr}`,
+      { next: { revalidate: 86400 } }
+    )
+    if (!res.ok) throw new Error(`archive API ${res.status}`)
+    const data = await res.json()
+    if (data?.error) throw new Error(data.reason)
+    const dates = data.daily.time as string[]
+    const minTemps = data.daily.temperature_2m_min as (number | null)[]
+    const maxTemps = data.daily.apparent_temperature_max as (number | null)[]
+    const nightCount = dates.filter((date, i) =>
+      date >= monthStart && minTemps[i] !== null &&
+      (isSummer ? minTemps[i]! > 20 : minTemps[i]! <= 0)
+    ).length
+    let streakCount = 0
+    for (let i = maxTemps.length - 1; i >= 0; i--) {
+      if (maxTemps[i] === null) break
+      const qualifies = isSummer ? maxTemps[i]! >= 35 : maxTemps[i]! < 5
+      if (qualifies) streakCount++
+      else break
+    }
+    const daysInMonth = endDate.getMonth() === month ? endDate.getDate() : new Date(y, month + 1, 0).getDate()
+    return { nightCount, streakCount, daysInMonth, isSummer }
+  } catch {
+    const daysInMonth = now.getDate() - 2
+    return { nightCount: 0, streakCount: 0, daysInMonth, isSummer }
+  }
+}
+
 async function fetchCityWeather(lat: number, lon: number) {
   try {
     const url =
@@ -173,10 +217,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const city = getCityBySlug(slug)
   if (!city) notFound()
 
-  const [climateMap, { citiesFR: allFR, citiesWorld: allWorld }, weather] = await Promise.all([
+  const [climateMap, { citiesFR: allFR, citiesWorld: allWorld }, weather, tropical] = await Promise.all([
     Promise.resolve(loadClimateMap()),
     getWeatherData(),
     fetchCityWeather(city.lat, city.lon),
+    city.isWorld ? Promise.resolve(null) : fetchTropicalMetrics(city.lat, city.lon),
   ])
   const climate = (climateMap[city.id] ?? null) as ClimateEntry
   const narrative = narratives[city.id] ?? null
@@ -287,7 +332,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {/* Narrative */}
               {narrative && (
                 <article className="col-span-2 bg-neutral-900 rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">
                     En quelques mots
                   </p>
                   <p className="text-sm text-white/80 leading-relaxed">{narrative}</p>
@@ -307,8 +352,13 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       <span className="text-2xl font-black text-blue-400">C</span>
                     </div>
                     {anomaly !== null && (
-                      <p className="text-sm text-blue-800/60 mt-2">
-                        {fmtDelta(anomaly)}&deg;C vs. normale {monthName}
+                      <p className="text-sm text-blue-800/60 mt-2 leading-snug">
+                        {anomaly > 0
+                          ? <>{fmtDelta(anomaly)}&deg;C <span className="font-normal">au-dessus de la normale de {monthName}</span></>
+                          : anomaly < 0
+                          ? <>{fmtDelta(anomaly)}&deg;C <span className="font-normal">en dessous de la normale de {monthName}</span></>
+                          : <span className="font-normal">dans la normale de {monthName}</span>
+                        }
                       </p>
                     )}
                   </div>
@@ -358,7 +408,15 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   {normal !== null ? (
                     <>
                       <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}&deg;C</div>
-                      <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
+                      <p className="text-xs text-green-900/50 mt-2 leading-snug">moy. 1991–2020 · référence ERA5</p>
+                      {anomaly !== null && (
+                        <p className="text-xs text-green-900/60 mt-2 leading-snug">
+                          {anomaly === 0
+                            ? "Aujourd'hui est exactement dans la norme historique."
+                            : `Aujourd'hui il fait ${Math.abs(anomaly).toFixed(1)}°C ${anomaly > 0 ? "de plus" : "de moins"} que ce qu'on attendait pour ce mois-ci.`
+                          }
+                        </p>
+                      )}
                     </>
                   ) : (
                     <p className="text-2xl font-black text-green-900/30">N/A</p>
@@ -376,7 +434,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-neutral-300">N/A</p>
+                    <p className="text-2xl font-black text-neutral-500">N/A</p>
                   )}
                 </div>
               </div>
@@ -389,7 +447,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               {/* Second paragraph — projection narrative */}
               {projectionParagraph && (
                 <article className="col-span-2 bg-[#1a1a2e] rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">
                     Ce que disent les modeles
                   </p>
                   <p className="text-sm text-white/75 leading-relaxed">{projectionParagraph}</p>
@@ -417,6 +475,75 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       {new Date(yearExtremes.min_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                     </p>
                   </div>
+                </div>
+              )}
+
+              {/* Alertes thermiques (villes FR seulement) */}
+              {tropical && (
+                <div className="col-span-2 grid grid-cols-2 gap-3">
+                  {/* Nuits */}
+                  <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.isSummer ? "bg-[#1e293b]" : "bg-[#1e3a5f]"}`}>
+                    <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.isSummer ? "text-sky-400/60" : "text-blue-300/60"}`}>
+                      {tropical.isSummer ? "Nuits tropicales ce mois" : "Nuits de gel ce mois"}
+                    </p>
+                    <div className="text-4xl font-black text-white leading-none">{tropical.nightCount}</div>
+                    <p className={`text-xs mt-2 ${tropical.isSummer ? "text-sky-300/50" : "text-blue-300/50"}`}>
+                      nuit{tropical.nightCount > 1 ? "s" : ""} sur {tropical.daysInMonth} · {tropical.isSummer ? "min > 20°C" : "min < 0°C"}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+                      {tropical.isSummer
+                        ? (tropical.nightCount === 0
+                          ? `Toutes les nuits ce mois sont descendues sous 20°C. Le corps a pu récupérer.`
+                          : tropical.nightCount >= 10
+                          ? `${tropical.nightCount} nuits sans fraîcheur : un mois exceptionnellement étouffant. Le sommeil réparateur est impossible.`
+                          : tropical.nightCount >= 5
+                          ? `${tropical.nightCount} nuits sans fraîcheur : le sommeil est compromis sur cette période.`
+                          : `${tropical.nightCount} nuit${tropical.nightCount > 1 ? "s" : ""} où la température n'est pas descendue sous 20°C. Difficile pour les personnes fragiles.`)
+                        : (tropical.nightCount === 0
+                          ? `Pas de nuit de gel ce mois. Les températures nocturnes sont restées positives.`
+                          : `${tropical.nightCount} nuit${tropical.nightCount > 1 ? "s" : ""} de gel (min < 0°C). Risque pour les canalisations et les cultures.`)}
+                    </p>
+                  </Link>
+                  {/* Streak */}
+                  {tropical.isSummer ? (
+                    <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.streakCount >= 3 ? "bg-[#7f1d1d]" : tropical.streakCount >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
+                      <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-red-300/60" : "text-red-900/50"}`}>
+                        Canicule · jours consécutifs
+                      </p>
+                      <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-red-900"}`}>
+                        {tropical.streakCount}j
+                      </div>
+                      <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-red-200/50" : "text-red-900/40"}`}>
+                        seuil : ressenti max &gt; 35°C
+                      </p>
+                      <p className={`text-xs mt-2 leading-relaxed ${tropical.streakCount >= 3 ? "text-red-200/60" : "text-red-900/50"}`}>
+                        {tropical.streakCount === 0
+                          ? `Aucun jour récent au-dessus de 35°C de ressenti. En dessous du seuil canicule Météo-France.`
+                          : tropical.streakCount >= 3
+                          ? `${tropical.streakCount} jours consécutifs au-dessus de 35°C : épisode caniculaire actif selon Météo-France.`
+                          : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} au-dessus de 35°C. Pas encore un épisode caniculaire (seuil : 3 jours).`}
+                      </p>
+                  </Link>
+                  ) : (
+                    <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.streakCount >= 3 ? "bg-[#1e3a8a]" : tropical.streakCount >= 1 ? "bg-blue-50" : "bg-white"}`}>
+                      <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
+                        Vague de froid · jours consécutifs
+                      </p>
+                      <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-blue-900"}`}>
+                        {tropical.streakCount}j
+                      </div>
+                      <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-blue-200/50" : "text-blue-900/40"}`}>
+                        seuil : ressenti max &lt; 5°C
+                      </p>
+                      <p className={`text-xs mt-2 leading-relaxed ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
+                        {tropical.streakCount === 0
+                          ? `Pas de vague de froid en cours. Le ressenti max reste au-dessus de 5°C.`
+                          : tropical.streakCount >= 3
+                          ? `${tropical.streakCount} jours consécutifs sous 5°C de ressenti : vague de froid active.`
+                          : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} sous 5°C. Pas encore une vague de froid (seuil : 3 jours).`}
+                      </p>
+                  </Link>
+                  )}
                 </div>
               )}
 
@@ -466,7 +593,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   </div>
                   <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col justify-between">
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-2">Notifications</p>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-2">Notifications</p>
                       <p className="text-sm font-black text-white leading-snug mb-2">
                         Le ressenti de {city.name} chaque matin
                       </p>

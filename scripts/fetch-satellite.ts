@@ -1,5 +1,5 @@
 /**
- * Génère les images satellite avant/après pour la page /terrain.
+ * Génère les images satellite avant/après pour la page /sol.
  * Utilise l'API Process de Copernicus Data Space (Sentinel-2 L2A, vraie couleur).
  *
  * Prérequis : COPERNICUS_CLIENT_ID et COPERNICUS_CLIENT_SECRET dans .env.local
@@ -9,6 +9,7 @@
 import * as fs from "fs"
 import * as path from "path"
 
+// Charge .env.local manuellement (dotenv n'est pas une dépendance du projet)
 const envPath = path.join(process.cwd(), ".env.local")
 if (fs.existsSync(envPath)) {
   for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
@@ -25,96 +26,75 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
   process.exit(1)
 }
 
+// Une image JPEG valide (1000×700, vraie couleur) fait >50 KB.
+// En dessous de ce seuil : données manquantes, nuages totaux, ou zone noire.
 const MIN_VALID_BYTES = 50_000
 
 type DateRange = { from: string; to: string }
-
-// Evalscript vraie couleur Sentinel-2, gain 3.5
-const TRUE_COLOR = `//VERSION=3
-function setup() { return { input: [{ bands: ["B04","B03","B02"] }], output: { bands: 3 } } }
-function evaluatePixel(s) { return [3.5*s.B04, 3.5*s.B03, 3.5*s.B02] }`
-
-// Evalscript fausses couleurs infrarouges : végétation = rouge vif, béton = cyan/gris
-// Parfait pour montrer l'îlot de chaleur et la canopée
-const FALSE_COLOR_URBAN = `//VERSION=3
-function setup() { return { input: [{ bands: ["B08","B04","B03"] }], output: { bands: 3 } } }
-function evaluatePixel(s) { return [2.5*s.B08, 2.5*s.B04, 2.5*s.B03] }`
 
 const ZONES: Array<{
   id: string
   label: string
   bbox: number[]
-  evalscript: string
   before: DateRange
   beforeFallbacks: DateRange[]
   after: DateRange
   afterFallbacks: DateRange[]
 }> = [
-  // ── Zones temporelles (avant/après événement) ───────────────────────────
   {
     id: "landes",
     label: "Les Landes — Incendies 2022",
     bbox: [-0.85, 44.55, -0.35, 44.85],
-    evalscript: TRUE_COLOR,
     before: { from: "2021-07-01", to: "2021-08-31" },
-    beforeFallbacks: [{ from: "2020-07-01", to: "2020-08-31" }],
-    after:  { from: "2022-08-15", to: "2022-09-30" },
-    afterFallbacks: [{ from: "2022-09-01", to: "2022-10-31" }],
+    beforeFallbacks: [
+      { from: "2020-07-01", to: "2020-08-31" },
+      { from: "2019-07-01", to: "2019-08-31" },
+    ],
+    after: { from: "2022-08-15", to: "2022-09-30" },
+    afterFallbacks: [
+      { from: "2022-09-01", to: "2022-10-31" },
+    ],
   },
   {
-    id: "serre-poncon",
-    label: "Lac de Serre-Ponçon — Sécheresse 2022",
-    bbox: [6.15, 44.42, 6.58, 44.72],
-    evalscript: TRUE_COLOR,
-    before: { from: "2019-08-01", to: "2019-09-30" },
-    beforeFallbacks: [{ from: "2018-08-01", to: "2018-09-30" }],
-    after:  { from: "2022-08-01", to: "2022-09-30" },
-    afterFallbacks: [{ from: "2022-07-01", to: "2022-10-31" }],
+    id: "montbel",
+    label: "Lac de Montbel — Sécheresse 2022",
+    bbox: [1.76, 42.86, 1.97, 42.99],
+    before: { from: "2019-07-01", to: "2019-08-31" },
+    beforeFallbacks: [
+      { from: "2018-07-01", to: "2018-08-31" },
+      { from: "2017-07-01", to: "2017-08-31" },
+    ],
+    after: { from: "2022-07-15", to: "2022-09-15" },
+    afterFallbacks: [
+      { from: "2022-08-01", to: "2022-10-01" },
+    ],
   },
   {
-    id: "mer-de-glace",
-    label: "Mer de Glace — Recul glaciaire",
-    bbox: [6.88, 45.86, 7.06, 45.98],
-    evalscript: TRUE_COLOR,
-    before: { from: "2016-08-01", to: "2016-09-15" },
-    beforeFallbacks: [{ from: "2017-08-01", to: "2017-09-15" }],
-    after:  { from: "2023-08-01", to: "2023-09-15" },
-    afterFallbacks: [{ from: "2022-08-01", to: "2022-09-15" }],
-  },
-  {
-    id: "loire",
-    label: "Loire à Nevers — Étiage record 2022",
-    bbox: [2.95, 46.95, 3.25, 47.15],
-    evalscript: TRUE_COLOR,
-    before: { from: "2019-08-01", to: "2019-09-30" },
-    beforeFallbacks: [{ from: "2018-08-01", to: "2018-09-30" }],
-    after:  { from: "2022-08-01", to: "2022-09-30" },
-    afterFallbacks: [{ from: "2022-07-15", to: "2022-10-15" }],
-  },
-
-  // ── Zones urbaines (canopée vs béton, même date récente) ────────────────
-  // "Avant" = quartier vert, "Après" = quartier béton — même période
-  {
-    id: "paris-bois",
-    label: "Paris — Bois de Vincennes (canopée)",
-    bbox: [2.41, 48.80, 2.48, 48.85],
-    evalscript: FALSE_COLOR_URBAN,
-    before: { from: "2023-07-01", to: "2023-08-31" },
-    beforeFallbacks: [{ from: "2022-07-01", to: "2022-08-31" }],
-    after:  { from: "2023-07-01", to: "2023-08-31" },
-    afterFallbacks: [{ from: "2022-07-01", to: "2022-08-31" }],
-  },
-  {
-    id: "paris-dalle",
-    label: "Paris — La Défense (béton)",
-    bbox: [2.22, 48.88, 2.27, 48.92],
-    evalscript: FALSE_COLOR_URBAN,
-    before: { from: "2023-07-01", to: "2023-08-31" },
-    beforeFallbacks: [{ from: "2022-07-01", to: "2022-08-31" }],
-    after:  { from: "2023-07-01", to: "2023-08-31" },
-    afterFallbacks: [{ from: "2022-07-01", to: "2022-08-31" }],
+    id: "camargue",
+    label: "Camargue — Assèchement",
+    bbox: [4.20, 43.30, 4.80, 43.70],
+    before: { from: "2016-07-01", to: "2016-08-31" },
+    beforeFallbacks: [
+      { from: "2017-06-01", to: "2017-07-31" },
+      { from: "2018-06-01", to: "2018-07-31" },
+      { from: "2019-06-01", to: "2019-07-31" },
+    ],
+    after: { from: "2022-07-01", to: "2022-08-31" },
+    afterFallbacks: [
+      { from: "2022-06-01", to: "2022-09-30" },
+      { from: "2023-07-01", to: "2023-08-31" },
+    ],
   },
 ]
+
+// Vraie couleur Sentinel-2 légèrement boostée (gain 3.5)
+const EVALSCRIPT = `//VERSION=3
+function setup() {
+  return { input: [{ bands: ["B04", "B03", "B02"] }], output: { bands: 3 } }
+}
+function evaluatePixel(s) {
+  return [3.5 * s.B04, 3.5 * s.B03, 3.5 * s.B02]
+}`
 
 async function getToken(): Promise<string> {
   const res = await fetch(
@@ -134,7 +114,7 @@ async function getToken(): Promise<string> {
   return data.access_token
 }
 
-async function fetchImage(token: string, bbox: number[], timeRange: DateRange, evalscript: string): Promise<Buffer> {
+async function fetchImage(token: string, bbox: number[], timeRange: DateRange): Promise<Buffer> {
   const body = {
     input: {
       bounds: {
@@ -144,7 +124,10 @@ async function fetchImage(token: string, bbox: number[], timeRange: DateRange, e
       data: [{
         type: "sentinel-2-l2a",
         dataFilter: {
-          timeRange: { from: `${timeRange.from}T00:00:00Z`, to: `${timeRange.to}T23:59:59Z` },
+          timeRange: {
+            from: `${timeRange.from}T00:00:00Z`,
+            to: `${timeRange.to}T23:59:59Z`,
+          },
           mosaickingOrder: "leastCC",
         },
       }],
@@ -154,7 +137,7 @@ async function fetchImage(token: string, bbox: number[], timeRange: DateRange, e
       height: 700,
       responses: [{ identifier: "default", format: { type: "image/jpeg", quality: 92 } }],
     },
-    evalscript,
+    evalscript: EVALSCRIPT,
   }
 
   const res = await fetch("https://sh.dataspace.copernicus.eu/api/v1/process", {
@@ -171,23 +154,23 @@ async function fetchImage(token: string, bbox: number[], timeRange: DateRange, e
   return Buffer.from(await res.arrayBuffer())
 }
 
+// Tente la date principale puis les fallbacks jusqu'à obtenir une image valide
 async function fetchWithFallback(
   token: string,
-  zone: typeof ZONES[0],
-  key: "before" | "after"
+  bbox: number[],
+  primary: DateRange,
+  fallbacks: DateRange[],
+  label: string
 ): Promise<{ buffer: Buffer; usedRange: DateRange } | null> {
-  const primary = zone[key]
-  const fallbacks = zone[`${key}Fallbacks`]
-
   for (const range of [primary, ...fallbacks]) {
-    process.stdout.write(`    ${key} ${range.from.slice(0, 7)} ... `)
+    process.stdout.write(`    essai ${range.from} → ${range.to} ... `)
     try {
-      const buf = await fetchImage(token, zone.bbox, range, zone.evalscript)
+      const buf = await fetchImage(token, bbox, range)
       if (buf.length < MIN_VALID_BYTES) {
-        console.log(`⚠  trop petit (${buf.length} bytes), essai suivant`)
+        console.log(`⚠  image suspecte (${buf.length} bytes < ${MIN_VALID_BYTES}), on essaie la suivante`)
         continue
       }
-      console.log(`✓  ${Math.round(buf.length / 1024)} KB`)
+      console.log(`✓  ${buf.length} bytes`)
       return { buffer: buf, usedRange: range }
     } catch (err) {
       console.log(`✗  ${err}`)
@@ -197,39 +180,43 @@ async function fetchWithFallback(
 }
 
 async function main() {
-  console.log("Token Copernicus...")
+  console.log("Obtention du token Copernicus...")
   const token = await getToken()
-  console.log("OK\n")
+  console.log("Token OK\n")
 
   const outDir = path.join(process.cwd(), "public/satellite")
   fs.mkdirSync(outDir, { recursive: true })
 
-  const manifest: Record<string, {
-    before: boolean; after: boolean
-    beforeDate?: string; afterDate?: string
-    label: string
-  }> = {}
+  // Manifest : indique quelles images sont disponibles (pour le front)
+  const manifest: Record<string, { before: boolean; after: boolean; beforeDate?: string; afterDate?: string }> = {}
 
   for (const zone of ZONES) {
     console.log(`[${zone.id}] ${zone.label}`)
-    manifest[zone.id] = { before: false, after: false, label: zone.label }
+    manifest[zone.id] = { before: false, after: false }
 
-    for (const key of ["before", "after"] as const) {
-      const result = await fetchWithFallback(token, zone, key)
+    for (const [key, primary, fallbacks] of [
+      ["before", zone.before, zone.beforeFallbacks],
+      ["after",  zone.after,  zone.afterFallbacks],
+    ] as const) {
+      const result = await fetchWithFallback(token, zone.bbox, primary, fallbacks, key)
       if (result) {
-        fs.writeFileSync(path.join(outDir, `${zone.id}-${key}.jpg`), result.buffer)
+        const filename = `${zone.id}-${key}.jpg`
+        fs.writeFileSync(path.join(outDir, filename), result.buffer)
         manifest[zone.id][key] = true
         manifest[zone.id][`${key}Date`] = result.usedRange.from.slice(0, 7)
       } else {
-        console.log(`    ✗ aucune image valide — ignoré dans le front`)
+        console.log(`    ✗ aucune image valide pour ${zone.id}/${key} — non affiché dans le front`)
       }
     }
     console.log()
   }
 
-  fs.writeFileSync(path.join(outDir, "manifest.json"), JSON.stringify(manifest, null, 2))
+  fs.writeFileSync(
+    path.join(outDir, "manifest.json"),
+    JSON.stringify(manifest, null, 2)
+  )
   console.log("manifest.json écrit.")
-  console.log("\nCommite public/satellite/ pour déployer.")
+  console.log("Terminé. Commite public/satellite/ pour déployer les images.")
 }
 
 main().catch((e) => { console.error(e); process.exit(1) })
