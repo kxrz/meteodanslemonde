@@ -122,8 +122,9 @@ async function fetchTropicalMetrics(lat: number, lon: number) {
       `&daily=temperature_2m_min,apparent_temperature_max&start_date=${past30Str}&end_date=${endStr}`,
       { next: { revalidate: 86400 } }
     )
-    if (!res.ok) return null
+    if (!res.ok) throw new Error(`archive API ${res.status}`)
     const data = await res.json()
+    if (data?.error) throw new Error(data.reason)
     const dates = data.daily.time as string[]
     const minTemps = data.daily.temperature_2m_min as (number | null)[]
     const maxTemps = data.daily.apparent_temperature_max as (number | null)[]
