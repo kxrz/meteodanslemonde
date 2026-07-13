@@ -9,6 +9,7 @@ import { slugify } from "@/lib/slugify"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import ShareButton from "@/components/ShareButton"
+import SpectreBar from "@/components/SpectreBar"
 import type { ClimateEntry } from "@/lib/climate"
 
 export const revalidate = 86400
@@ -298,53 +299,10 @@ export default async function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
 
             <div className="lg:col-span-2 bg-white rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
-                Spectre de chaleur &middot; {citiesWithClimate.length} villes
-              </p>
-              <p className="text-xs text-neutral-400 mb-4">
-                Anomalie vs normale ERA5 de {monthName}, de la plus froide à la plus chaude
-              </p>
-
-              <div className="flex rounded-xl overflow-hidden h-10 mb-3">
-                {spectreSorted.map((city) => (
-                  <div
-                    key={city.id}
-                    title={`${city.name} : ${city.anomaly !== null ? (city.anomaly > 0 ? "+" : "") + city.anomaly.toFixed(1) + "°C" : "N/A"}`}
-                    style={{ flex: 1, backgroundColor: anomalyHex(city.anomaly) }}
-                  />
-                ))}
-              </div>
-
-              {(() => {
-                const segments = [
-                  { label: "< -2°C", color: "#3b82f6", count: spectreSorted.filter(c => (c.anomaly ?? 0) < -2).length },
-                  { label: "-2 à 0°C", color: "#93c5fd", count: spectreSorted.filter(c => { const a = c.anomaly ?? 0; return a >= -2 && a < 0 }).length },
-                  { label: "0 à +2°C", color: "#fca5a5", count: spectreSorted.filter(c => { const a = c.anomaly ?? 0; return a >= 0 && a < 2 }).length },
-                  { label: "> +2°C", color: "#ef4444", count: spectreSorted.filter(c => (c.anomaly ?? 0) >= 2).length },
-                ]
-                return (
-                  <div className="flex gap-4 mt-2 mb-1 flex-wrap">
-                    {segments.filter(s => s.count > 0).map(s => (
-                      <span key={s.label} className="flex items-center gap-1.5 text-xs text-neutral-500">
-                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-                        {s.label} &middot; <strong className="text-neutral-700">{s.count} ville{s.count > 1 ? "s" : ""}</strong>
-                      </span>
-                    ))}
-                  </div>
-                )
-              })()}
-
-              <div className="flex justify-between text-xs text-neutral-500 mb-5">
-                <span>
-                  {spectreMin.anomaly !== null ? `${spectreMin.anomaly > 0 ? "+" : ""}${spectreMin.anomaly.toFixed(1)}°C` : "?"} &middot; {spectreMin.name}
-                </span>
-                <span>
-                  {spectreMax.name} &middot; {spectreMax.anomaly !== null ? `${spectreMax.anomaly > 0 ? "+" : ""}${spectreMax.anomaly.toFixed(1)}°C` : "?"}
-                </span>
-              </div>
+              <SpectreBar cities={spectreSorted} monthName={monthName} />
 
               {/* 3 stats chocs -- colonne sur mobile, 3 cols sur sm+ */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-5">
                 {top3Anomaly[0] && (
                   <Link href={`/a/${slugify(top3Anomaly[0].name)}`} className={`rounded-2xl p-4 ${anomalyBg(top3Anomaly[0].anomaly)} group`}>
                     <p className="text-[9px] uppercase tracking-[0.12em] font-semibold text-black/40 mb-1">Anomalie max</p>
@@ -536,15 +494,17 @@ export default async function Home() {
           )}
 
           {/* ── 5. Nudge partage du jour ── */}
-          <ShareButton
-            text={`En France ce ${dataLabel} : ressenti moyen ${avgTemp}°C${avgAnomaly !== null ? `, soit ${avgAnomaly > 0 ? "+" : ""}${avgAnomaly.toFixed(1)}°C vs la normale ERA5` : ""}${top3Anomaly[0] ? `. Anomalie max : ${top3Anomaly[0].name} à ${top3Anomaly[0].anomaly !== null ? (top3Anomaly[0].anomaly > 0 ? "+" : "") + top3Anomaly[0].anomaly.toFixed(1) + "°C" : ""}` : ""}.`}
-            url="https://www.cestchaud.fr"
-            label="Partager l'état du jour"
-            variant="nudge"
-          />
+          <div className="max-w-xl">
+            <ShareButton
+              text={`En France ce ${dataLabel} : ressenti moyen ${avgTemp}°C${avgAnomaly !== null ? `, soit ${avgAnomaly > 0 ? "+" : ""}${avgAnomaly.toFixed(1)}°C vs la normale ERA5` : ""}${top3Anomaly[0] ? `. Anomalie max : ${top3Anomaly[0].name} à ${top3Anomaly[0].anomaly !== null ? (top3Anomaly[0].anomaly > 0 ? "+" : "") + top3Anomaly[0].anomaly.toFixed(1) + "°C" : ""}` : ""}.`}
+              url="https://www.cestchaud.fr"
+              label="Partager l'état du jour"
+              variant="nudge"
+            />
+          </div>
 
           {/* ── 6. Pages du site ── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group flex flex-col">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Explorer</p>
               <p className="text-base font-black text-neutral-900 leading-snug mb-2">Jumeaux climatiques</p>
@@ -563,13 +523,31 @@ export default async function Home() {
               <span className="text-orange-400 group-hover:text-orange-600 text-lg transition-colors mt-4 block">&rarr;</span>
             </Link>
 
+            <Link href="/terrain" className="bg-[#e8f5e9] rounded-3xl p-5 hover:bg-[#d0ecd2] transition-colors group flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-2">Satellite</p>
+              <p className="text-base font-black text-green-900 leading-snug mb-2">Terrain</p>
+              <p className="text-xs text-green-900/60 leading-relaxed flex-1">
+                Incendies, lacs asséchés, glaciers en recul. Les images satellite avant/après montrent ce que les chiffres ERA5 décrivent en degrés.
+              </p>
+              <span className="text-green-400 group-hover:text-green-700 text-lg transition-colors mt-4 block">&rarr;</span>
+            </Link>
+
             <Link href="/en/france" className="bg-[#dbeafe] rounded-3xl p-5 hover:bg-[#bfdbfe] transition-colors group flex flex-col">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-2">France</p>
               <p className="text-base font-black text-blue-900 leading-snug mb-2">France en chiffres</p>
               <p className="text-xs text-blue-900/60 leading-relaxed flex-1">
-                60 villes, leurs anomalies du jour, leurs tendances sur 30 ans et ce que le GIEC prédit pour 2030, 2040 et 2050.
+                62 villes, leurs anomalies du jour, leurs tendances sur 30 ans et ce que le GIEC prédit pour 2030, 2040 et 2050.
               </p>
               <span className="text-blue-400 group-hover:text-blue-600 text-lg transition-colors mt-4 block">&rarr;</span>
+            </Link>
+
+            <Link href="/r" className="bg-[#f3e8ff] rounded-3xl p-5 hover:bg-[#e9d5ff] transition-colors group flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-2">Régions</p>
+              <p className="text-base font-black text-purple-900 leading-snug mb-2">Par région</p>
+              <p className="text-xs text-purple-900/60 leading-relaxed flex-1">
+                Tendances, villes les plus chaudes et données de sécheresse région par région.
+              </p>
+              <span className="text-purple-400 group-hover:text-purple-700 text-lg transition-colors mt-4 block">&rarr;</span>
             </Link>
 
             <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group flex flex-col">
