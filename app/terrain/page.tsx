@@ -7,6 +7,7 @@ import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import BeforeAfterSlider from "@/components/BeforeAfterSlider"
 import { loadClimateMap } from "@/lib/climate"
+import { getWeatherData } from "@/lib/weather-data"
 
 export const revalidate = 86400
 
@@ -71,7 +72,7 @@ const ZONE_CONTENT = {
       { val: "400", label: "espèces d'oiseaux recensées, menacées par l'assèchement" },
       { val: "2050", label: "scénario de submersion partielle si RCP8.5" },
     ],
-    link: { href: "/a/arles", label: "Données climatiques d'Arles" },
+    link: { href: "/a/marseille", label: "Données climatiques de Marseille" },
   },
   "serre-poncon": {
     tag: "Hautes-Alpes · Sécheresse 2022",
@@ -82,7 +83,7 @@ const ZONE_CONTENT = {
       { val: "180", label: "millions de m³ manquants" },
       { val: "600 000", label: "habitants dépendants" },
     ],
-    link: { href: "/a/gap", label: "Données climatiques de Gap" },
+    link: { href: "/a/grenoble", label: "Données climatiques de Grenoble" },
   },
   "mer-de-glace": {
     tag: "Chamonix · Recul glaciaire",
@@ -119,18 +120,11 @@ const URBAN_CONTENT = {
   ],
 }
 
-function loadCitiesWeather(): Record<string, { apparent_temp_max: number }> {
-  try {
-    const p = path.join(process.cwd(), "data/cities-fr.json")
-    const cities = JSON.parse(fs.readFileSync(p, "utf8")) as Array<{ id: string; apparent_temp_max: number }>
-    return Object.fromEntries(cities.map(c => [c.id, { apparent_temp_max: c.apparent_temp_max }]))
-  } catch { return {} }
-}
-
-export default function TerrainPage() {
+export default async function TerrainPage() {
   const manifest = loadManifest()
-  const weatherMap = loadCitiesWeather()
   const climateMap = loadClimateMap()
+  const allCities = await getWeatherData()
+  const weatherMap = Object.fromEntries(allCities.map(c => [c.id, c]))
   const m = new Date().getMonth()
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
@@ -144,8 +138,8 @@ export default function TerrainPage() {
   const ZONE_CITY: Record<string, string> = {
     landes: "bordeaux",
     montbel: "toulouse",
-    camargue: "arles",
-    "serre-poncon": "gap",
+    camargue: "marseille",
+    "serre-poncon": "grenoble",
     "mer-de-glace": "chamonix",
     loire: "tours",
   }
