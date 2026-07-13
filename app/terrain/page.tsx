@@ -135,13 +135,13 @@ export default async function TerrainPage() {
 
   const hasUrban = manifest["paris-bois"]?.before && manifest["paris-dalle"]?.before
 
-  const ZONE_CITY: Record<string, string> = {
-    landes: "bordeaux",
-    montbel: "toulouse",
-    camargue: "marseille",
-    "serre-poncon": "grenoble",
-    "mer-de-glace": "chamonix",
-    loire: "tours",
+  const ZONE_REGION: Record<string, { slug: string; label: string; cities: string[] }> = {
+    landes:          { slug: "nouvelle-aquitaine",           label: "Nouvelle-Aquitaine",         cities: ["bordeaux", "bayonne", "pau"] },
+    montbel:         { slug: "occitanie",                    label: "Occitanie",                  cities: ["toulouse", "montpellier", "nimes"] },
+    camargue:        { slug: "provence-alpes-cote-d-azur",   label: "Provence-Alpes-Côte d'Azur", cities: ["marseille", "avignon", "toulon"] },
+    "serre-poncon":  { slug: "provence-alpes-cote-d-azur",   label: "Provence-Alpes-Côte d'Azur", cities: ["marseille", "avignon", "toulon"] },
+    "mer-de-glace":  { slug: "auvergne-rhone-alpes",         label: "Auvergne-Rhône-Alpes",       cities: ["lyon", "grenoble", "chamonix"] },
+    loire:           { slug: "centre-val-de-loire",          label: "Centre-Val de Loire",        cities: ["tours", "orleans", "chartres"] },
   }
 
   return (
@@ -191,14 +191,17 @@ export default async function TerrainPage() {
         {availableZones.map((id) => {
           const content = ZONE_CONTENT[id]
           const entry = manifest[id]
-          const cityId = ZONE_CITY[id]
-          const cityWeather = cityId ? weatherMap[cityId] : null
-          const cityClimate = cityId ? (climateMap[cityId] ?? null) : null
-          const normal = cityClimate?.normal?.[m] ?? null
-          const todayTemp = cityWeather?.apparent_temp_max ?? null
-          const anomaly = todayTemp !== null && normal !== null
-            ? Math.round((todayTemp - normal) * 10) / 10
-            : null
+          const region = ZONE_REGION[id]
+          const regionCities = region.cities.map(cityId => {
+            const w = weatherMap[cityId]
+            const cl = climateMap[cityId]
+            if (!w || !cl) return null
+            const normal = cl.normal?.[m] ?? null
+            const temp = w.apparent_temp_max
+            const anomaly = normal !== null ? Math.round((temp - normal) * 10) / 10 : null
+            const name = citiesFR.find(c => c.id === cityId)?.name ?? cityId
+            return { cityId, name, temp, anomaly }
+          }).filter(Boolean) as { cityId: string; name: string; temp: number; anomaly: number | null }[]
 
           return (
             <section key={id} className="border-b border-neutral-200 pb-20 last:border-0">
@@ -222,38 +225,36 @@ export default async function TerrainPage() {
                   </div>
                 ))}
 
-                {todayTemp !== null && (
-                  <div className="ml-auto bg-neutral-900 rounded-2xl px-5 py-3 flex flex-col items-end">
-                    <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-white/30 mb-1">
-                      Aujourd&apos;hui · {content.link.label.replace("Données climatiques de ", "").replace("Données climatiques d'", "")}
-                    </p>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-2xl font-black text-white">{todayTemp}&deg;C</span>
-                      {anomaly !== null && (
-                        <span className={`text-sm font-semibold ${anomaly > 0 ? "text-red-400" : "text-blue-400"}`}>
-                          {anomaly > 0 ? "+" : ""}{anomaly.toFixed(1)}&deg; vs normale
-                        </span>
-                      )}
+                <div className="ml-auto bg-neutral-900 rounded-2xl px-5 py-3 flex flex-col items-end min-w-[200px]">
+                  <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-white/30 mb-2">
+                    Aujourd&apos;hui · {region.label}
+                  </p>
+                  {regionCities.length > 0 ? (
+                    <div className="flex flex-col gap-1.5 items-end w-full">
+                      {regionCities.map(({ cityId, name, temp, anomaly }) => (
+                        <Link key={cityId} href={`/a/${cityId}`} className="flex items-baseline justify-between gap-3 w-full group">
+                          <span className="text-xs text-white/40 group-hover:text-white/60 transition-colors">{name}</span>
+                          <span className="flex items-baseline gap-1">
+                            <span className="text-sm font-bold text-white">{temp}&deg;</span>
+                            {anomaly !== null && (
+                              <span className={`text-xs font-semibold ${anomaly > 0 ? "text-red-400" : "text-blue-400"}`}>
+                                {anomaly > 0 ? "+" : ""}{anomaly.toFixed(1)}&deg;
+                              </span>
+                            )}
+                          </span>
+                        </Link>
+                      ))}
                     </div>
-                    <Link
-                      href={content.link.href}
-                      className="text-xs text-white/40 hover:text-white/70 transition-colors mt-1"
-                    >
-                      Voir toutes les données &rarr;
-                    </Link>
-                  </div>
-                )}
-
-                {todayTemp === null && (
-                  <div className="ml-auto">
-                    <Link
-                      href={content.link.href}
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors bg-white rounded-xl px-4 py-2 border border-neutral-200 hover:border-neutral-400"
-                    >
-                      {content.link.label} &rarr;
-                    </Link>
-                  </div>
-                )}
+                  ) : (
+                    <p className="text-xs text-white/30">Données en cours</p>
+                  )}
+                  <Link
+                    href={`/r/${region.slug}`}
+                    className="text-xs text-white/30 hover:text-white/60 transition-colors mt-3 self-end"
+                  >
+                    Voir la région &rarr;
+                  </Link>
+                </div>
               </div>
             </section>
           )
