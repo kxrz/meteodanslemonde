@@ -514,7 +514,7 @@ export default async function Home() {
                 </div>
                 <div className={`grid gap-3 ${hotNightCities.length > 0 && heatwaveCities.length > 0 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
                   {hotNightCities.length > 0 && (
-                    <div className="bg-[#1e293b] rounded-3xl p-5">
+                    <Link href="/alertes" className="bg-[#1e293b] rounded-3xl p-5 hover:brightness-110 transition-all">
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-300 mb-3">Nuits tropicales</p>
                       <div className="flex items-baseline gap-2 mb-2">
                         <span className="text-4xl font-black text-white leading-none">{hotNightCities.length}</span>
@@ -530,10 +530,10 @@ export default async function Home() {
                           <span className="text-xs text-slate-400 py-1">+{hotNightCities.length - 6} autres</span>
                         )}
                       </div>
-                    </div>
+                    </Link>
                   )}
                   {heatwaveCities.length > 0 && (
-                    <div className="bg-[#7f1d1d] rounded-3xl p-5">
+                    <Link href="/alertes" className="bg-[#7f1d1d] rounded-3xl p-5 hover:brightness-110 transition-all">
                       <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-300 mb-3">Canicule aujourd&apos;hui</p>
                       <div className="flex items-baseline gap-2 mb-2">
                         <span className="text-4xl font-black text-white leading-none">{heatwaveCities.length}</span>
@@ -549,7 +549,7 @@ export default async function Home() {
                           <span className="text-xs text-red-300 py-1">+{heatwaveCities.length - 6} autres</span>
                         )}
                       </div>
-                    </div>
+                    </Link>
                   )}
                 </div>
               </>
