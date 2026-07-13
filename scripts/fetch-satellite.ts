@@ -8,9 +8,15 @@
 
 import * as fs from "fs"
 import * as path from "path"
-import { config } from "dotenv"
 
-config({ path: ".env.local" })
+// Charge .env.local manuellement (dotenv n'est pas une dépendance du projet)
+const envPath = path.join(process.cwd(), ".env.local")
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
+    const m = line.match(/^([^#=]+)=(.*)$/)
+    if (m) process.env[m[1].trim()] = m[2].trim()
+  }
+}
 
 const CLIENT_ID = process.env.COPERNICUS_CLIENT_ID
 const CLIENT_SECRET = process.env.COPERNICUS_CLIENT_SECRET
