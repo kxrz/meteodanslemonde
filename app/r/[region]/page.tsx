@@ -11,6 +11,36 @@ import RegionCitiesMapWrapper from "@/components/RegionCitiesMapWrapper"
 
 export const revalidate = 86400
 
+async function fetchDroughtData(lat: number, lon: number): Promise<{ current: number; normal: number; anomaly: number; daysElapsed: number } | null> {
+  const now = new Date()
+  const y = now.getFullYear()
+  const m = String(now.getMonth() + 1).padStart(2, "0")
+  const d = String(now.getDate()).padStart(2, "0")
+  const daysInMonth = new Date(y, now.getMonth() + 1, 0).getDate()
+  const daysElapsed = now.getDate()
+  if (daysElapsed < 3) return null
+
+  const base = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&daily=precipitation_sum`
+  try {
+    const [resCurrent, resNormal] = await Promise.all([
+      fetch(`${base}&start_date=${y}-${m}-01&end_date=${y}-${m}-${d}`, { next: { revalidate: 86400 } }),
+      fetch(`${base}&start_date=2013-${m}-01&end_date=2022-${m}-${String(daysInMonth).padStart(2, "0")}`, { next: { revalidate: 86400 } }),
+    ])
+    if (!resCurrent.ok || !resNormal.ok) return null
+    const [dataCurrent, dataNormal] = await Promise.all([resCurrent.json(), resNormal.json()])
+
+    const sum = (arr: (number | null)[]) => arr.filter((v): v is number => v !== null).reduce((s, v) => s + v, 0)
+    const current = Math.round(sum(dataCurrent.daily.precipitation_sum))
+    const fullMonthNormal = sum(dataNormal.daily.precipitation_sum) / 10
+    const proratedNormal = Math.round(fullMonthNormal * (daysElapsed / daysInMonth))
+    const anomaly = proratedNormal > 0 ? Math.round(((current - proratedNormal) / proratedNormal) * 100) : 0
+
+    return { current, normal: proratedNormal, anomaly, daysElapsed }
+  } catch {
+    return null
+  }
+}
+
 const citiesFR = require("@/data/cities-fr.json") as Array<{
   id: string; name: string; lat: number; lon: number; region: string
 }>
@@ -151,6 +181,8 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
     trend: c.trendMonth,
   }))
 
+  const drought = hottest ? await fetchDroughtData(hottest.lat, hottest.lon) : null
+
   return (
     <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
       <SiteHeader asLink subtitle={`Données climatiques de la région ${meta.label}`} />
@@ -200,6 +232,29 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                 <p className="text-4xl font-black text-neutral-300">—</p>
               )}
             </div>
+
+            {drought && (
+              <div className={`col-span-2 rounded-3xl p-5 ${drought.anomaly <= -30 ? "bg-amber-50" : drought.anomaly >= 30 ? "bg-blue-50" : "bg-neutral-50"}`}>
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">
+                  Précipitations · {new Date().toLocaleDateString("fr-FR", { month: "long" })} (J1–J{drought.daysElapsed})
+                </p>
+                <div className="flex items-baseline gap-3">
+                  <p className="text-4xl font-black text-neutral-900">{drought.current} mm</p>
+                  <p className={`text-lg font-bold ${drought.anomaly < -15 ? "text-amber-500" : drought.anomaly > 15 ? "text-blue-500" : "text-neutral-400"}`}>
+                    {drought.anomaly > 0 ? "+" : ""}{drought.anomaly}%
+                  </p>
+                </div>
+                <p className="text-xs text-neutral-400 mt-1">
+                  vs. normale proratisée : {drought.normal} mm · référence 2013–2022
+                </p>
+                {drought.anomaly <= -30 && (
+                  <p className="text-xs text-amber-600 mt-2 font-semibold">Déficit hydrique significatif ce mois.</p>
+                )}
+                {drought.anomaly >= 30 && (
+                  <p className="text-xs text-blue-600 mt-2 font-semibold">Excédent de précipitations ce mois.</p>
+                )}
+              </div>
+            )}
 
             {hottest && hottest.normal !== null && (
               <div className="col-span-2 bg-[#fff7ed] rounded-3xl p-5">
