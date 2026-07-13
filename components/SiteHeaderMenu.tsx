@@ -3,80 +3,75 @@
 import Link from "next/link"
 import { useState } from "react"
 
-const MENU_ITEMS = [
+const MENU_SECTIONS = [
   {
-    href: "/explorer",
-    label: "Jumeaux climatiques",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="2" y1="12" x2="22" y2="12" />
-        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-      </svg>
-    ),
+    section: "Explorer",
+    items: [
+      {
+        href: "/carte",
+        emoji: "🗺️",
+        label: "Carte de chaleur",
+        desc: "Anomalies du jour sur toute la France",
+      },
+      {
+        href: "/explorer",
+        emoji: "🌍",
+        label: "Jumeaux climatiques",
+        desc: "Ta ville aujourd'hui, comme où dans le monde ?",
+      },
+      {
+        href: "/r",
+        emoji: "📍",
+        label: "Régions",
+        desc: "Tendances et projections par région",
+      },
+      {
+        href: "/en/france",
+        emoji: "📊",
+        label: "France en chiffres",
+        desc: "Vue d'ensemble nationale ERA5 et GIEC",
+      },
+    ],
   },
   {
-    href: "/carte",
-    label: "Carte de chaleur",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
-        <line x1="9" y1="3" x2="9" y2="18" />
-        <line x1="15" y1="6" x2="15" y2="21" />
-      </svg>
-    ),
+    section: "Comprendre",
+    items: [
+      {
+        href: "/terrain",
+        emoji: "🛰️",
+        label: "Terrain",
+        desc: "Ce que le satellite confirme : avant/après",
+      },
+      {
+        href: "/methodologie",
+        emoji: "🔬",
+        label: "Méthodologie",
+        desc: "Sources, ERA5, GIEC CMIP6, calculs",
+      },
+      {
+        href: "/citoyens",
+        emoji: "✉️",
+        label: "Écrire à vos élus",
+        desc: "Modèle de lettre pour agir localement",
+      },
+    ],
   },
   {
-    href: "/r",
-    label: "Régions",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-        <polyline points="9 22 9 12 15 12 15 22" />
-      </svg>
-    ),
-  },
-  {
-    href: "/en/france",
-    label: "France en chiffres",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="20" x2="18" y2="10" />
-        <line x1="12" y1="20" x2="12" y2="4" />
-        <line x1="6" y1="20" x2="6" y2="14" />
-        <line x1="2" y1="20" x2="22" y2="20" />
-      </svg>
-    ),
-  },
-  {
-    href: "/citoyens",
-    label: "Écrire à vos élus",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect width="20" height="16" x="2" y="4" rx="2" />
-        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-      </svg>
-    ),
-  },
-  {
-    href: "/a-propos",
-    label: "À propos",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" />
-        <line x1="12" y1="16" x2="12" y2="12" />
-        <line x1="12" y1="8" x2="12.01" y2="8" />
-      </svg>
-    ),
-  },
-  {
-    href: "/contact",
-    label: "Contact",
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
-    ),
+    section: "Le site",
+    items: [
+      {
+        href: "/a-propos",
+        emoji: "💡",
+        label: "À propos",
+        desc: "Pourquoi ce site existe",
+      },
+      {
+        href: "/contact",
+        emoji: "💬",
+        label: "Contact",
+        desc: "Une question, une suggestion",
+      },
+    ],
   },
 ]
 
@@ -97,38 +92,65 @@ export default function SiteHeaderMenu() {
 
       {menuOpen && (
         <div
-          className="fixed inset-0 z-[2000] flex items-center justify-center"
+          className="fixed inset-0 z-[2000] flex items-start justify-end"
           onClick={() => setMenuOpen(false)}
         >
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
           <nav
-            className="relative bg-[#f5f4f0] rounded-3xl p-8 shadow-2xl min-w-[300px]"
+            className="relative bg-[#f5f4f0] h-full w-full max-w-sm overflow-y-auto shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={() => setMenuOpen(false)}
-              className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 text-lg transition-colors"
-              aria-label="Fermer"
-            >
-              ✕
-            </button>
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-5">
-              Navigation
-            </p>
-            <ul className="space-y-1">
-              {MENU_ITEMS.map(({ href, label, icon }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center gap-3 font-black text-lg text-neutral-900 hover:opacity-60 transition-opacity py-2"
-                  >
-                    <span className="text-neutral-400 shrink-0">{icon}</span>
-                    {label}
-                  </Link>
-                </li>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-neutral-200">
+              <p className="text-[10px] uppercase tracking-[0.18em] font-semibold text-neutral-400">Navigation</p>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="text-neutral-400 hover:text-neutral-700 transition-colors w-8 h-8 flex items-center justify-center rounded-xl hover:bg-neutral-200"
+                aria-label="Fermer"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Sections */}
+            <div className="px-4 py-4 space-y-6">
+              {MENU_SECTIONS.map(({ section, items }) => (
+                <div key={section}>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 px-2 mb-2">
+                    {section}
+                  </p>
+                  <div className="space-y-1">
+                    {items.map(({ href, emoji, label, desc }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        onClick={() => setMenuOpen(false)}
+                        className="flex items-start gap-3 px-3 py-3 rounded-2xl hover:bg-white transition-colors group"
+                      >
+                        <span className="text-xl mt-0.5 shrink-0">{emoji}</span>
+                        <div className="min-w-0">
+                          <p className="font-black text-neutral-900 group-hover:text-neutral-700 leading-tight">{label}</p>
+                          <p className="text-xs text-neutral-400 mt-0.5 leading-snug">{desc}</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-5 border-t border-neutral-200 mt-2">
+              <Link
+                href="/en/france"
+                onClick={() => setMenuOpen(false)}
+                className="text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+              >
+                cestchaud.fr · données ERA5 &amp; GIEC CMIP6
+              </Link>
+            </div>
           </nav>
         </div>
       )}
