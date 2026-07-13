@@ -236,6 +236,55 @@ export default async function FrancePage() {
             </div>
             <div className="grid grid-cols-2 gap-3 pb-4 mt-0">
 
+              {/* Spectre d'anomalies */}
+              {withAnomaly.length > 0 && (() => {
+                const spectreSorted = [...withAnomaly].sort((a, b) => (a.anomaly ?? 0) - (b.anomaly ?? 0))
+                const spectreMin = spectreSorted[0]
+                const spectreMax = spectreSorted[spectreSorted.length - 1]
+                const segments = [
+                  { label: "< -2°C", color: "#3b82f6", count: spectreSorted.filter(c => (c.anomaly ?? 0) < -2).length },
+                  { label: "-2 à 0°C", color: "#93c5fd", count: spectreSorted.filter(c => { const a = c.anomaly ?? 0; return a >= -2 && a < 0 }).length },
+                  { label: "0 à +2°C", color: "#fca5a5", count: spectreSorted.filter(c => { const a = c.anomaly ?? 0; return a >= 0 && a < 2 }).length },
+                  { label: "> +2°C", color: "#ef4444", count: spectreSorted.filter(c => (c.anomaly ?? 0) >= 2).length },
+                ]
+                const anomalyHex = (a: number | null) => {
+                  if (a === null) return "#e5e5e5"
+                  if (a <= -3) return "#1d4ed8"
+                  if (a <= -1) return "#93c5fd"
+                  if (a <= 1) return "#fca5a5"
+                  if (a <= 3) return "#f97316"
+                  return "#ef4444"
+                }
+                return (
+                  <div className="col-span-2 bg-white rounded-3xl p-5">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
+                      Spectre d&apos;anomalies · {withAnomaly.length} villes
+                    </p>
+                    <div className="flex h-5 rounded-lg overflow-hidden mb-2">
+                      {spectreSorted.map((city) => (
+                        <div
+                          key={city.id}
+                          title={`${city.name} : ${city.anomaly !== null ? (city.anomaly > 0 ? "+" : "") + city.anomaly.toFixed(1) + "°C" : "N/A"}`}
+                          style={{ flex: 1, backgroundColor: anomalyHex(city.anomaly) }}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex gap-3 flex-wrap mt-2 mb-1">
+                      {segments.filter(s => s.count > 0).map(s => (
+                        <span key={s.label} className="flex items-center gap-1.5 text-[11px] text-neutral-500">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                          {s.label} · <strong className="text-neutral-700">{s.count} ville{s.count > 1 ? "s" : ""}</strong>
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex justify-between text-[11px] text-neutral-400 mt-1">
+                      <span>{spectreMin.anomaly !== null ? (spectreMin.anomaly > 0 ? "+" : "") + spectreMin.anomaly.toFixed(1) + "°C" : "?"} · {spectreMin.name}</span>
+                      <span>{spectreMax.name} · {spectreMax.anomaly !== null ? (spectreMax.anomaly > 0 ? "+" : "") + spectreMax.anomaly.toFixed(1) + "°C" : "?"}</span>
+                    </div>
+                  </div>
+                )
+              })()}
+
               {/* Top 3 anomalies */}
               {top3Anomaly.length > 0 && (
                 <div className="col-span-2 bg-[#fff7ed] rounded-3xl p-5">

@@ -6,6 +6,7 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import BeforeAfterSlider from "@/components/BeforeAfterSlider"
+import { loadClimateMap } from "@/lib/climate"
 
 export const revalidate = 86400
 
@@ -118,8 +119,20 @@ const URBAN_CONTENT = {
   ],
 }
 
+function loadCitiesWeather(): Record<string, { apparent_temp_max: number }> {
+  try {
+    const p = path.join(process.cwd(), "data/cities-fr.json")
+    const cities = JSON.parse(fs.readFileSync(p, "utf8")) as Array<{ id: string; apparent_temp_max: number }>
+    return Object.fromEntries(cities.map(c => [c.id, { apparent_temp_max: c.apparent_temp_max }]))
+  } catch { return {} }
+}
+
 export default function TerrainPage() {
   const manifest = loadManifest()
+  const weatherMap = loadCitiesWeather()
+  const climateMap = loadClimateMap()
+  const m = new Date().getMonth()
+  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
 
   const zoneIds = ["landes", "montbel", "camargue", "serre-poncon", "mer-de-glace", "loire"] as const
   const availableZones = zoneIds.filter(
@@ -127,6 +140,15 @@ export default function TerrainPage() {
   )
 
   const hasUrban = manifest["paris-bois"]?.before && manifest["paris-dalle"]?.before
+
+  const ZONE_CITY: Record<string, string> = {
+    landes: "bordeaux",
+    montbel: "toulouse",
+    camargue: "arles",
+    "serre-poncon": "gap",
+    "mer-de-glace": "chamonix",
+    loire: "tours",
+  }
 
   return (
     <div className="bg-[#f5f4f0] min-h-screen">
@@ -175,6 +197,15 @@ export default function TerrainPage() {
         {availableZones.map((id) => {
           const content = ZONE_CONTENT[id]
           const entry = manifest[id]
+          const cityId = ZONE_CITY[id]
+          const cityWeather = cityId ? weatherMap[cityId] : null
+          const cityClimate = cityId ? (climateMap[cityId] ?? null) : null
+          const normal = cityClimate?.normal?.[m] ?? null
+          const todayTemp = cityWeather?.apparent_temp_max ?? null
+          const anomaly = todayTemp !== null && normal !== null
+            ? Math.round((todayTemp - normal) * 10) / 10
+            : null
+
           return (
             <section key={id} className="border-b border-neutral-200 pb-20 last:border-0">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-400 mb-3">{content.tag}</p>
@@ -189,21 +220,46 @@ export default function TerrainPage() {
                 alt={content.title}
               />
 
-              <div className="mt-6 flex flex-wrap gap-8">
+              <div className="mt-6 flex flex-wrap gap-8 items-end">
                 {content.stats.map(({ val, label }) => (
                   <div key={label} className="min-w-[80px]">
                     <p className="text-2xl font-black text-neutral-900 leading-none">{val}</p>
                     <p className="text-xs text-neutral-400 mt-1 leading-snug">{label}</p>
                   </div>
                 ))}
-                <div className="ml-auto flex items-end">
-                  <Link
-                    href={content.link.href}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors bg-white rounded-xl px-4 py-2 border border-neutral-200 hover:border-neutral-400"
-                  >
-                    {content.link.label} &rarr;
-                  </Link>
-                </div>
+
+                {todayTemp !== null && (
+                  <div className="ml-auto bg-neutral-900 rounded-2xl px-5 py-3 flex flex-col items-end">
+                    <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-white/30 mb-1">
+                      Aujourd&apos;hui · {content.link.label.replace("Données climatiques de ", "").replace("Données climatiques d'", "")}
+                    </p>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-2xl font-black text-white">{todayTemp}&deg;C</span>
+                      {anomaly !== null && (
+                        <span className={`text-sm font-semibold ${anomaly > 0 ? "text-red-400" : "text-blue-400"}`}>
+                          {anomaly > 0 ? "+" : ""}{anomaly.toFixed(1)}&deg; vs normale
+                        </span>
+                      )}
+                    </div>
+                    <Link
+                      href={content.link.href}
+                      className="text-xs text-white/40 hover:text-white/70 transition-colors mt-1"
+                    >
+                      Voir toutes les données &rarr;
+                    </Link>
+                  </div>
+                )}
+
+                {todayTemp === null && (
+                  <div className="ml-auto">
+                    <Link
+                      href={content.link.href}
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors bg-white rounded-xl px-4 py-2 border border-neutral-200 hover:border-neutral-400"
+                    >
+                      {content.link.label} &rarr;
+                    </Link>
+                  </div>
+                )}
               </div>
             </section>
           )

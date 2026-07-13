@@ -307,8 +307,13 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       <span className="text-2xl font-black text-blue-400">C</span>
                     </div>
                     {anomaly !== null && (
-                      <p className="text-sm text-blue-800/60 mt-2">
-                        {fmtDelta(anomaly)}&deg;C vs. normale {monthName}
+                      <p className="text-sm text-blue-800/60 mt-2 leading-snug">
+                        {anomaly > 0
+                          ? <>{fmtDelta(anomaly)}&deg;C <span className="font-normal">au-dessus de la normale de {monthName}</span></>
+                          : anomaly < 0
+                          ? <>{fmtDelta(anomaly)}&deg;C <span className="font-normal">en dessous de la normale de {monthName}</span></>
+                          : <span className="font-normal">dans la normale de {monthName}</span>
+                        }
                       </p>
                     )}
                   </div>
@@ -358,7 +363,15 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   {normal !== null ? (
                     <>
                       <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}&deg;C</div>
-                      <p className="text-xs text-green-900/50 mt-2">moy. 1991–2020</p>
+                      <p className="text-xs text-green-900/50 mt-2 leading-snug">moy. 1991–2020 · référence ERA5</p>
+                      {anomaly !== null && (
+                        <p className="text-xs text-green-900/60 mt-2 leading-snug">
+                          {anomaly === 0
+                            ? "Aujourd'hui est exactement dans la norme historique."
+                            : `Aujourd'hui il fait ${Math.abs(anomaly).toFixed(1)}°C ${anomaly > 0 ? "de plus" : "de moins"} que ce qu'on attendait pour ce mois-ci.`
+                          }
+                        </p>
+                      )}
                     </>
                   ) : (
                     <p className="text-2xl font-black text-green-900/30">N/A</p>
