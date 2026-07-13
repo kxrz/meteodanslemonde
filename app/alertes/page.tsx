@@ -55,7 +55,7 @@ async function fetchAlertMetrics(season: Season, monthStart: string, end: string
       const arr = Array.isArray(data) ? data : [data]
       batch.forEach((city, j) => {
         const r = arr[j]
-        if (!r?.daily?.time) {
+        if (!r?.daily?.time || !r.daily.temperature_2m_min || !r.daily.apparent_temperature_max) {
           allResults.push({ ...city, nightCount: 0, streakCount: 0, maxTemp: null, minTemp: null })
           return
         }
@@ -66,7 +66,7 @@ async function fetchAlertMetrics(season: Season, monthStart: string, end: string
         // Nuits hors norme dans le mois courant
         const nightCount = dates.filter((date, k) =>
           date >= monthStart && minTemps[k] !== null &&
-          (season === "summer" ? minTemps[k]! > nightThreshold : minTemps[k]! < nightThreshold)
+          (season === "summer" ? minTemps[k]! > nightThreshold : minTemps[k]! <= nightThreshold)
         ).length
 
         // Streak à rebours depuis la dernière date disponible
@@ -105,12 +105,12 @@ export default async function AlertesPage() {
   const y = now.getFullYear()
   const m = String(month + 1).padStart(2, "0")
   const monthStart = `${y}-${m}-01`
-  const daysInMonth = now.getDate()
-
   // Utilise avant-hier pour éviter le lag de l'API archive (1-2 jours)
   const endDate = new Date(now)
   endDate.setDate(endDate.getDate() - 2)
   const endStr = endDate.toISOString().split("T")[0]
+  // Nombre de jours couverts = du 1er du mois jusqu'à endDate (pas aujourd'hui)
+  const daysInMonth = endDate.getMonth() === month ? endDate.getDate() : new Date(y, month + 1, 0).getDate()
 
   const past30 = new Date(now)
   past30.setDate(past30.getDate() - 32)

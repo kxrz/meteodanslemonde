@@ -130,7 +130,7 @@ async function fetchTropicalMetrics(lat: number, lon: number) {
     const maxTemps = data.daily.apparent_temperature_max as (number | null)[]
     const nightCount = dates.filter((date, i) =>
       date >= monthStart && minTemps[i] !== null &&
-      (isSummer ? minTemps[i]! > 20 : minTemps[i]! < 0)
+      (isSummer ? minTemps[i]! > 20 : minTemps[i]! <= 0)
     ).length
     let streakCount = 0
     for (let i = maxTemps.length - 1; i >= 0; i--) {
@@ -139,9 +139,11 @@ async function fetchTropicalMetrics(lat: number, lon: number) {
       if (qualifies) streakCount++
       else break
     }
-    return { nightCount, streakCount, daysInMonth: now.getDate(), isSummer }
+    const daysInMonth = endDate.getMonth() === month ? endDate.getDate() : new Date(y, month + 1, 0).getDate()
+    return { nightCount, streakCount, daysInMonth, isSummer }
   } catch {
-    return { nightCount: 0, streakCount: 0, daysInMonth: now.getDate(), isSummer }
+    const daysInMonth = now.getDate() - 2
+    return { nightCount: 0, streakCount: 0, daysInMonth, isSummer }
   }
 }
 
