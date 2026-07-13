@@ -556,21 +556,31 @@ export default async function Home() {
             )
           })()}
 
-          {/* ── Séparateur ── */}
-          <div className="flex items-center gap-3 py-1">
-            <div className="flex-1 h-px bg-neutral-200" />
-            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-300 font-semibold">Partager</span>
-            <div className="flex-1 h-px bg-neutral-200" />
-          </div>
-
-          {/* ── 5. Nudge partage du jour ── */}
-          <div className="max-w-xl">
-            <ShareButton
-              text={`En France ce ${dataLabel} : ressenti moyen ${avgTemp}°C${avgAnomaly !== null ? `, soit ${avgAnomaly > 0 ? "+" : ""}${avgAnomaly.toFixed(1)}°C vs la normale ERA5` : ""}${top3Anomaly[0] ? `. Anomalie max : ${top3Anomaly[0].name} à ${top3Anomaly[0].anomaly !== null ? (top3Anomaly[0].anomaly > 0 ? "+" : "") + top3Anomaly[0].anomaly.toFixed(1) + "°C" : ""}` : ""}.`}
-              url="https://www.cestchaud.fr"
-              label="Partager l'état du jour"
-              variant="nudge"
-            />
+          {/* ── 5. Ces données vous ont surpris ? + Notifications ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-2">Ces données vous ont surpris ?</p>
+              <p className="text-base font-black text-white leading-snug mb-3">Partagez l&apos;état du jour</p>
+              <p className="text-xs text-white/50 leading-relaxed flex-1 mb-4">
+                Anomalies ERA5, tendance sur 30 ans, projections GIEC 2050 : ces données méritent d&apos;être vues.
+              </p>
+              <ShareButton
+                text={`En France ce ${dataLabel} : ressenti moyen ${avgTemp}°C${avgAnomaly !== null ? `, soit ${avgAnomaly > 0 ? "+" : ""}${avgAnomaly.toFixed(1)}°C vs la normale ERA5` : ""}${top3Anomaly[0] ? `. Anomalie max : ${top3Anomaly[0].name} à ${top3Anomaly[0].anomaly !== null ? (top3Anomaly[0].anomaly > 0 ? "+" : "") + top3Anomaly[0].anomaly.toFixed(1) + "°C" : ""}` : ""}.`}
+                url="https://www.cestchaud.fr"
+                label="Partager"
+                variant="inline"
+              />
+            </div>
+            <div className="bg-white rounded-3xl p-5 flex flex-col opacity-60">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Notifications</p>
+              <p className="text-base font-black text-neutral-900 leading-snug mb-2">Le ressenti de ta ville, chaque matin</p>
+              <p className="text-xs text-neutral-500 leading-relaxed flex-1">
+                Choisis une ville française et reçois chaque matin son ressenti max, son anomalie vs la normale ERA5, et son jumeau climatique du jour. Aucun compte requis.
+              </p>
+              <span className="mt-4 inline-flex items-center gap-2 bg-neutral-200 text-neutral-400 font-semibold text-sm rounded-2xl px-5 py-3 cursor-not-allowed self-start">
+                Bientôt disponible
+              </span>
+            </div>
           </div>
 
           {/* ── Séparateur ── */}
@@ -581,7 +591,7 @@ export default async function Home() {
           </div>
 
           {/* ── 6. Pages du site ── */}
-          <div className="max-w-4xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group flex flex-col">
               <div className="flex items-start justify-between mb-3">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Explorer</p>
@@ -642,34 +652,20 @@ export default async function Home() {
               <span className="text-purple-400 group-hover:text-purple-700 text-sm transition-colors mt-4 block">Choisir une région &rarr;</span>
             </Link>
 
-            <Link href="/citoyens" className="bg-neutral-900 rounded-3xl p-5 hover:bg-neutral-800 transition-colors group flex flex-col">
+            <Link href="/alertes" className="bg-[#1e293b] rounded-3xl p-5 hover:bg-[#0f172a] transition-colors group flex flex-col">
               <div className="flex items-start justify-between mb-3">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30">Agir</p>
-                <svg className="w-5 h-5 text-white/20 group-hover:text-white/50 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-400/50">Alertes</p>
+                <svg className="w-5 h-5 text-sky-400/40 group-hover:text-sky-400 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
               </div>
-              <p className="text-base font-black text-white leading-snug mb-2">Écrire à vos élus</p>
-              <p className="text-xs text-white/50 leading-relaxed flex-1">
-                Contactez vos sénateurs, email pré-rédigé et fondé sur les données scientifiques. Parce que la prise de conscience ne suffit pas.
+              <p className="text-base font-black text-white leading-snug mb-2">Nuits tropicales & canicule</p>
+              <p className="text-xs text-sky-100/40 leading-relaxed flex-1">
+                Quelles villes ne dorment pas ? Où la canicule dure depuis plusieurs jours ? Le tableau complet des 62 villes.
               </p>
-              <span className="text-white/30 group-hover:text-white text-sm transition-colors mt-4 block">Écrire maintenant &rarr;</span>
+              <span className="text-sky-400/40 group-hover:text-sky-300 text-sm transition-colors mt-4 block">Voir les alertes &rarr;</span>
             </Link>
           </div>
 
-          {/* ── Bloc push ── */}
-          <div className="bg-white rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center gap-5 opacity-50">
-            <div className="flex-1">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Notifications</p>
-              <p className="text-base font-black text-neutral-900 leading-snug mb-1">Le ressenti de ta ville, chaque matin</p>
-              <p className="text-xs text-neutral-500 leading-relaxed">
-                Choisis une ville française et reçois chaque matin son ressenti max, son anomalie vs la normale ERA5, et son jumeau climatique du jour. Aucun compte requis.
-              </p>
-            </div>
-            <span className="shrink-0 inline-flex items-center gap-2 bg-neutral-200 text-neutral-400 font-semibold text-sm rounded-2xl px-5 py-3 cursor-not-allowed">
-              Bientôt disponible
-            </span>
-          </div>
-
-          {/* ── 6. Bloc pédagogique élus ── */}
+          {/* ── Bloc pédagogique élus ── */}
           <div className="bg-neutral-900 rounded-3xl p-6 lg:p-8">
             <div className="max-w-2xl">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-3">Pourquoi agir</p>
