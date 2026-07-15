@@ -1,7 +1,9 @@
 import Link from "next/link"
 import { Metadata } from "next"
+import { Suspense } from "react"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
+import ConfirmedBanner from "@/components/ConfirmedBanner"
 
 export const metadata: Metadata = {
   title: "Briefing matinal · Données climatiques de votre ville chaque matin",
@@ -57,6 +59,10 @@ export default function NotificationsPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[#f5f4f0]">
       <SiteHeader asLink />
+
+      <Suspense>
+        <ConfirmedBanner />
+      </Suspense>
 
       {/* Hero sombre */}
       <section className="bg-[#111111] text-white">

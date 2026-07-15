@@ -20,5 +20,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${BASE_URL}/?confirmed=invalid`)
   }
 
-  return NextResponse.redirect(`${BASE_URL}/?confirmed=ok`)
+  return NextResponse.redirect(`${BASE_URL}/notifications?confirmed=ok`)
 }
