@@ -4,10 +4,26 @@ import { Metadata } from "next"
 import { slugify } from "@/lib/slugify"
 import { loadClimateMap } from "@/lib/climate"
 import { fmt, fmtDelta } from "@/lib/format"
+import { fetchFireRisk, fetchFireSummary, type FireRiskLevel } from "@/lib/fire-data"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import RegionCitiesMapWrapper from "@/components/RegionCitiesMapWrapper"
+
+const FIRE_PRONE = new Set([
+  "provence-alpes-cote-d-azur",
+  "occitanie",
+  "nouvelle-aquitaine",
+  "corse",
+  "auvergne-rhone-alpes",
+])
+
+const FIRE_RISK_STYLE: Record<FireRiskLevel, { bg: string; badge: string; label: string; text: string }> = {
+  low:      { bg: "bg-green-50",  badge: "bg-green-100 text-green-800",  label: "Faible",  text: "text-green-700" },
+  moderate: { bg: "bg-amber-50",  badge: "bg-amber-100 text-amber-800",  label: "Modéré",  text: "text-amber-700" },
+  high:     { bg: "bg-orange-50", badge: "bg-orange-100 text-orange-800", label: "Élevé",   text: "text-orange-700" },
+  extreme:  { bg: "bg-red-50",    badge: "bg-red-100 text-red-800",      label: "Extrême", text: "text-red-700" },
+}
 
 export const revalidate = 86400
 
@@ -183,6 +199,15 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
 
   const drought = hottest ? await fetchDroughtData(hottest.lat, hottest.lon) : null
 
+  const isSummer = new Date().getMonth() >= 4 && new Date().getMonth() <= 9
+  const isFireProne = FIRE_PRONE.has(region)
+  const [fireRisk, fireSummary] = isFireProne && isSummer
+    ? await Promise.all([
+        fetchFireRisk(hottest?.lat ?? 44, hottest?.lon ?? 5),
+        fetchFireSummary(),
+      ])
+    : [null, null]
+
   return (
     <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
       <SiteHeader asLink subtitle={`Données climatiques de la région ${meta.label}`} />
@@ -193,7 +218,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
         {/* Left: map (40%) */}
         <div className="h-[50vw] max-h-[360px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative p-3 lg:p-4">
           <div className="w-full h-full rounded-3xl overflow-hidden">
-            <RegionCitiesMapWrapper cities={citiesForMap} />
+            <RegionCitiesMapWrapper cities={citiesForMap} showFires={isFireProne && isSummer} />
           </div>
           <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
             <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 leading-none mb-0.5">
@@ -253,6 +278,54 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                 {drought.anomaly >= 30 && (
                   <p className="text-xs text-blue-600 mt-2 font-semibold">Excédent de précipitations ce mois.</p>
                 )}
+              </div>
+            )}
+
+            {fireRisk && (
+              <div className={`col-span-2 rounded-3xl p-5 ${FIRE_RISK_STYLE[fireRisk.level].bg}`}>
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">
+                    Risque incendie · aujourd&apos;hui
+                  </p>
+                  <span className={`text-xs font-black px-2 py-0.5 rounded-lg ${FIRE_RISK_STYLE[fireRisk.level].badge}`}>
+                    {FIRE_RISK_STYLE[fireRisk.level].label}
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-4 mb-3">
+                  <div>
+                    <p className="text-xs text-neutral-400">Temp. max</p>
+                    <p className={`text-xl font-black ${FIRE_RISK_STYLE[fireRisk.level].text}`}>{Math.round(fireRisk.tempMax)}°C</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-400">Humidité min</p>
+                    <p className={`text-xl font-black ${FIRE_RISK_STYLE[fireRisk.level].text}`}>{Math.round(fireRisk.humMin)}%</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-400">Vent max</p>
+                    <p className={`text-xl font-black ${FIRE_RISK_STYLE[fireRisk.level].text}`}>{Math.round(fireRisk.windMax)} km/h</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-400">Pluie 3j</p>
+                    <p className={`text-xl font-black ${FIRE_RISK_STYLE[fireRisk.level].text}`}>{Math.round(fireRisk.precip3d)} mm</p>
+                  </div>
+                </div>
+                {fireSummary && (fireSummary.activeCount > 0 || fireSummary.burnedCount > 0) && (
+                  <div className="flex flex-wrap gap-3 mb-3 text-xs text-neutral-600">
+                    {fireSummary.activeCount > 0 && (
+                      <span className="bg-red-100 text-red-700 rounded-lg px-2 py-0.5 font-semibold">
+                        {fireSummary.activeCount} feux actifs (7j) · EFFIS/VIIRS
+                      </span>
+                    )}
+                    {fireSummary.burnedCount > 0 && (
+                      <span className="bg-orange-100 text-orange-700 rounded-lg px-2 py-0.5 font-semibold">
+                        {fireSummary.burnedCount} périmètres brûlés · {fireSummary.burnedHa > 0 ? `${fireSummary.burnedHa.toLocaleString("fr-FR")} ha` : "30 derniers jours"}
+                      </span>
+                    )}
+                  </div>
+                )}
+                <p className="text-xs text-neutral-500 leading-relaxed">
+                  La saison des feux s&apos;est allongée de 3 semaines depuis 1970 en France méditerranéenne. Sous RCP4.5, elle devrait s&apos;étendre de 4 à 8 semaines supplémentaires d&apos;ici 2050 (GIEC AR6, Ch.&nbsp;12). Les périmètres brûlés sont visibles sur la carte (orange).
+                </p>
               </div>
             )}
 

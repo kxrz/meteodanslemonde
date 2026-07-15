@@ -15,6 +15,7 @@ interface City {
 
 interface Props {
   cities: City[]
+  showFires?: boolean
 }
 
 function trendColor(trend: number | null, normal: number | null): string {
@@ -27,7 +28,7 @@ function trendColor(trend: number | null, normal: number | null): string {
   return "#b91c1c"
 }
 
-export default function RegionCitiesMap({ cities }: Props) {
+export default function RegionCitiesMap({ cities, showFires = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -98,12 +99,51 @@ export default function RegionCitiesMap({ cities }: Props) {
           )
           .on("click", () => router.push(`/a/${slugify(city.name)}`))
       })
+
+      if (showFires) {
+        fetch("/api/fires")
+          .then(r => r.ok ? r.json() : null)
+          .then(geojson => {
+            if (!geojson || !map) return
+            L.geoJSON(geojson, {
+              style: (feature) => {
+                if (feature?.properties?._type === "burned") {
+                  return { color: "#ea580c", weight: 1.5, fillColor: "#f97316", fillOpacity: 0.35 }
+                }
+                return { color: "#dc2626", weight: 0, fillColor: "#dc2626", fillOpacity: 0 }
+              },
+              pointToLayer: (feature, latlng) => {
+                if (feature?.properties?._type === "active") {
+                  return L.circleMarker(latlng, {
+                    radius: 5,
+                    fillColor: "#ef4444",
+                    color: "#b91c1c",
+                    weight: 1,
+                    fillOpacity: 0.85,
+                  })
+                }
+                return L.circleMarker(latlng, { radius: 0 })
+              },
+              onEachFeature: (feature, layer) => {
+                const p = feature.properties ?? {}
+                if (p._type === "burned") {
+                  const ha = p.areaha ? `${Math.round(p.areaha)} ha brûlés` : ""
+                  const date = p.firedate ? `· ${p.firedate}` : ""
+                  layer.bindTooltip(`Feu détecté ${date}<br>${ha}`, { direction: "top" })
+                } else if (p._type === "active") {
+                  layer.bindTooltip(`Feu actif · ${p.firedate ?? ""}`, { direction: "top" })
+                }
+              },
+            }).addTo(map!)
+          })
+          .catch(() => {})
+      }
     })
 
     return () => {
       map?.remove()
     }
-  }, [cities, router])
+  }, [cities, router, showFires])
 
   return <div ref={containerRef} className="w-full h-full" />
 }
