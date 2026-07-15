@@ -48,11 +48,11 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return
 
-    Promise.all([
-      import("leaflet"),
-      import("leaflet.heat"),
-    ]).then(([L]) => {
+    import("leaflet").then(async (L) => {
       if (!containerRef.current || mapRef.current) return
+      // leaflet.heat est un plugin UMD qui cherche L comme global
+      ;(window as unknown as Record<string, unknown>).L = L
+      await import("leaflet.heat")
 
       const map = L.map(containerRef.current!, {
         center: [46.5, 2.5],
