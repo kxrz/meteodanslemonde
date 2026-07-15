@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { sql } from "@/lib/db"
+import { getSql } from "@/lib/db"
 import { resend, FROM_EMAIL, BASE_URL, RESEND_AUDIENCE_ID, confirmationEmailHtml } from "@/lib/resend"
 
 export async function POST(req: NextRequest) {
@@ -16,9 +16,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Champs manquants" }, { status: 400 })
   }
 
+  const sql = getSql()
   const emailLower = email.trim().toLowerCase()
 
-  // Upsert subscriber
   const rows = await sql`
     INSERT INTO subscribers (email, first_name)
     VALUES (${emailLower}, ${firstName.trim()})
@@ -27,14 +27,12 @@ export async function POST(req: NextRequest) {
   ` as { id: string; confirm_token: string; confirmed_at: Date | null }[]
   const subscriber = rows[0]
 
-  // Add city subscription (ignore if already exists)
   await sql`
     INSERT INTO subscriptions (subscriber_id, city_slug, city_name)
     VALUES (${subscriber.id}, ${citySlug}, ${cityName})
     ON CONFLICT (subscriber_id, city_slug) DO NOTHING
   `
 
-  // Create Resend contact if audience configured
   if (RESEND_AUDIENCE_ID && !subscriber.confirmed_at) {
     try {
       const contact = await resend.contacts.create({
@@ -47,11 +45,10 @@ export async function POST(req: NextRequest) {
         await sql`UPDATE subscribers SET resend_id = ${contact.data.id} WHERE id = ${subscriber.id}`
       }
     } catch {
-      // Non-bloquant : le contact sera créé à la confirmation si ça échoue ici
+      // Non-bloquant
     }
   }
 
-  // Envoyer email de confirmation si pas encore confirmé
   if (!subscriber.confirmed_at) {
     const confirmUrl = `${BASE_URL}/api/confirm?token=${subscriber.confirm_token}`
     await resend.emails.send({

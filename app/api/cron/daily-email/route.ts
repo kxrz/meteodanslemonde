@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { sql } from "@/lib/db"
+import { getSql } from "@/lib/db"
 import { resend, FROM_EMAIL, BASE_URL } from "@/lib/resend"
 import { fetchCityWeather } from "@/lib/weather-data"
 import { loadClimateMap } from "@/lib/climate"
@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Récupérer tous les abonnés confirmés avec leurs villes
+  const sql = getSql()
   const rows = await sql`
     SELECT
       s.email,

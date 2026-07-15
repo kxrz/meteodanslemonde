@@ -1,10 +1,7 @@
 import { Resend } from "resend"
 
-if (!process.env.RESEND_API_KEY) {
-  throw new Error("RESEND_API_KEY is not set")
-}
-
-export const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy — Resend("") ne lève pas d'erreur à l'init, seulement à l'envoi
+export const resend = new Resend(process.env.RESEND_API_KEY ?? "")
 
 export const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? ""
 export const FROM_EMAIL = "cestchaud.fr <matin@cestchaud.fr>"
