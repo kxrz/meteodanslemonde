@@ -8,6 +8,7 @@ import { fmt, fmtDelta } from "@/lib/format"
 // Route de test uniquement — à supprimer en production
 // Usage : GET /api/test-email?to=florent@leswww.com&secret=<CRON_SECRET>
 export async function GET(req: NextRequest) {
+  try {
   const secret = process.env.CRON_SECRET
   if (secret && req.nextUrl.searchParams.get("secret") !== secret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -123,4 +124,8 @@ export async function GET(req: NextRequest) {
   }
 
   return NextResponse.json({ ok: true, to, cities: cityNames, resend_id: result.data?.id })
+  } catch (err) {
+    console.error("[test-email]", err)
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
 }
