@@ -633,6 +633,23 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                 </div>
               )}
 
+              {/* Liens navigation */}
+              {!city.isWorld && (
+                <Link
+                  href={`/r/${slugify(city.region)}`}
+                  className="col-span-2 flex items-center justify-between bg-orange-50 hover:bg-orange-100 transition-colors rounded-3xl px-6 py-5 group"
+                >
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-400 mb-1">
+                      Votre région
+                    </p>
+                    <p className="text-base font-black text-neutral-900">{city.region}</p>
+                    <p className="text-xs text-neutral-500 mt-0.5">Climat, tendances et alertes</p>
+                  </div>
+                  <span className="text-orange-300 group-hover:text-orange-600 text-2xl transition-colors">&rarr;</span>
+                </Link>
+              )}
+
               {/* Lien France */}
               <Link
                 href="/en/france"
