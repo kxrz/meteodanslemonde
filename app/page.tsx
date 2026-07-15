@@ -560,42 +560,31 @@ export default async function Home() {
           })()}
 
           {/* ── 4c. Événements en cours (feux) ── */}
-          {fireSummary && (fireSummary.activeCount > 0 || fireSummary.burnedCount > 0) && (
+          {fireSummary && fireSummary.activeCount > 0 && (
             <>
               <div className="flex items-center gap-3 py-1">
                 <div className="flex-1 h-px bg-neutral-200" />
                 <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Événements en cours</span>
                 <div className="flex-1 h-px bg-neutral-200" />
               </div>
-              <Link href="/r/provence-alpes-cote-d-azur" className="bg-[#431407] rounded-3xl p-5 hover:brightness-110 transition-all block">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Incendies · France</p>
-                <div className="flex items-baseline gap-4 mb-3">
-                  {fireSummary.activeCount > 0 && (
-                    <div>
-                      <span className="text-4xl font-black text-white leading-none">{fireSummary.activeCount}</span>
-                      <span className="text-sm text-orange-200/80 ml-2">feux actifs (7 derniers jours)</span>
-                    </div>
-                  )}
-                  {fireSummary.burnedCount > 0 && fireSummary.activeCount === 0 && (
-                    <div>
-                      <span className="text-4xl font-black text-white leading-none">{fireSummary.burnedCount}</span>
-                      <span className="text-sm text-orange-200/80 ml-2">zones brûlées (30 derniers jours)</span>
-                    </div>
-                  )}
+              <Link href="/r" className="bg-[#431407] rounded-3xl p-5 hover:brightness-110 transition-all block">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Incendies détectés · France</p>
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-4xl font-black text-white leading-none">{fireSummary.activeCount}</span>
+                  <span className="text-sm text-orange-200/80">détections satellite (7 derniers jours)</span>
                 </div>
-                {fireSummary.burnedHa > 0 && (
-                  <p className="text-xs text-orange-200/70 mb-3">
-                    {fireSummary.burnedHa.toLocaleString("fr-FR")} ha brûlés · Source EFFIS / Copernicus
-                  </p>
-                )}
+                <p className="text-xs text-orange-200/70 mb-3">
+                  Source NASA FIRMS · VIIRS SUOMI NPP · Données publiques
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {["provence-alpes-cote-d-azur", "occitanie", "nouvelle-aquitaine", "corse"].map((slug) => (
-                    <span key={slug} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5">
+                  {(["provence-alpes-cote-d-azur", "occitanie", "nouvelle-aquitaine", "corse", "auvergne-rhone-alpes"] as const).map((slug) => (
+                    <Link key={slug} href={`/r/${slug}`} onClick={e => e.stopPropagation()} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5 hover:bg-orange-800/80 transition-colors">
                       {slug === "provence-alpes-cote-d-azur" ? "PACA"
                         : slug === "occitanie" ? "Occitanie"
-                        : slug === "nouvelle-aquitaine" ? "Nouvelle-Aquitaine"
-                        : "Corse"}
-                    </span>
+                        : slug === "nouvelle-aquitaine" ? "Nvlle-Aquitaine"
+                        : slug === "corse" ? "Corse"
+                        : "Auvergne-RA"}
+                    </Link>
                   ))}
                 </div>
               </Link>

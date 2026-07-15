@@ -309,22 +309,15 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                     <p className={`text-xl font-black ${FIRE_RISK_STYLE[fireRisk.level].text}`}>{Math.round(fireRisk.precip3d)} mm</p>
                   </div>
                 </div>
-                {fireSummary && (fireSummary.activeCount > 0 || fireSummary.burnedCount > 0) && (
+                {fireSummary && fireSummary.activeCount > 0 && (
                   <div className="flex flex-wrap gap-3 mb-3 text-xs text-neutral-600">
-                    {fireSummary.activeCount > 0 && (
-                      <span className="bg-red-100 text-red-700 rounded-lg px-2 py-0.5 font-semibold">
-                        {fireSummary.activeCount} feux actifs (7j) · EFFIS/VIIRS
-                      </span>
-                    )}
-                    {fireSummary.burnedCount > 0 && (
-                      <span className="bg-orange-100 text-orange-700 rounded-lg px-2 py-0.5 font-semibold">
-                        {fireSummary.burnedCount} périmètres brûlés · {fireSummary.burnedHa > 0 ? `${fireSummary.burnedHa.toLocaleString("fr-FR")} ha` : "30 derniers jours"}
-                      </span>
-                    )}
+                    <span className="bg-red-100 text-red-700 rounded-lg px-2 py-0.5 font-semibold">
+                      {fireSummary.activeCount} détections satellite en France (7j) · NASA FIRMS/VIIRS
+                    </span>
                   </div>
                 )}
                 <p className="text-xs text-neutral-500 leading-relaxed">
-                  La saison des feux s&apos;est allongée de 3 semaines depuis 1970 en France méditerranéenne. Sous RCP4.5, elle devrait s&apos;étendre de 4 à 8 semaines supplémentaires d&apos;ici 2050 (GIEC AR6, Ch.&nbsp;12). Les périmètres brûlés sont visibles sur la carte (orange).
+                  La saison des feux s&apos;est allongée de 3 semaines depuis 1970 en France méditerranéenne. Sous RCP4.5, elle devrait s&apos;étendre de 4 à 8 semaines supplémentaires d&apos;ici 2050 (GIEC AR6, Ch.&nbsp;12). Les points rouges sur la carte indiquent les feux détectés par satellite (NASA FIRMS, 7 derniers jours).
                 </p>
               </div>
             )}
