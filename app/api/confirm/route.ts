@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { sql } from "@/lib/db"
+import { getSql } from "@/lib/db"
 import { BASE_URL } from "@/lib/resend"
 
 export async function GET(req: NextRequest) {
@@ -8,12 +8,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${BASE_URL}/?confirmed=invalid`)
   }
 
+  const sql = getSql()
   const rows = await sql`
     UPDATE subscribers
     SET confirmed_at = COALESCE(confirmed_at, now())
     WHERE confirm_token = ${token}
-    RETURNING id, confirmed_at
-  ` as { id: string; confirmed_at: Date | null }[]
+    RETURNING id
+  ` as { id: string }[]
 
   if (!rows.length) {
     return NextResponse.redirect(`${BASE_URL}/?confirmed=invalid`)
