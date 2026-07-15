@@ -9,13 +9,6 @@ function inFrance(lat: number, lon: number) {
   return lat >= FR.latMin && lat <= FR.latMax && lon >= FR.lonMin && lon <= FR.lonMax
 }
 
-type FirmsPoint = {
-  lat: number
-  lon: number
-  date: string
-  confidence: string  // "low" | "nominal" | "high"
-  frp: number         // Fire Radiative Power (MW)
-}
 
 function parseFirmsCSV(csv: string): FirmsPoint[] {
   const lines = csv.trim().split("\n")
@@ -57,6 +50,14 @@ export type FireSummary = {
   burnedHa: number     // non disponible via FIRMS points — toujours 0
 }
 
+export type FirmsPoint = {
+  lat: number
+  lon: number
+  date: string
+  confidence: string
+  frp: number
+}
+
 // ─── Fonctions exportées ──────────────────────────────────────────────────────
 
 function computeLevel(tempMax: number, humMin: number, windMax: number, precip3d: number): FireRiskLevel {
@@ -92,6 +93,10 @@ export async function fetchFireRisk(lat: number, lon: number): Promise<FireRisk 
 export async function fetchFireSummary(): Promise<FireSummary> {
   const points = await fetchFirmsPoints()
   return { activeCount: points.length, burnedHa: 0 }
+}
+
+export async function fetchFirePoints(): Promise<FirmsPoint[]> {
+  return fetchFirmsPoints()
 }
 
 export async function fetchFiresGeoJSON(): Promise<{ type: "FeatureCollection"; features: object[] }> {
