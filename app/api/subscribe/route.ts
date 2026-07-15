@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getSql } from "@/lib/db"
+import { getSql, initDb } from "@/lib/db"
 import { resend, FROM_EMAIL, BASE_URL, RESEND_AUDIENCE_ID, confirmationEmailHtml } from "@/lib/resend"
+
+let dbReady = false
 
 export async function POST(req: NextRequest) {
   let body: unknown
@@ -14,6 +16,12 @@ export async function POST(req: NextRequest) {
 
   if (!firstName?.trim() || !email?.trim() || !citySlug?.trim() || !cityName?.trim()) {
     return NextResponse.json({ error: "Champs manquants" }, { status: 400 })
+  }
+
+  // Créer les tables au premier appel (idempotent, CREATE TABLE IF NOT EXISTS)
+  if (!dbReady) {
+    await initDb()
+    dbReady = true
   }
 
   const sql = getSql()
@@ -51,12 +59,27 @@ export async function POST(req: NextRequest) {
 
   if (!subscriber.confirmed_at) {
     const confirmUrl = `${BASE_URL}/api/confirm?token=${subscriber.confirm_token}`
-    await resend.emails.send({
-      from: FROM_EMAIL,
-      to: emailLower,
-      subject: `Confirmez votre briefing matinal · ${cityName}`,
-      html: confirmationEmailHtml({ firstName: firstName.trim(), cityName, confirmUrl }),
-    })
+    try {
+      const result = await resend.emails.send({
+        from: FROM_EMAIL,
+        to: emailLower,
+        subject: `Confirmez votre briefing matinal · ${cityName}`,
+        html: confirmationEmailHtml({ firstName: firstName.trim(), cityName, confirmUrl }),
+      })
+      if (result.error) {
+        console.error("[subscribe] Resend error:", result.error)
+        return NextResponse.json(
+          { error: "Inscription enregistrée mais l'envoi de l'email a échoué. Vérifiez la configuration Resend." },
+          { status: 500 }
+        )
+      }
+    } catch (err) {
+      console.error("[subscribe] Resend exception:", err)
+      return NextResponse.json(
+        { error: "Inscription enregistrée mais l'envoi de l'email a échoué." },
+        { status: 500 }
+      )
+    }
   }
 
   return NextResponse.json({ ok: true })
