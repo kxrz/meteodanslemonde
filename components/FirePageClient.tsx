@@ -98,8 +98,8 @@ export default function FirePageClient({
           <FireMap geojson={geojson} cities={cities} flyToRef={flyToRef} />
         </div>
         <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
-          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-orange-500 leading-none mb-0.5">NASA FIRMS · VIIRS</p>
-          <p className="text-sm font-black text-neutral-900 leading-tight">Incendies en France</p>
+          <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-orange-500 leading-none mb-0.5">Satellite NASA · 7 jours</p>
+          <p className="text-sm font-black text-neutral-900 leading-tight">Feux détectés en France</p>
         </div>
         <div className="absolute bottom-6 left-6 z-[1000]">
           <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
@@ -151,22 +151,22 @@ export default function FirePageClient({
           </div>
 
           <div className="bg-red-900 rounded-3xl p-5">
-            <p className="text-[10px] uppercase tracking-widest text-red-200 font-semibold mb-1">Confiance haute</p>
+            <p className="text-[10px] uppercase tracking-widest text-red-200 font-semibold mb-1">Feux confirmés</p>
             <p className="text-4xl font-black text-white leading-none">{highConf}</p>
-            <p className="text-xs text-red-200/70 mt-1">{totalCount > 0 ? Math.round((highConf / totalCount) * 100) : 0}% des signaux</p>
+            <p className="text-xs text-red-200/70 mt-1">{totalCount > 0 ? Math.round((highConf / totalCount) * 100) : 0}% des détections</p>
           </div>
 
           {hasFrp ? (
             <div className="bg-amber-900 rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-widest text-amber-200 font-semibold mb-1">Puissance max</p>
+              <p className="text-[10px] uppercase tracking-widest text-amber-200 font-semibold mb-1">Feu le plus intense</p>
               <p className="text-3xl font-black text-white leading-none">{frpLabel(maxFrp)}</p>
-              <p className="text-xs text-amber-200/70 mt-1">feu le plus intense</p>
+              <p className="text-xs text-amber-200/70 mt-1">puissance rayonnée</p>
             </div>
           ) : (
             <div className="bg-neutral-700 rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold mb-1">Puissance (FRP)</p>
-              <p className="text-3xl font-black text-neutral-300 leading-none">n/d</p>
-              <p className="text-xs text-neutral-400 mt-1">non transmise</p>
+              <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold mb-1">Intensité</p>
+              <p className="text-2xl font-black text-neutral-300 leading-none">Feux de surface</p>
+              <p className="text-xs text-neutral-400 mt-1">en dessous du seuil de mesure</p>
             </div>
           )}
 
@@ -244,9 +244,10 @@ export default function FirePageClient({
 
           {/* Source */}
           <div className="col-span-2 bg-neutral-100 rounded-3xl p-5 text-xs text-neutral-500 leading-relaxed">
-            <p className="font-semibold text-neutral-700 mb-1">Source · NASA FIRMS</p>
-            Satellite SUOMI NPP · capteur VIIRS · données publiques sans clé API.
-            FRP (Fire Radiative Power) mesure la puissance radiative en MW. Les zones nuageuses peuvent masquer des détections.
+            <p className="font-semibold text-neutral-700 mb-1">Comment ça marche ?</p>
+            Un satellite de la NASA survole la France 2 fois par jour et repère les anomalies thermiques au sol.
+            Chaque point rouge est un foyer de chaleur anormale détecté depuis l&apos;espace.
+            Par temps nuageux, des feux peuvent passer inaperçus.
           </div>
 
           <Link href="/r" className="flex items-center justify-between bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-3xl px-5 py-4 group">

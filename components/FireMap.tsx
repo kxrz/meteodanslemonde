@@ -29,8 +29,13 @@ function nearestCity(lat: number, lon: number, cities: CityFR[]): CityFR | null 
   return best
 }
 
-const CONF_LABEL: Record<string, string> = { high: "Haute", nominal: "Nominale", low: "Faible" }
+const CONF_LABEL: Record<string, string> = { high: "Confirmé", nominal: "Probable", low: "Signal faible" }
 const CONF_COLOR: Record<string, string> = { high: "#dc2626", nominal: "#f97316", low: "#fbbf24" }
+const CONF_DESC: Record<string, string> = {
+  high: "détection fiable, feu actif",
+  nominal: "détection probable, à surveiller",
+  low: "signal incertain, peut-être un feu",
+}
 
 export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -86,22 +91,24 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
           : `<span class="fire-tip-date">${firedate}</span>`
 
         // Popup clic — détaillé avec croix
+        const label = CONF_LABEL[confidence] ?? confidence
+        const desc = CONF_DESC[confidence] ?? ""
         const frpLine = frp > 0
-          ? `<div class="fire-pop-row"><span>Puissance</span><strong>${frp < 10 ? frp.toFixed(1) : Math.round(frp)} MW</strong></div>`
+          ? `<div class="fire-pop-row"><span>Intensité</span><strong>${frp < 10 ? frp.toFixed(1) : Math.round(frp)} MW</strong></div>`
           : ""
         const cityLine = city
           ? `<div class="fire-pop-sub">${city.name} · ${city.region}</div>`
           : ""
         const popupHtml = `
           <div class="fire-pop">
-            <div class="fire-pop-title">Feu actif</div>
+            <div class="fire-pop-title">Feu détecté par satellite</div>
             ${cityLine}
-            <div class="fire-pop-row"><span>Date</span><strong>${firedate}</strong></div>
-            <div class="fire-pop-row"><span>Confiance</span>
-              <strong style="color:${color}">${CONF_LABEL[confidence] ?? confidence}</strong>
+            <div class="fire-pop-row"><span>Détecté le</span><strong>${firedate}</strong></div>
+            <div class="fire-pop-row fire-pop-badge-row">
+              <span class="fire-pop-badge" style="background:${color}22;color:${color}">${label}</span>
+              <span class="fire-pop-badge-desc">${desc}</span>
             </div>
             ${frpLine}
-            <div class="fire-pop-coords">${lat.toFixed(3)}N · ${Math.abs(lon).toFixed(3)}${lon >= 0 ? "E" : "O"}</div>
           </div>`
 
         L.circleMarker([lat, lon], {
