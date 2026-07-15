@@ -45,8 +45,8 @@ const STEPS = [
   },
   {
     num: "3",
-    title: "Recevez votre briefing à 7h",
-    desc: "Chaque matin, l'essentiel de la situation climatique pour votre ville, avant de commencer votre journée.",
+    title: "Recevez votre briefing chaque matin",
+    desc: "L'essentiel de la situation climatique pour votre ville, avant de commencer votre journée.",
   },
 ]
 
@@ -73,7 +73,7 @@ export default function NotificationsPage() {
                 <span className="text-orange-400">chaque matin.</span>
               </h1>
               <p className="text-neutral-400 text-base leading-relaxed mb-8 max-w-md">
-                Un email sobre, envoyé à 7h, avec le ressenti du jour, l&apos;anomalie vs la normale et les projections GIEC pour la ville de votre choix.
+                Un email sobre avec le ressenti du jour, l&apos;anomalie vs la normale et les projections GIEC pour la ville de votre choix.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link

@@ -8,6 +8,8 @@ export interface CityEmailData {
   anomaly: number | null
   proj2050: number | null
   normal: number | null
+  caniculeStreak?: number
+  climateTwin?: { name: string; country: string } | null
 }
 
 function anomalyLabel(a: number): { label: string; color: string; severity: string } {
@@ -53,7 +55,7 @@ function climateNarrative(anomaly: number, proj2050: number | null, month: numbe
 }
 
 function buildCityBlock(city: CityEmailData, month: number): string {
-  const { slug, name, apparentTempMax, anomaly, proj2050, normal } = city
+  const { slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin } = city
 
   if (!apparentTempMax) {
     return `
@@ -89,6 +91,30 @@ function buildCityBlock(city: CityEmailData, month: number): string {
             <td style="background:#fffbeb;border-left:3px solid #f97316;border-radius:0 8px 8px 0;padding:12px 16px">
               <p style="margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#92400e">Conseils du jour</p>
               <p style="margin:6px 0 0;font-size:13px;color:#78350f;line-height:1.6">${advice}</p>
+            </td>
+          </tr>
+        </table>
+        ` : ""}
+
+        ${caniculeStreak && caniculeStreak >= 3 ? `
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:14px 0 0">
+          <tr>
+            <td style="background:#fef2f2;border-left:3px solid #dc2626;border-radius:0 8px 8px 0;padding:12px 16px">
+              <p style="margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#991b1b">Alerte canicule</p>
+              <p style="margin:6px 0 0;font-size:13px;color:#7f1d1d;line-height:1.6">Episode en cours depuis <strong>${caniculeStreak} jour${caniculeStreak > 1 ? "s" : ""}</strong> (ressenti &ge; 35°C). Un épisode caniculaire prolongé est le facteur de risque le plus dangereux : le corps ne récupère pas entre les journées.</p>
+            </td>
+          </tr>
+        </table>
+        ` : caniculeStreak && caniculeStreak > 0 ? `
+        <p style="margin:14px 0 0;font-size:13px;color:#dc2626;font-weight:600">Ressenti &ge; 35°C depuis ${caniculeStreak} jour${caniculeStreak > 1 ? "s" : ""} &mdash; seuil d'alerte canicule.</p>
+        ` : ""}
+
+        ${climateTwin ? `
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin:14px 0 0">
+          <tr>
+            <td style="background:#f0fdf4;border-left:3px solid #16a34a;border-radius:0 8px 8px 0;padding:12px 16px">
+              <p style="margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#14532d">Jumeau climatique du jour</p>
+              <p style="margin:6px 0 0;font-size:13px;color:#166534;line-height:1.6">Aujourd'hui, <strong>${name}</strong> vit la même chaleur que <strong>${climateTwin.name}</strong> (${climateTwin.country}). Une façon concrète de visualiser votre ressenti à l'échelle mondiale.</p>
             </td>
           </tr>
         </table>

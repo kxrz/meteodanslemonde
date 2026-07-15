@@ -73,6 +73,63 @@ export async function fetchCityWeather(lat: number, lon: number) {
   }
 }
 
+export async function fetchCaniculeStreak(lat: number, lon: number): Promise<number> {
+  try {
+    const end = new Date()
+    end.setDate(end.getDate() - 1)
+    const start = new Date(end)
+    start.setDate(start.getDate() - 9)
+    const fmt = (d: Date) => d.toISOString().slice(0, 10)
+    const url =
+      `https://archive-api.open-meteo.com/v1/archive` +
+      `?latitude=${lat}&longitude=${lon}` +
+      `&daily=apparent_temperature_max` +
+      `&start_date=${fmt(start)}&end_date=${fmt(end)}`
+    const res = await fetch(url, { next: { revalidate: 86400 } })
+    if (!res.ok) return 0
+    const data = await res.json()
+    const maxTemps = (data.daily?.apparent_temperature_max ?? []) as (number | null)[]
+    let streak = 0
+    for (let k = maxTemps.length - 1; k >= 0; k--) {
+      if (maxTemps[k] !== null && maxTemps[k]! >= 35) streak++
+      else break
+    }
+    return streak
+  } catch {
+    return 0
+  }
+}
+
+export async function fetchClimateTwin(apparentTempMax: number): Promise<{ name: string; country: string } | null> {
+  try {
+    const worldBase = citiesWorldRaw as WorldBase[]
+    const lats = worldBase.map(c => c.lat).join(",")
+    const lons = worldBase.map(c => c.lon).join(",")
+    const url =
+      `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${lats}&longitude=${lons}` +
+      `&daily=apparent_temperature_max&forecast_days=1`
+    const res = await fetch(url, { next: { revalidate: 86400 } })
+    if (!res.ok) return null
+    const data = await res.json()
+    const results = Array.isArray(data) ? data : [data]
+    let best: { name: string; country: string } | null = null
+    let bestDelta = Infinity
+    for (let i = 0; i < worldBase.length; i++) {
+      const t = results[i]?.daily?.apparent_temperature_max?.[0]
+      if (t == null) continue
+      const delta = Math.abs(t - apparentTempMax)
+      if (delta < bestDelta && delta <= 4) {
+        bestDelta = delta
+        best = { name: worldBase[i].name, country: worldBase[i].country }
+      }
+    }
+    return best
+  } catch {
+    return null
+  }
+}
+
 export async function getWeatherData() {
   const cached = loadCache()
   if (cached) return cached
