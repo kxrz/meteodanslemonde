@@ -1,7 +1,7 @@
 name: Daily weather build
 on:
   schedule:
-    - cron: '0 5 * * *'   # chaque jour à 5h UTC (7h Paris en été)
+    - cron: '0 3 * * *'   # 3h UTC = 5h Paris (été, CEST) / 4h Paris (hiver, CET)
   workflow_dispatch:
 
 jobs:
