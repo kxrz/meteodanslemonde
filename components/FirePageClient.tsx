@@ -161,7 +161,11 @@ export default function FirePageClient({
           </div>
 
           {/* Filtre */}
-          <div className="col-span-2 flex gap-2">
+          <div className="col-span-2 bg-white rounded-3xl p-4 flex flex-col gap-3">
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Le satellite distingue deux niveaux de certitude. Les <strong className="text-neutral-700">feux confirmés</strong> sont des anomalies thermiques très marquées, très probablement des incendies actifs. Les autres détections peuvent inclure des zones industrielles, des reflets solaires ou des feux agricoles contrôlés.
+            </p>
+            <div className="flex gap-2">
             <button
               onClick={() => setFilter("all")}
               className={`flex-1 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${filter === "all" ? "bg-orange-500 text-white" : "bg-white text-neutral-500 hover:bg-neutral-100"}`}
@@ -176,6 +180,7 @@ export default function FirePageClient({
               Feux confirmés
               <span className={`ml-2 text-xs font-normal ${filter === "confirmed" ? "text-red-200" : "text-neutral-400"}`}>{highConf}</span>
             </button>
+            </div>
           </div>
 
           {/* KPIs */}
@@ -183,12 +188,14 @@ export default function FirePageClient({
             <p className="text-[10px] uppercase tracking-widest text-orange-300 font-semibold mb-1">Détections</p>
             <p className="text-4xl font-black text-white leading-none">{totalCount}</p>
             <p className="text-xs text-orange-200/70 mt-1">7 derniers jours</p>
+            <p className="text-[10px] text-orange-200/50 mt-2 leading-relaxed">Nombre total d&apos;anomalies thermiques repérées depuis l&apos;espace, toutes confiances confondues.</p>
           </div>
 
           <div className="bg-red-900 rounded-3xl p-5">
             <p className="text-[10px] uppercase tracking-widest text-red-200 font-semibold mb-1">Feux confirmés</p>
             <p className="text-4xl font-black text-white leading-none">{highConf}</p>
             <p className="text-xs text-red-200/70 mt-1">{totalCount > 0 ? Math.round((highConf / totalCount) * 100) : 0}% des détections</p>
+            <p className="text-[10px] text-red-200/50 mt-2 leading-relaxed">Signal thermique très intense, peu de doute sur la nature du foyer.</p>
           </div>
 
           {hasFrp ? (
@@ -196,12 +203,14 @@ export default function FirePageClient({
               <p className="text-[10px] uppercase tracking-widest text-amber-200 font-semibold mb-1">Feu le plus intense</p>
               <p className="text-3xl font-black text-white leading-none">{frpLabel(maxFrp)}</p>
               <p className="text-xs text-amber-200/70 mt-1">puissance rayonnée</p>
+              <p className="text-[10px] text-amber-200/50 mt-2 leading-relaxed">La puissance en MW mesure l&apos;énergie thermique émise. Un grand incendie de forêt dépasse souvent 100 MW.</p>
             </div>
           ) : (
             <div className="bg-neutral-700 rounded-3xl p-5">
               <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold mb-1">Intensité</p>
               <p className="text-2xl font-black text-neutral-300 leading-none">Feux de surface</p>
               <p className="text-xs text-neutral-400 mt-1">en dessous du seuil de mesure</p>
+              <p className="text-[10px] text-neutral-500 mt-2 leading-relaxed">Les feux détectés sont trop petits ou trop peu intenses pour que le satellite mesure leur puissance.</p>
             </div>
           )}
 
@@ -211,6 +220,7 @@ export default function FirePageClient({
             <p className="text-xs text-orange-200/70 mt-1">
               le {peakDay ? new Date(peakDay + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "-"}
             </p>
+            <p className="text-[10px] text-orange-200/50 mt-2 leading-relaxed">Jour où le satellite a enregistré le plus de foyers actifs simultanément.</p>
           </div>
 
           {/* Qualité de l'air */}
@@ -230,6 +240,7 @@ export default function FirePageClient({
                     {zoneWeather.pm10 !== null && <span>PM10 <strong className="text-neutral-700">{zoneWeather.pm10.toFixed(0)} µg/m³</strong></span>}
                   </div>
                 )}
+                <p className="text-[10px] text-neutral-400 mt-3 leading-relaxed">Les feux émettent des particules fines (PM2.5) dangereuses à respirer. Mesuré au centroïde des zones actives, modèle Copernicus CAMS.</p>
               </div>
             )
           })() : null}
@@ -250,14 +261,16 @@ export default function FirePageClient({
                   <p className="text-xs text-neutral-400">{windDirLabel(zoneWeather.windDir)}</p>
                 </div>
               </div>
+              <p className="text-[10px] text-neutral-400 mt-3 leading-relaxed">La direction du vent détermine vers où se propagent les fumées et les braises. Un vent fort multiplie la vitesse de progression d&apos;un incendie.</p>
             </div>
           ) : null}
 
           {/* Activité par jour */}
           <div className="col-span-2 bg-white rounded-3xl p-5">
-            <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-4">
+            <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">
               Activité · {days.length} jour{days.length > 1 ? "s" : ""}
             </p>
+            <p className="text-[10px] text-neutral-400 mb-4 leading-relaxed">Un pic peut refléter une vague de chaleur, un épisode de vent sec, ou simplement une meilleure couverture satellite ce jour-là. La barre rouge marque le jour le plus actif.</p>
             <div className="flex items-end gap-1.5" style={{ height: BAR_MAX_PX + 28 }}>
               {days.map(day => {
                 const count = byDay[day] ?? 0
@@ -282,7 +295,8 @@ export default function FirePageClient({
 
           {/* Par région */}
           <div className="col-span-2 bg-white rounded-3xl p-5">
-            <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-4">Par région</p>
+            <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">Par région</p>
+            <p className="text-[10px] text-neutral-400 mb-4 leading-relaxed">Répartition géographique des foyers détectés. La barre indique la part de chaque région sur le total France. Le chiffre en MW est la somme des puissances mesurées, un indicateur de l&apos;ampleur globale des feux dans la zone.</p>
             <div className="space-y-3">
               {regionRanking.map(({ key, label, slug, count, frpTotal }) => (
                 <div key={key}>
