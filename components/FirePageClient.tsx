@@ -51,6 +51,7 @@ export default function FirePageClient({
   peakDay, peakCount, days, byDay, regionRanking, autresCount,
 }: Props) {
   const flyToRef = useRef<((lat: number, lon: number, zoom?: number) => void) | null>(null)
+  const [filter, setFilter] = useState<"all" | "confirmed">("all")
   const [search, setSearch] = useState("")
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState("")
@@ -95,7 +96,7 @@ export default function FirePageClient({
       {/* Gauche : carte */}
       <div className="h-[55vw] max-h-[420px] lg:max-h-none lg:h-auto lg:w-[55%] shrink-0 relative p-3 lg:p-4">
         <div className="w-full h-full rounded-3xl overflow-hidden">
-          <FireMap geojson={geojson} cities={cities} flyToRef={flyToRef} />
+          <FireMap geojson={geojson} cities={cities} flyToRef={flyToRef} filter={filter} />
         </div>
         <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-orange-500 leading-none mb-0.5">Satellite NASA · 7 jours</p>
@@ -141,6 +142,24 @@ export default function FirePageClient({
               {locating ? "Localisation en cours…" : "Centrer sur ma position"}
             </button>
             {searchError && <p className="text-xs text-red-500 px-1">{searchError}</p>}
+          </div>
+
+          {/* Filtre */}
+          <div className="col-span-2 flex gap-2">
+            <button
+              onClick={() => setFilter("all")}
+              className={`flex-1 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${filter === "all" ? "bg-orange-500 text-white" : "bg-white text-neutral-500 hover:bg-neutral-100"}`}
+            >
+              Toutes les détections
+              <span className={`ml-2 text-xs font-normal ${filter === "all" ? "text-orange-200" : "text-neutral-400"}`}>{totalCount}</span>
+            </button>
+            <button
+              onClick={() => setFilter("confirmed")}
+              className={`flex-1 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-colors ${filter === "confirmed" ? "bg-red-600 text-white" : "bg-white text-neutral-500 hover:bg-neutral-100"}`}
+            >
+              Feux confirmés
+              <span className={`ml-2 text-xs font-normal ${filter === "confirmed" ? "text-red-200" : "text-neutral-400"}`}>{highConf}</span>
+            </button>
           </div>
 
           {/* KPIs */}
