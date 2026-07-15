@@ -54,7 +54,7 @@ function climateNarrative(anomaly: number, proj2050: number | null, month: numbe
   return text
 }
 
-function buildCityBlock(city: CityEmailData, month: number): string {
+function buildCityBlock(city: CityEmailData, month: number, unsubToken?: string): string {
   const { slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin } = city
 
   if (!apparentTempMax) {
@@ -124,8 +124,9 @@ function buildCityBlock(city: CityEmailData, month: number): string {
         <p style="margin:14px 0 0;font-size:13px;color:#6b7280;line-height:1.7">${narrative}</p>
         ` : ""}
 
-        <p style="margin:14px 0 0">
+        <p style="margin:14px 0 0;display:flex;gap:16px;align-items:center">
           <a href="${BASE_URL}/a/${slug}" style="font-size:12px;color:#f97316;font-weight:600;text-decoration:none">Voir la carte climatique de ${name} &rarr;</a>
+          ${unsubToken ? `<a href="${BASE_URL}/api/unsubscribe-city?token=${unsubToken}&city=${slug}" style="font-size:11px;color:#d1d5db;text-decoration:none">Retirer cette ville</a>` : ""}
         </p>
       </td>
     </tr>`
@@ -144,7 +145,7 @@ export function buildDailyEmailHtml({
   month: number
   unsubToken?: string
 }) {
-  const cityBlocks = cities.map(c => buildCityBlock(c, month)).join("")
+  const cityBlocks = cities.map(c => buildCityBlock(c, month, unsubToken)).join("")
   const unsubUrl = unsubToken
     ? `${BASE_URL}/api/confirm?token=${unsubToken}`
     : `${BASE_URL}/api/confirm?token=unsub`
