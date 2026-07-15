@@ -5,9 +5,22 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import FirePageClient from "@/components/FirePageClient"
 
+const META_TITLE = "Incendies en France · Détections satellite 7 jours"
+const META_DESC = "Carte des feux actifs détectés par satellite NASA FIRMS / VIIRS en France métropolitaine et Corse. Données mises à jour toutes les heures."
+
 export const metadata: Metadata = {
-  title: "Incendies en France · Détections satellite 7 jours",
-  description: "Carte des feux actifs détectés par satellite NASA FIRMS / VIIRS en France métropolitaine et Corse.",
+  title: META_TITLE,
+  description: META_DESC,
+  alternates: { canonical: "https://www.cestchaud.fr/feux" },
+  openGraph: {
+    title: META_TITLE,
+    description: META_DESC,
+    url: "https://www.cestchaud.fr/feux",
+    siteName: "cestchaud.fr",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", title: META_TITLE, description: META_DESC },
 }
 
 export const revalidate = 3600
