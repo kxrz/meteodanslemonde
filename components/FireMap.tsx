@@ -53,6 +53,8 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return
 
+    let rafId: number
+    rafId = requestAnimationFrame(() => {
     import("leaflet").then(async (L) => {
       if (!containerRef.current || mapRef.current) return
       // leaflet.heat est un plugin UMD qui cherche L comme global
@@ -71,9 +73,12 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
         flyToRef.current = (lat, lon, zoom = 11) => map.flyTo([lat, lon], zoom, { duration: 1.2 })
       }
 
-      resizeObserverRef.current = new ResizeObserver(() => map.invalidateSize())
+      resizeObserverRef.current = new ResizeObserver(() => {
+        map.invalidateSize({ animate: false })
+        layersRef.current?.updateZoom()
+      })
       resizeObserverRef.current.observe(containerRef.current!)
-      setTimeout(() => map.invalidateSize(), 50)
+      setTimeout(() => map.invalidateSize({ animate: false }), 200)
       L.control.zoom({ position: "bottomright" }).addTo(map)
       L.control.attribution({ prefix: false }).addTo(map).addAttribution("&copy; CARTO · NASA FIRMS")
 
@@ -216,8 +221,10 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
       updateZoom()
       map.on("zoomend", updateZoom)
     })
+    }) // requestAnimationFrame
 
     return () => {
+      cancelAnimationFrame(rafId)
       if (flyToRef) flyToRef.current = null
       layersRef.current = null
       resizeObserverRef.current?.disconnect()
