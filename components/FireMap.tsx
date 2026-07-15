@@ -18,10 +18,12 @@ interface Props {
   flyToRef?: React.MutableRefObject<((lat: number, lon: number, zoom?: number) => void) | null>
 }
 
+const MAX_CITY_DIST_DEG2 = 0.15 * 0.15 + 0.15 * 0.15 // ~15 km rayon
+
 function nearestCity(lat: number, lon: number, cities: CityFR[]): CityFR | null {
   if (!cities.length) return null
   let best: CityFR | null = null
-  let bestDist = Infinity
+  let bestDist = MAX_CITY_DIST_DEG2
   for (const c of cities) {
     const d = (c.lat - lat) ** 2 + (c.lon - lon) ** 2
     if (d < bestDist) { bestDist = d; best = c }
