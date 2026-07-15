@@ -48,6 +48,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const layersRef = useRef<{ heatAll: any; heatConfirmed: any; markersAll: any; markersConfirmed: any; updateZoom: () => void } | null>(null)
   const filterRef = useRef(filter)
+  const resizeObserverRef = useRef<ResizeObserver | null>(null)
 
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return
@@ -70,7 +71,9 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
         flyToRef.current = (lat, lon, zoom = 11) => map.flyTo([lat, lon], zoom, { duration: 1.2 })
       }
 
-      setTimeout(() => map.invalidateSize(), 100)
+      resizeObserverRef.current = new ResizeObserver(() => map.invalidateSize())
+      resizeObserverRef.current.observe(containerRef.current!)
+      setTimeout(() => map.invalidateSize(), 50)
       L.control.zoom({ position: "bottomright" }).addTo(map)
       L.control.attribution({ prefix: false }).addTo(map).addAttribution("&copy; CARTO · NASA FIRMS")
 
@@ -217,6 +220,8 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
     return () => {
       if (flyToRef) flyToRef.current = null
       layersRef.current = null
+      resizeObserverRef.current?.disconnect()
+      resizeObserverRef.current = null
       mapRef.current?.remove()
       mapRef.current = null
     }
