@@ -136,9 +136,11 @@ export function buildDailyEmailHtml({
       <table width="100%" style="max-width:520px;background:#ffffff;border-radius:20px;overflow:hidden">
 
         <tr>
-          <td style="background:#111111;padding:28px 36px">
-            <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#f97316">cestchaud.fr &middot; briefing matinal</p>
-            <p style="margin:6px 0 0;font-size:18px;font-weight:700;color:#ffffff;text-transform:capitalize">${dateLabel}</p>
+          <td style="background:#f97316;padding:24px 36px">
+            <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ffffff">
+              <a href="${BASE_URL}" style="color:#ffffff;text-decoration:none">cestchaud&#8203;.fr</a> &middot; briefing matinal
+            </p>
+            <p style="margin:6px 0 0;font-size:20px;font-weight:900;color:#ffffff;text-transform:capitalize">${dateLabel}</p>
           </td>
         </tr>
 
