@@ -5,10 +5,29 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import ConfirmedBanner from "@/components/ConfirmedBanner"
 
+const BASE = "https://www.cestchaud.fr"
+const TITLE = "Briefing matinal · Données climatiques de votre ville chaque matin"
+const DESCRIPTION = "Recevez chaque matin par email le ressenti du jour, l'anomalie vs la normale et les projections GIEC pour la ville de votre choix. Gratuit, sans publicité."
+
 export const metadata: Metadata = {
-  title: "Briefing matinal · Données climatiques de votre ville chaque matin",
-  description: "Recevez chaque matin par email le ressenti du jour, l'anomalie vs la normale et les projections GIEC pour la ville de votre choix. Gratuit, sans publicité.",
-  alternates: { canonical: "https://www.cestchaud.fr/notifications" },
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: `${BASE}/notifications` },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: `${BASE}/notifications`,
+    siteName: "cestchaud.fr",
+    locale: "fr_FR",
+    type: "website",
+    images: [{ url: `${BASE}/notifications/opengraph-image`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [`${BASE}/notifications/opengraph-image`],
+  },
 }
 
 const FEATURES = [
