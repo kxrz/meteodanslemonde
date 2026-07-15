@@ -4,7 +4,7 @@ import { Resend } from "resend"
 export const resend = new Resend(process.env.RESEND_API_KEY ?? "")
 
 export const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? ""
-export const FROM_EMAIL = "cestchaud.fr <matin@cestchaud.fr>"
+export const FROM_EMAIL = "cestchaud.fr <florent@updates.leswww.com>"
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.cestchaud.fr"
 
 export function confirmationEmailHtml({
