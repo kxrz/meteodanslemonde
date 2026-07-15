@@ -311,9 +311,9 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                 </div>
                 {fireSummary && fireSummary.activeCount > 0 && (
                   <div className="flex flex-wrap gap-3 mb-3 text-xs text-neutral-600">
-                    <span className="bg-red-100 text-red-700 rounded-lg px-2 py-0.5 font-semibold">
-                      {fireSummary.activeCount} détections satellite en France (7j) · NASA FIRMS/VIIRS
-                    </span>
+                    <Link href="/feux" className="bg-red-100 text-red-700 rounded-lg px-2 py-0.5 font-semibold hover:bg-red-200 transition-colors">
+                      {fireSummary.activeCount} détections satellite en France (7j) · voir la carte
+                    </Link>
                   </div>
                 )}
                 <p className="text-xs text-neutral-500 leading-relaxed">

@@ -587,9 +587,14 @@ export default async function Home() {
                     </Link>
                   ))}
                 </div>
-                <Link href="/r" className="text-xs text-orange-300 hover:text-orange-100 transition-colors">
-                  Voir toutes les régions &rarr;
-                </Link>
+                <div className="flex items-center gap-4">
+                  <Link href="/feux" className="text-xs text-orange-200 hover:text-white font-semibold transition-colors">
+                    Carte détaillée &rarr;
+                  </Link>
+                  <Link href="/r" className="text-xs text-orange-300/70 hover:text-orange-100 transition-colors">
+                    Toutes les régions
+                  </Link>
+                </div>
               </div>
             </>
           )}
