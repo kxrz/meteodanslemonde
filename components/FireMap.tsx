@@ -92,28 +92,32 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
           ? `<span class="fire-tip-city">${city.name}</span> <span class="fire-tip-date">${firedate}</span>`
           : `<span class="fire-tip-date">${firedate}</span>`
 
-        // Popup clic — détaillé avec croix
+        // Popup clic — localisation par reverse geocoding au clic
         const label = CONF_LABEL[confidence] ?? confidence
         const desc = CONF_DESC[confidence] ?? ""
         const frpLine = frp > 0
           ? `<div class="fire-pop-row"><span>Intensité</span><strong>${frp < 10 ? frp.toFixed(1) : Math.round(frp)} MW</strong></div>`
           : ""
-        const cityLine = city
-          ? `<div class="fire-pop-sub">${city.name} · ${city.region}</div>`
-          : ""
-        const popupHtml = `
-          <div class="fire-pop">
-            <div class="fire-pop-title">Feu détecté par satellite</div>
-            ${cityLine}
-            <div class="fire-pop-row"><span>Détecté le</span><strong>${firedate}</strong></div>
-            <div class="fire-pop-row fire-pop-badge-row">
-              <span class="fire-pop-badge" style="background:${color}22;color:${color}">${label}</span>
-              <span class="fire-pop-badge-desc">${desc}</span>
-            </div>
-            ${frpLine}
-          </div>`
 
-        L.circleMarker([lat, lon], {
+        function buildPopupHtml(locationLine: string) {
+          return `
+            <div class="fire-pop">
+              <div class="fire-pop-title">Feu détecté par satellite</div>
+              ${locationLine}
+              <div class="fire-pop-row"><span>Détecté le</span><strong>${firedate}</strong></div>
+              <div class="fire-pop-row fire-pop-badge-row">
+                <span class="fire-pop-badge" style="background:${color}22;color:${color}">${label}</span>
+                <span class="fire-pop-badge-desc">${desc}</span>
+              </div>
+              ${frpLine}
+            </div>`
+        }
+
+        const initialLocationLine = city
+          ? `<div class="fire-pop-sub">${city.name} · ${city.region}</div>`
+          : `<div class="fire-pop-sub fire-pop-locating">Localisation…</div>`
+
+        const marker = L.circleMarker([lat, lon], {
           radius: isHigh ? 5 : 3,
           fillColor: color,
           color: "#0000001a",
@@ -122,7 +126,39 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
         })
           .addTo(map)
           .bindTooltip(tooltipHtml, { direction: "top", className: "fire-tooltip" })
-          .bindPopup(popupHtml, { maxWidth: 220, className: "fire-popup" })
+          .bindPopup(buildPopupHtml(initialLocationLine), { maxWidth: 220, className: "fire-popup" })
+
+        if (!city) {
+          marker.on("popupopen", () => {
+            fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=fr`,
+              { headers: { "Accept-Language": "fr" } }
+            )
+              .then(r => r.json())
+              .then(data => {
+                const addr = data.address ?? {}
+                const commune = addr.village ?? addr.town ?? addr.city ?? addr.municipality ?? ""
+                const dept = addr.county ?? addr.state ?? ""
+                const locationLine = commune
+                  ? `<div class="fire-pop-sub">${commune}${dept ? ` · ${dept}` : ""}</div>`
+                  : `<div class="fire-pop-sub">${dept || "Zone forestière"}</div>`
+                const popup = marker.getPopup()
+                if (popup?.isOpen()) {
+                  popup.setContent(buildPopupHtml(locationLine))
+                  // update tooltip too
+                  marker.setTooltipContent(
+                    `<span class="fire-tip-city">${commune || dept || "Feu"}</span> <span class="fire-tip-date">${firedate}</span>`
+                  )
+                }
+              })
+              .catch(() => {
+                const popup = marker.getPopup()
+                if (popup?.isOpen()) {
+                  popup.setContent(buildPopupHtml(`<div class="fire-pop-sub">Zone forestière</div>`))
+                }
+              })
+          })
+        }
       }
     })
 
