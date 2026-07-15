@@ -6,7 +6,7 @@ import { getWeatherData } from "@/lib/weather-data"
 import { loadClimateMap } from "@/lib/climate"
 import { fmtDelta } from "@/lib/format"
 import { slugify } from "@/lib/slugify"
-import { fetchFireSummary } from "@/lib/fire-data"
+import { fetchFireSummary, fetchFireZoneWeather } from "@/lib/fire-data"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import ShareButton from "@/components/ShareButton"
@@ -184,6 +184,9 @@ export default async function Home() {
   const month = new Date(fetchedAt).getMonth()
   const isSummer = month >= 4 && month <= 9
   const fireSummary = isSummer ? await fetchFireSummary().catch(() => null) : null
+  const homeAirQuality = fireSummary && fireSummary.activeCount > 0
+    ? await fetchFireZoneWeather(46.5, 2.5).catch(() => null)
+    : null
   const monthName = MONTHS_DISPLAY[month]
 
   const citiesWithClimate: CityWithClimate[] = citiesFR.map((c) => {
@@ -242,15 +245,28 @@ export default async function Home() {
       <main className="flex-1 px-3 lg:px-4 pb-4">
         <div className="space-y-3">
 
-          {/* ── 0. Recherche ── */}
-          <div className="flex items-center gap-2 max-w-lg">
-            <div className="flex-1">
-              <CitySearch cities={citiesForSearch} />
+          {/* ── 0. Intro + Recherche ── */}
+          <div className="space-y-3">
+            <div>
+              <h1 className="text-xl font-black text-neutral-900 leading-tight">Il fait vraiment chaud aujourd&apos;hui ?</h1>
+              <p className="text-sm text-neutral-500 mt-1 leading-relaxed">
+                Chaque jour, ce site compare la chaleur réelle en France avec les moyennes historiques ERA5.
+                Cherchez votre ville pour voir l&apos;anomalie du jour, la tendance sur 30 ans et les projections GIEC 2050.
+              </p>
             </div>
-            <GeolocateButton cities={citiesForSearch} />
+            <div className="flex items-center gap-2 max-w-lg">
+              <div className="flex-1">
+                <CitySearch cities={citiesForSearch} />
+              </div>
+              <GeolocateButton cities={citiesForSearch} />
+            </div>
           </div>
 
           {/* ── 1. Records du jour ── */}
+          <div className="flex items-baseline gap-3">
+            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">En ce moment en France</p>
+            <p className="text-xs text-neutral-400">· ressenti maximal du jour · {monthName}</p>
+          </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <Link href={`/a/${slugify(hottest.name)}`} className="bg-[#fed7aa]/80 hover:bg-[#fbbf77]/80 transition-colors rounded-3xl p-5 group">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">Plus chaud aujourd&apos;hui</p>
@@ -291,6 +307,7 @@ export default async function Home() {
                   <p className="text-xs text-black/50 mt-1.5">
                     {avgAnomaly > 2 ? "nettement au-dessus" : avgAnomaly > 0 ? "légèrement au-dessus" : avgAnomaly < -2 ? "nettement en dessous" : "dans la normale"} de la normale ERA5
                   </p>
+                  <p className="text-[10px] text-black/30 mt-2 leading-relaxed">Écart par rapport à la moyenne du mois calculée sur 1940-2023.</p>
                 </>
               ) : (
                 <div className="text-2xl font-black text-black/20">-</div>
@@ -321,7 +338,7 @@ export default async function Home() {
                     <>
                       <p className="text-2xl font-black text-green-900 leading-none">{fmtDelta(avgTrend)}&deg;C</p>
                       <p className="text-sm text-green-900/60 mt-1.5">depuis 1990 en {monthName}</p>
-                      <p className="text-xs text-green-900/40">moyenne nationale ERA5</p>
+                      <p className="text-[10px] text-green-900/40 mt-1">Ce que le thermomètre a gagné en trois décennies sur toute la France.</p>
                     </>
                   ) : (
                     <p className="text-xl font-black text-green-900/20">N/A</p>
@@ -334,8 +351,8 @@ export default async function Home() {
                     {top3Anomaly[0].proj2050 !== null ? (
                       <>
                         <p className="text-2xl font-black text-purple-900 leading-none">+{top3Anomaly[0].proj2050.toFixed(1)}&deg;C</p>
-                        <p className="text-sm text-purple-900/60 mt-1.5">supplémentaires</p>
-                        <p className="text-xs text-purple-900/40">à {top3Anomaly[0].name}</p>
+                        <p className="text-sm text-purple-900/60 mt-1.5">supplémentaires à {top3Anomaly[0].name}</p>
+                        <p className="text-[10px] text-purple-900/40 mt-1">Projection médiane scénario SSP2-4.5 (émissions modérées).</p>
                       </>
                     ) : (
                       <p className="text-xl font-black text-purple-900/20">N/A</p>
@@ -408,10 +425,13 @@ export default async function Home() {
           </div>
 
           {/* ── Séparateur ── */}
-          <div className="flex items-center gap-3 py-1">
-            <div className="flex-1 h-px bg-neutral-200" />
-            <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Focus</span>
-            <div className="flex-1 h-px bg-neutral-200" />
+          <div className="space-y-1 py-1">
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-neutral-200" />
+              <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Zoom sur aujourd&apos;hui</span>
+              <div className="flex-1 h-px bg-neutral-200" />
+            </div>
+            <p className="text-center text-[10px] text-neutral-400">Une ville tirée au sort chaque matin, ses anomalies ERA5 et ce que le GIEC projette pour 2050.</p>
           </div>
 
           {/* ── 3. Ville du jour ── */}
@@ -510,10 +530,13 @@ export default async function Home() {
             if (hotNightCities.length === 0 && heatwaveCities.length === 0) return null
             return (
               <>
-                <div className="flex items-center gap-3 py-1">
-                  <div className="flex-1 h-px bg-neutral-200" />
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Alertes du jour</span>
-                  <div className="flex-1 h-px bg-neutral-200" />
+                <div className="space-y-1 py-1">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-neutral-200" />
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Alertes du jour</span>
+                    <div className="flex-1 h-px bg-neutral-200" />
+                  </div>
+                  <p className="text-center text-[10px] text-neutral-400">Villes où les conditions sont potentiellement dangereuses pour la santé aujourd&apos;hui.</p>
                 </div>
                 <div className={`grid gap-3 ${hotNightCities.length > 0 && heatwaveCities.length > 0 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
                   {hotNightCities.length > 0 && (
@@ -562,33 +585,68 @@ export default async function Home() {
           {/* ── 4c. Événements en cours (feux) ── */}
           {fireSummary && fireSummary.activeCount > 0 && (
             <>
-              <div className="flex items-center gap-3 py-1">
-                <div className="flex-1 h-px bg-neutral-200" />
-                <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Événements en cours</span>
-                <div className="flex-1 h-px bg-neutral-200" />
+              <div className="space-y-1 py-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-neutral-200" />
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Événements en cours</span>
+                  <div className="flex-1 h-px bg-neutral-200" />
+                </div>
+                <p className="text-center text-[10px] text-neutral-400">Incendies détectés par satellite et impact sur l&apos;air que vous respirez.</p>
               </div>
-              <Link href="/feux" className="bg-[#431407] rounded-3xl p-5 block hover:brightness-110 transition-all group">
-                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Incendies détectés · France</p>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-4xl font-black text-white leading-none">{fireSummary.activeCount}</span>
-                  <span className="text-sm text-orange-200/80">détections satellite · 7 jours</span>
-                </div>
-                <p className="text-xs text-orange-200/60 mb-4">NASA FIRMS · VIIRS SUOMI NPP</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {(["provence-alpes-cote-d-azur", "occitanie", "nouvelle-aquitaine", "corse", "auvergne-rhone-alpes"] as const).map((slug) => (
-                    <span key={slug} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5">
-                      {slug === "provence-alpes-cote-d-azur" ? "PACA"
-                        : slug === "occitanie" ? "Occitanie"
-                        : slug === "nouvelle-aquitaine" ? "Nvlle-Aquitaine"
-                        : slug === "corse" ? "Corse"
-                        : "Auvergne-RA"}
-                    </span>
-                  ))}
-                </div>
-                <span className="text-xs text-orange-200 font-semibold group-hover:text-white transition-colors">
-                  Voir la carte satellite &rarr;
-                </span>
-              </Link>
+              <div className={`grid gap-3 ${homeAirQuality?.aqi !== null ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
+                <Link href="/feux" className="bg-[#431407] rounded-3xl p-5 block hover:brightness-110 transition-all group">
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Incendies détectés · France</p>
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-4xl font-black text-white leading-none">{fireSummary.activeCount}</span>
+                    <span className="text-sm text-orange-200/80">foyers · 7 derniers jours</span>
+                  </div>
+                  <p className="text-xs text-orange-200/50 mb-4">Repérés par satellite depuis l&apos;espace, mis à jour toutes les heures.</p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {(["provence-alpes-cote-d-azur", "occitanie", "nouvelle-aquitaine", "corse", "auvergne-rhone-alpes"] as const).map((slug) => (
+                      <span key={slug} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5">
+                        {slug === "provence-alpes-cote-d-azur" ? "PACA"
+                          : slug === "occitanie" ? "Occitanie"
+                          : slug === "nouvelle-aquitaine" ? "Nvlle-Aquitaine"
+                          : slug === "corse" ? "Corse"
+                          : "Auvergne-RA"}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs text-orange-200 font-semibold group-hover:text-white transition-colors">
+                    Voir la carte satellite &rarr;
+                  </span>
+                </Link>
+
+                {homeAirQuality && homeAirQuality.aqi !== null && (() => {
+                  const aqi = homeAirQuality.aqi
+                  const { label, color, bg } = aqi <= 20
+                    ? { label: "Bon", color: "#16a34a", bg: "#dcfce7" }
+                    : aqi <= 40 ? { label: "Acceptable", color: "#65a30d", bg: "#ecfccb" }
+                    : aqi <= 60 ? { label: "Modéré", color: "#d97706", bg: "#fef3c7" }
+                    : aqi <= 80 ? { label: "Mauvais", color: "#ea580c", bg: "#ffedd5" }
+                    : { label: "Très mauvais", color: "#dc2626", bg: "#fee2e2" }
+                  const pm25 = homeAirQuality.pm25
+                  return (
+                    <Link href="/feux" className="bg-white rounded-3xl p-5 block hover:bg-neutral-50 transition-colors">
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Qualité de l&apos;air · France</p>
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ color, background: bg }}>{label}</span>
+                        <span className="text-2xl font-black text-neutral-900">{aqi}</span>
+                        <span className="text-xs text-neutral-400">IQA</span>
+                      </div>
+                      {pm25 !== null && (
+                        <p className="text-xs text-neutral-500 mb-3">
+                          Particules fines PM2.5 <strong className="text-neutral-700">{pm25.toFixed(0)} µg/m³</strong>
+                          {pm25 > 25 ? " — niveau préoccupant" : pm25 > 10 ? " — niveau modéré" : " — niveau faible"}
+                        </p>
+                      )}
+                      <p className="text-[10px] text-neutral-400 leading-relaxed">
+                        Les feux actifs dégradent l&apos;air à distance. Personnes sensibles (asthme, enfants, seniors) : limitez les sorties prolongées.
+                      </p>
+                    </Link>
+                  )
+                })()}
+              </div>
             </>
           )}
 

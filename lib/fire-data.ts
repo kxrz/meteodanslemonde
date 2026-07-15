@@ -113,6 +113,43 @@ export async function fetchFireRisk(lat: number, lon: number): Promise<FireRisk 
   }
 }
 
+export type FireZoneWeather = {
+  aqi: number | null       // European AQI 0-500
+  pm25: number | null      // µg/m³
+  pm10: number | null      // µg/m³
+  windSpeed: number | null // km/h
+  windDir: number | null   // degrés 0-360
+}
+
+export async function fetchFireZoneWeather(lat: number, lon: number): Promise<FireZoneWeather> {
+  const empty: FireZoneWeather = { aqi: null, pm25: null, pm10: null, windSpeed: null, windDir: null }
+  try {
+    const [aqRes, windRes] = await Promise.all([
+      fetch(
+        `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}` +
+        `&current=european_aqi,pm10,pm2_5&domains=cams_europe`,
+        { next: { revalidate: 3600 } }
+      ),
+      fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+        `&current=wind_speed_10m,wind_direction_10m`,
+        { next: { revalidate: 3600 } }
+      ),
+    ])
+    const aq = aqRes.ok ? (await aqRes.json()).current : {}
+    const wind = windRes.ok ? (await windRes.json()).current : {}
+    return {
+      aqi: aq.european_aqi ?? null,
+      pm25: aq.pm2_5 ?? null,
+      pm10: aq.pm10 ?? null,
+      windSpeed: wind.wind_speed_10m ?? null,
+      windDir: wind.wind_direction_10m ?? null,
+    }
+  } catch {
+    return empty
+  }
+}
+
 export async function fetchFireSummary(): Promise<FireSummary> {
   const points = await fetchFirmsPoints()
   return { activeCount: points.length, burnedHa: 0 }
