@@ -23,19 +23,20 @@ export async function GET(req: NextRequest) {
     const rows = await sql`
       SELECT
         s.first_name,
+        s.confirm_token,
         string_agg(sub.city_slug, ',' ORDER BY sub.created_at) AS city_slugs,
         string_agg(sub.city_name, ',' ORDER BY sub.created_at) AS city_names
       FROM subscribers s
       JOIN subscriptions sub ON sub.subscriber_id = s.id
       WHERE s.email = ${to.toLowerCase()}
-      GROUP BY s.first_name
-    ` as { first_name: string; city_slugs: string; city_names: string }[]
+      GROUP BY s.first_name, s.confirm_token
+    ` as { first_name: string; confirm_token: string; city_slugs: string; city_names: string }[]
 
     if (!rows.length) {
       return NextResponse.json({ error: `Abonné non trouvé : ${to}` }, { status: 404 })
     }
 
-    const { first_name, city_slugs, city_names } = rows[0]
+    const { first_name, confirm_token, city_slugs, city_names } = rows[0]
     const citySlugs = city_slugs.split(",")
     const cityNames = city_names.split(",")
 
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest) {
       cityData.push({ slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin })
     }
 
-    const html = buildDailyEmailHtml({ firstName: first_name, cities: cityData, dateLabel, month })
+    const html = buildDailyEmailHtml({ firstName: first_name, cities: cityData, dateLabel, month, unsubToken: confirm_token })
 
     const result = await resend.emails.send({
       from: FROM_EMAIL,

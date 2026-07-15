@@ -16,13 +16,14 @@ export async function GET(req: NextRequest) {
     SELECT
       s.email,
       s.first_name,
+      s.confirm_token,
       string_agg(sub.city_slug, ',' ORDER BY sub.created_at) AS city_slugs,
       string_agg(sub.city_name, ',' ORDER BY sub.created_at) AS city_names
     FROM subscribers s
     JOIN subscriptions sub ON sub.subscriber_id = s.id
     WHERE s.confirmed_at IS NOT NULL
-    GROUP BY s.email, s.first_name
-  ` as { email: string; first_name: string; city_slugs: string; city_names: string }[]
+    GROUP BY s.email, s.first_name, s.confirm_token
+  ` as { email: string; first_name: string; confirm_token: string; city_slugs: string; city_names: string }[]
 
   if (!rows.length) return NextResponse.json({ sent: 0 })
 
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
       cityData.push({ slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin })
     }
 
-    const html = buildDailyEmailHtml({ firstName: row.first_name, cities: cityData, dateLabel, month })
+    const html = buildDailyEmailHtml({ firstName: row.first_name, cities: cityData, dateLabel, month, unsubToken: row.confirm_token })
 
     emails.push({
       from: FROM_EMAIL,
