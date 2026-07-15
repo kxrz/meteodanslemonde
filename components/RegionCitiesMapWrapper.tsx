@@ -20,6 +20,6 @@ const RegionCitiesMap = dynamic(() => import("@/components/RegionCitiesMap"), {
   ),
 })
 
-export default function RegionCitiesMapWrapper({ cities }: { cities: City[] }) {
-  return <RegionCitiesMap cities={cities} />
+export default function RegionCitiesMapWrapper({ cities, showFires }: { cities: City[]; showFires?: boolean }) {
+  return <RegionCitiesMap cities={cities} showFires={showFires} />
 }
