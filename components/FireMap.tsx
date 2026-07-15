@@ -18,7 +18,7 @@ interface Props {
   flyToRef?: React.MutableRefObject<((lat: number, lon: number, zoom?: number) => void) | null>
 }
 
-const MAX_CITY_DIST_DEG2 = 0.15 * 0.15 + 0.15 * 0.15 // ~15 km rayon
+const MAX_CITY_DIST_DEG2 = 0.15 * 0.15 + 0.15 * 0.15
 
 function nearestCity(lat: number, lon: number, cities: CityFR[]): CityFR | null {
   if (!cities.length) return null
@@ -39,6 +39,8 @@ const CONF_DESC: Record<string, string> = {
   low: "signal incertain, peut-être un feu",
 }
 
+const HEATMAP_ZOOM_THRESHOLD = 9
+
 export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<import("leaflet").Map | null>(null)
@@ -46,7 +48,10 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
   useEffect(() => {
     if (typeof window === "undefined" || !containerRef.current) return
 
-    import("leaflet").then((L) => {
+    Promise.all([
+      import("leaflet"),
+      import("leaflet.heat"),
+    ]).then(([L]) => {
       if (!containerRef.current || mapRef.current) return
 
       const map = L.map(containerRef.current!, {
@@ -69,6 +74,27 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
         subdomains: "abcd", maxZoom: 19,
       }).addTo(map)
 
+      // ── Heatmap (vue d'ensemble) ─────────────────────────────────────────
+      const heatPoints = geojson.features.map(f => {
+        const [lon, lat] = f.geometry.coordinates
+        const { frp, confidence } = f.properties
+        // intensité = FRP normalisé, minimum 0.3 pour les feux sans FRP
+        const weight = frp > 0 ? Math.min(frp / 30, 1) : (confidence === "high" ? 0.5 : 0.3)
+        return [lat, lon, weight] as [number, number, number]
+      })
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const heat = (L as any).heatLayer(heatPoints, {
+        radius: 28,
+        blur: 22,
+        maxZoom: HEATMAP_ZOOM_THRESHOLD,
+        gradient: { 0.2: "#fde68a", 0.5: "#f97316", 0.8: "#dc2626", 1.0: "#7f1d1d" },
+        minOpacity: 0.45,
+      }).addTo(map)
+
+      // ── Markers individuels (vue de détail) ─────────────────────────────
+      const markersLayer = L.layerGroup()
+
       for (const f of geojson.features) {
         const [lon, lat] = f.geometry.coordinates
         const { frp, firedate, confidence } = f.properties
@@ -85,14 +111,13 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
           weight: 0,
           fillOpacity: 0.08 + intensity * 0.08,
           interactive: false,
-        }).addTo(map)
+        }).addTo(markersLayer)
 
-        // Tooltip survol — ultra minimaliste
+        // Tooltip survol
         const tooltipHtml = city
           ? `<span class="fire-tip-city">${city.name}</span> <span class="fire-tip-date">${firedate}</span>`
           : `<span class="fire-tip-date">${firedate}</span>`
 
-        // Popup clic — localisation par reverse geocoding au clic
         const label = CONF_LABEL[confidence] ?? confidence
         const desc = CONF_DESC[confidence] ?? ""
         const frpLine = frp > 0
@@ -124,9 +149,9 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
           weight: 1,
           fillOpacity: 0.9,
         })
-          .addTo(map)
           .bindTooltip(tooltipHtml, { direction: "top", className: "fire-tooltip" })
           .bindPopup(buildPopupHtml(initialLocationLine), { maxWidth: 220, className: "fire-popup" })
+          .addTo(markersLayer)
 
         if (!city) {
           marker.on("popupopen", () => {
@@ -145,7 +170,6 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
                 const popup = marker.getPopup()
                 if (popup?.isOpen()) {
                   popup.setContent(buildPopupHtml(locationLine))
-                  // update tooltip too
                   marker.setTooltipContent(
                     `<span class="fire-tip-city">${commune || dept || "Feu"}</span> <span class="fire-tip-date">${firedate}</span>`
                   )
@@ -160,6 +184,21 @@ export default function FireMap({ geojson, cities = [], flyToRef }: Props) {
           })
         }
       }
+
+      // ── Toggle selon zoom ────────────────────────────────────────────────
+      function updateLayers() {
+        const z = map.getZoom()
+        if (z >= HEATMAP_ZOOM_THRESHOLD) {
+          if (!map.hasLayer(markersLayer)) markersLayer.addTo(map)
+          heat.setOptions({ minOpacity: 0 })
+        } else {
+          if (map.hasLayer(markersLayer)) map.removeLayer(markersLayer)
+          heat.setOptions({ minOpacity: 0.45 })
+        }
+      }
+
+      updateLayers()
+      map.on("zoomend", updateLayers)
     })
 
     return () => {
