@@ -567,35 +567,28 @@ export default async function Home() {
                 <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Événements en cours</span>
                 <div className="flex-1 h-px bg-neutral-200" />
               </div>
-              <div className="bg-[#431407] rounded-3xl p-5">
+              <Link href="/feux" className="bg-[#431407] rounded-3xl p-5 block hover:brightness-110 transition-all group">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Incendies détectés · France</p>
-                <div className="flex items-baseline gap-2 mb-3">
+                <div className="flex items-baseline gap-2 mb-2">
                   <span className="text-4xl font-black text-white leading-none">{fireSummary.activeCount}</span>
-                  <span className="text-sm text-orange-200/80">détections satellite (7 derniers jours)</span>
+                  <span className="text-sm text-orange-200/80">détections satellite · 7 jours</span>
                 </div>
-                <p className="text-xs text-orange-200/70 mb-3">
-                  Source NASA FIRMS · VIIRS SUOMI NPP · Données publiques
-                </p>
+                <p className="text-xs text-orange-200/60 mb-4">NASA FIRMS · VIIRS SUOMI NPP</p>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {(["provence-alpes-cote-d-azur", "occitanie", "nouvelle-aquitaine", "corse", "auvergne-rhone-alpes"] as const).map((slug) => (
-                    <Link key={slug} href={`/r/${slug}`} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5 hover:bg-orange-800/80 transition-colors">
+                    <span key={slug} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5">
                       {slug === "provence-alpes-cote-d-azur" ? "PACA"
                         : slug === "occitanie" ? "Occitanie"
                         : slug === "nouvelle-aquitaine" ? "Nvlle-Aquitaine"
                         : slug === "corse" ? "Corse"
                         : "Auvergne-RA"}
-                    </Link>
+                    </span>
                   ))}
                 </div>
-                <div className="flex items-center gap-4">
-                  <Link href="/feux" className="text-xs text-orange-200 hover:text-white font-semibold transition-colors">
-                    Carte détaillée &rarr;
-                  </Link>
-                  <Link href="/r" className="text-xs text-orange-300/70 hover:text-orange-100 transition-colors">
-                    Toutes les régions
-                  </Link>
-                </div>
-              </div>
+                <span className="text-xs text-orange-200 font-semibold group-hover:text-white transition-colors">
+                  Voir la carte satellite &rarr;
+                </span>
+              </Link>
             </>
           )}
 
