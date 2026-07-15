@@ -602,7 +602,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                       </p>
                     </div>
                     <div className="mt-4">
-                      <PushOptIn cityId={city.id} cityName={city.name} />
+                      <PushOptIn cityId={city.id} cityName={city.name} citySlug={slug} />
                     </div>
                   </div>
                 </div>
