@@ -4,6 +4,7 @@ import { useRef, useState, useCallback } from "react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 import PageFooter from "@/components/PageFooter"
+import type { FireZoneWeather } from "@/lib/fire-data"
 
 interface FireFeature {
   type: "Feature"
@@ -28,6 +29,7 @@ interface Props {
   byDay: Record<string, number>
   regionRanking: RegionStat[]
   autresCount: number
+  zoneWeather: FireZoneWeather
 }
 
 const FireMap = dynamic(() => import("@/components/FireMap"), {
@@ -46,9 +48,23 @@ function frpLabel(frp: number) {
   return frp < 10 ? `${frp.toFixed(1)} MW` : `${Math.round(frp)} MW`
 }
 
+function aqiLabel(aqi: number): { label: string; color: string; bg: string } {
+  if (aqi <= 20) return { label: "Bon", color: "#16a34a", bg: "#dcfce7" }
+  if (aqi <= 40) return { label: "Acceptable", color: "#65a30d", bg: "#ecfccb" }
+  if (aqi <= 60) return { label: "Modéré", color: "#d97706", bg: "#fef3c7" }
+  if (aqi <= 80) return { label: "Mauvais", color: "#ea580c", bg: "#ffedd5" }
+  if (aqi <= 100) return { label: "Très mauvais", color: "#dc2626", bg: "#fee2e2" }
+  return { label: "Dangereux", color: "#7c3aed", bg: "#ede9fe" }
+}
+
+function windDirLabel(deg: number): string {
+  const dirs = ["N", "NE", "E", "SE", "S", "SO", "O", "NO"]
+  return dirs[Math.round(deg / 45) % 8]
+}
+
 export default function FirePageClient({
   geojson, cities, totalCount, highConf, hasFrp, maxFrp,
-  peakDay, peakCount, days, byDay, regionRanking, autresCount,
+  peakDay, peakCount, days, byDay, regionRanking, autresCount, zoneWeather,
 }: Props) {
   const flyToRef = useRef<((lat: number, lon: number, zoom?: number) => void) | null>(null)
   const [filter, setFilter] = useState<"all" | "confirmed">("all")
@@ -196,6 +212,46 @@ export default function FirePageClient({
               le {peakDay ? new Date(peakDay + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "-"}
             </p>
           </div>
+
+          {/* Qualité de l'air */}
+          {zoneWeather.aqi !== null ? (() => {
+            const { label, color, bg } = aqiLabel(zoneWeather.aqi)
+            return (
+              <div className="bg-white rounded-3xl p-5">
+                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-2">Air · zones feux</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ color, background: bg }}>{label}</span>
+                  <span className="text-xl font-black text-neutral-800">{zoneWeather.aqi}</span>
+                  <span className="text-xs text-neutral-400">IQA européen</span>
+                </div>
+                {(zoneWeather.pm25 !== null || zoneWeather.pm10 !== null) && (
+                  <div className="flex gap-4 text-xs text-neutral-500">
+                    {zoneWeather.pm25 !== null && <span>PM2.5 <strong className="text-neutral-700">{zoneWeather.pm25.toFixed(0)} µg/m³</strong></span>}
+                    {zoneWeather.pm10 !== null && <span>PM10 <strong className="text-neutral-700">{zoneWeather.pm10.toFixed(0)} µg/m³</strong></span>}
+                  </div>
+                )}
+              </div>
+            )
+          })() : null}
+
+          {/* Vent */}
+          {zoneWeather.windSpeed !== null && zoneWeather.windDir !== null ? (
+            <div className="bg-white rounded-3xl p-5">
+              <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-2">Vent · zones feux</p>
+              <div className="flex items-center gap-3">
+                <svg
+                  width="32" height="32" viewBox="0 0 32 32"
+                  style={{ transform: `rotate(${zoneWeather.windDir}deg)` }}
+                >
+                  <polygon points="16,2 20,26 16,22 12,26" fill="#f97316" />
+                </svg>
+                <div>
+                  <p className="text-xl font-black text-neutral-800">{Math.round(zoneWeather.windSpeed)} <span className="text-sm font-normal text-neutral-500">km/h</span></p>
+                  <p className="text-xs text-neutral-400">{windDirLabel(zoneWeather.windDir)}</p>
+                </div>
+              </div>
+            </div>
+          ) : null}
 
           {/* Activité par jour */}
           <div className="col-span-2 bg-white rounded-3xl p-5">

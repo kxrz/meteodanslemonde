@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Metadata } from "next"
-import { fetchFirePoints } from "@/lib/fire-data"
+import { fetchFirePoints, fetchFireZoneWeather } from "@/lib/fire-data"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import FirePageClient from "@/components/FirePageClient"
@@ -36,6 +36,7 @@ const citiesFR = require("@/data/cities-fr.json") as Array<{
 export default async function FeuxPage() {
   const points = await fetchFirePoints()
 
+
   if (points.length === 0) {
     return (
       <>
@@ -48,6 +49,11 @@ export default async function FeuxPage() {
       </>
     )
   }
+
+  // Centroïde des feux pour les données météo
+  const centroidLat = points.reduce((s, p) => s + p.lat, 0) / points.length
+  const centroidLon = points.reduce((s, p) => s + p.lon, 0) / points.length
+  const zoneWeather = await fetchFireZoneWeather(centroidLat, centroidLon)
 
   // Agrégations
   const byDay: Record<string, number> = {}
@@ -106,6 +112,7 @@ export default async function FeuxPage() {
         byDay={byDay}
         regionRanking={regionRanking}
         autresCount={autresCount}
+        zoneWeather={zoneWeather}
       />
     </div>
   )
