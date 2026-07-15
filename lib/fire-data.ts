@@ -2,11 +2,31 @@
 // https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/
 const FIRMS_7D = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Europe_7d.csv"
 
-// Bounding box France métropolitaine + Corse
-const FR = { latMin: 41.3, latMax: 51.2, lonMin: -5.2, lonMax: 9.6 }
+// Polygone simplifié France métropolitaine (ray-casting) — exclut UK, Belgique, Allemagne, Espagne, Italie
+// Format : [lat, lon]
+const FRANCE_POLY: [number, number][] = [
+  [48.37, -4.78], [49.65, -1.56], [50.10, 1.60], [50.96, 1.82], [51.00, 2.52],
+  [50.75, 3.12],  [50.25, 4.16],  [49.46, 6.37], [48.98, 7.63], [47.96, 8.23],
+  [47.59, 7.60],  [46.43, 6.80],  [45.92, 7.05], [45.18, 6.90], [43.98, 7.68],
+  [43.76, 7.52],  [43.10, 6.22],  [43.30, 4.64], [43.08, 3.08], [43.34, 1.78],
+  [42.80, 0.70],  [43.37, -1.77], [47.68, -4.62],[48.37, -4.78],
+]
+// Corse (bbox simple)
+const CORSE = { latMin: 41.3, latMax: 43.05, lonMin: 8.4, lonMax: 9.6 }
+
+function pointInPolygon(lat: number, lon: number, poly: [number, number][]): boolean {
+  let inside = false
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [yi, xi] = poly[i], [yj, xj] = poly[j]
+    if (((yi > lat) !== (yj > lat)) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi)
+      inside = !inside
+  }
+  return inside
+}
 
 function inFrance(lat: number, lon: number) {
-  return lat >= FR.latMin && lat <= FR.latMax && lon >= FR.lonMin && lon <= FR.lonMax
+  if (lat >= CORSE.latMin && lat <= CORSE.latMax && lon >= CORSE.lonMin && lon <= CORSE.lonMax) return true
+  return pointInPolygon(lat, lon, FRANCE_POLY)
 }
 
 
