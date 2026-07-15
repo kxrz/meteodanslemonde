@@ -6,7 +6,7 @@ import { getWeatherData } from "@/lib/weather-data"
 import { loadClimateMap } from "@/lib/climate"
 import { fmtDelta } from "@/lib/format"
 import { slugify } from "@/lib/slugify"
-import { fetchFireSummary } from "@/lib/fire-data"
+import { fetchFireSummary, fetchFireZoneWeather } from "@/lib/fire-data"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import ShareButton from "@/components/ShareButton"
@@ -184,6 +184,9 @@ export default async function Home() {
   const month = new Date(fetchedAt).getMonth()
   const isSummer = month >= 4 && month <= 9
   const fireSummary = isSummer ? await fetchFireSummary().catch(() => null) : null
+  const homeAirQuality = fireSummary && fireSummary.activeCount > 0
+    ? await fetchFireZoneWeather(46.5, 2.5).catch(() => null)
+    : null
   const monthName = MONTHS_DISPLAY[month]
 
   const citiesWithClimate: CityWithClimate[] = citiesFR.map((c) => {
@@ -589,6 +592,36 @@ export default async function Home() {
                   Voir la carte satellite &rarr;
                 </span>
               </Link>
+
+              {homeAirQuality && homeAirQuality.aqi !== null && (() => {
+                const aqi = homeAirQuality.aqi
+                const { label, color, bg } = aqi <= 20
+                  ? { label: "Bon", color: "#16a34a", bg: "#dcfce7" }
+                  : aqi <= 40 ? { label: "Acceptable", color: "#65a30d", bg: "#ecfccb" }
+                  : aqi <= 60 ? { label: "Modéré", color: "#d97706", bg: "#fef3c7" }
+                  : aqi <= 80 ? { label: "Mauvais", color: "#ea580c", bg: "#ffedd5" }
+                  : { label: "Très mauvais", color: "#dc2626", bg: "#fee2e2" }
+                const pm25 = homeAirQuality.pm25
+                return (
+                  <Link href="/feux" className="bg-white rounded-3xl p-5 block hover:bg-neutral-50 transition-colors">
+                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Qualité de l&apos;air · France</p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-xs font-bold px-2.5 py-1 rounded-full" style={{ color, background: bg }}>{label}</span>
+                      <span className="text-2xl font-black text-neutral-900">{aqi}</span>
+                      <span className="text-xs text-neutral-400">IQA</span>
+                    </div>
+                    {pm25 !== null && (
+                      <p className="text-xs text-neutral-500 mb-3">
+                        Particules fines PM2.5 <strong className="text-neutral-700">{pm25.toFixed(0)} µg/m³</strong>
+                        {pm25 > 25 ? " — niveau préoccupant" : pm25 > 10 ? " — niveau modéré" : " — niveau faible"}
+                      </p>
+                    )}
+                    <p className="text-[10px] text-neutral-400 leading-relaxed">
+                      Les incendies actifs dégradent la qualité de l&apos;air à distance. Les personnes sensibles (asthme, enfants, personnes âgées) sont les premières touchées.
+                    </p>
+                  </Link>
+                )
+              })()}
             </>
           )}
 
