@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSql, initDb } from "@/lib/db"
 import { resend, FROM_EMAIL } from "@/lib/resend"
-import { fetchCityWeather } from "@/lib/weather-data"
+import { fetchCityWeather, fetchCaniculeStreak, fetchClimateTwin } from "@/lib/weather-data"
 import { loadClimateMap } from "@/lib/climate"
 import { buildDailyEmailHtml, CityEmailData } from "@/lib/email-builder"
 
@@ -66,7 +66,11 @@ export async function GET(req: NextRequest) {
         ? Math.round((apparentTempMax - normal) * 10) / 10
         : null
 
-      cityData.push({ slug, name, apparentTempMax, anomaly, proj2050, normal })
+      const [caniculeStreak, climateTwin] = city && apparentTempMax !== null
+        ? await Promise.all([fetchCaniculeStreak(city.lat, city.lon), fetchClimateTwin(apparentTempMax)])
+        : [0, null]
+
+      cityData.push({ slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin })
     }
 
     const html = buildDailyEmailHtml({ firstName: first_name, cities: cityData, dateLabel, month })
