@@ -1,3 +1,47 @@
+// Source : NASA FIRMS — CSV public, sans clé API, mis à jour plusieurs fois/jour
+// https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/
+const FIRMS_7D = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Europe_7d.csv"
+
+// Bounding box France métropolitaine + Corse
+const FR = { latMin: 41.3, latMax: 51.2, lonMin: -5.2, lonMax: 9.6 }
+
+function inFrance(lat: number, lon: number) {
+  return lat >= FR.latMin && lat <= FR.latMax && lon >= FR.lonMin && lon <= FR.lonMax
+}
+
+type FirmsPoint = {
+  lat: number
+  lon: number
+  date: string
+  confidence: string  // "low" | "nominal" | "high"
+  frp: number         // Fire Radiative Power (MW)
+}
+
+function parseFirmsCSV(csv: string): FirmsPoint[] {
+  const lines = csv.trim().split("\n")
+  if (lines.length < 2) return []
+  // colonnes: latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,satellite,instrument,confidence,version,bright_ti5,frp,daynight,type
+  return lines.slice(1).flatMap(line => {
+    const c = line.split(",")
+    const lat = parseFloat(c[0])
+    const lon = parseFloat(c[1])
+    if (isNaN(lat) || isNaN(lon) || !inFrance(lat, lon)) return []
+    return [{ lat, lon, date: c[5] ?? "", confidence: c[9] ?? "", frp: parseFloat(c[12] ?? "0") || 0 }]
+  })
+}
+
+async function fetchFirmsPoints(): Promise<FirmsPoint[]> {
+  try {
+    const res = await fetch(FIRMS_7D, { next: { revalidate: 86400 } })
+    if (!res.ok) return []
+    return parseFirmsCSV(await res.text())
+  } catch {
+    return []
+  }
+}
+
+// ─── Types exportés ──────────────────────────────────────────────────────────
+
 export type FireRiskLevel = "low" | "moderate" | "high" | "extreme"
 
 export type FireRisk = {
@@ -9,12 +53,11 @@ export type FireRisk = {
 }
 
 export type FireSummary = {
-  activeCount: number   // feux actifs VIIRS (7 derniers jours)
-  burnedCount: number   // périmètres MODIS (30 derniers jours)
-  burnedHa: number      // superficie brûlée totale (ha)
+  activeCount: number  // détections VIIRS sur 7j en France
+  burnedHa: number     // non disponible via FIRMS points — toujours 0
 }
 
-const EFFIS = "https://ies-ows.jrc.ec.europa.eu/effis"
+// ─── Fonctions exportées ──────────────────────────────────────────────────────
 
 function computeLevel(tempMax: number, humMin: number, windMax: number, precip3d: number): FireRiskLevel {
   if (precip3d > 10) return "low"
@@ -33,8 +76,7 @@ export async function fetchFireRisk(lat: number, lon: number): Promise<FireRisk 
       { next: { revalidate: 86400 } }
     )
     if (!res.ok) return null
-    const data = await res.json()
-    const d = data.daily
+    const d = (await res.json()).daily
     const last = d.time.length - 1
     const tempMax: number = d.temperature_2m_max[last] ?? 20
     const humMin: number = d.relative_humidity_2m_min[last] ?? 60
@@ -47,92 +89,19 @@ export async function fetchFireRisk(lat: number, lon: number): Promise<FireRisk 
   }
 }
 
-function dateStr(d: Date) {
-  return d.toISOString().split("T")[0]
-}
-
 export async function fetchFireSummary(): Promise<FireSummary> {
-  const now = new Date()
-  const past30 = new Date(now); past30.setDate(past30.getDate() - 30)
-  const past7 = new Date(now); past7.setDate(past7.getDate() - 7)
-
-  const burnedFilter = encodeURIComponent(`country='FR' AND firedate>='${dateStr(past30)}'`)
-  const activeFilter = encodeURIComponent(`country='FR' AND firedate>='${dateStr(past7)}'`)
-
-  const [burnedRes, activeRes] = await Promise.allSettled([
-    fetch(
-      `${EFFIS}?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=ms:modis.ba.poly` +
-      `&outputFormat=application/json&CQL_FILTER=${burnedFilter}&COUNT=200`,
-      { next: { revalidate: 86400 } }
-    ),
-    fetch(
-      `${EFFIS}?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=ms:viirs.inpe` +
-      `&outputFormat=application/json&CQL_FILTER=${activeFilter}&COUNT=200`,
-      { next: { revalidate: 86400 } }
-    ),
-  ])
-
-  const burned = burnedRes.status === "fulfilled" && burnedRes.value.ok
-    ? await burnedRes.value.json().catch(() => null) : null
-  const active = activeRes.status === "fulfilled" && activeRes.value.ok
-    ? await activeRes.value.json().catch(() => null) : null
-
-  const burnedFeatures: Record<string, unknown>[] = burned?.features ?? []
-  const activeFeatures: Record<string, unknown>[] = active?.features ?? []
-
-  const burnedHa = burnedFeatures.reduce((s, f) => {
-    const props = (f as { properties?: { areaha?: number } }).properties
-    return s + (props?.areaha ?? 0)
-  }, 0)
-
-  return {
-    activeCount: activeFeatures.length,
-    burnedCount: burnedFeatures.length,
-    burnedHa: Math.round(burnedHa),
-  }
+  const points = await fetchFirmsPoints()
+  return { activeCount: points.length, burnedHa: 0 }
 }
 
-// Retourne le GeoJSON complet pour la carte (périmètres + points feux actifs)
-export async function fetchFiresGeoJSON(): Promise<{
-  type: "FeatureCollection"
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  features: any[]
-}> {
-  const now = new Date()
-  const past30 = new Date(now); past30.setDate(past30.getDate() - 30)
-  const past7 = new Date(now); past7.setDate(past7.getDate() - 7)
-
-  const burnedFilter = encodeURIComponent(`country='FR' AND firedate>='${dateStr(past30)}'`)
-  const activeFilter = encodeURIComponent(`country='FR' AND firedate>='${dateStr(past7)}'`)
-
-  const [burnedRes, activeRes] = await Promise.allSettled([
-    fetch(
-      `${EFFIS}?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=ms:modis.ba.poly` +
-      `&outputFormat=application/json&CQL_FILTER=${burnedFilter}&COUNT=100`,
-      { next: { revalidate: 86400 } }
-    ),
-    fetch(
-      `${EFFIS}?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=ms:viirs.inpe` +
-      `&outputFormat=application/json&CQL_FILTER=${activeFilter}&COUNT=100`,
-      { next: { revalidate: 86400 } }
-    ),
-  ])
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const burned: any = burnedRes.status === "fulfilled" && burnedRes.value.ok
-    ? await burnedRes.value.json().catch(() => null) : null
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const active: any = activeRes.status === "fulfilled" && activeRes.value.ok
-    ? await activeRes.value.json().catch(() => null) : null
-
-  const burnedFeatures = (burned?.features ?? []).map((f: Record<string, unknown>) => ({
-    ...f,
-    properties: { ...(f.properties as object), _type: "burned" },
-  }))
-  const activeFeatures = (active?.features ?? []).map((f: Record<string, unknown>) => ({
-    ...f,
-    properties: { ...(f.properties as object), _type: "active" },
-  }))
-
-  return { type: "FeatureCollection", features: [...burnedFeatures, ...activeFeatures] }
+export async function fetchFiresGeoJSON(): Promise<{ type: "FeatureCollection"; features: object[] }> {
+  const points = await fetchFirmsPoints()
+  return {
+    type: "FeatureCollection",
+    features: points.map(p => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+      properties: { _type: "active", firedate: p.date, confidence: p.confidence, frp: p.frp },
+    })),
+  }
 }
