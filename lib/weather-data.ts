@@ -54,6 +54,25 @@ function emptyResult() {
   }
 }
 
+export async function fetchCityWeather(lat: number, lon: number) {
+  try {
+    const url =
+      `https://api.open-meteo.com/v1/forecast` +
+      `?latitude=${lat}&longitude=${lon}` +
+      `&daily=apparent_temperature_max,weathercode` +
+      `&forecast_days=1`
+    const res = await fetch(url, { next: { revalidate: 86400 } })
+    if (!res.ok) return null
+    const data = await res.json()
+    return {
+      apparent_temp_max: Math.round(data.daily.apparent_temperature_max[0]) as number,
+      weathercode: data.daily.weathercode[0] as number,
+    }
+  } catch {
+    return null
+  }
+}
+
 export async function getWeatherData() {
   const cached = loadCache()
   if (cached) return cached
