@@ -13,18 +13,16 @@ function inFrance(lat: number, lon: number) {
 function parseFirmsCSV(csv: string): FirmsPoint[] {
   const lines = csv.trim().split("\n")
   if (lines.length < 2) return []
-  // colonnes: latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,satellite,instrument,confidence,version,bright_ti5,frp,daynight,type
-  // confidence VIIRS SUOMI NPP : "l" | "n" | "h" (low/nominal/high)
+  // colonnes réelles : latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,satellite,confidence,version,bright_ti5,frp,daynight
+  // (pas de colonne "instrument" contrairement à la doc générique)
   return lines.slice(1).flatMap(line => {
     const c = line.trim().split(",")
     const lat = parseFloat(c[0])
     const lon = parseFloat(c[1])
     if (isNaN(lat) || isNaN(lon) || !inFrance(lat, lon)) return []
-    const rawConf = (c[9] ?? "").trim()
-    // normalise "l"→"low", "n"→"nominal", "h"→"high" (et laisse passe si déjà long)
-    const confidence = rawConf === "l" ? "low" : rawConf === "n" ? "nominal" : rawConf === "h" ? "high" : rawConf
-    const frp = parseFloat((c[12] ?? "").trim()) || 0
-    return [{ lat, lon, date: c[5] ?? "", confidence, frp }]
+    const confidence = (c[8] ?? "").trim()  // "low" | "nominal" | "high"
+    const frp = parseFloat((c[11] ?? "").trim()) || 0
+    return [{ lat, lon, date: (c[5] ?? "").trim(), confidence, frp }]
   })
 }
 
