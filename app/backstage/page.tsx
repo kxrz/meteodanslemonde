@@ -6,9 +6,9 @@ import PageFooter from "@/components/PageFooter"
 export const revalidate = 604800
 
 const BASE = "https://www.cestchaud.fr"
-const TITLE = "Backstage · Comment cestchaud.fr a été construit"
+const TITLE = "Backstage · Les coulisses d'un site pédagogique sur le climat"
 const DESCRIPTION =
-  "REX technique : APIs gratuites, stack Next.js, données climatiques open source, coût inférieur à 10 € par an. Tout le monde peut le faire."
+  "Comment un développeur solo construit un service de données climatiques avec des APIs gratuites, pour moins de 10 € par an. Tout le monde peut le faire."
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -92,16 +92,6 @@ function IconTrend({ className }: { className?: string }) {
   )
 }
 
-function IconClock({ className }: { className?: string }) {
-  return (
-    <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none"
-      stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
-  )
-}
-
 function IconZap({ className }: { className?: string }) {
   return (
     <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -133,7 +123,17 @@ function IconBulb({ className }: { className?: string }) {
   )
 }
 
-/* ── Composants de mise en page ─────────────────────────────────────────── */
+function IconLock({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="20" height="20" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  )
+}
+
+/* ── Composants utilitaires ─────────────────────────────────────────────── */
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -153,7 +153,7 @@ function Code({ children }: { children: React.ReactNode }) {
 
 function CodeBlock({ children }: { children: string }) {
   return (
-    <pre className="bg-[#111111] text-orange-300 text-xs font-mono rounded-2xl p-4 overflow-x-auto leading-relaxed mt-3">
+    <pre className="bg-[#0d1117] text-orange-300 text-xs font-mono rounded-2xl p-4 overflow-x-auto leading-relaxed mt-3">
       {children.trim()}
     </pre>
   )
@@ -168,165 +168,192 @@ export default function BackstagePage() {
 
       {/* Hero */}
       <section className="bg-[#111111] text-white">
-        <div className="max-w-4xl mx-auto px-5 py-16 lg:py-20">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-orange-400 mb-5">
+        <div className="max-w-4xl mx-auto px-5 py-16 lg:py-24">
+          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-orange-400 mb-6">
             Backstage
           </p>
-          <h1 className="text-4xl lg:text-5xl font-black leading-[1.08] tracking-tight mb-5 max-w-2xl"
-            style={{ textWrap: "balance" } as React.CSSProperties}>
-            Comment cestchaud.fr a été construit,{" "}
-            <span className="text-orange-400">avec des APIs gratuites.</span>
+          <h1
+            className="text-4xl lg:text-[56px] font-black leading-[1.06] tracking-tight mb-6 max-w-3xl"
+            style={{ textWrap: "balance" } as React.CSSProperties}
+          >
+            Les coulisses d&apos;un site pédagogique{" "}
+            <span className="text-orange-400">sur le climat.</span>
           </h1>
-          <p className="text-neutral-400 text-base leading-relaxed max-w-xl">
-            Un side project weekend devenu un service avec des cartes interactives,
-            des données satellite, un email quotidien personnalisé et des projections
-            GIEC à l'échelle locale. Coût mensuel d'infrastructure : moins de 10 €.
-            APIs payantes : zéro.
+          <p className="text-neutral-400 text-base leading-relaxed max-w-xl mb-8">
+            Cartes interactives, données satellite, email quotidien personnalisé, projections
+            GIEC à l'échelle locale. Un développeur, un weekend de départ, des APIs gratuites.
+            Coût total : moins de 10 € par an.
           </p>
+          {/* Thèse en évidence */}
+          <div className="inline-flex items-center gap-3 bg-orange-500/10 border border-orange-500/20 rounded-2xl px-5 py-3">
+            <span className="text-2xl font-black text-orange-400">→</span>
+            <p className="text-sm font-semibold text-orange-200">
+              Tout le monde peut le faire. Il faut juste l'idée.
+            </p>
+          </div>
         </div>
       </section>
 
-      {/* Contenu */}
-      <div className="max-w-4xl mx-auto px-5 py-12 w-full space-y-12">
+      <div className="max-w-4xl mx-auto px-5 py-12 w-full space-y-16">
 
-        {/* Contexte */}
+        {/* Le vrai problème */}
         <section>
-          <SectionLabel>Contexte</SectionLabel>
-          <div className="bg-white rounded-3xl p-6 lg:p-8">
-            <h2 className="text-xl font-black text-neutral-900 mb-4">
-              Né d'une frustration
-            </h2>
-            <p className="text-sm text-neutral-600 leading-relaxed mb-3">
-              L'été 2022, la France brûlait. L'été 2023, rebelote. Impossible d'avoir
-              accès aux <strong className="text-neutral-900">vrais chiffres</strong> pour
-              sa ville : de combien la température a-t-elle augmenté depuis 30 ans ?
-              Est-ce vraiment exceptionnel, ou c'est la nouvelle normale ?
-            </p>
-            <p className="text-sm text-neutral-600 leading-relaxed">
-              Les données climatiques publiques sont d'une richesse incroyable, quasi
-              inconnue du grand public. ERA5, CMIP6, FIRMS, Copernicus — tout ça est
-              libre, gratuit, et d'une qualité scientifique sérieuse. Le manque,
-              c'est l'interface.
-            </p>
+          <SectionLabel>Le point de départ</SectionLabel>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="bg-white rounded-3xl p-6 lg:p-8">
+              <h2 className="text-xl font-black text-neutral-900 mb-4 leading-tight">
+                Les données existent. L'interface, non.
+              </h2>
+              <p className="text-sm text-neutral-600 leading-relaxed mb-3">
+                ERA5, CMIP6, NASA FIRMS, Copernicus — des décennies de données climatiques
+                libres, gratuites, de qualité scientifique sérieuse. Inaccessibles au
+                commun des mortels parce que personne n'a fait la traduction.
+              </p>
+              <p className="text-sm text-neutral-600 leading-relaxed">
+                Quelqu'un qui cherche <em>"est-ce que les étés à Lyon sont plus chauds
+                qu'avant ?"</em> ne va pas télécharger un fichier NetCDF de 2 Go depuis
+                le site de Copernicus. cestchaud.fr fait ce pont-là.
+              </p>
+            </div>
+            <div className="bg-[#111111] rounded-3xl p-6 lg:p-8 flex flex-col justify-between">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-4">
+                Le vrai enjeu
+              </p>
+              <blockquote className="text-lg font-black text-white leading-snug mb-6">
+                "La technique est accessible à n'importe quel développeur web.
+                C'est une question d'idée, pas de moyens."
+              </blockquote>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-orange-400" />
+                <p className="text-xs text-neutral-500">Florent Bertiaux · cestchaud.fr</p>
+              </div>
+            </div>
           </div>
         </section>
 
         {/* Stack */}
         <section>
-          <SectionLabel>Stack technique</SectionLabel>
+          <SectionLabel>Les outils</SectionLabel>
           <div className="space-y-4">
 
             {/* Next.js */}
             <div className="bg-[#111111] text-white rounded-3xl p-6 lg:p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
                   <IconZap className="text-orange-400" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/40 mb-0.5">Hosting & framework</p>
-                  <h3 className="text-base font-black text-white">Next.js App Router sur Vercel</h3>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/30 mb-1">
+                    Framework & hosting
+                  </p>
+                  <h3 className="text-lg font-black text-white">Next.js + Vercel</h3>
+                  <p className="text-sm text-white/50 mt-1">
+                    500 pages de villes. Chargement instantané. Zéro serveur à gérer.
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-white/70 leading-relaxed mb-4">
-                Le choix central, c'est l'<strong className="text-white">ISR (Incremental Static Regeneration)</strong> :
-                les pages de villes sont générées statiquement mais se rafraîchissent
-                automatiquement toutes les heures. La 500e ville chargée est aussi rapide
-                que la première, sans payer un serveur qui tourne en permanence.
+                La clé, c'est l'<strong className="text-white">ISR — Incremental Static Regeneration</strong>.
+                Les pages de villes sont générées statiquement et rafraîchies automatiquement
+                toutes les heures. La 500e ville chargée est aussi rapide que la première,
+                sans payer un serveur allumé en permanence. Les cron jobs pour l'email
+                quotidien sont natifs dans Vercel : une ligne de config.
               </p>
-              <CodeBlock>{`// app/a/[slug]/page.tsx
-export const revalidate = 3600 // regénère toutes les heures`}</CodeBlock>
-              <p className="text-sm text-white/70 leading-relaxed mt-4 mb-3">
-                Vercel gère aussi les <strong className="text-white">Cron Jobs</strong> nativement.
-                Le briefing email part chaque matin via une route API protégée par un secret :
-              </p>
-              <CodeBlock>{`// vercel.json
-{
-  "crons": [{ "path": "/api/cron/daily-email", "schedule": "0 7 * * *" }]
-}`}</CodeBlock>
+              <CodeBlock>{`// Regénération automatique toutes les heures
+export const revalidate = 3600
+
+// Email quotidien via cron Vercel — vercel.json
+{ "crons": [{ "path": "/api/cron/daily-email", "schedule": "0 7 * * *" }] }`}</CodeBlock>
             </div>
 
             {/* Open-Meteo */}
             <div className="bg-[#dbeafe] rounded-3xl p-6 lg:p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-xl bg-blue-900/10 flex items-center justify-center">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-blue-900/10 flex items-center justify-center shrink-0 mt-0.5">
                   <IconCloud className="text-blue-800" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/40 mb-0.5">Météo & archive</p>
-                  <h3 className="text-base font-black text-blue-900">Open-Meteo</h3>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/40 mb-1">
+                    Météo & données historiques
+                  </p>
+                  <h3 className="text-lg font-black text-blue-900">Open-Meteo</h3>
+                  <p className="text-sm text-blue-900/50 mt-1">
+                    Gratuit. Sans clé API. Qualité professionnelle.
+                  </p>
                 </div>
               </div>
-              <p className="text-sm text-blue-900/70 leading-relaxed mb-3">
-                La vraie révélation du projet. API météo open source, entièrement gratuite,
-                sans clé API, avec des données d'une qualité professionnelle :
+              <p className="text-sm text-blue-900/70 leading-relaxed mb-4">
+                La révélation du projet. Open-Meteo, c'est une API météo open source qui
+                donne accès aux modèles ECMWF et Météo-France, mais surtout aux{" "}
+                <strong className="text-blue-900">archives ERA5 depuis 1940</strong> — ce
+                qui permet de calculer les normales climatiques sur 30 ans et de détecter
+                les anomalies en temps réel. Jusqu'à 10 000 requêtes gratuites par jour,
+                avec batch multi-villes en une seule requête.
               </p>
-              <ul className="text-sm text-blue-900/70 leading-relaxed space-y-1.5 mb-4 ml-1">
-                {[
-                  "Prévisions en temps réel (modèles ECMWF, GFS, Météo-France)",
-                  "Archive ERA5 depuis 1940 — calcul des normales climatiques sur 30 ans",
-                  "Indice UTCI (température ressentie réelle, pas l'approximation vent + humidité)",
-                  "Jusqu'à 10 000 requêtes par jour gratuitement, batch multi-villes en une seule requête",
-                ].map(item => (
-                  <li key={item} className="flex items-start gap-2">
-                    <span className="text-blue-500 mt-0.5 shrink-0">·</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <CodeBlock>{`// Batch de 10 villes en une requête
+              <CodeBlock>{`// 10 villes en une requête, batch gratuit
 const url = \`https://api.open-meteo.com/v1/forecast
   ?latitude=\${lats}&longitude=\${lons}
-  &daily=apparent_temperature_max,weathercode
+  &daily=apparent_temperature_max
   &forecast_days=1\`
 
-// Données historiques pour les anomalies
+// Anomalie : archive ERA5 pour calculer la normale du mois
 const archive = \`https://archive-api.open-meteo.com/v1/archive
   ?latitude=\${lat}&longitude=\${lon}
   &daily=apparent_temperature_max
-  &start_date=2024-06-01&end_date=2024-06-30\``}</CodeBlock>
+  &start_date=1991-06-01&end_date=2020-06-30\``}</CodeBlock>
             </div>
 
             {/* NASA FIRMS */}
             <div className="bg-[#431407] rounded-3xl p-6 lg:p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
                   <IconSatellite className="text-orange-300" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-200/40 mb-0.5">Incendies</p>
-                  <h3 className="text-base font-black text-white">NASA FIRMS</h3>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-200/30 mb-1">
+                    Incendies en temps réel
+                  </p>
+                  <h3 className="text-lg font-black text-white">NASA FIRMS</h3>
+                  <p className="text-sm text-orange-200/50 mt-1">
+                    Détections satellite VIIRS · mis à jour toutes les heures.
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-orange-100/70 leading-relaxed mb-4">
-                Pour la carte des feux en temps réel,{" "}
-                <strong className="text-white">NASA FIRMS</strong>{" "}
-                (Fire Information for Resource Management System) fournit des détections
-                satellite VIIRS mises à jour toutes les heures. Accès gratuit avec une
-                clé API obtenue en quelques secondes. Les données reviennent en CSV,
-                transformées en heatmap avec <strong className="text-white">Leaflet + leaflet.heat</strong>.
+                Pour la carte des feux, la NASA met à disposition ses données satellite
+                VIIRS gratuitement, avec une clé obtenue en 30 secondes d'inscription.
+                Les détections reviennent en CSV avec latitude, longitude et puissance
+                radiative. Transformées en heatmap avec Leaflet côté client — quelques
+                lignes de code pour un résultat qui s'appuie sur l'infrastructure spatiale
+                de la NASA.
               </p>
               <CodeBlock>{`const url = \`https://firms.modaps.eosdis.nasa.gov/api/area/csv/
   \${process.env.NASA_FIRMS_KEY}/VIIRS_SNPP_NRT/world/1\``}</CodeBlock>
             </div>
 
-            {/* ERA5 + CMIP6 */}
+            {/* ERA5 + CMIP6 embarqués */}
             <div className="bg-[#b8d4b0] rounded-3xl p-6 lg:p-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-xl bg-green-900/10 flex items-center justify-center">
+              <div className="flex items-start gap-4 mb-5">
+                <div className="w-10 h-10 rounded-xl bg-green-900/10 flex items-center justify-center shrink-0 mt-0.5">
                   <IconTrend className="text-green-900" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/40 mb-0.5">Climatologie</p>
-                  <h3 className="text-base font-black text-green-900">ERA5 + GIEC CMIP6</h3>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/40 mb-1">
+                    Projections climatiques
+                  </p>
+                  <h3 className="text-lg font-black text-green-900">ERA5 + GIEC CMIP6</h3>
+                  <p className="text-sm text-green-900/50 mt-1">
+                    Données Copernicus · embarquées dans le build · zéro API.
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-green-900/70 leading-relaxed">
-                Les normales de saison (référence 1981–2010) et les projections 2050 viennent
-                de données pré-calculées stockées en JSON dans le projet. Le modèle CMIP6
-                sous scénario <strong className="text-green-900">SSP2-4.5</strong> (trajectoire
-                intermédiaire) donne une valeur de réchauffement supplémentaire par mois et
-                par ville. Pas d'API ici : du post-traitement de données publiques
-                Copernicus/IPCC transformées en fichiers légers embarqués dans le build.
+                Les normales historiques (1981–2010) et les projections 2050 sous scénario{" "}
+                <strong className="text-green-900">SSP2-4.5</strong> sont pré-calculées
+                et stockées en JSON dans le projet. Pas d'API à appeler, pas de latence,
+                pas de dépendance externe. Un seul travail éditorial en amont —
+                post-traitement de données publiques Copernicus — et le résultat tient
+                dans quelques kilooctets embarqués dans le build.
               </p>
             </div>
 
@@ -335,31 +362,30 @@ const archive = \`https://archive-api.open-meteo.com/v1/archive
 
         {/* Services tiers */}
         <section>
-          <SectionLabel>Services tiers</SectionLabel>
+          <SectionLabel>Les services</SectionLabel>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
             <div className="bg-white rounded-3xl p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-9 h-9 rounded-xl bg-neutral-100 flex items-center justify-center">
                   <IconDatabase className="text-neutral-600" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-0.5">Base de données</p>
-                  <h3 className="text-sm font-black text-neutral-900">Neon · Postgres serverless</h3>
+                  <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-neutral-400">Base de données</p>
+                  <h3 className="text-sm font-black text-neutral-900 mt-0.5">Neon · Postgres serverless</h3>
                 </div>
               </div>
-              <p className="text-xs text-neutral-500 leading-relaxed mb-3">
-                Pour les abonnés, villes et tokens de confirmation. Tier gratuit généreux,
-                fonctionne directement dans les edge functions sans pool de connexions.
-                Pattern lazy init pour éviter les crashs au build :
+              <p className="text-xs text-neutral-500 leading-relaxed mb-4">
+                Abonnés, villes suivies, tokens de confirmation. Tier gratuit généreux,
+                compatible edge functions sans pool de connexions à gérer. Un piège classique
+                à éviter : le client doit s'initialiser à la demande, pas au chargement
+                du module — sinon le build Next.js échoue.
               </p>
-              <pre className="bg-neutral-50 text-neutral-700 text-[11px] font-mono rounded-xl p-3 overflow-x-auto leading-relaxed">
-{`let _sql = null
+              <CodeBlock>{`// Lazy init : ne se lance qu'à l'exécution
+let _sql = null
 export function getSql() {
   if (!_sql) _sql = neon(process.env.DATABASE_URL!)
   return _sql
-}`}
-              </pre>
+}`}</CodeBlock>
             </div>
 
             <div className="bg-white rounded-3xl p-6">
@@ -368,92 +394,50 @@ export function getSql() {
                   <IconMail className="text-neutral-600" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-0.5">Emails transactionnels</p>
-                  <h3 className="text-sm font-black text-neutral-900">Resend · 3 000 emails/mois gratuits</h3>
+                  <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-neutral-400">Email</p>
+                  <h3 className="text-sm font-black text-neutral-900 mt-0.5">Resend · 3 000 emails/mois</h3>
                 </div>
               </div>
               <p className="text-xs text-neutral-500 leading-relaxed">
-                API propre, SDK TypeScript bien typé. Les briefings sont envoyés en batch
-                de 100 via <Code>resend.batch.send()</Code>. Flow complet : inscription →
-                confirmation (double opt-in RGPD) → briefings quotidiens. Désabonnement
-                en un clic, depuis chaque email, par ville ou total.
+                API propre, SDK TypeScript bien typé. Les briefings partent en batch de
+                100 via <Code>resend.batch.send()</Code>. Flow complet : inscription →
+                double opt-in RGPD → confirmation → briefings quotidiens. Désabonnement
+                en un clic depuis chaque email, par ville ou total. Tout ça dans le
+                tier gratuit.
               </p>
             </div>
-
           </div>
         </section>
 
-        {/* Ce qui a pris plus de temps */}
+        {/* Ce que ça coûte */}
         <section>
-          <SectionLabel>Ce qui a pris plus de temps que prévu</SectionLabel>
-          <div className="space-y-4">
-
-            {[
-              {
-                icon: <IconTrend className="text-orange-500" />,
-                title: "Les données d'anomalie",
-                body: "La température ressentie (UTCI) n'est pas la même chose que la température de l'air. Et comparer à la \"normale\" demande de choisir une période de référence (1981–2010, standard OMM), de calculer par mois, et de distinguer normal vs anomalie de façon lisible. Beaucoup de travail éditorial autour des chiffres.",
-              },
-              {
-                icon: <IconServer className="text-orange-500" />,
-                title: "Leaflet en Next.js App Router",
-                body: "Leaflet est pensé pour le DOM du navigateur. En App Router avec SSR, il faut charger la carte côté client uniquement, gérer les dimensions du conteneur (un conteneur à 0px de hauteur au moment du montage donne une heatmap invisible), et enchaîner les imports dans le bon ordre pour les plugins.",
-                code: `// L doit être défini globalement avant le plugin
-window.L = L
-await import("leaflet.heat")`,
-              },
-              {
-                icon: <IconZap className="text-orange-500" />,
-                title: "Le build Next.js et les variables d'env",
-                body: "Next.js évalue les modules à la compilation pour générer le sitemap et les metadata. Si votre DB est initialisée au niveau module avec throw new Error, le build échoue. Solution : lazy initialization.",
-                code: `// ❌ Fail au build
-const sql = neon(process.env.DATABASE_URL!)
-
-// ✅ Lazy : ne lance qu'à l'exécution
-let _sql = null
-export function getSql() {
-  if (!_sql) _sql = neon(process.env.DATABASE_URL!)
-  return _sql
-}`,
-              },
-            ].map(({ icon, title, body, code }) => (
-              <div key={title} className="bg-white rounded-3xl p-6">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center shrink-0">
-                    {icon}
-                  </div>
-                  <h3 className="text-sm font-black text-neutral-900">{title}</h3>
-                </div>
-                <p className="text-sm text-neutral-500 leading-relaxed">{body}</p>
-                {code && <CodeBlock>{code}</CodeBlock>}
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Coûts */}
-        <section>
-          <SectionLabel>Coûts</SectionLabel>
+          <SectionLabel>Ce que ça coûte</SectionLabel>
           <div className="bg-[#111111] rounded-3xl p-6 lg:p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center">
                 <IconEuro className="text-orange-400" />
               </div>
-              <h2 className="text-lg font-black text-white">Environ 10 € <span className="font-normal text-white/40">par an</span></h2>
+              <div>
+                <h2 className="text-xl font-black text-white">10 € par an.</h2>
+                <p className="text-sm text-white/40 mt-0.5">
+                  Le prix d'un café de qualité. Pour un service de données climatiques.
+                </p>
+              </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {[
-                { composant: "Hosting + Cron", service: "Vercel Hobby", cost: "Gratuit" },
-                { composant: "Météo + Archive", service: "Open-Meteo", cost: "Gratuit" },
-                { composant: "Incendies satellite", service: "NASA FIRMS", cost: "Gratuit" },
-                { composant: "Base de données", service: "Neon (free tier)", cost: "Gratuit" },
-                { composant: "Emails (< 3 000/mois)", service: "Resend", cost: "Gratuit" },
-                { composant: "Domaine", service: "OVH", cost: "~10 €/an" },
+                { composant: "Hosting + Cron jobs", service: "Vercel Hobby", cost: "Gratuit" },
+                { composant: "Météo temps réel + Archive ERA5", service: "Open-Meteo", cost: "Gratuit" },
+                { composant: "Détections satellite incendies", service: "NASA FIRMS", cost: "Gratuit" },
+                { composant: "Base de données Postgres", service: "Neon (free tier)", cost: "Gratuit" },
+                { composant: "Emails transactionnels (< 3 000/mois)", service: "Resend", cost: "Gratuit" },
+                { composant: "Nom de domaine", service: "OVH", cost: "~10 €/an" },
               ].map(({ composant, service, cost }) => (
-                <div key={composant} className="flex items-center justify-between gap-4 py-2.5 border-b border-white/[0.06] last:border-0">
-                  <div>
-                    <p className="text-sm font-semibold text-white">{composant}</p>
-                    <p className="text-xs text-white/40 mt-0.5">{service}</p>
+                <div key={composant}
+                  className="flex items-center justify-between gap-4 py-3 border-b border-white/[0.06] last:border-0">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-white truncate">{composant}</p>
+                    <p className="text-xs text-white/30 mt-0.5">{service}</p>
                   </div>
                   <span className={`text-sm font-black shrink-0 ${cost === "Gratuit" ? "text-green-400" : "text-orange-400"}`}>
                     {cost}
@@ -464,32 +448,37 @@ export function getSql() {
           </div>
         </section>
 
-        {/* Ce qu'on aurait fait différemment */}
+        {/* Ce qu'on referait différemment */}
         <section>
-          <SectionLabel>Rétrospective</SectionLabel>
+          <SectionLabel>Rétrospective honnête</SectionLabel>
           <div className="bg-white rounded-3xl p-6 lg:p-8">
-            <h2 className="text-xl font-black text-neutral-900 mb-5">Ce que j'aurais fait différemment</h2>
-            <div className="space-y-4">
+            <h2 className="text-xl font-black text-neutral-900 mb-6">
+              Trois décisions à rependre dès le départ
+            </h2>
+            <div className="space-y-6">
               {[
                 {
-                  title: "Générer les normales climatiques automatiquement",
-                  body: "Plutôt que les embarquer en JSON statique. Ça rend l'ajout de nouvelles villes laborieux.",
+                  num: "1",
+                  title: "Générer les normales climatiques à la volée",
+                  body: "Elles sont actuellement embarquées en JSON statique. Ça marche, mais ajouter une nouvelle ville demande de relancer un script manuellement. Une génération automatique depuis Open-Meteo archive aurait été plus propre dès le début.",
                 },
                 {
-                  title: "Ne pas mixer monde et France dans le même batch",
-                  body: "500 villes françaises + 67 villes mondiales dans une seule requête Open-Meteo, c'est jouable mais fragile si l'API est lente.",
+                  num: "2",
+                  title: "Séparer les batchs France et monde",
+                  body: "500 villes françaises + 67 villes mondiales dans une seule requête Open-Meteo : techniquement possible, mais fragile. Une timeout de l'API et c'est la page entière qui plante. Deux requêtes distinctes, deux points de défaillance isolés.",
                 },
                 {
-                  title: "Prévoir le multi-villes dès le début",
-                  body: "Le schéma initial était un abonné = une ville. Migrer vers une table subscriptions séparée en cours de route a pris du temps.",
+                  num: "3",
+                  title: "Prévoir le multi-villes dès le schéma initial",
+                  body: "Le modèle de départ : un abonné = une ville. Migrer vers une table subscriptions séparée — pour permettre de suivre plusieurs villes — a coûté plusieurs heures de migration et de réécriture. Un vrai coût d'une mauvaise intuition initiale.",
                 },
-              ].map(({ title, body }, i) => (
-                <div key={title} className="flex gap-4">
-                  <span className="text-3xl font-black text-orange-100 leading-none shrink-0 w-6 text-right">
-                    {i + 1}
+              ].map(({ num, title, body }) => (
+                <div key={num} className="flex gap-5">
+                  <span className="text-4xl font-black text-orange-100 leading-none shrink-0 w-7 text-right tabular-nums">
+                    {num}
                   </span>
                   <div>
-                    <p className="text-sm font-black text-neutral-900 mb-1">{title}</p>
+                    <p className="text-sm font-black text-neutral-900 mb-1.5">{title}</p>
                     <p className="text-sm text-neutral-500 leading-relaxed">{body}</p>
                   </div>
                 </div>
@@ -498,48 +487,78 @@ export function getSql() {
           </div>
         </section>
 
+        {/* RGPD mention */}
+        <section>
+          <SectionLabel>Responsabilités</SectionLabel>
+          <div className="bg-white rounded-3xl p-6 lg:p-8 flex items-start gap-4">
+            <div className="w-10 h-10 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0 mt-0.5">
+              <IconLock className="text-neutral-600" />
+            </div>
+            <div>
+              <h2 className="text-base font-black text-neutral-900 mb-2">
+                RGPD, double opt-in, hébergement EU
+              </h2>
+              <p className="text-sm text-neutral-500 leading-relaxed">
+                La collecte d'adresses email implique de faire les choses correctement.
+                Confirmation par lien avant tout envoi, désabonnement en un clic dans
+                chaque email, données conservées uniquement le temps de l'abonnement,
+                hébergement EU via Resend et Neon. La conformité n'est pas un obstacle —
+                c'est une contrainte de design qui force la clarté.
+              </p>
+              <Link
+                href="/confidentialite"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-400 hover:text-neutral-700 mt-3 transition-colors"
+              >
+                Politique de confidentialité →
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* Leçon */}
-        <section className="pb-4">
-          <SectionLabel>Leçon principale</SectionLabel>
+        <section>
+          <SectionLabel>La leçon</SectionLabel>
           <div className="bg-[#111111] rounded-3xl p-6 lg:p-8">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center shrink-0 mt-1">
                 <IconBulb className="text-orange-400" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-white mb-4 leading-tight"
-                  style={{ textWrap: "balance" } as React.CSSProperties}>
-                  La technique est accessible. L'enjeu, c'est la traduction.
+                <h2
+                  className="text-2xl font-black text-white mb-5 leading-tight"
+                  style={{ textWrap: "balance" } as React.CSSProperties}
+                >
+                  Les données climatiques publiques sont une mine. Le manque,
+                  c'est l'interface.
                 </h2>
-                <p className="text-sm text-white/70 leading-relaxed mb-3">
-                  Quelqu'un qui cherche "est-ce que les étés à Lyon sont plus chauds
-                  qu'avant ?" ne va pas télécharger un fichier NetCDF de 2 Go depuis
-                  le site de Copernicus.
+                <p className="text-sm text-white/60 leading-relaxed mb-3">
+                  L'enjeu de ce genre de projet n'est pas technique. C'est éditorial :
+                  transformer des données brutes en quelque chose qu'un humain peut lire
+                  dans son email le matin, comprendre en dix secondes, et qui l'aide à
+                  prendre de meilleures décisions.
                 </p>
-                <p className="text-sm text-white/70 leading-relaxed">
-                  L'enjeu de ce genre de projet, c'est de transformer des données
-                  brutes en quelque chose qu'un humain peut lire dans son email à 7h du
-                  matin, comprendre en 10 secondes, et qui l'aide à prendre de
-                  meilleures décisions. La technique est accessible à n'importe quel
-                  développeur web. C'est vraiment juste une question d'idée.
+                <p className="text-sm text-white/60 leading-relaxed">
+                  La technique, n'importe quel développeur web peut la maîtriser en un
+                  weekend. Ce qui est rare, c'est l'idée de faire le pont. Et la volonté
+                  de le faire simplement.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <div className="border-t border-black/[0.06] pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        {/* CTA footer */}
+        <div className="border-t border-black/[0.06] pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
           <div>
             <p className="text-sm font-black text-neutral-900">cestchaud.fr</p>
-            <p className="text-xs text-neutral-400 mt-0.5">
-              Données ERA5 & GIEC CMIP6 · Open source APIs · Vercel
+            <p className="text-xs text-neutral-400 mt-1">
+              Open-Meteo · ERA5 · CMIP6 · NASA FIRMS · Neon · Resend · Vercel
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Link
               href="/a-propos"
-              className="text-sm font-semibold text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors"
             >
               Méthodologie →
             </Link>
