@@ -254,7 +254,6 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const regionSlug = city.isWorld ? null : slugify(city.region)
   const impactsToShow = city.isWorld ? [] : getImpacts({
     regionSlug,
-    anomaly,
     month: currentMonth,
     count: 1,
     seed: dayOfYear + cityHash,
@@ -650,7 +649,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
 
               {/* En vrai, ça fait quoi ? */}
               {impactsToShow.length > 0 && (
-                <EnVraiCaFaitQuoi impacts={impactsToShow} />
+                <EnVraiCaFaitQuoi impacts={impactsToShow} anomaly={anomaly} />
               )}
 
               {/* Liens navigation */}

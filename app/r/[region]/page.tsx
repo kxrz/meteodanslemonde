@@ -206,7 +206,6 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
   const dayOfYear = Math.floor((now2.getTime() - new Date(now2.getFullYear(), 0, 0).getTime()) / 86400000)
   const regionImpacts = getImpacts({
     regionSlug: region,
-    anomaly: null,
     month: currentMonth,
     count: 2,
     seed: dayOfYear,

@@ -15,13 +15,11 @@ export interface Impact {
 
 export function getImpacts({
   regionSlug,
-  anomaly,
   month,
   count = 1,
   seed = 0,
 }: {
   regionSlug: string | null
-  anomaly: number | null
   month: number  // 1-12
   count?: number
   seed?: number
@@ -31,8 +29,7 @@ export function getImpacts({
       impact.regions.length === 0 ||
       (regionSlug !== null && impact.regions.includes(regionSlug))
     const monthOk = impact.months === null || impact.months.includes(month)
-    const anomalyOk = anomaly === null || anomaly >= impact.anomaly_min
-    return regionOk && monthOk && anomalyOk
+    return regionOk && monthOk
   })
 
   if (eligible.length === 0) return []
