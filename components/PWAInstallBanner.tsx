@@ -53,11 +53,11 @@ export default function PWAInstallBanner() {
         <p className="text-sm font-black leading-snug mb-1">Installer l&apos;app</p>
         {mode === "ios" ? (
           <p className="text-xs text-white/60 leading-relaxed">
-            Appuie sur <strong className="text-white/80">Partager</strong> puis <strong className="text-white/80">Sur l&apos;écran d&apos;accueil</strong> pour recevoir les alertes quotidiennes.
+            Appuie sur <strong className="text-white/80">Partager</strong> puis <strong className="text-white/80">Sur l&apos;écran d&apos;accueil</strong> pour accéder au site en un geste.
           </p>
         ) : (
           <p className="text-xs text-white/60 leading-relaxed">
-            Installe cestchaud.fr pour recevoir le ressenti de ta ville chaque matin.
+            Installe cestchaud.fr sur ton écran d&apos;accueil pour un accès rapide.
           </p>
         )}
         {mode === "android" && (

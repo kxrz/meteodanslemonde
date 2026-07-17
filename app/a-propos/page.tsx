@@ -121,7 +121,7 @@ export default function AProposPage() {
             <Stat value="129" label="villes couvertes" sub="62 FR · 67 monde" />
             <Stat value="1940" label="point de départ" sub="archives ERA5" />
             <Stat value="2050" label="horizon projeté" sub="GIEC CMIP6 SSP2-4.5" />
-            <Stat value="26" label="faits sourcés" sub="INRAE, ONF, IFREMER…" />
+            <Stat value="63" label="faits sourcés" sub="INRAE, ONF, IFREMER…" />
           </div>
         </div>
       </section>
@@ -331,7 +331,7 @@ export default function AProposPage() {
           </p>
           <div className="bg-[#111111] rounded-3xl p-6 lg:p-8">
             <h2 className="text-lg font-black text-white mb-4 leading-tight">
-              26 faits d'impact sourcés, contextualisés selon l'anomalie du jour
+              63 faits d'impact sourcés, contextualisés selon l'anomalie du jour
             </h2>
             <p className="text-sm text-white/75 leading-relaxed mb-5">
               Sur chaque page de ville et de région, un bloc affiche un fait concret sur les
