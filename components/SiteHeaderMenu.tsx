@@ -6,17 +6,17 @@ import { useState } from "react"
 const NAV_EXPLORER = [
   {
     items: [
-      { href: "/carte", label: "Carte de chaleur", desc: "Ressenti par ville, en direct" },
-      { href: "/r", label: "Régions de France", desc: "Données ERA5 par région" },
-      { href: "/en/france", label: "France en chiffres", desc: "Statistiques nationales" },
+      { href: "/carte", label: "Où ça chauffe", desc: "Ressenti par ville, en direct" },
+      { href: "/r", label: "Par région", desc: "Données ERA5 par région" },
+      { href: "/en/france", label: "La France entière", desc: "Statistiques nationales" },
     ],
   },
   {
     items: [
-      { href: "/feux", label: "Incendies · satellite", desc: "Détections NASA FIRMS, 7 jours" },
-      { href: "/alertes", label: "Alertes thermiques", desc: "Canicule et vigilance météo" },
-      { href: "/explorer", label: "Jumeaux climatiques", desc: "Votre ville dans le monde" },
-      { href: "/terrain", label: "Images satellite", desc: "Avant / après, sécheresse" },
+      { href: "/feux", label: "Ça brûle", desc: "Détections NASA FIRMS, 7 jours" },
+      { href: "/alertes", label: "Dangers du mois", desc: "Nuits tropicales et canicule" },
+      { href: "/explorer", label: "Et ailleurs dans le monde ?", desc: "Votre ville dans le monde" },
+      { href: "/terrain", label: "Vues d'en haut", desc: "Avant / après, sécheresse" },
     ],
   },
 ]
@@ -25,15 +25,14 @@ const NAV_PROJECT = [
   {
     label: "Services",
     items: [
-      { href: "/notifications", label: "Briefing matinal", desc: "Email quotidien pour votre ville" },
-      { href: "/citoyens", label: "Écrire à vos élus", desc: "Modèle de lettre personnalisé" },
+      { href: "/notifications", label: "Me tenir informé", desc: "Briefing email quotidien pour votre ville" },
+      { href: "/citoyens", label: "Écrire à mes élus", desc: "Modèle de lettre personnalisé" },
     ],
   },
   {
     label: "Le projet",
     items: [
-      { href: "/methodologie", label: "Méthodologie", desc: "Sources, calculs, limites" },
-      { href: "/a-propos", label: "À propos", desc: "Qui fait ce site et pourquoi" },
+      { href: "/a-propos", label: "À propos", desc: "Méthodologie, sources, qui fait ce site" },
       { href: "/contact", label: "Contact", desc: "Signaler une erreur, suggérer" },
     ],
   },
