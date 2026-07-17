@@ -452,10 +452,10 @@ export default function AProposPage() {
                   </svg>
                 </Link>
                 <Link
-                  href="/backstage"
+                  href="/terrain"
                   className="flex items-center justify-between bg-white/10 hover:bg-white/15 text-white/80 font-semibold rounded-xl px-5 py-3 text-sm transition-colors"
                 >
-                  Voir le backstage technique
+                  Images satellite avant/après
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     strokeWidth="2.5" strokeLinecap="round">
                     <path d="M5 12h14M12 5l7 7-7 7" />

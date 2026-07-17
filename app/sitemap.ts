@@ -11,10 +11,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/carte`, lastModified: new Date(), changeFrequency: "daily", priority: 0.95 },
     { url: `${BASE}/explorer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE}/en/france`, lastModified: new Date(), changeFrequency: "daily", priority: 0.85 },
-    { url: `${BASE}/citoyens`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE}/feux`, lastModified: new Date(), changeFrequency: "daily", priority: 0.8 },
+    { url: `${BASE}/terrain`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.75 },
+    { url: `${BASE}/citoyens`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.75 },
+    { url: `${BASE}/notifications`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/alertes`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/a-propos`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/mentions-legales`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/confidentialite`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.2 },
   ]
 
   const frCityRoutes: MetadataRoute.Sitemap = (citiesFR as { id: string; name: string }[]).map((c) => ({
