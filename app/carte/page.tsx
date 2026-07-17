@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Anomalies de température en temps réel sur les grandes villes françaises. Où fait-il anormalement chaud aujourd'hui ?",
   alternates: { canonical: "https://www.cestchaud.fr/carte" },
   openGraph: {
-    title: "Carte de chaleur — anomalies du jour · cestchaud.fr",
+    title: "Carte de chaleur · anomalies du jour · cestchaud.fr",
     description: "Visualisez où il fait anormalement chaud aujourd'hui en France. Données ERA5 / GIEC en temps réel.",
     url: "https://www.cestchaud.fr/carte",
     siteName: "cestchaud.fr",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Carte de chaleur — anomalies du jour · cestchaud.fr",
+    title: "Carte de chaleur · anomalies du jour · cestchaud.fr",
     description: "Visualisez où il fait anormalement chaud aujourd'hui en France. Données ERA5 / GIEC en temps réel.",
     images: ["/og/france.png"],
   },

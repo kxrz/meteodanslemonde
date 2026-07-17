@@ -2,41 +2,54 @@
 
 > Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques, anomalies en temps réel et projections GIEC.
 
-Ce site visualise le dérèglement climatique en France à travers des données scientifiques ouvertes. Il compare le ressenti maximal journalier de villes françaises et mondiales pour identifier des « jumeaux climatiques » — des villes qui vivent aujourd'hui les températures qu'une ville française vivra demain sous l'effet du réchauffement climatique.
+Ce site visualise le dérèglement climatique en France à travers des données scientifiques ouvertes. Il compare le ressenti maximal journalier de villes françaises et mondiales pour identifier des jumeaux climatiques : des villes qui vivent aujourd'hui les températures qu'une ville française vivra demain sous l'effet du réchauffement climatique.
 
 Aucun contenu n'est généré par IA générative. Toutes les données proviennent de sources scientifiques ouvertes et vérifiables.
 
 ## Sources de données
 
-- Open-Meteo : températures ressenties en temps réel (apparent_temperature_max)
-- ERA5 (ECMWF / Copernicus) : normales climatiques 1991–2020 et tendances sur 30 ans
-- CMIP6 / GIEC AR6 : projections climatiques 2030, 2040, 2050 (scénario SSP2-4.5 et SSP5-8.5)
+- Open-Meteo : températures ressenties en temps réel (UTCI, apparent_temperature_max), modèles ECMWF, GFS et Météo-France
+- ERA5 (ECMWF / Copernicus) : normales climatiques 1991-2020 et tendances sur 30 ans
+- CMIP6 / GIEC AR6 : projections climatiques 2030, 2040, 2050 (scénario SSP2-4.5)
+- NASA FIRMS / VIIRS : détections d'incendies par satellite, résolution 375 m, mise à jour horaire
+- INRAE, ONF, IFREMER, LPO/STOC, ANSES, GLACIOCLIM, Météo-France, Haut Conseil pour le Climat : faits d'impact observés sourcés individuellement
 - VoxPublic : contacts des sénatrices et sénateurs français (emails, réseaux sociaux, commissions)
 
 ## Pages
 
-- / : tableau de bord climatique du jour — records (plus chaud, plus frais), spectre de chaleur nationale, top 3 anomalies, ville du jour (rotation quotidienne), insights dynamiques ERA5 et GIEC, blocs de navigation vers toutes les pages, bloc pédagogique sur le rôle des élus
-- /explorer : carte interactive mondiale et jumeaux climatiques — cliquer une ville française révèle les villes du monde à ressenti équivalent aujourd'hui
-- /en/france : vue d'ensemble de la chaleur en France (36 villes, classement par anomalie)
-- /a/[slug] : fiche climatique par ville française — ressenti max, normale historique, anomalie, tendance 30 ans, projections GIEC 2030/2040/2050, records de l'année, partage sur réseaux sociaux
-- /carte : carte de chaleur interactive — anomalies du jour pour 36 villes françaises, colorées par écart à la normale, classement en temps réel
-- /citoyens : page d'action citoyenne — contacter les 333 sénateurs joignables par email, dont 49 membres de la commission Aménagement du territoire et développement durable, filtrage par département et commission, email pré-rédigé sur le changement climatique
-- /a-propos : méthodologie détaillée, sources et outils
+- / : tableau de bord climatique du jour. Records (plus chaud, plus frais), spectre de chaleur nationale, top 3 anomalies, ville du jour (rotation quotidienne), insights dynamiques ERA5 et GIEC, blocs de navigation vers toutes les pages, bloc pédagogique sur le rôle des élus
+- /explorer : carte interactive mondiale et jumeaux climatiques. Cliquer une ville française révèle les villes du monde à ressenti équivalent aujourd'hui
+- /en/france : vue d'ensemble de la chaleur en France (62 villes, classement par anomalie)
+- /carte : carte de chaleur interactive. Anomalies du jour pour les villes françaises, colorées par écart à la normale, classement en temps réel
+- /a/[slug] : fiche climatique par ville (française ou mondiale). Ressenti max, normale historique, anomalie, tendance 30 ans, projections GIEC 2030/2040/2050, records de l'année, jumeau climatique mondial, faits d'impact "En vrai, ça fait quoi ?", partage sur réseaux sociaux
+- /r/[slug] : fiche climatique par région française. Données agrégées, anomalie régionale, précipitations, faits d'impact régionaux
+- /r : liste des 13 régions couvertes avec accès aux fiches régionales
+- /feux : carte des incendies actifs en France métropolitaine, données NASA FIRMS VIIRS temps réel
+- /terrain : images satellite avant/après. Incendies, lacs asséchés, glaciers en recul, fleuves à sec. Zones : Landes, Montbel, Camargue, Serre-Ponçon, Mer de Glace, Loire
+- /citoyens : page d'action citoyenne. Contacter les 333 sénateurs joignables par email, dont 49 membres de la commission Aménagement du territoire et développement durable, filtrage par département et commission, email pré-rédigé sur le changement climatique
+- /notifications : abonnement aux alertes météo extrêmes par ville
+- /alertes : gestion des alertes personnalisées
+- /a-propos : méthodologie complète, sources détaillées (Open-Meteo, ERA5, CMIP6, NASA FIRMS), ce qu'on calcule (anomalie, normale, jumeau, alerte canicule, tendance 30 ans, projections), institutions scientifiques des faits d'impact, limites et engagements éditoriaux
 - /contact : formulaire de contact
+- /mentions-legales : informations légales (LesWWW, EURL, SIREN 912 258 050)
+- /confidentialite : politique de confidentialité
 
 ## Fonctionnalités clés
 
 - Jumeaux climatiques : algorithme de correspondance entre villes françaises et mondiales à ±4°C de ressenti
-- Anomalie du jour : écart entre le ressenti observé et la normale historique ERA5 1991–2020
-- Projections GIEC : modèles CMIP6 AR6, scénario SSP2-4.5 (émissions modérées) et SSP5-8.5 (émissions élevées)
+- Anomalie du jour : écart entre le ressenti UTCI observé et la normale historique ERA5 1991-2020
+- Projections GIEC : modèles CMIP6 AR6, scénario SSP2-4.5 (émissions modérées)
 - Carte de chaleur : visualisation spatiale des anomalies françaises du jour
+- Feux actifs : détections satellite NASA FIRMS VIIRS mises à jour toutes les heures
+- En vrai, ça fait quoi ? : 26 faits d'impact climatique sourcés, contextualisés selon l'anomalie du jour (badge "Déjà en cours ici", "En cours en France" ou "En approche")
 - Action citoyenne : mailto pré-rempli vers les sénateurs avec contexte climatique pédagogique
 - Partage social : texte pré-généré incluant l'anomalie du jour et le lien vers la page
+- Notifications push : alertes sur les épisodes de chaleur extrême par ville
 
 ## Couverture géographique
 
-France métropolitaine : 36 villes de Lille à Ajaccio.
-Monde : plus de 100 villes sur tous les continents pour la comparaison climatique.
+France métropolitaine : 62 villes de Lille à Ajaccio, 13 régions.
+Monde : 67 villes sur tous les continents pour la comparaison climatique.
 
 ## Contact
 

@@ -9,6 +9,8 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import Breadcrumb from "@/components/Breadcrumb"
 import RegionCitiesMapWrapper from "@/components/RegionCitiesMapWrapper"
+import EnVraiCaFaitQuoi from "@/components/EnVraiCaFaitQuoi"
+import { getImpacts } from "@/lib/climate-impacts"
 
 const FIRE_PRONE = new Set([
   "provence-alpes-cote-d-azur",
@@ -199,6 +201,16 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
 
   const drought = hottest ? await fetchDroughtData(hottest.lat, hottest.lon) : null
 
+  const now2 = new Date()
+  const currentMonth = now2.getMonth() + 1
+  const dayOfYear = Math.floor((now2.getTime() - new Date(now2.getFullYear(), 0, 0).getTime()) / 86400000)
+  const regionImpacts = getImpacts({
+    regionSlug: region,
+    month: currentMonth,
+    count: 2,
+    seed: dayOfYear,
+  })
+
   const isSummer = new Date().getMonth() >= 4 && new Date().getMonth() <= 9
   const isFireProne = FIRE_PRONE.has(region)
   const [fireRisk, fireSummary] = isFireProne && isSummer
@@ -254,7 +266,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                   <p className="text-xs text-neutral-400 mt-1">moy. toutes saisons · depuis 1990</p>
                 </>
               ) : (
-                <p className="text-4xl font-black text-neutral-500">—</p>
+                <p className="text-4xl font-black text-neutral-500">-</p>
               )}
             </div>
 
@@ -366,6 +378,11 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                 ))}
               </div>
             </div>
+
+            {/* En vrai, ça fait quoi ? */}
+            {regionImpacts.length > 0 && (
+              <EnVraiCaFaitQuoi impacts={regionImpacts} />
+            )}
 
             {/* Autres régions */}
             <div className="col-span-2">

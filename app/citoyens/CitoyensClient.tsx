@@ -89,7 +89,7 @@ function getRole(c: string): string {
 }
 
 function buildMailto(senator: Senator, template: string): string {
-  const subject = encodeURIComponent("Urgence climatique — données cestchaud.fr")
+  const subject = encodeURIComponent("Urgence climatique · données cestchaud.fr")
   const body = encodeURIComponent(template)
   return `mailto:${senator.email}?subject=${subject}&body=${body}`
 }
@@ -166,7 +166,7 @@ export default function CitoyensClient({ senators }: { senators: Senator[] }) {
                 Écrire à vos élus
               </h1>
               <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
-                Les données climatiques sont réelles. Vos représentants au Sénat ont le pouvoir d'agir. Écrivez-leur — un email citoyen compte.
+                Les données climatiques sont réelles. Vos représentants au Sénat ont le pouvoir d'agir. Écrivez-leur : un email citoyen compte.
               </p>
             </div>
 
@@ -247,7 +247,7 @@ export default function CitoyensClient({ senators }: { senators: Senator[] }) {
                 <option value="">Tous les départements</option>
                 {deptOptions.map(d => (
                   <option key={d.num} value={d.num}>
-                    {d.num} — {d.name}
+                    {d.num} · {d.name}
                   </option>
                 ))}
               </select>

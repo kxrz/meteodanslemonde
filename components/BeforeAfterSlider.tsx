@@ -33,14 +33,14 @@ export default function BeforeAfterSlider({ before, after, labelBefore, labelAft
       onClick={(e) => move(e.clientX)}
     >
       {/* Image avant (fond, visible à droite du curseur) */}
-      <img src={before} alt={`${alt} — avant`} className="w-full block" draggable={false} />
+      <img src={before} alt={`${alt} avant`} className="w-full block" draggable={false} />
 
       {/* Image après (par-dessus, visible à gauche du curseur) */}
       <div
         className="absolute inset-0"
         style={{ clipPath: `inset(0 0 0 ${pos}%)` }}
       >
-        <img src={after} alt={`${alt} — après`} className="w-full block" draggable={false} />
+        <img src={after} alt={`${alt} après`} className="w-full block" draggable={false} />
       </div>
 
       {/* Séparateur */}

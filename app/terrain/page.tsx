@@ -12,11 +12,11 @@ import { getWeatherData } from "@/lib/weather-data"
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: "Terrain — Ce que le satellite confirme · cestchaud.fr",
+  title: "Terrain · Ce que le satellite confirme · cestchaud.fr",
   description: "Incendies, lacs asséchés, glaciers en recul, fleuves à l'étiage et îlots de chaleur urbains : les preuves visuelles du réchauffement en France.",
   alternates: { canonical: "https://www.cestchaud.fr/terrain" },
   openGraph: {
-    title: "Terrain — Ce que le satellite confirme · cestchaud.fr",
+    title: "Terrain · Ce que le satellite confirme · cestchaud.fr",
     description: "Images satellite avant/après : incendies, sécheresse, glaciers et chaleur urbaine en France.",
     url: "https://www.cestchaud.fr/terrain",
     siteName: "cestchaud.fr",
