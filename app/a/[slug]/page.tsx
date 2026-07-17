@@ -13,6 +13,8 @@ import ShareButton from "@/components/ShareButton"
 import TempSparkline from "@/components/TempSparkline"
 import { getWeatherData } from "@/lib/weather-data"
 import PushOptIn from "@/components/PushOptIn"
+import EnVraiCaFaitQuoi from "@/components/EnVraiCaFaitQuoi"
+import { getImpacts } from "@/lib/climate-impacts"
 
 export const revalidate = 86400
 
@@ -245,6 +247,19 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
   const cityLocation = city.isWorld ? city.country : city.region
   const cityTodayTemp = weather?.apparent_temp_max ?? null
   const twins = cityTodayTemp !== null ? findLiveTwins(cityTodayTemp, !!city.isWorld, allFR, allWorld) : []
+  const now = new Date()
+  const currentMonth = now.getMonth() + 1
+  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000)
+  const cityHash = city.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)
+  const regionSlug = city.isWorld ? null : slugify(city.region)
+  const impactsToShow = city.isWorld ? [] : getImpacts({
+    regionSlug,
+    anomaly,
+    month: currentMonth,
+    count: 1,
+    seed: dayOfYear + cityHash,
+  })
+
   const projectionParagraph = city.isWorld ? null : buildProjectionParagraph(
     city.name, city.region, monthName,
     normal, trend, proj2030, proj2040, proj2050
@@ -631,6 +646,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
                   </div>
                   <p className="text-[10px] text-neutral-400 mt-3">Ressenti max du jour · ±4°C</p>
                 </div>
+              )}
+
+              {/* En vrai, ça fait quoi ? */}
+              {impactsToShow.length > 0 && (
+                <EnVraiCaFaitQuoi impacts={impactsToShow} />
               )}
 
               {/* Liens navigation */}
