@@ -163,7 +163,7 @@ export default function FirePageClient({
           {/* Filtre */}
           <div className="col-span-2 bg-white rounded-3xl p-4 flex flex-col gap-3">
             <p className="text-xs text-neutral-500 leading-relaxed">
-              Le satellite distingue deux niveaux de certitude. Les <strong className="text-neutral-700">feux confirmés</strong> sont des anomalies thermiques très marquées, très probablement des incendies actifs. Les autres détections peuvent inclure des zones industrielles, des reflets solaires ou des feux agricoles contrôlés.
+              Filtrez par niveau de certitude. <strong className="text-neutral-700">Toutes les détections</strong> inclut toutes les anomalies thermiques. <strong className="text-neutral-700">Feux confirmés</strong> ne garde que les foyers dont le signal est suffisamment intense pour lever le doute.
             </p>
             <div className="flex gap-2">
             <button
@@ -331,12 +331,37 @@ export default function FirePageClient({
             </div>
           </div>
 
-          {/* Source */}
-          <div className="col-span-2 bg-neutral-100 rounded-3xl p-5 text-xs text-neutral-500 leading-relaxed">
-            <p className="font-semibold text-neutral-700 mb-1">Comment ça marche ?</p>
-            Un satellite de la NASA survole la France 2 fois par jour et repère les anomalies thermiques au sol.
-            Chaque point rouge est un foyer de chaleur anormale détecté depuis l&apos;espace.
-            Par temps nuageux, des feux peuvent passer inaperçus.
+          {/* Bloc pédagogique */}
+          <div className="col-span-2 bg-white rounded-3xl p-5 space-y-4">
+            <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold">Pourquoi autant d&apos;écart entre détections et confirmés ?</p>
+
+            <div className="flex gap-3">
+              <span className="text-lg leading-none mt-0.5 shrink-0">🛰️</span>
+              <div>
+                <p className="text-sm font-semibold text-neutral-800 mb-0.5">Le satellite voit de la chaleur, pas un incendie</p>
+                <p className="text-xs text-neutral-500 leading-relaxed">VIIRS repère toute anomalie thermique intense au sol à 375 m de résolution. Il ne distingue pas un feu de forêt d&apos;une torchère industrielle, d&apos;un four à chaux ou d&apos;un reflet solaire sur un toit métallique.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <span className="text-lg leading-none mt-0.5 shrink-0">🏭</span>
+              <div>
+                <p className="text-sm font-semibold text-neutral-800 mb-0.5">Ce que les autres détections peuvent être</p>
+                <p className="text-xs text-neutral-500 leading-relaxed">Sites industriels actifs, feux agricoles autorisés, écobuages en zone de montagne, compostage de grandes surfaces, ou simplement des pixels chauds par temps de canicule sur du béton. Tous passent le seuil de détection.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <span className="text-lg leading-none mt-0.5 shrink-0">🔴</span>
+              <div>
+                <p className="text-sm font-semibold text-neutral-800 mb-0.5">Ce que "confirmé" veut dire</p>
+                <p className="text-xs text-neutral-500 leading-relaxed">Un signal tellement intense et persistant que la probabilité d&apos;erreur est très faible. En été sec avec vent, c&apos;est quasiment la certitude d&apos;un foyer actif. NASA FIRMS attribue ce niveau après analyse multi-spectrale du pixel et de ses voisins.</p>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-neutral-400 leading-relaxed border-t border-neutral-100 pt-3">
+              Le satellite survole la France 2 fois par jour. Par temps nuageux, des feux peuvent passer inaperçus entre deux passages.
+            </p>
           </div>
 
           <Link href="/r" className="flex items-center justify-between bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-3xl px-5 py-4 group">
