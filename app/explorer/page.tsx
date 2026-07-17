@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.cestchaud.fr/explorer" },
   openGraph: {
     title: "Jumeaux climatiques mondiaux · cestchaud.fr",
-    description: "Cliquez une ville française et découvrez ses villes jumelles dans le monde — celles qui vivent aujourd'hui votre climat de demain.",
+    description: "Cliquez une ville française et découvrez ses villes jumelles dans le monde, celles qui vivent aujourd'hui votre climat de demain.",
     url: "https://www.cestchaud.fr/explorer",
     siteName: "cestchaud.fr",
     locale: "fr_FR",

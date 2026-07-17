@@ -111,7 +111,7 @@ export default function AProposPage() {
           </h1>
           <p className="text-white/70 text-base leading-relaxed max-w-xl mb-10">
             cestchaud.fr ne génère aucun contenu. Chaque chiffre affiché provient de sources
-            scientifiques publiques — réanalyses climatiques, modèles de projection, satellites
+            scientifiques publiques : réanalyses climatiques, modèles de projection, satellites
             NASA, études INRAE, IFREMER, ONF. Voici précisément ce qu'on utilise, comment,
             et pourquoi.
           </p>
@@ -155,7 +155,7 @@ export default function AProposPage() {
                 <p>
                   L'indice retenu est l'<strong className="text-blue-900">UTCI</strong> (Universal
                   Thermal Climate Index), qui intègre température, humidité, rayonnement et vent pour
-                  donner le ressenti thermique réel — et non la température de l'air seule.
+                  donner le ressenti thermique réel, et non la température de l'air seule.
                   Jusqu'à 10 000 requêtes gratuites par jour, sans clé API ni authentification.
                 </p>
               </div>
@@ -196,7 +196,7 @@ export default function AProposPage() {
                 <p>
                   L'<strong className="text-green-900">anomalie du jour</strong> est la différence entre
                   le ressenti UTCI prévu par Open-Meteo et la normale ERA5 du même mois. C'est ce chiffre
-                  qui dit si aujourd'hui est vraiment exceptionnel — ou juste dans la norme.
+                  qui dit si aujourd'hui est vraiment exceptionnel, ou juste dans la norme.
                 </p>
               </div>
               <a href="https://cds.climate.copernicus.eu" target="_blank" rel="noopener noreferrer"
@@ -241,7 +241,7 @@ export default function AProposPage() {
               </div>
               <a href="https://www.ipcc.ch/report/ar6/wg1/" target="_blank" rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-xs font-semibold mt-5 underline underline-offset-2 text-purple-900/60 hover:text-purple-900 transition-colors">
-                GIEC — Rapport AR6, Groupe de travail I <IconExternal />
+                GIEC · Rapport AR6, Groupe de travail I <IconExternal />
               </a>
             </section>
 
@@ -304,7 +304,7 @@ export default function AProposPage() {
               },
               {
                 title: "L'alerte canicule",
-                body: "Un épisode de canicule est identifié quand le ressenti max dépasse 35°C durant au moins 3 jours consécutifs — seuil Météo-France. Le compteur est calculé sur les 10 derniers jours d'archive ERA5.",
+                body: "Un épisode de canicule est identifié quand le ressenti max dépasse 35°C durant au moins 3 jours consécutifs (seuil Météo-France). Le compteur est calculé sur les 10 derniers jours d'archive ERA5.",
               },
               {
                 title: "La tendance sur 30 ans",
@@ -335,7 +335,7 @@ export default function AProposPage() {
             </h2>
             <p className="text-sm text-white/75 leading-relaxed mb-5">
               Sur chaque page de ville et de région, un bloc affiche un fait concret sur les
-              conséquences observées du réchauffement dans cette zone — avec la cause, le mécanisme,
+              conséquences observées du réchauffement dans cette zone, avec la cause, le mécanisme,
               et ce que ça implique réellement. Un badge indique si le phénomène est{" "}
               <span className="text-orange-400 font-semibold">déjà en cours ici</span>,{" "}
               <span className="text-amber-300 font-semibold">en cours en France</span> ou{" "}
@@ -386,7 +386,7 @@ export default function AProposPage() {
                 },
                 {
                   titre: "Les projections sont des tendances, pas des prévisions.",
-                  corps: "Le scénario SSP2-4.5 décrit une trajectoire probable si les politiques actuelles se poursuivent. Ce n'est pas une certitude — c'est la meilleure estimation scientifique disponible.",
+                  corps: "Le scénario SSP2-4.5 décrit une trajectoire probable si les politiques actuelles se poursuivent. Ce n'est pas une certitude : c'est la meilleure estimation scientifique disponible.",
                 },
                 {
                   titre: "Le ressenti UTCI est différent de la température de l'air.",
@@ -423,7 +423,7 @@ export default function AProposPage() {
               <h2 className="text-lg font-black text-neutral-900 mb-3">Florent Bertiaux</h2>
               <p className="text-sm text-neutral-500 leading-relaxed mb-4">
                 Créatif technologique basé en France. cestchaud.fr est né de la conviction que
-                les données climatiques méritent d'être lues autrement — sans jargon, sans filtre,
+                les données climatiques méritent d'être lues autrement, sans jargon, sans filtre,
                 accessibles à tous. Le projet est indépendant, sans publicité, sans investisseur.
               </p>
               <a href="https://leswww.com" target="_blank" rel="noopener noreferrer"

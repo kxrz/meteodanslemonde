@@ -308,7 +308,7 @@ export default function ExplorerClient({ citiesFR, citiesWorld, fetchedAt, clima
                       <p className="text-xs text-green-900/50 mt-2">moy. {monthName} 1991–2020</p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-green-900/30">—</p>
+                    <p className="text-2xl font-black text-green-900/30">-</p>
                   )}
                 </div>
 
@@ -329,13 +329,13 @@ export default function ExplorerClient({ citiesFR, citiesWorld, fetchedAt, clima
                       </p>
                     </>
                   ) : (
-                    <p className="text-2xl font-black text-black/20">—</p>
+                    <p className="text-2xl font-black text-black/20">-</p>
                   )}
                 </div>
 
                 {/* Tendance 30 ans */}
                 <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance observée — 30 ans</p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-2">Tendance observée · 30 ans</p>
                   {climateTrend !== null ? (
                     <p className="font-black text-xl text-neutral-900">
                       {fmtDelta(climateTrend)}°C

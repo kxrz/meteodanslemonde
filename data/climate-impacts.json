@@ -19,7 +19,7 @@
     "theme": "faune",
     "fait": "Les oiseaux migrateurs arrivent en France 5 à 12 jours plus tôt qu'il y a 30 ans.",
     "pourquoi": "Ils partent d'Afrique calés sur le jour, mais leur nourriture en Europe (insectes, bourgeons) répond à la température. Le décalage grandit chaque année.",
-    "implication": "Les espèces qui s'adaptent le plus vite survivent. Celles qui ne suivent pas — les spécialistes des milieux agricoles — ont chuté de 36% depuis 1989. Ce n'est pas une projection : c'est le comptage du STOC, le plus long suivi ornithologique de France.",
+    "implication": "Les espèces qui s'adaptent le plus vite survivent. Celles qui ne suivent pas, les spécialistes des milieux agricoles, ont chuté de 36% depuis 1989. Ce n'est pas une projection : c'est le comptage du STOC, le plus long suivi ornithologique de France.",
     "source": "LPO / Vigie-Nature (programme STOC)",
     "source_url": "https://www.lpo.fr/qui-sommes-nous/toutes-nos-actualites/articles/2019/rechauffement-climatique-les-oiseaux-migrent-plus-tot"
   },
@@ -32,7 +32,7 @@
     "fait": "Les oiseaux des milieux agricoles français ont reculé de 36% en 30 ans.",
     "pourquoi": "Les espèces spécialistes (celles qui dépendent d'un habitat précis) ne peuvent pas suivre l'évolution des températures et des saisons aussi vite que les généralistes.",
     "implication": "Les espèces généralistes progressent de 19%. Le résultat net : des paysages où de moins en moins d'espèces différentes survivent. C'est l'uniformisation du vivant, mesurée chaque printemps depuis 1989 par 2 000 observateurs bénévoles.",
-    "source": "Programme STOC — Vigie-Nature / MNHN",
+    "source": "Programme STOC · Vigie-Nature / MNHN",
     "source_url": "https://www.statistiques.developpement-durable.gouv.fr/etat-de-la-population-des-oiseaux-communs-en-france-en-2024"
   },
   {
@@ -44,7 +44,7 @@
     "fait": "Depuis 2018, plus de 670 000 hectares de forêts françaises sont touchés par des phénomènes de dépérissement.",
     "pourquoi": "Les sécheresses répétées affaiblissent les arbres, qui deviennent vulnérables aux parasites et aux champignons. Un arbre stressé par la chaleur est un arbre qui ne peut plus se défendre.",
     "implication": "44% des hêtres suivis par l'ONF sont aujourd'hui considérés comme dépérissants. La forêt française telle que nous la connaissons va changer de composition d'ici 2050, que nous le voulions ou non.",
-    "source": "ONF — Observatoire de la santé des forêts",
+    "source": "ONF · Observatoire de la santé des forêts",
     "source_url": "https://www.onf.fr/onf/+/1544::deperissements-et-changement-climatique.html"
   },
   {
@@ -68,7 +68,7 @@
     "fait": "Les cerisiers fleurissent 10 à 15 jours plus tôt qu'il y a 30 ans, selon le réseau de suivi phénologique INRAE.",
     "pourquoi": "La floraison est déclenchée par l'accumulation de chaleur en fin d'hiver. Quand les hivers sont plus doux, le seuil est atteint plus tôt.",
     "implication": "Des fleurs trop précoces s'exposent aux gelées tardives printanières, qui elles n'ont pas changé de date. Les arboriculteurs parlent de \"déphasage\" : l'arbre et son calendrier ne sont plus synchronisés avec le climat qu'ils ont connu pendant des siècles.",
-    "source": "INRAE — Réseau phénologique",
+    "source": "INRAE · Réseau phénologique",
     "source_url": "https://www.inrae.fr/actualites/changement-climatique-modeles-predire-dormance-hivernale-cerisier"
   },
   {
@@ -78,9 +78,9 @@
     "anomaly_min": 1.5,
     "theme": "agriculture",
     "fait": "Les vendanges dans le Bordelais se font 3 semaines plus tôt qu'en 1980.",
-    "pourquoi": "La chaleur accélère la maturation du raisin. Plus les étés sont chauds, plus le sucre monte vite — et plus on vendange tôt pour éviter une maturité excessive.",
-    "implication": "Les vins sont plus alcoolisés, moins frais, plus épais. Les profils aromatiques qui font la réputation des appellations changent. Certains cépages emblématiques — notamment le Merlot — risquent d'être remplacés par des variétés méridionales d'ici 2050. L'écologie du vignoble a plus changé en 40 ans qu'en 400.",
-    "source": "INRAE — projet LACCAVE",
+    "pourquoi": "La chaleur accélère la maturation du raisin. Plus les étés sont chauds, plus le sucre monte vite, et plus on vendange tôt pour éviter une maturité excessive.",
+    "implication": "Les vins sont plus alcoolisés, moins frais, plus épais. Les profils aromatiques qui font la réputation des appellations changent. Certains cépages emblématiques (notamment le Merlot) risquent d'être remplacés par des variétés méridionales d'ici 2050. L'écologie du vignoble a plus changé en 40 ans qu'en 400.",
+    "source": "INRAE · projet LACCAVE",
     "source_url": "https://hal.inrae.fr/hal-02757837/document"
   },
   {
@@ -125,9 +125,9 @@
     "months": [6, 7, 8, 9],
     "anomaly_min": 1.5,
     "theme": "faune",
-    "fait": "Les barracudas — poissons tropicaux — sont désormais présents en nombre dans les eaux des Calanques de Marseille.",
+    "fait": "Les barracudas, poissons tropicaux, sont désormais présents en nombre dans les eaux des Calanques de Marseille.",
     "pourquoi": "Cette espèce thermophile s'installe là où la température de l'eau dépasse régulièrement 22°C en été. La Méditerranée nord-occidentale était historiquement trop froide pour lui.",
-    "implication": "Pendant ce temps, les espèces d'eaux froides qui définissaient les fonds marseillais reculent vers le nord ou vers les profondeurs. La Méditerranée se tropicalise à vue d'œil — une métamorphose visible par n'importe quel plongeur.",
+    "implication": "Pendant ce temps, les espèces d'eaux froides qui définissaient les fonds marseillais reculent vers le nord ou vers les profondeurs. La Méditerranée se tropicalise à vue d'œil : une métamorphose visible par n'importe quel plongeur.",
     "source": "Parc national des Calanques",
     "source_url": "https://www.calanques-parcnational.fr/fr/actualites/des-barracudas-signales-en-nombre-dans-les-eaux-du-parc-national"
   },
@@ -139,7 +139,7 @@
     "theme": "flore",
     "fait": "Les prairies de posidonie ont régressé de 34% en Méditerranée en 50 ans.",
     "pourquoi": "La posidonie (Posidonia oceanica) est une plante endémique méditerranéenne extrêmement sensible à la hausse des températures et à la pollution. Elle pousse 1 centimètre par an et met des millénaires à constituer un herbier.",
-    "implication": "Un herbier de posidonie produit autant d'oxygène qu'une forêt terrestre de même surface. Il est la nurserie de 30% des poissons méditerranéens. Sa disparition ne se voit pas depuis la plage — mais elle réorganise silencieusement tout ce qui vit en dessous.",
+    "implication": "Un herbier de posidonie produit autant d'oxygène qu'une forêt terrestre de même surface. Il est la nurserie de 30% des poissons méditerranéens. Sa disparition ne se voit pas depuis la plage, mais elle réorganise silencieusement tout ce qui vit en dessous.",
     "source": "GIS Posidonie / CNRS",
     "source_url": "https://arxiv.org/pdf/2402.14459"
   },
@@ -152,7 +152,7 @@
     "fait": "La taille moyenne des sardines de Méditerranée française est passée de 15 cm à 11 cm. Leur poids de 30 g à 10 g.",
     "pourquoi": "Le réchauffement modifie la productivité du phytoplancton dont se nourrissent les sardines. Moins de nourriture disponible au bon moment = poissons plus petits et plus jeunes.",
     "implication": "Les individus de plus de 2 ans ont quasiment disparu des filets. Des pêcheurs qui travaillaient toute leur vie sur un produit connaissent un poisson qui a changé de caractéristiques en 20 ans. Ce n'est pas anecdotique : c'est un signal d'alerte sur l'état de la chaîne alimentaire marine.",
-    "source": "IFREMER — Projets Méditerranée",
+    "source": "IFREMER · Projets Méditerranée",
     "source_url": "https://www.lejdd.fr/Societe/a-cause-du-rechauffement-climatique-les-sardines-et-les-anchois-sont-de-moins-en-moins-gros-4075870"
   },
   {
@@ -163,7 +163,7 @@
     "theme": "climat",
     "fait": "La Mer de Glace a perdu plus de volume en 30 ans qu'en 170 ans auparavant (1825–1995).",
     "pourquoi": "La fonte des glaciers s'accélère avec le réchauffement. Au-delà d'un certain point, les glaciers entrent dans une spirale : moins de glace = moins de réflexion du soleil = plus de chaleur absorbée = plus de fonte.",
-    "implication": "La Mer de Glace est la source d'eau de plusieurs vallées en période estivale. Sa disparition progressive modifie les débits des rivières en été — exactement quand l'eau est la plus rare. Le glacier de Sarenne, lui, est déjà si petit que GLACIOCLIM a arrêté de le mesurer.",
+    "implication": "La Mer de Glace est la source d'eau de plusieurs vallées en période estivale. Sa disparition progressive modifie les débits des rivières en été, exactement quand l'eau est la plus rare. Le glacier de Sarenne, lui, est déjà si petit que GLACIOCLIM a arrêté de le mesurer.",
     "source": "GLACIOCLIM (IGE/OSUG) / Météo-France",
     "source_url": "https://meteofrance.com/le-changement-climatique/la-fonte-des-glaciers"
   },
@@ -176,7 +176,7 @@
     "fait": "À +2,7°C de réchauffement, 90% des stations de ski françaises font face à un risque très élevé d'insuffisance d'enneigement naturel.",
     "pourquoi": "La durée d'enneigement à 1800 m dans les Alpes du Nord est déjà passée de 5,5 mois à 4,5 mois. Chaque demi-degré supplémentaire raccourcit encore la saison.",
     "implication": "L'enneigement artificiel compense partiellement, mais consomme des millions de mètres cubes d'eau dans des zones déjà sous stress hydrique. À +4°C, aucune station n'est épargnée, même avec des canons à neige à plein régime. Le modèle économique de la montagne hivernale telle qu'on la connaît est condamné.",
-    "source": "ClimSnow — Météo-France / INRAE",
+    "source": "ClimSnow · Météo-France / INRAE",
     "source_url": "https://services.meteofrance.com/changement-climatique/enneigement-et-changement-climatique"
   },
   {
@@ -187,7 +187,7 @@
     "theme": "flore",
     "fait": "Les espèces végétales alpines remontent de 30 à 100 mètres d'altitude par décennie dans les Alpes françaises.",
     "pourquoi": "Chaque espèce vit dans une bande de température. Quand le climat se réchauffe, elle cherche de l'altitude pour retrouver ses conditions. Mais l'altitude est une ressource finie.",
-    "implication": "Les espèces endémiques des sommets n'ont nulle part où aller. Sur 37 sommets alpins suivis, la richesse spécifique a augmenté de 86% au cours du XXe siècle — non par abondance, mais parce que les espèces de plaine colonisent des zones qui leur étaient inaccessibles. Les espèces natives, elles, se raréfient.",
+    "implication": "Les espèces endémiques des sommets n'ont nulle part où aller. Sur 37 sommets alpins suivis, la richesse spécifique a augmenté de 86% au cours du XXe siècle, non par abondance, mais parce que les espèces de plaine colonisent des zones qui leur étaient inaccessibles. Les espèces natives, elles, se raréfient.",
     "source": "Flore Sentinelle / CBNA / Zone Atelier Alpes",
     "source_url": "https://floresentinelle.fr"
   },
@@ -197,9 +197,9 @@
     "months": [6, 7, 8, 9],
     "anomaly_min": 1.5,
     "theme": "faune",
-    "fait": "Le thon rouge est désormais régulièrement présent en Manche et au large de la Bretagne — des eaux qu'il évitait historiquement.",
+    "fait": "Le thon rouge est désormais régulièrement présent en Manche et au large de la Bretagne, des eaux qu'il évitait historiquement.",
     "pourquoi": "La Manche et l'Atlantique européen se sont réchauffés de 0,5 à 1°C entre 1982 et 2024. Une différence qui suffit à rendre ces zones vivables pour des espèces thermophiles.",
-    "implication": "Pendant ce temps, le maquereau et le hareng — espèces d'eaux froides — voient leurs zones de pêche se déplacer vers le nord. Les flotilles bretonnes qui pêchaient certaines espèces depuis des générations doivent suivre, ou changer de cible. Ce n'est pas une projection : c'est le quotidien des criées depuis 5 ans.",
+    "implication": "Pendant ce temps, le maquereau et le hareng, espèces d'eaux froides, voient leurs zones de pêche se déplacer vers le nord. Les flotilles bretonnes qui pêchaient certaines espèces depuis des générations doivent suivre, ou changer de cible. Ce n'est pas une projection : c'est le quotidien des criées depuis 5 ans.",
     "source": "IFREMER",
     "source_url": "https://www.ifremer.fr/en/news/fish-stocks-disrupted-climate-change"
   },
@@ -209,9 +209,9 @@
     "months": null,
     "anomaly_min": 1,
     "theme": "flore",
-    "fait": "La composition des algues rouges au large de la Bretagne a changé significativement en 20 ans, les espèces se concentrant vers la Mer d'Iroise — les dernières eaux restées plus fraîches.",
+    "fait": "La composition des algues rouges au large de la Bretagne a changé significativement en 20 ans, les espèces se concentrant vers la Mer d'Iroise, les dernières eaux restées plus fraîches.",
     "pourquoi": "Les espèces d'algues froides reculent devant la hausse progressive de la température de surface. La Mer d'Iroise joue le rôle de dernier refuge thermique en Bretagne.",
-    "implication": "Ces algues sont la base de chaînes alimentaires entières et la ressource d'une filière aquacole bretonne. Si les eaux de l'Iroise se réchauffent à leur tour, il n'y a plus de refuge. L'MNHN parle d'\"irréductibles\" — mais même leur résistance a une limite physique.",
+    "implication": "Ces algues sont la base de chaînes alimentaires entières et la ressource d'une filière aquacole bretonne. Si les eaux de l'Iroise se réchauffent à leur tour, il n'y a plus de refuge. L'MNHN parle d'\"irréductibles\", mais même leur résistance a une limite physique.",
     "source": "MNHN",
     "source_url": "https://www.mnhn.fr/fr/communique-de-presse/les-irreductibles-algues-rouges-de-bretagne-resistent-encore-au-rechauffement"
   },
@@ -248,7 +248,7 @@
     "fait": "La chenille processionnaire du pin progresse vers le nord depuis 20 ans. Elle est désormais signalée en Normandie, en Île-de-France et en Bourgogne.",
     "pourquoi": "Elle ne survit pas quand les températures hivernales descendent sous -16°C. Le réchauffement des hivers lui ouvre des territoires qu'elle ne pouvait pas coloniser avant.",
     "implication": "Ses poils urticants provoquent des réactions allergiques sévères chez les humains, les chiens et les chevaux. Une espèce cantonnée au sud de la Loire devient un problème de santé publique dans des régions qui n'avaient jamais eu à s'en préoccuper.",
-    "source": "INRAE — Unité de Zoologie Forestière",
+    "source": "INRAE · Unité de Zoologie Forestière",
     "source_url": "https://www.ile-de-france.prse.fr/chenilles-processionnaires-du-pin-une-nouvelle-a185.html?lang=fr"
   },
   {
@@ -271,8 +271,8 @@
     "theme": "flore",
     "fait": "44% des hêtres suivis par l'ONF dans le Grand Est et en Auvergne-Rhône-Alpes sont aujourd'hui considérés comme dépérissants.",
     "pourquoi": "Le hêtre est une espèce des climats tempérés frais. Il tolère mal les sécheresses prolongées, qui se succèdent depuis 2018. Chaque épisode sec laisse l'arbre plus affaibli que le précédent.",
-    "implication": "Le hêtre structure l'écosystème forestier de montagne — il crée l'ombre qui permet à d'autres espèces de vivre sous lui. Sa disparition n'est pas seulement la perte d'un arbre : c'est la transformation du sous-bois, de la faune qui l'habite, et des cours d'eau qu'il alimente.",
-    "source": "ONF — dispositif DEPERIS",
+    "implication": "Le hêtre structure l'écosystème forestier de montagne : il crée l'ombre qui permet à d'autres espèces de vivre sous lui. Sa disparition n'est pas seulement la perte d'un arbre : c'est la transformation du sous-bois, de la faune qui l'habite, et des cours d'eau qu'il alimente.",
+    "source": "ONF · dispositif DEPERIS",
     "source_url": "https://www.onf.fr/vivre-la-foret/+/2204::la-sante-des-chenes-et-des-hetres-etudiee-et-suivie-dans-le-temps.html"
   },
   {
@@ -281,9 +281,9 @@
     "months": [5, 6, 7, 8, 9, 10],
     "anomaly_min": 1,
     "theme": "sante",
-    "fait": "Le moustique tigre a atteint les Hauts-de-France et la Normandie — des territoires où son installation était considérée comme impossible il y a 15 ans.",
+    "fait": "Le moustique tigre a atteint les Hauts-de-France et la Normandie, des territoires où son installation était considérée comme impossible il y a 15 ans.",
     "pourquoi": "Son expansion vers le nord est directement corrélée à l'adoucissement des hivers. Chaque hiver doux lui permet de survivre là où il mourait auparavant.",
-    "implication": "Calais, Dunkerque, Amiens, Rouen — des villes du nord de la France devront intégrer la surveillance du moustique tigre dans leur santé publique. C'est une réalité nouvelle, sans précédent, qui s'installe discrètement.",
+    "implication": "Calais, Dunkerque, Amiens, Rouen : des villes du nord de la France devront intégrer la surveillance du moustique tigre dans leur santé publique. C'est une réalité nouvelle, sans précédent, qui s'installe discrètement.",
     "source": "ANSES / Santé Publique France",
     "source_url": "https://sante.gouv.fr/sante-et-environnement/risques-microbiologiques-physiques-et-chimiques/especes-nuisibles-et-parasites/article/cartes-de-presence-du-moustique-tigre-aedes-albopictus-en-france-metropolitaine"
   },
@@ -305,7 +305,7 @@
     "months": [6, 7, 8, 9],
     "anomaly_min": 2,
     "theme": "faune",
-    "fait": "Des espèces de poissons tropicaux — poisson-ballon, poisson-lion — sont désormais signalées dans les eaux corses.",
+    "fait": "Des espèces de poissons tropicaux (poisson-ballon, poisson-lion) sont désormais signalées dans les eaux corses.",
     "pourquoi": "Ces espèces dites \"lessepsiennes\" sont arrivées par le canal de Suez et progressaient lentement. Le réchauffement des eaux méditerranéennes accélère leur installation vers le nord-ouest.",
     "implication": "Le poisson-ballon (cousin du fugu) contient de la tétrodotoxine, une neurotoxine sans antidote. Il a causé des intoxications en Méditerranée orientale. Le poisson-lion, prédateur vorace sans prédateur naturel en Méditerranée, peut décimer les populations de petits poissons locaux. La Méditerranée corse est en train de changer d'écosystème.",
     "source": "IFREMER / Reporterre",

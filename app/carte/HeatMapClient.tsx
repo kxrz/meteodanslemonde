@@ -311,7 +311,7 @@ export default function HeatMapClient({ cities, fetchedAt, month }: Props) {
                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: anomalyColor(city.anomaly) }} />
                   <span className="flex-1 text-xs font-semibold truncate">{city.name}</span>
                   <span className="text-xs font-black shrink-0" style={{ color: anomalyColor(city.anomaly) }}>
-                    {city.anomaly !== null ? `${city.anomaly > 0 ? "+" : ""}${city.anomaly.toFixed(1)}°` : "—"}
+                    {city.anomaly !== null ? `${city.anomaly > 0 ? "+" : ""}${city.anomaly.toFixed(1)}°` : "-"}
                   </span>
                   <span className={`text-xs shrink-0 ${selectedCity?.id === city.id ? "text-white/60" : "text-neutral-400"}`}>
                     {city.apparent_temp_max}°C

@@ -11,7 +11,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "En vrai, c'est chaud — cestchaud.fr",
+  title: "En vrai, c'est chaud · cestchaud.fr",
   description: "Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.",
   metadataBase: new URL("https://cestchaud.fr"),
   manifest: "/manifest.json",
@@ -24,17 +24,17 @@ export const metadata: Metadata = {
     apple: "/icons/icon-192.png",
   },
   openGraph: {
-    title: "En vrai, c'est chaud — cestchaud.fr",
+    title: "En vrai, c'est chaud · cestchaud.fr",
     description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
     url: "https://cestchaud.fr",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",
-    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "En vrai, c'est chaud — cestchaud.fr" }],
+    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "En vrai, c'est chaud · cestchaud.fr" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "En vrai, c'est chaud — cestchaud.fr",
+    title: "En vrai, c'est chaud · cestchaud.fr",
     description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
     images: ["/og/home.png"],
   },

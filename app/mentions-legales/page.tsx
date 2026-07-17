@@ -34,8 +34,8 @@ export default function MentionsLegalesPage() {
             <div className="bg-white rounded-3xl p-6 space-y-2">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Éditeur</p>
               <p className="text-sm text-neutral-700 leading-relaxed">
-                <strong className="text-neutral-900">LesWWW</strong> — EURL<br />
-                SIREN : 912 258 050 — RCS Lille Métropole<br />
+                <strong className="text-neutral-900">LesWWW</strong>, EURL<br />
+                SIREN : 912 258 050, RCS Lille Métropole<br />
                 N° TVA : FR60 912 258 050<br />
                 Code NAF : 73.11Z<br />
                 Gérant : Florent Bertiaux<br />
@@ -53,7 +53,7 @@ export default function MentionsLegalesPage() {
             <div className="bg-white rounded-3xl p-6 space-y-2">
               <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Hébergement</p>
               <p className="text-sm text-neutral-700">
-                Vercel Inc., San Francisco, CA — infrastructure européenne.
+                Vercel Inc., San Francisco, CA (infrastructure européenne).
               </p>
             </div>
 

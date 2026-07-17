@@ -637,7 +637,7 @@ export default async function Home() {
                       {pm25 !== null && (
                         <p className="text-xs text-neutral-500 mb-3">
                           Particules fines PM2.5 <strong className="text-neutral-700">{pm25.toFixed(0)} µg/m³</strong>
-                          {pm25 > 25 ? " — niveau préoccupant" : pm25 > 10 ? " — niveau modéré" : " — niveau faible"}
+                          {pm25 > 25 ? ", niveau préoccupant" : pm25 > 10 ? ", niveau modéré" : ", niveau faible"}
                         </p>
                       )}
                       <p className="text-[10px] text-neutral-400 leading-relaxed">

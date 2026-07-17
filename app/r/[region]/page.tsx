@@ -266,7 +266,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                   <p className="text-xs text-neutral-400 mt-1">moy. toutes saisons · depuis 1990</p>
                 </>
               ) : (
-                <p className="text-4xl font-black text-neutral-500">—</p>
+                <p className="text-4xl font-black text-neutral-500">-</p>
               )}
             </div>
 
