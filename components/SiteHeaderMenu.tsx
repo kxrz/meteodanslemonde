@@ -32,8 +32,7 @@ const NAV_PROJECT = [
   {
     label: "Le projet",
     items: [
-      { href: "/methodologie", label: "Méthodologie", desc: "Sources, calculs, limites" },
-      { href: "/a-propos", label: "À propos", desc: "Qui fait ce site et pourquoi" },
+      { href: "/a-propos", label: "À propos", desc: "Méthodologie, sources, qui fait ce site" },
       { href: "/contact", label: "Contact", desc: "Signaler une erreur, suggérer" },
     ],
   },
