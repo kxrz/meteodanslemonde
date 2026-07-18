@@ -4,7 +4,7 @@ import { useRef, useState, useCallback } from "react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
 import PageFooter from "@/components/PageFooter"
-import type { FireZoneWeather } from "@/lib/fire-data"
+import type { FireZoneWeather, FireCluster } from "@/lib/fire-data"
 
 interface FireFeature {
   type: "Feature"
@@ -30,6 +30,7 @@ interface Props {
   regionRanking: RegionStat[]
   autresCount: number
   zoneWeather: FireZoneWeather
+  clusters: FireCluster[]
 }
 
 const FireMap = dynamic(() => import("@/components/FireMap"), {
@@ -64,7 +65,7 @@ function windDirLabel(deg: number): string {
 
 export default function FirePageClient({
   geojson, cities, totalCount, highConf, hasFrp, maxFrp,
-  peakDay, peakCount, days, byDay, regionRanking, autresCount, zoneWeather,
+  peakDay, peakCount, days, byDay, regionRanking, autresCount, zoneWeather, clusters,
 }: Props) {
   const flyToRef = useRef<((lat: number, lon: number, zoom?: number) => void) | null>(null)
   const [filter, setFilter] = useState<"all" | "confirmed">("all")
@@ -112,15 +113,16 @@ export default function FirePageClient({
       {/* Gauche : carte */}
       <div className="h-[55vw] max-h-[420px] lg:max-h-none lg:h-auto lg:w-[55%] shrink-0 relative p-3 lg:p-4">
         <div className="w-full h-full rounded-3xl overflow-hidden">
-          <FireMap geojson={geojson} cities={cities} flyToRef={flyToRef} filter={filter} />
+          <FireMap geojson={geojson} cities={cities} flyToRef={flyToRef} filter={filter} clusters={clusters} />
         </div>
         <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-orange-500 leading-none mb-0.5">Satellite NASA · 7 jours</p>
           <p className="text-sm font-black text-neutral-900 leading-tight">Feux détectés en France</p>
+          <p className="text-[10px] text-neutral-400 mt-1 leading-snug">Anomalies thermiques · sites industriels inclus</p>
         </div>
         <div className="absolute bottom-6 left-6 z-[1000]">
           <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
-            7 jours · {totalCount} détections
+            7 jours · {totalCount} détections · nuages = angle mort
           </p>
         </div>
       </div>
@@ -196,6 +198,28 @@ export default function FirePageClient({
             <p className="text-4xl font-black text-white leading-none">{highConf}</p>
             <p className="text-xs text-red-200/70 mt-1">{totalCount > 0 ? Math.round((highConf / totalCount) * 100) : 0}% des détections</p>
             <p className="text-[10px] text-red-200/50 mt-2 leading-relaxed">Signal thermique très intense, peu de doute sur la nature du foyer.</p>
+          </div>
+
+          <div className="col-span-2 bg-white rounded-3xl p-5">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">Foyers significatifs · clustering satellite</p>
+                <p className="text-xs text-neutral-400 leading-relaxed">
+                  Zones où plusieurs détections sont co-localisées sur ~5 km. Les <strong className="text-neutral-600">foyers majeurs</strong> (cercle rouge sur la carte) cumulent 8+ détections confirmées ou 20+ détections totales. Un site industriel persistant peut aussi apparaître.
+                </p>
+              </div>
+              <span className="text-3xl font-black text-neutral-900 ml-4 shrink-0">{clusters.filter(c => c.isMajor).length}</span>
+            </div>
+            {clusters.filter(c => c.isMajor).length > 0 && (
+              <div className="space-y-2">
+                {clusters.filter(c => c.isMajor).map((c, i) => (
+                  <div key={i} className="flex items-center justify-between text-xs bg-red-50 rounded-xl px-3 py-2">
+                    <span className="text-red-700 font-semibold">{c.count} détections · {c.highConf} confirmées</span>
+                    <span className="text-neutral-400">{c.dateFirst === c.dateLast ? c.dateFirst : `${c.dateFirst} → ${c.dateLast}`}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {hasFrp ? (

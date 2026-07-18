@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Metadata } from "next"
-import { fetchFirePoints, fetchFireZoneWeather } from "@/lib/fire-data"
+import { fetchFirePoints, fetchFireZoneWeather, clusterFirePoints } from "@/lib/fire-data"
 import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import FirePageClient from "@/components/FirePageClient"
@@ -94,6 +94,7 @@ export default async function FeuxPage() {
     .filter(r => r.label)
 
   const autresCount = byRegion["autres"]?.count ?? 0
+  const clusters = clusterFirePoints(points)
 
   const geojson = {
     type: "FeatureCollection" as const,
@@ -126,6 +127,7 @@ export default async function FeuxPage() {
         regionRanking={regionRanking}
         autresCount={autresCount}
         zoneWeather={zoneWeather}
+        clusters={clusters}
       />
     </div>
   )

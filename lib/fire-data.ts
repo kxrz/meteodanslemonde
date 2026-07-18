@@ -159,6 +159,60 @@ export async function fetchFirePoints(): Promise<FirmsPoint[]> {
   return fetchFirmsPoints()
 }
 
+// ─── Clustering spatial ───────────────────────────────────────────────────────
+// Regroupe les points de détection proches (~5 km) pour identifier les foyers
+// significatifs. Un cluster = plusieurs détections co-localisées sur la même zone.
+// Seuil isMajor : ≥8 confirmés OU ≥20 détections totales.
+
+export type FireCluster = {
+  lat: number
+  lon: number
+  count: number
+  highConf: number
+  frpMax: number
+  frpTotal: number
+  dateFirst: string
+  dateLast: string
+  isMajor: boolean
+}
+
+export function clusterFirePoints(points: FirmsPoint[]): FireCluster[] {
+  const RADIUS = 0.05 // ~5 km en degrés
+  const clusters: Array<{ latSum: number; lonSum: number; n: number; pts: FirmsPoint[] }> = []
+
+  for (const p of points) {
+    let best: typeof clusters[0] | null = null
+    let bestDist = RADIUS
+    for (const c of clusters) {
+      const d = Math.max(Math.abs(p.lat - c.latSum / c.n), Math.abs(p.lon - c.lonSum / c.n))
+      if (d < bestDist) { bestDist = d; best = c }
+    }
+    if (best) {
+      best.latSum += p.lat; best.lonSum += p.lon; best.n++; best.pts.push(p)
+    } else {
+      clusters.push({ latSum: p.lat, lonSum: p.lon, n: 1, pts: [p] })
+    }
+  }
+
+  return clusters
+    .filter(c => c.n >= 3)
+    .map(c => {
+      const lat = c.latSum / c.n
+      const lon = c.lonSum / c.n
+      const highConf = c.pts.filter(p => p.confidence === "high").length
+      const frps = c.pts.map(p => p.frp).filter(f => f > 0)
+      const frpMax = frps.length ? Math.max(...frps) : 0
+      const frpTotal = frps.reduce((a, b) => a + b, 0)
+      const dates = [...new Set(c.pts.map(p => p.date))].sort()
+      return {
+        lat, lon, count: c.n, highConf, frpMax, frpTotal,
+        dateFirst: dates[0], dateLast: dates[dates.length - 1],
+        isMajor: highConf >= 8 || c.n >= 20,
+      }
+    })
+    .sort((a, b) => b.count - a.count)
+}
+
 export async function fetchFiresGeoJSON(): Promise<{ type: "FeatureCollection"; features: object[] }> {
   const points = await fetchFirmsPoints()
   return {
