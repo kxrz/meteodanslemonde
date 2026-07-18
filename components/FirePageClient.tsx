@@ -131,6 +131,31 @@ export default function FirePageClient({
       <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto p-3 lg:p-4">
         <div className="grid grid-cols-2 gap-3 pb-4">
 
+          {/* Bloc transparence */}
+          <div className="col-span-2 bg-neutral-900 text-white rounded-3xl p-5">
+            <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold mb-3">Ce que cette carte peut et ne peut pas faire</p>
+            <div className="space-y-3">
+              <div className="flex gap-3 items-start">
+                <span className="text-base shrink-0">📡</span>
+                <p className="text-xs text-neutral-300 leading-relaxed">
+                  <strong className="text-white">Source unique : satellite NASA FIRMS / VIIRS.</strong> Il n&apos;existe pas en France d&apos;API publique centralisant les déclarations officielles d&apos;incendies en temps réel. Les SDIS (pompiers) opèrent département par département, sans flux ouvert.
+                </p>
+              </div>
+              <div className="flex gap-3 items-start">
+                <span className="text-base shrink-0">🧮</span>
+                <p className="text-xs text-neutral-300 leading-relaxed">
+                  <strong className="text-white">Interprétation mathématique, pas IA.</strong> Les foyers groupés sont calculés par un algorithme de clustering spatial (regroupement de points à moins de 5 km). Aucun modèle d&apos;intelligence artificielle n&apos;intervient dans l&apos;analyse.
+                </p>
+              </div>
+              <div className="flex gap-3 items-start">
+                <span className="text-base shrink-0">⚠️</span>
+                <p className="text-xs text-neutral-300 leading-relaxed">
+                  <strong className="text-white">Limites à connaître.</strong> Sites industriels, écobuages et reflets solaires peuvent déclencher des détections. La couverture nuageuse crée des angles morts entre deux passages satellite (2 fois/jour). Cette carte est un outil pédagogique, pas un outil d&apos;alerte opérationnelle.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Recherche + géoloc */}
           <div className="col-span-2 bg-white rounded-3xl p-4 flex flex-col gap-2">
             <form onSubmit={handleSearch} className="flex gap-2">
