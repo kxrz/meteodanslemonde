@@ -117,7 +117,7 @@ export default function FirePageClient({
         </div>
         <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-orange-500 leading-none mb-0.5">Satellite NASA · 7 jours</p>
-          <p className="text-sm font-black text-neutral-900 leading-tight">Feux détectés en France</p>
+          <p className="text-sm font-black text-neutral-900 leading-tight">Anomalies thermiques en France</p>
           <p className="text-[10px] text-neutral-400 mt-1 leading-snug">Anomalies thermiques · sites industriels inclus</p>
         </div>
         <div className="absolute bottom-6 left-6 z-[1000]">
@@ -254,17 +254,17 @@ export default function FirePageClient({
 
           {hasFrp ? (
             <div className="bg-amber-900 rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-widest text-amber-200 font-semibold mb-1">Feu le plus intense</p>
+              <p className="text-[10px] uppercase tracking-widest text-amber-200 font-semibold mb-1">Signal le plus intense</p>
               <p className="text-3xl font-black text-white leading-none">{frpLabel(maxFrp)}</p>
               <p className="text-xs text-amber-200/70 mt-1">puissance rayonnée</p>
-              <p className="text-[10px] text-amber-200/50 mt-2 leading-relaxed">La puissance en MW mesure l&apos;énergie thermique émise. Un grand incendie de forêt dépasse souvent 100 MW.</p>
+              <p className="text-[10px] text-amber-200/50 mt-2 leading-relaxed">La puissance en MW mesure l&apos;énergie thermique émise par le sol. Un feu de forêt actif dépasse souvent 100 MW, mais une torchère industrielle aussi.</p>
             </div>
           ) : (
             <div className="bg-neutral-700 rounded-3xl p-5">
               <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-semibold mb-1">Intensité</p>
-              <p className="text-2xl font-black text-neutral-300 leading-none">Feux de surface</p>
+              <p className="text-2xl font-black text-neutral-300 leading-none">Anomalies faibles</p>
               <p className="text-xs text-neutral-400 mt-1">en dessous du seuil de mesure</p>
-              <p className="text-[10px] text-neutral-500 mt-2 leading-relaxed">Les feux détectés sont trop petits ou trop peu intenses pour que le satellite mesure leur puissance.</p>
+              <p className="text-[10px] text-neutral-500 mt-2 leading-relaxed">Les anomalies détectées sont trop peu intenses pour que le satellite mesure leur puissance rayonnée.</p>
             </div>
           )}
 
@@ -274,7 +274,7 @@ export default function FirePageClient({
             <p className="text-xs text-orange-200/70 mt-1">
               le {peakDay ? new Date(peakDay + "T12:00:00Z").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "-"}
             </p>
-            <p className="text-[10px] text-orange-200/50 mt-2 leading-relaxed">Jour où le satellite a enregistré le plus de foyers actifs simultanément.</p>
+            <p className="text-[10px] text-orange-200/50 mt-2 leading-relaxed">Jour où le satellite a enregistré le plus d&apos;anomalies thermiques sur le territoire.</p>
           </div>
 
           {/* Qualité de l'air */}
@@ -350,7 +350,7 @@ export default function FirePageClient({
           {/* Par région */}
           <div className="col-span-2 bg-white rounded-3xl p-5">
             <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">Par région</p>
-            <p className="text-[10px] text-neutral-400 mb-4 leading-relaxed">Répartition géographique des foyers détectés. La barre indique la part de chaque région sur le total France. Le chiffre en MW est la somme des puissances mesurées, un indicateur de l&apos;ampleur globale des feux dans la zone.</p>
+            <p className="text-[10px] text-neutral-400 mb-4 leading-relaxed">Répartition géographique des anomalies détectées. La barre indique la part de chaque région sur le total France. Le chiffre en MW est la somme des puissances mesurées par le satellite, un indicateur de l&apos;intensité thermique de la zone.</p>
             <div className="space-y-3">
               {regionRanking.map(({ key, label, slug, count, frpTotal }) => (
                 <div key={key}>

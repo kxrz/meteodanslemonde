@@ -111,7 +111,7 @@ export default async function FeuxPage() {
       <nav className="text-xs text-neutral-400 flex items-center gap-1.5 px-5 py-2">
         <Link href="/" className="hover:text-neutral-700 transition-colors">Accueil</Link>
         <span>/</span>
-        <span className="text-neutral-700">Incendies</span>
+        <span className="text-neutral-700">Anomalies thermiques</span>
       </nav>
       <div className="px-5 py-3 border-b border-neutral-200 bg-[#f5f4f0] space-y-3">
         <p className="text-xs text-neutral-500 leading-relaxed max-w-3xl">

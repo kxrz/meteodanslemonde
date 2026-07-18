@@ -131,7 +131,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
 
           function buildPopupHtml(locationLine: string) {
             return `<div class="fire-pop">
-              <div class="fire-pop-title">Feu détecté par satellite</div>
+              <div class="fire-pop-title">Anomalie thermique détectée</div>
               ${locationLine}
               <div class="fire-pop-row"><span>Détecté le</span><strong>${firedate}</strong></div>
               <div class="fire-pop-row fire-pop-badge-row">
