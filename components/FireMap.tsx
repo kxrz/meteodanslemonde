@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import type { FireCluster } from "@/lib/fire-data"
 
 interface FireFeature {
   type: "Feature"
@@ -17,6 +18,7 @@ interface Props {
   cities?: CityFR[]
   flyToRef?: React.MutableRefObject<((lat: number, lon: number, zoom?: number) => void) | null>
   filter?: "all" | "confirmed"
+  clusters?: FireCluster[]
 }
 
 const MAX_CITY_DIST_DEG2 = 0.15 * 0.15 + 0.15 * 0.15
@@ -42,7 +44,7 @@ const CONF_DESC: Record<string, string> = {
 
 const HEATMAP_ZOOM_THRESHOLD = 9
 
-export default function FireMap({ geojson, cities = [], flyToRef, filter = "all" }: Props) {
+export default function FireMap({ geojson, cities = [], flyToRef, filter = "all", clusters = [] }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<import("leaflet").Map | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -180,6 +182,71 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
           }
         }
         return layer
+      }
+
+      // ── Couche clusters ──────────────────────────────────────────────────
+      for (const c of clusters) {
+        const radius = Math.max(12, Math.min(c.count * 1.5, 40))
+        const color = c.isMajor ? "#dc2626" : "#f97316"
+        const dateStr = c.dateFirst === c.dateLast
+          ? c.dateFirst
+          : `${c.dateFirst} → ${c.dateLast}`
+        const frpLine = c.frpMax > 0
+          ? `<div class="fire-pop-row"><span>Intensité max</span><strong>${c.frpMax < 10 ? c.frpMax.toFixed(1) : Math.round(c.frpMax)} MW</strong></div>`
+          : ""
+
+        // Halo
+        L.circleMarker([c.lat, c.lon], {
+          radius: radius + 10,
+          fillColor: color,
+          color: "transparent",
+          weight: 0,
+          fillOpacity: 0.12,
+          interactive: false,
+        }).addTo(map)
+
+        // Cercle principal
+        L.circleMarker([c.lat, c.lon], {
+          radius,
+          fillColor: color,
+          color: "#fff",
+          weight: c.isMajor ? 2 : 1,
+          fillOpacity: 0.35,
+        })
+          .bindTooltip(
+            c.isMajor
+              ? `<strong>Foyer majeur</strong> · ${c.count} détections`
+              : `Foyer · ${c.count} détections`,
+            { direction: "top", className: "fire-tooltip" }
+          )
+          .bindPopup(
+            `<div class="fire-pop">
+              <div class="fire-pop-title">${c.isMajor ? "Foyer majeur" : "Foyer groupé"}</div>
+              <div class="fire-pop-sub">${c.count} détections · ${c.highConf} confirmées</div>
+              <div class="fire-pop-row"><span>Période</span><strong>${dateStr}</strong></div>
+              ${frpLine}
+              <div class="fire-pop-row fire-pop-badge-row">
+                <span class="fire-pop-badge" style="background:${color}22;color:${color}">
+                  ${c.isMajor ? "Foyer significatif" : "Cluster satellite"}
+                </span>
+                <span class="fire-pop-badge-desc">peut inclure sources industrielles</span>
+              </div>
+            </div>`,
+            { maxWidth: 220, className: "fire-popup" }
+          )
+          .addTo(map)
+
+        // Label pour les foyers majeurs uniquement
+        if (c.isMajor) {
+          L.marker([c.lat, c.lon], {
+            icon: L.divIcon({
+              className: "",
+              html: `<div style="background:#dc2626;color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:999px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.3)">${c.count} pts</div>`,
+              iconAnchor: [20, -8],
+            }),
+            interactive: false,
+          }).addTo(map)
+        }
       }
 
       // ── Construire les 4 couches (all / confirmed) x (heat / markers) ───
