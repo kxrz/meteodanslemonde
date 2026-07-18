@@ -117,10 +117,11 @@ export default function FirePageClient({
         <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
           <p className="text-[10px] uppercase tracking-[0.12em] font-semibold text-orange-500 leading-none mb-0.5">Satellite NASA · 7 jours</p>
           <p className="text-sm font-black text-neutral-900 leading-tight">Feux détectés en France</p>
+          <p className="text-[10px] text-neutral-400 mt-1 leading-snug">Anomalies thermiques · sites industriels inclus</p>
         </div>
         <div className="absolute bottom-6 left-6 z-[1000]">
           <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
-            7 jours · {totalCount} détections
+            7 jours · {totalCount} détections · nuages = angle mort
           </p>
         </div>
       </div>

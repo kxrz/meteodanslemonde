@@ -35,9 +35,9 @@ function nearestCity(lat: number, lon: number, cities: CityFR[]): CityFR | null 
 const CONF_LABEL: Record<string, string> = { high: "Confirmé", nominal: "Probable", low: "Signal faible" }
 const CONF_COLOR: Record<string, string> = { high: "#dc2626", nominal: "#f97316", low: "#fbbf24" }
 const CONF_DESC: Record<string, string> = {
-  high: "détection fiable, feu actif",
-  nominal: "détection probable, à surveiller",
-  low: "signal incertain, peut-être un feu",
+  high: "signal très intense, feu actif très probable",
+  nominal: "peut être un feu, une usine ou un écobuage",
+  low: "signal faible, source industrielle ou agricole possible",
 }
 
 const HEATMAP_ZOOM_THRESHOLD = 9
