@@ -131,7 +131,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
 
           function buildPopupHtml(locationLine: string) {
             return `<div class="fire-pop">
-              <div class="fire-pop-title">Feu détecté par satellite</div>
+              <div class="fire-pop-title">Anomalie thermique détectée</div>
               ${locationLine}
               <div class="fire-pop-row"><span>Détecté le</span><strong>${firedate}</strong></div>
               <div class="fire-pop-row fire-pop-badge-row">
@@ -187,7 +187,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
       // ── Couche clusters ──────────────────────────────────────────────────
       for (const c of clusters) {
         const radius = Math.max(12, Math.min(c.count * 1.5, 40))
-        const color = c.isMajor ? "#dc2626" : "#f97316"
+        const color = c.isIndustrial ? "#94a3b8" : c.isPermanent ? "#d97706" : c.isMajor ? "#dc2626" : "#f97316"
         const dateStr = c.dateFirst === c.dateLast
           ? c.dateFirst
           : `${c.dateFirst} → ${c.dateLast}`
@@ -214,14 +214,18 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
           fillOpacity: 0.35,
         })
           .bindTooltip(
-            c.isMajor
-              ? `<strong>Foyer majeur</strong> · ${c.count} détections`
-              : `Foyer · ${c.count} détections`,
+            c.isIndustrial
+              ? `<strong>Zone industrielle connue</strong> · ${c.count} détections`
+              : c.isPermanent
+              ? `<strong>Source thermique permanente</strong> · ${c.count} détections`
+              : c.isMajor
+              ? `<strong>Foyer actif</strong> · ${c.count} détections`
+              : `Anomalie groupée · ${c.count} détections`,
             { direction: "top", className: "fire-tooltip" }
           )
           .bindPopup(
             `<div class="fire-pop">
-              <div class="fire-pop-title">${c.isMajor ? "Foyer majeur" : "Foyer groupé"}</div>
+              <div class="fire-pop-title">${c.isIndustrial ? "Zone industrielle connue" : c.isPermanent ? "Source thermique permanente" : c.isMajor ? "Foyer actif" : "Anomalie groupée"}</div>
               <div class="fire-pop-sub">${c.count} détections · ${c.highConf} confirmées</div>
               <div class="fire-pop-row"><span>Période</span><strong>${dateStr}</strong></div>
               ${frpLine}
@@ -237,7 +241,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
           .addTo(map)
 
         // Label pour les foyers majeurs uniquement
-        if (c.isMajor) {
+        if (c.isMajor && !c.isIndustrial && !c.isPermanent) {
           L.marker([c.lat, c.lon], {
             icon: L.divIcon({
               className: "",

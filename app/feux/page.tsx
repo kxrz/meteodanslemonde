@@ -5,8 +5,8 @@ import SiteHeader from "@/components/SiteHeader"
 import PageFooter from "@/components/PageFooter"
 import FirePageClient from "@/components/FirePageClient"
 
-const META_TITLE = "Incendies en France · Détections satellite 7 jours"
-const META_DESC = "Carte des feux actifs détectés par satellite NASA FIRMS / VIIRS en France métropolitaine et Corse. Données mises à jour toutes les heures."
+const META_TITLE = "Anomalies thermiques en France · Lecture satellite 7 jours"
+const META_DESC = "Carte des anomalies thermiques détectées par satellite NASA FIRMS / VIIRS en France métropolitaine et Corse. Usage pédagogique de données ouvertes, mis à jour toutes les heures."
 
 export const metadata: Metadata = {
   title: META_TITLE,
@@ -111,12 +111,18 @@ export default async function FeuxPage() {
       <nav className="text-xs text-neutral-400 flex items-center gap-1.5 px-5 py-2">
         <Link href="/" className="hover:text-neutral-700 transition-colors">Accueil</Link>
         <span>/</span>
-        <span className="text-neutral-700">Incendies</span>
+        <span className="text-neutral-700">Anomalies thermiques</span>
       </nav>
-      <div className="px-5 py-3 border-b border-neutral-200 bg-[#f5f4f0]">
+      <div className="px-5 py-3 border-b border-neutral-200 bg-[#f5f4f0] space-y-3">
         <p className="text-xs text-neutral-500 leading-relaxed max-w-3xl">
-          Cette page lit des données satellite NASA et les rend lisibles. Nous ne sommes pas journalistes : nous ne vérifions pas les feux sur le terrain et nous ne contactons pas les services de secours. Il n&apos;existe pas en France d&apos;API publique centralisant les déclarations d&apos;incendies en cours. Cette carte est ce qu&apos;on peut construire avec les données ouvertes disponibles, affiché avec ses limites.
+          Cette page affiche des <strong className="text-neutral-700">anomalies thermiques détectées depuis l&apos;espace</strong>, pas des incendies déclarés. Un capteur satellite voit une zone plus chaude que son environnement : cela peut être un feu de forêt, un site industriel, un écobuage ou un reflet solaire. Il n&apos;existe pas en France d&apos;API publique centralisant les déclarations d&apos;incendies en cours. Cette carte est un usage pédagogique de données ouvertes, pas un outil métier.
         </p>
+        <div className="max-w-3xl bg-white border border-neutral-200 rounded-2xl px-4 py-3 flex gap-3 items-start">
+          <span className="text-base shrink-0">💬</span>
+          <p className="text-xs text-neutral-500 leading-relaxed">
+            <strong className="text-neutral-700">Mis à jour grâce aux retours d&apos;experts.</strong> Des géomaticiens et spécialistes des risques ont commenté cette page et signalé des imprécisions. Leurs bonnes pratiques ont permis d&apos;améliorer la lecture des données : masque des zones industrielles connues, détection des sources thermiques permanentes, reformulation des niveaux de certitude. Leurs avis sont les bienvenus.
+          </p>
+        </div>
       </div>
       <FirePageClient
         geojson={geojson}
