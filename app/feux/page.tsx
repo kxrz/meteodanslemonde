@@ -113,6 +113,11 @@ export default async function FeuxPage() {
         <span>/</span>
         <span className="text-neutral-700">Incendies</span>
       </nav>
+      <div className="px-5 py-3 border-b border-neutral-200 bg-[#f5f4f0]">
+        <p className="text-xs text-neutral-500 leading-relaxed max-w-3xl">
+          Cette page lit des données satellite NASA et les rend lisibles. Nous ne sommes pas journalistes : nous ne vérifions pas les feux sur le terrain et nous ne contactons pas les services de secours. Il n&apos;existe pas en France d&apos;API publique centralisant les déclarations d&apos;incendies en cours. Cette carte est ce qu&apos;on peut construire avec les données ouvertes disponibles, affiché avec ses limites.
+        </p>
+      </div>
       <FirePageClient
         geojson={geojson}
         cities={citiesFR}
