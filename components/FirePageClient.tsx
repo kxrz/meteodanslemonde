@@ -228,21 +228,26 @@ export default function FirePageClient({
           <div className="col-span-2 bg-white rounded-3xl p-5">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">Foyers significatifs · clustering satellite</p>
+                <p className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold mb-1">Foyers groupés · clustering spatial</p>
                 <p className="text-xs text-neutral-400 leading-relaxed">
-                  Zones où plusieurs détections sont co-localisées sur ~5 km. Les <strong className="text-neutral-600">foyers majeurs</strong> (cercle rouge sur la carte) cumulent 8+ détections confirmées ou 20+ détections totales. Un site industriel persistant peut aussi apparaître.
+                  Zones avec plusieurs anomalies co-localisées sur ~5 km. Les sources actives 5 jours ou plus sont marquées comme <strong className="text-neutral-600">permanentes</strong> (probablement industrielles). Les zones industrielles connues sont identifiées séparément.
                 </p>
               </div>
               <span className="text-3xl font-black text-neutral-900 ml-4 shrink-0">{clusters.filter(c => c.isMajor).length}</span>
             </div>
-            {clusters.filter(c => c.isMajor).length > 0 && (
+            {clusters.length > 0 && (
               <div className="space-y-2">
-                {clusters.filter(c => c.isMajor).map((c, i) => (
-                  <div key={i} className="flex items-center justify-between text-xs bg-red-50 rounded-xl px-3 py-2">
-                    <span className="text-red-700 font-semibold">{c.count} détections · {c.highConf} confirmées</span>
-                    <span className="text-neutral-400">{c.dateFirst === c.dateLast ? c.dateFirst : `${c.dateFirst} → ${c.dateLast}`}</span>
-                  </div>
-                ))}
+                {clusters.filter(c => c.isMajor || c.isPermanent || c.isIndustrial).map((c, i) => {
+                  const tag = c.isIndustrial ? { label: "Zone industrielle", bg: "bg-neutral-100", text: "text-neutral-500" }
+                    : c.isPermanent ? { label: "Source permanente", bg: "bg-amber-50", text: "text-amber-700" }
+                    : { label: "Foyer actif", bg: "bg-red-50", text: "text-red-700" }
+                  return (
+                    <div key={i} className={`flex items-center justify-between text-xs ${tag.bg} rounded-xl px-3 py-2`}>
+                      <span className={`font-semibold ${tag.text}`}>{tag.label} · {c.count} détections · {c.highConf} confirmées</span>
+                      <span className="text-neutral-400 shrink-0 ml-2">{c.dateFirst === c.dateLast ? c.dateFirst : `${c.dateFirst} → ${c.dateLast}`}</span>
+                    </div>
+                  )
+                })}
               </div>
             )}
           </div>

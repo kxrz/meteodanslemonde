@@ -159,6 +159,29 @@ export async function fetchFirePoints(): Promise<FirmsPoint[]> {
   return fetchFirmsPoints()
 }
 
+// ─── Masque des sources thermiques industrielles permanentes connues ──────────
+// Sources : sites industriels à forte signature thermique permanente.
+// Rayon d'exclusion : 0.03° (~3 km). Basé sur retours experts terrain.
+
+const INDUSTRIAL_MASK: Array<{ lat: number; lon: number; label: string }> = [
+  { lat: 43.41, lon: 4.94,  label: "Fos-sur-Mer (complexe pétrochimique)" },
+  { lat: 43.50, lon: 5.07,  label: "Martigues (raffinerie)" },
+  { lat: 50.35, lon: 3.51,  label: "Valenciennes (Toyota)" },
+  { lat: 43.52, lon: -0.63, label: "Lacq (gaz naturel)" },
+  { lat: 49.49, lon: 0.11,  label: "Le Havre (raffinerie)" },
+  { lat: 51.04, lon: 2.67,  label: "Dunkerque (sidérurgie)" },
+  { lat: 45.73, lon: 4.81,  label: "Lyon (zone industrielle)" },
+  { lat: 43.30, lon: 5.38,  label: "Marseille (zone industrielle nord)" },
+]
+
+const INDUSTRIAL_RADIUS = 0.03
+
+function isIndustrialZone(lat: number, lon: number): boolean {
+  return INDUSTRIAL_MASK.some(z =>
+    Math.abs(lat - z.lat) < INDUSTRIAL_RADIUS && Math.abs(lon - z.lon) < INDUSTRIAL_RADIUS
+  )
+}
+
 // ─── Clustering spatial ───────────────────────────────────────────────────────
 // Regroupe les points de détection proches (~5 km) pour identifier les foyers
 // significatifs. Un cluster = plusieurs détections co-localisées sur la même zone.
@@ -174,6 +197,8 @@ export type FireCluster = {
   dateFirst: string
   dateLast: string
   isMajor: boolean
+  isPermanent: boolean  // actif 5+ jours sur 7 = source thermique permanente suspectée
+  isIndustrial: boolean // dans un masque de zone industrielle connue
 }
 
 export function clusterFirePoints(points: FirmsPoint[]): FireCluster[] {
@@ -204,10 +229,14 @@ export function clusterFirePoints(points: FirmsPoint[]): FireCluster[] {
       const frpMax = frps.length ? Math.max(...frps) : 0
       const frpTotal = frps.reduce((a, b) => a + b, 0)
       const dates = [...new Set(c.pts.map(p => p.date))].sort()
+      const isPermanent = dates.length >= 5
+      const isIndustrial = isIndustrialZone(lat, lon)
       return {
         lat, lon, count: c.n, highConf, frpMax, frpTotal,
         dateFirst: dates[0], dateLast: dates[dates.length - 1],
-        isMajor: highConf >= 8 || c.n >= 20,
+        isMajor: (highConf >= 8 || c.n >= 20) && !isIndustrial && !isPermanent,
+        isPermanent,
+        isIndustrial,
       }
     })
     .sort((a, b) => b.count - a.count)
