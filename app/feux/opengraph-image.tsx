@@ -35,7 +35,7 @@ export default async function Image() {
       {/* Breadcrumb */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span style={{ fontSize: 13, fontWeight: 400, letterSpacing: "0.18em", textTransform: "uppercase", color: "#a3a3a3" }}>
-          Incendies
+          Anomalies thermiques
         </span>
         <span style={{ color: "#d4d4d4" }}>·</span>
         <span style={{ fontSize: 13, fontWeight: 400, letterSpacing: "0.18em", textTransform: "uppercase", color: "#a3a3a3" }}>
@@ -53,7 +53,7 @@ export default async function Image() {
           letterSpacing: "-0.02em",
           textAlign: "center",
         }}>
-          Feux en France
+          Anomalies thermiques
         </span>
         <div style={{ width: 80, height: 5, background: "#f97316", borderRadius: 99, marginTop: 18 }} />
       </div>
@@ -63,7 +63,7 @@ export default async function Image() {
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{ display: "flex", flexDirection: "column", background: "#431407", borderRadius: 20, padding: "16px 24px" }}>
             <span style={{ fontSize: 12, fontWeight: 400, letterSpacing: "0.15em", textTransform: "uppercase", color: "#fed7aa", marginBottom: 6 }}>
-              Détections satellite
+              Zones détectées
             </span>
             <span style={{ fontSize: 64, fontWeight: 700, color: "#ffffff", lineHeight: 1 }}>
               {total}
@@ -82,7 +82,7 @@ export default async function Image() {
         </div>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
           <span style={{ fontSize: 22, fontWeight: 700, color: "#171717" }}>cestchaud.fr</span>
-          <span style={{ fontSize: 13, color: "#a3a3a3", marginTop: 2 }}>Carte satellite en temps réel</span>
+          <span style={{ fontSize: 13, color: "#a3a3a3", marginTop: 2 }}>Lecture satellite NASA FIRMS</span>
         </div>
       </div>
     </div>,

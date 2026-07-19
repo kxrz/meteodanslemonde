@@ -613,25 +613,25 @@ export default async function Home() {
             )
           })()}
 
-          {/* ── 4c. Événements en cours (feux) ── */}
+          {/* ── 4c. Anomalies thermiques ── */}
           {fireSummary && fireSummary.activeCount > 0 && (
             <>
               <div className="space-y-1 py-1">
                 <div className="flex items-center gap-3">
                   <div className="flex-1 h-px bg-neutral-200" />
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Événements en cours</span>
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Anomalies thermiques</span>
                   <div className="flex-1 h-px bg-neutral-200" />
                 </div>
-                <p className="text-center text-[10px] text-neutral-400">Incendies détectés par satellite et impact sur l&apos;air que vous respirez.</p>
+                <p className="text-center text-[10px] text-neutral-400">Zones plus chaudes que leur environnement, détectées par satellite. Peut inclure feux de forêt, écobuages, ou autres sources de chaleur.</p>
               </div>
               <div className={`grid gap-3 ${homeAirQuality?.aqi !== null ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
                 <Link href="/feux" className="bg-[#431407] rounded-3xl p-5 block hover:brightness-110 transition-all group">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Incendies détectés · France</p>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Anomalies thermiques · France</p>
                   <div className="flex items-baseline gap-2 mb-2">
                     <span className="text-4xl font-black text-white leading-none">{fireSummary.activeCount}</span>
-                    <span className="text-sm text-orange-200/80">foyers · 7 derniers jours</span>
+                    <span className="text-sm text-orange-200/80">zones · 7 derniers jours</span>
                   </div>
-                  <p className="text-xs text-orange-200/50 mb-4">Repérés par satellite depuis l&apos;espace, mis à jour toutes les heures.</p>
+                  <p className="text-xs text-orange-200/50 mb-4">Détectées par satellite NASA FIRMS/VIIRS, mises a jour toutes les heures.</p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {(["provence-alpes-cote-d-azur", "occitanie", "nouvelle-aquitaine", "corse", "auvergne-rhone-alpes"] as const).map((slug) => (
                       <span key={slug} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5">
@@ -672,7 +672,7 @@ export default async function Home() {
                         </p>
                       )}
                       <p className="text-[10px] text-neutral-400 leading-relaxed">
-                        Les feux actifs dégradent l&apos;air à distance. Personnes sensibles (asthme, enfants, seniors) : limitez les sorties prolongées.
+                        Les anomalies thermiques intenses peuvent dégrader la qualite de l&apos;air a distance. Personnes sensibles (asthme, enfants, seniors) : limitez les sorties prolongées.
                       </p>
                     </Link>
                   )
@@ -748,7 +748,7 @@ export default async function Home() {
               </div>
               <p className="text-base font-black text-green-900 leading-snug mb-2">Terrain</p>
               <p className="text-xs text-green-900/60 leading-relaxed flex-1">
-                Incendies, lacs asséchés, glaciers en recul. Les images satellite avant/après montrent ce que les chiffres ERA5 décrivent en degrés.
+                Anomalies thermiques, lacs asséchés, glaciers en recul. Les images satellite avant/apres montrent ce que les chiffres ERA5 décrivent en degrés.
               </p>
               <span className="text-green-400 group-hover:text-green-700 text-sm transition-colors mt-4 block">Voir les images &rarr;</span>
             </Link>
