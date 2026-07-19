@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   ` as { id: string }[]
 
   if (!rows.length) {
-    return NextResponse.redirect(`${BASE_URL}/notifications?unsub=invalid`)
+    return NextResponse.redirect(`${BASE_URL}/notifications?action=invalid-token`)
   }
 
   const subscriberId = rows[0].id
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
   ` as { city_name: string }[]
 
   if (!cityRows.length) {
-    return NextResponse.redirect(`${BASE_URL}/notifications?unsub=notfound`)
+    return NextResponse.redirect(`${BASE_URL}/profil?token=${token}&action=city-not-found`)
   }
 
   const cityName = cityRows[0].city_name
@@ -42,5 +42,5 @@ export async function GET(req: NextRequest) {
   `
 
   const encoded = encodeURIComponent(cityName)
-  return NextResponse.redirect(`${BASE_URL}/notifications?unsub=ok&city=${encoded}`)
+  return NextResponse.redirect(`${BASE_URL}/profil?token=${token}&action=city-removed&city=${encoded}`)
 }

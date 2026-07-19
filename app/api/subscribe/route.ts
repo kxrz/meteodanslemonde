@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSql, initDb } from "@/lib/db"
-import { resend, FROM_EMAIL, BASE_URL, RESEND_AUDIENCE_ID, confirmationEmailHtml } from "@/lib/resend"
+import { resend, FROM_EMAIL, BASE_URL, RESEND_AUDIENCE_ID, RESEND_GENERAL_AUDIENCE_ID, confirmationEmailHtml } from "@/lib/resend"
 
 let dbReady = false
 
@@ -41,7 +41,9 @@ export async function POST(req: NextRequest) {
     ON CONFLICT (subscriber_id, city_slug) DO NOTHING
   `
 
-  if (RESEND_AUDIENCE_ID && !subscriber.confirmed_at) {
+  // Upsert dans Resend — liste segmentée (RESEND_AUDIENCE_ID) et liste générale
+  // Toujours tenté, même si déjà confirmé, pour garantir la cohérence
+  if (RESEND_AUDIENCE_ID) {
     try {
       const contact = await resend.contacts.create({
         audienceId: RESEND_AUDIENCE_ID,
@@ -52,6 +54,18 @@ export async function POST(req: NextRequest) {
       if (contact.data?.id) {
         await sql`UPDATE subscribers SET resend_id = ${contact.data.id} WHERE id = ${subscriber.id}`
       }
+    } catch {
+      // Non-bloquant
+    }
+  }
+  if (RESEND_GENERAL_AUDIENCE_ID && RESEND_GENERAL_AUDIENCE_ID !== RESEND_AUDIENCE_ID) {
+    try {
+      await resend.contacts.create({
+        audienceId: RESEND_GENERAL_AUDIENCE_ID,
+        email: emailLower,
+        firstName: firstName.trim(),
+        unsubscribed: false,
+      })
     } catch {
       // Non-bloquant
     }
