@@ -152,7 +152,9 @@ export async function fetchFireZoneWeather(lat: number, lon: number): Promise<Fi
 
 export async function fetchFireSummary(): Promise<FireSummary> {
   const points = await fetchFirmsPoints()
-  return { activeCount: points.length, burnedHa: 0 }
+  const clusters = clusterFirePoints(points)
+  const realFires = clusters.filter(c => !c.isIndustrial && !c.isPermanent)
+  return { activeCount: realFires.length, burnedHa: 0 }
 }
 
 export async function fetchFirePoints(): Promise<FirmsPoint[]> {
