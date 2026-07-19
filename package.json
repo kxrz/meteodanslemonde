@@ -12,6 +12,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "sync-resend": "npx tsx scripts/sync-resend.ts",
     "test": "vitest run"
   },
   "dependencies": {
