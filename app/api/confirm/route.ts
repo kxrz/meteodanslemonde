@@ -9,29 +9,37 @@ export async function GET(req: NextRequest) {
   }
 
   const sql = getSql()
-  const rows = await sql`
-    UPDATE subscribers
-    SET confirmed_at = COALESCE(confirmed_at, now())
-    WHERE confirm_token = ${token}
-    RETURNING id, first_name, email, confirm_token,
-              (confirmed_at IS NULL) AS was_pending
-  ` as { id: string; first_name: string; email: string; confirm_token: string; was_pending: boolean }[]
 
-  if (!rows.length) {
+  // Lire l'état AVANT la mise à jour pour savoir si c'est une première confirmation
+  const beforeRows = await sql`
+    SELECT id, first_name, email, confirm_token, confirmed_at
+    FROM subscribers WHERE confirm_token = ${token}
+  ` as { id: string; first_name: string; email: string; confirm_token: string; confirmed_at: Date | null }[]
+
+  if (!beforeRows.length) {
     return NextResponse.redirect(`${BASE_URL}/notifications?action=invalid-token`)
   }
 
-  const sub = rows[0]
+  const sub = beforeRows[0]
+  const wasPending = !sub.confirmed_at
 
-  // Email de bienvenue uniquement au premier passage (was_pending = true)
-  if (sub.was_pending) {
+  await sql`
+    UPDATE subscribers SET confirmed_at = COALESCE(confirmed_at, now()) WHERE id = ${sub.id}
+  `
+
+  // Email de bienvenue uniquement au premier passage
+  if (wasPending) {
+    const cityRows = await sql`
+      SELECT city_name FROM subscriptions WHERE subscriber_id = ${sub.id} ORDER BY created_at LIMIT 1
+    ` as { city_name: string }[]
+    const cityName = cityRows[0]?.city_name ?? ""
     const profilUrl = `${BASE_URL}/profil?token=${sub.confirm_token}`
     try {
       await resend.emails.send({
         from: FROM_EMAIL,
         to: sub.email,
         subject: "Bienvenue sur cestchaud.fr",
-        html: welcomeEmailHtml({ firstName: sub.first_name, cityName: "", profilUrl }),
+        html: welcomeEmailHtml({ firstName: sub.first_name, cityName, profilUrl }),
       })
     } catch {
       // Non-bloquant
