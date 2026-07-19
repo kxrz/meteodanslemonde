@@ -238,7 +238,37 @@ export default async function Home() {
 
   const citiesForSearch = citiesFR.map(c => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon, region: c.region }))
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://www.cestchaud.fr/#website",
+        url: "https://www.cestchaud.fr",
+        name: "cestchaud.fr",
+        description: "Tableau de bord climatique : anomalies de chaleur, jumeaux climatiques et projections GIEC pour les villes françaises.",
+        inLanguage: "fr-FR",
+        publisher: { "@id": "https://www.cestchaud.fr/#organization" },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: "https://www.cestchaud.fr/a/{slug}" },
+          "query-input": "required name=slug",
+        },
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://www.cestchaud.fr/#organization",
+        name: "LesWWW",
+        url: "https://www.cestchaud.fr",
+        logo: { "@type": "ImageObject", url: "https://www.cestchaud.fr/icons/icon-512.png" },
+        contactPoint: { "@type": "ContactPoint", email: "florent@leswww.com", contactType: "customer service" },
+      },
+    ],
+  }
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
       <SiteHeader subtitle={`Données du ${dataLabel}. Ressenti max, anomalies ERA5, projections GIEC 2030-2050.`} />
 
@@ -786,5 +816,6 @@ export default async function Home() {
         </div>
       </main>
     </div>
+    </>
   )
 }

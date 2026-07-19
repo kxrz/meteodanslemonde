@@ -220,7 +220,30 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
       ])
     : [null, null]
 
+  const pageUrl = `https://www.cestchaud.fr/r/${region}`
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    url: pageUrl,
+    name: `${meta.label} · Chaleur & projections climatiques`,
+    description: `Données ERA5 et projections GIEC 2050 pour les villes de ${meta.label}.`,
+    about: {
+      "@type": "AdministrativeArea",
+      name: meta.label,
+      containedInPlace: { "@type": "Country", name: "France", identifier: "FR" },
+    },
+    ...(avgTrendAnnual !== null && {
+      additionalProperty: {
+        "@type": "PropertyValue",
+        name: "Tendance ERA5 annuelle",
+        value: `${avgTrendAnnual > 0 ? "+" : ""}${avgTrendAnnual.toFixed(1)}°C depuis 1990`,
+      },
+    }),
+  }
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
       <SiteHeader asLink subtitle={`Données climatiques de la région ${meta.label}`} />
       <Breadcrumb crumbs={[{ label: "Régions", href: "/r" }, { label: meta.label }]} />
@@ -408,5 +431,6 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
 
       </div>
     </div>
+    </>
   )
 }

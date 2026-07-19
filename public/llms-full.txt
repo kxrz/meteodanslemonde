@@ -1,0 +1,126 @@
+# cestchaud.fr — Documentation complete pour agents IA
+
+> Version detaillee de /llms.txt. Pour la version courte : https://www.cestchaud.fr/llms.txt
+
+## Identite et mission
+
+cestchaud.fr est un site de vulgarisation scientifique sur le derèglement climatique en France. Il a ete cree pour rendre tangible ce que les chiffres du GIEC signifient concretement : pas seulement "il fera +2°C en 2050" mais "Bordeaux vivra les etes de Marrakech".
+
+L'approche est comparative et ancrée dans le present : on montre ce que les habitants d'une ville française ressentent AUJOURD'HUI, on compare avec la normale historique, et on identifie des villes dans le monde qui vivent déja cette temperature. C'est le concept de "jumeau climatique".
+
+## Methodologie des donnees
+
+### Ressenti thermique (UTCI)
+
+L'indice UTCI (Universal Thermal Climate Index) est l'indicateur retenu pour les comparaisons. Il integre la temperature de l'air, l'humidite, le rayonnement solaire et le vent. Il reflete mieux le stress thermique ressenti par le corps humain que la simple temperature de l'air (temperature de bulbe sec).
+
+Toutes les valeurs de ressenti sur ce site sont des valeurs UTCI ou apparent_temperature (temperature ressentie equivalente), selon la disponibilite via Open-Meteo.
+
+### Normales climatiques (ERA5)
+
+Les normales sont calculees sur la periode 1991-2020, conformement aux conventions de l'OMM. Pour chaque ville et chaque mois, on calcule la moyenne des maxima journaliers sur 30 ans. La source est ERA5 (ECMWF / Copernicus), la reannalyse climatique mondiale de reference.
+
+Les tendances (en °C de hausse depuis les annees 1990) sont calculees par regression lineaire sur les donnees ERA5 mensuelles depuis 1990.
+
+### Anomalie du jour
+
+Anomalie = Ressenti UTCI max du jour (Open-Meteo) - Normale ERA5 du mois en cours (1991-2020).
+
+Une anomalie positive signifie qu'il fait plus chaud que la normale historique. Les anomalies de +3°C et plus sont considerees significatives. Les alertes canicule se declenchent a partir de seuils UTCI definis par arrondissement de ville (typiquement 38-42°C UTCI selon les villes).
+
+### Jumeaux climatiques
+
+L'algorithme compare le ressenti UTCI journalier de chaque ville française avec celui de 67 villes mondiales. Un "jumeau" est une ville mondiale dont le ressenti du jour est dans la plage [ressenti_FR - 4°C, ressenti_FR + 4°C]. Quand plusieurs jumeaux existent, on prefere la ville la plus connue (Paris > Lyon, etc.). La correspondance se fait sur le même jour calendaire (pas de decalage saisonnier).
+
+### Projections GIEC (CMIP6)
+
+Les projections 2030, 2040, 2050 sont issues des modeles CMIP6, rapport AR6 du GIEC, scenario SSP2-4.5 (emissions moderees, compatible avec un rechauffement global de +2,5°C en 2100). Les valeurs representent la hausse mediane du ressenti mensuel par rapport a la periode de reference 1991-2020.
+
+### Feux actifs (NASA FIRMS VIIRS)
+
+Les points d'incendie sont des detections radiometriques du satellite VIIRS (Visible Infrared Imaging Radiometer Suite) de la NASA. Resolution : 375 m. Latence : environ 1 heure apres le passage du satellite.
+
+Un masque industriel elimine les faux positifs sur 8 zones françaises connues (raffineries, papeteries, acieries, incinérateurs) dans un rayon de 0,03° (~3 km). Les feux sont regroupes par clustering spatial (rayon de regroupement : 0,15°) pour eliminer les doublons de passages successifs.
+
+Classification des feux :
+- **Majeur** : FRP (Fire Radiative Power) > 50 MW, ou plus de 5 points dans le cluster
+- **Permanent** : memes coordonnees detectees sur 3 jours ou plus dans les 7 derniers jours (source industrielle ou dechetterie)
+- **Industriel** : dans le masque des 8 zones industrielles declarees
+
+## Exemple de donnees : page ville
+
+Pour `/a/bordeaux` un jour de juillet type :
+
+```
+Ressenti max : 38°C UTCI
+Normale juillet (ERA5 1991-2020) : 31°C
+Anomalie : +7°C
+Tendance ERA5 annuelle depuis 1990 : +2.3°C
+Projection 2050 (SSP2-4.5) : +3.8°C
+Jumeau climatique : Marrakech (Maroc) — ressenti 37°C ce jour
+Record annee : 42°C (15 aout)
+```
+
+## Structure des pages
+
+### Page ville `/a/[slug]`
+
+Chaque ville française (62 villes) et mondiale (67 villes) a une fiche. Les donnees affichees :
+- Ressenti UTCI max du jour (Open-Meteo, mis a jour chaque matin)
+- Normale ERA5 pour le mois en cours
+- Anomalie (difference)
+- Tendance ERA5 sur 30 ans (annuelle, toutes saisons)
+- Projections GIEC 2030 / 2040 / 2050 (scenario SSP2-4.5)
+- Record de l'annee en cours (max UTCI depuis le 1er janvier)
+- Jumeau climatique mondial
+- 2 faits d'impact contextualises selon l'anomalie
+- Lien vers la fiche de la region
+
+### Page region `/r/[slug]`
+
+13 regions metropolitaines. Les donnees affichees :
+- Ville la plus chaude de la region (normale ERA5 du mois le plus eleve)
+- Tendance ERA5 annuelle moyenne sur toutes les villes de la region
+- Anomalie de precipitations du mois en cours : precipitations cumulees vs normale 2013-2022, proratisee sur les jours ecoules (source Open-Meteo Archive API)
+- Risque incendie (ete uniquement, regions a risque) : temperature max, humidite min, vent max, cumul pluie 3 jours
+- Feux actifs dans la region (lien vers /feux)
+- 2 faits d'impact regionaux
+- Liste des villes avec normales et tendances individuelles
+
+## Briefings email
+
+Les abonnes recoivent chaque matin un email par ville suivie contenant :
+- Ressenti max prevu du jour (UTCI)
+- Anomalie vs normale ERA5
+- Alerte si seuil canicule atteint
+- Jumeau climatique du jour
+- Projection GIEC pour leur ville
+
+Les emails sont envoyes via Resend. L'abonne peut gerer ses villes, se desabonner ou supprimer son compte depuis sa page profil (acces par token UDID unique dans l'email).
+
+## Limites editoriales
+
+1. **Les donnees ne sont pas des previsions** : le ressenti UTCI affiche est celui du jour actuel (ou de la veille selon l'heure de la mise a jour), pas une prediction future.
+2. **Les normales ERA5 sont des moyennes** : l'anomalie mesure un ecart a une moyenne sur 30 ans, pas a un record.
+3. **Les projections GIEC sont des medianes de modeles** : les incertitudes sont importantes, surtout apres 2040. SSP2-4.5 est un scenario median, ni optimiste ni pessimiste.
+4. **Les feux VIIRS peuvent avoir des faux positifs** : malgre le masque industriel, certaines sources de chaleur industrielles ou agricoles (sechage, brulage agricole) peuvent apparaitre. On filtre les permanents mais pas tous les agricoles.
+5. **Couverture geographique limitee** : 62 villes françaises, pas de DOM-TOM, pas de granularite communale.
+
+## Engagement de qualite
+
+- Aucune donnee generee ou interpolee par IA generative
+- Sources identifiees pour chaque fait d'impact
+- Methodologie publiee sur /a-propos
+- Code source ouvert (sur demande)
+- Pas de publicite, pas de cookies tiers, pas de tracking comportemental
+- Conformite RGPD : donnees abonnes exportables et supprimables a tout moment
+
+## Editeur
+
+LesWWW EURL
+SIREN : 912 258 050
+Contact : florent[at]leswww.com
+Siege : France
+
+Premiere mise en ligne : 2024
+Derniere mise a jour de ce fichier : juillet 2026
