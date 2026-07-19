@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSql, initDb } from "@/lib/db"
-import { resend, FROM_EMAIL, BASE_URL, RESEND_AUDIENCE_ID, confirmationEmailHtml } from "@/lib/resend"
+import { resend, FROM_EMAIL, BASE_URL, RESEND_AUDIENCE_ID, RESEND_GENERAL_AUDIENCE_ID, confirmationEmailHtml } from "@/lib/resend"
 
 let dbReady = false
 
@@ -31,8 +31,8 @@ export async function POST(req: NextRequest) {
     INSERT INTO subscribers (email, first_name)
     VALUES (${emailLower}, ${firstName.trim()})
     ON CONFLICT (email) DO UPDATE SET first_name = EXCLUDED.first_name
-    RETURNING id, confirm_token, confirmed_at
-  ` as { id: string; confirm_token: string; confirmed_at: Date | null }[]
+    RETURNING id, confirm_token, confirmed_at, resend_id
+  ` as { id: string; confirm_token: string; confirmed_at: Date | null; resend_id: string | null }[]
   const subscriber = rows[0]
 
   await sql`
@@ -41,20 +41,46 @@ export async function POST(req: NextRequest) {
     ON CONFLICT (subscriber_id, city_slug) DO NOTHING
   `
 
-  if (RESEND_AUDIENCE_ID && !subscriber.confirmed_at) {
+  // Upsert dans Resend — liste segmentée + liste générale
+  // Si le contact existe déjà, on tente un update pour réactiver et syncer le prénom
+  async function upsertResendContact(audienceId: string): Promise<string | null> {
     try {
-      const contact = await resend.contacts.create({
-        audienceId: RESEND_AUDIENCE_ID,
+      const result = await resend.contacts.create({
+        audienceId,
         email: emailLower,
         firstName: firstName.trim(),
         unsubscribed: false,
       })
-      if (contact.data?.id) {
-        await sql`UPDATE subscribers SET resend_id = ${contact.data.id} WHERE id = ${subscriber.id}`
-      }
+      return result.data?.id ?? null
     } catch {
-      // Non-bloquant
+      // Contact probablement déjà existant — paginer pour le retrouver par email
+      try {
+        let cursor: string | undefined
+        outer: do {
+          const list = await resend.contacts.list({ audienceId, limit: 100, ...(cursor ? { after: cursor } : {}) } as Parameters<typeof resend.contacts.list>[0])
+          const existing = list.data?.data?.find((c: { email: string }) => c.email === emailLower)
+          if (existing?.id) {
+            await resend.contacts.update({ audienceId, id: existing.id, firstName: firstName.trim(), unsubscribed: false })
+            return existing.id
+          }
+          cursor = list.data?.has_more ? list.data?.data?.at(-1)?.id : undefined
+          if (!list.data?.has_more) break outer
+        } while (cursor)
+      } catch {
+        // Non-bloquant
+      }
+      return null
     }
+  }
+
+  if (RESEND_AUDIENCE_ID) {
+    const resendId = await upsertResendContact(RESEND_AUDIENCE_ID)
+    if (resendId && !subscriber.resend_id) {
+      await sql`UPDATE subscribers SET resend_id = ${resendId} WHERE id = ${subscriber.id}`
+    }
+  }
+  if (RESEND_GENERAL_AUDIENCE_ID && RESEND_GENERAL_AUDIENCE_ID !== RESEND_AUDIENCE_ID) {
+    await upsertResendContact(RESEND_GENERAL_AUDIENCE_ID)
   }
 
   if (!subscriber.confirmed_at) {

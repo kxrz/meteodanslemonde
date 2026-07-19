@@ -36,6 +36,10 @@ export async function initDb() {
       UNIQUE (subscriber_id, city_slug)
     )
   `
+  // Migrations idempotentes — colonnes ajoutées après le lancement initial
+  await sql`ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS frequency TEXT NOT NULL DEFAULT 'daily'`
+  await sql`ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS alert_threshold INT NOT NULL DEFAULT 35`
+  await sql`ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS beta_tester BOOLEAN NOT NULL DEFAULT false`
 }
 
 export type Subscriber = {
@@ -45,4 +49,13 @@ export type Subscriber = {
   resend_id: string | null
   confirmed_at: Date | null
   confirm_token: string
+  frequency: string
+  alert_threshold: number
+  beta_tester: boolean
+  created_at: Date
+}
+
+export type SubscriberCity = {
+  slug: string
+  name: string
 }

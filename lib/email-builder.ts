@@ -128,6 +128,7 @@ function buildCityBlock(city: CityEmailData, month: number, unsubToken?: string)
           <a href="${BASE_URL}/a/${slug}" style="font-size:12px;color:#f97316;font-weight:600;text-decoration:none">Voir la carte climatique de ${name} &rarr;</a>
           ${unsubToken ? `<a href="${BASE_URL}/api/unsubscribe-city?token=${unsubToken}&city=${slug}" style="font-size:11px;color:#d1d5db;text-decoration:none">Retirer cette ville</a>` : ""}
         </p>
+        ${unsubToken ? `<p style="margin:6px 0 0"><a href="${BASE_URL}/profil?token=${unsubToken}" style="font-size:11px;color:#d1d5db;text-decoration:none">Gerer mon profil</a></p>` : ""}
       </td>
     </tr>`
 }
@@ -147,8 +148,8 @@ export function buildDailyEmailHtml({
 }) {
   const cityBlocks = cities.map(c => buildCityBlock(c, month, unsubToken)).join("")
   const unsubUrl = unsubToken
-    ? `${BASE_URL}/api/confirm?token=${unsubToken}`
-    : `${BASE_URL}/api/confirm?token=unsub`
+    ? `${BASE_URL}/profil?token=${unsubToken}`
+    : `${BASE_URL}/notifications`
 
   const intro = cities.length === 1
     ? `Voici votre briefing thermique pour <strong>${cities[0].name}</strong>.`
@@ -197,7 +198,7 @@ export function buildDailyEmailHtml({
           <td style="padding:20px 36px 28px;border-top:1px solid #f3f4f6">
             <p style="margin:0;font-size:11px;color:#d1d5db;text-align:center">
               cestchaud.fr &middot; données ERA5 &amp; GIEC CMIP6 &middot;
-              <a href="${unsubUrl}" style="color:#d1d5db">Se désabonner</a>
+              <a href="${unsubUrl}" style="color:#d1d5db">Gerer mon profil / se desabonner</a>
             </p>
           </td>
         </tr>

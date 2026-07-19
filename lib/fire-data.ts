@@ -30,7 +30,7 @@ function inFrance(lat: number, lon: number) {
 }
 
 
-function parseFirmsCSV(csv: string): FirmsPoint[] {
+export function parseFirmsCSV(csv: string): FirmsPoint[] {
   const lines = csv.trim().split("\n")
   if (lines.length < 2) return []
   // colonnes réelles : latitude,longitude,bright_ti4,scan,track,acq_date,acq_time,satellite,confidence,version,bright_ti5,frp,daynight
@@ -176,7 +176,7 @@ const INDUSTRIAL_MASK: Array<{ lat: number; lon: number; label: string }> = [
 
 const INDUSTRIAL_RADIUS = 0.03
 
-function isIndustrialZone(lat: number, lon: number): boolean {
+export function isIndustrialZone(lat: number, lon: number): boolean {
   return INDUSTRIAL_MASK.some(z =>
     Math.abs(lat - z.lat) < INDUSTRIAL_RADIUS && Math.abs(lon - z.lon) < INDUSTRIAL_RADIUS
   )
