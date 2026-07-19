@@ -53,19 +53,19 @@ export async function POST(req: NextRequest) {
       })
       return result.data?.id ?? null
     } catch {
-      // Contact probablement déjà existant — tenter un update via l'email
+      // Contact probablement déjà existant — paginer pour le retrouver par email
       try {
-        const list = await resend.contacts.list({ audienceId })
-        const existing = list.data?.data?.find((c: { email: string }) => c.email === emailLower)
-        if (existing?.id) {
-          await resend.contacts.update({
-            audienceId,
-            id: existing.id,
-            firstName: firstName.trim(),
-            unsubscribed: false,
-          })
-          return existing.id
-        }
+        let cursor: string | undefined
+        outer: do {
+          const list = await resend.contacts.list({ audienceId, limit: 100, ...(cursor ? { after: cursor } : {}) } as Parameters<typeof resend.contacts.list>[0])
+          const existing = list.data?.data?.find((c: { email: string }) => c.email === emailLower)
+          if (existing?.id) {
+            await resend.contacts.update({ audienceId, id: existing.id, firstName: firstName.trim(), unsubscribed: false })
+            return existing.id
+          }
+          cursor = list.data?.has_more ? list.data?.data?.at(-1)?.id : undefined
+          if (!list.data?.has_more) break outer
+        } while (cursor)
       } catch {
         // Non-bloquant
       }

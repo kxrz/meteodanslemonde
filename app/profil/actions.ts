@@ -36,6 +36,7 @@ export async function unsubscribeAll(token: string) {
     WHERE confirm_token = ${token}
     RETURNING resend_id
   ` as { resend_id: string | null }[]
+  if (!rows.length) redirect(`/profil?token=${token}&action=invalid-token`)
   if (rows[0]?.resend_id && RESEND_AUDIENCE_ID) {
     try {
       await resend.contacts.update({ audienceId: RESEND_AUDIENCE_ID, id: rows[0].resend_id, unsubscribed: true })
