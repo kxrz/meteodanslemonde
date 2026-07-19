@@ -4,7 +4,7 @@ import { Resend } from "resend"
 export const resend = new Resend(process.env.RESEND_API_KEY ?? "")
 
 export const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? ""
-export const RESEND_GENERAL_AUDIENCE_ID = process.env.RESEND_GENERAL_AUDIENCE_ID ?? RESEND_AUDIENCE_ID
+export const RESEND_GENERAL_AUDIENCE_ID = process.env.RESEND_GENERAL_AUDIENCE_ID ?? "c975fbb5-2253-447a-b371-e54aab62febd"
 export const FROM_EMAIL = "cestchaud.fr <florent@updates.leswww.com>"
 export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.cestchaud.fr"
 
