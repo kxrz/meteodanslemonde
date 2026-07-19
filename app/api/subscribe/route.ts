@@ -73,14 +73,16 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  let resendId: string | null = null
   if (RESEND_AUDIENCE_ID) {
-    const resendId = await upsertResendContact(RESEND_AUDIENCE_ID)
-    if (resendId && !subscriber.resend_id) {
-      await sql`UPDATE subscribers SET resend_id = ${resendId} WHERE id = ${subscriber.id}`
-    }
+    resendId = await upsertResendContact(RESEND_AUDIENCE_ID)
   }
   if (RESEND_GENERAL_AUDIENCE_ID && RESEND_GENERAL_AUDIENCE_ID !== RESEND_AUDIENCE_ID) {
-    await upsertResendContact(RESEND_GENERAL_AUDIENCE_ID)
+    const gId = await upsertResendContact(RESEND_GENERAL_AUDIENCE_ID)
+    if (!resendId) resendId = gId
+  }
+  if (resendId && !subscriber.resend_id) {
+    await sql`UPDATE subscribers SET resend_id = ${resendId} WHERE id = ${subscriber.id}`
   }
 
   if (!subscriber.confirmed_at) {

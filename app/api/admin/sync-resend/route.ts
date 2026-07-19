@@ -31,7 +31,7 @@ async function upsertContact(audienceId: string, email: string, firstName: strin
 
 export async function POST() {
   if (!RESEND_AUDIENCE_ID && !RESEND_GENERAL_AUDIENCE_ID) {
-    return NextResponse.json({ error: "RESEND_AUDIENCE_ID non configuré" }, { status: 500 })
+    return NextResponse.json({ error: "Aucune audience Resend configurée (RESEND_AUDIENCE_ID ou RESEND_GENERAL_AUDIENCE_ID)" }, { status: 500 })
   }
 
   await initDb()
