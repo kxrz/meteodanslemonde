@@ -13,7 +13,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "En vrai, c'est chaud · cestchaud.fr",
   description: "Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.",
-  metadataBase: new URL("https://cestchaud.fr"),
+  metadataBase: new URL("https://www.cestchaud.fr"),
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

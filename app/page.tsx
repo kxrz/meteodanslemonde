@@ -19,6 +19,7 @@ export const metadata: Metadata = {
   title: "En vrai, c'est chaud - cestchaud.fr",
   description: "Tableau de bord climatique du jour : anomalies, records, tendances ERA5 et projections GIEC 2050 pour les grandes villes françaises.",
   metadataBase: new URL("https://www.cestchaud.fr"),
+  alternates: { canonical: "https://www.cestchaud.fr" },
   openGraph: {
     title: "En vrai, c'est chaud - cestchaud.fr",
     description: "Anomalies du jour, records de chaleur, projections GIEC 2050. Le tableau de bord climatique de la France.",
