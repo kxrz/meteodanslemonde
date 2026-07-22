@@ -3,6 +3,8 @@
 import { useState } from "react"
 import type { QuizQuestion } from "./page"
 import Link from "next/link"
+import SiteHeader from "@/components/SiteHeader"
+import PageFooter from "@/components/PageFooter"
 
 type Props = { questions: QuizQuestion[] }
 
@@ -47,9 +49,10 @@ export default function JeuClient({ questions }: Props) {
   if (isDone) {
     const shareText = `J'ai trouvé ${score}/5 au quiz Jumeau climatique sur cestchaud.fr — et toi ?`
     return (
-      <div className="min-h-screen bg-[#f5f4f0] flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen bg-[#f5f4f0] flex flex-col">
+        <SiteHeader asLink subtitle="Le jeu du jumeau climatique" />
+        <div className="flex-1 flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md">
-          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-6 text-center">cestchaud.fr · Jumeau climatique</p>
           <div className="bg-white rounded-3xl p-8 mb-4 text-center">
             <p className="text-6xl font-black text-neutral-900 mb-1">{score}<span className="text-3xl text-neutral-300">/5</span></p>
             <p className="text-sm text-neutral-500 mb-6">
@@ -88,22 +91,20 @@ export default function JeuClient({ questions }: Props) {
               Rejouer (nouvelles villes)
             </Link>
           </div>
-          <Link href="/" className="block text-center text-xs text-neutral-400 hover:text-neutral-600 transition-colors">
-            Retour au tableau de bord
-          </Link>
         </div>
+        </div>
+        <PageFooter />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f4f0] flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-[#f5f4f0] flex flex-col">
+      <SiteHeader asLink subtitle="Le jeu du jumeau climatique" />
+      <div className="flex-1 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md">
-        {/* Header */}
+        {/* Progression */}
         <div className="flex items-center justify-between mb-6">
-          <Link href="/" className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 hover:text-neutral-700 transition-colors">
-            cestchaud.fr
-          </Link>
           <div className="flex gap-1.5">
             {questions.map((_, i) => (
               <div key={i} className={`h-1.5 rounded-full transition-all ${i < step ? "w-6 bg-neutral-900" : i === step ? "w-6 bg-orange-400" : "w-4 bg-neutral-200"}`} />
@@ -176,6 +177,8 @@ export default function JeuClient({ questions }: Props) {
           </button>
         )}
       </div>
+      </div>
+      <PageFooter />
     </div>
   )
 }
