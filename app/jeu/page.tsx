@@ -7,9 +7,25 @@ import JeuClient from "./JeuClient"
 export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Jumeau climatique · Le jeu · cestchaud.fr",
-  description: "Trouvez a quel pays ressemble votre ville aujourd'hui. Un quiz base sur les donnees meteorologiques du jour.",
-  robots: "noindex",
+  title: "Le jeu du jumeau climatique · cestchaud.fr",
+  description: "Trouvez a quel pays ressemble votre ville francaise aujourd'hui. 5 questions basees sur les ressentis UTCI du jour. Vos resultats changent chaque jour.",
+  metadataBase: new URL("https://www.cestchaud.fr"),
+  alternates: { canonical: "https://www.cestchaud.fr/jeu" },
+  openGraph: {
+    title: "Le jeu du jumeau climatique · cestchaud.fr",
+    description: "Bordeaux ressemble aujourd'hui a quelle ville du monde ? Testez vos connaissances climatiques en 5 questions.",
+    url: "https://www.cestchaud.fr/jeu",
+    siteName: "cestchaud.fr",
+    locale: "fr_FR",
+    type: "website",
+    images: [{ url: "/og/jeu.png", width: 1200, height: 630, alt: "Le jeu du jumeau climatique · cestchaud.fr" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Le jeu du jumeau climatique · cestchaud.fr",
+    description: "Bordeaux ressemble aujourd'hui a quelle ville du monde ? 5 questions, donnees du jour.",
+    images: ["/og/jeu.png"],
+  },
 }
 
 export type QuizQuestion = {
@@ -69,5 +85,29 @@ export default async function JeuPage() {
     }
   })
 
-  return <JeuClient questions={questions} />
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Quiz",
+    "name": "Le jeu du jumeau climatique",
+    "description": "Un quiz quotidien base sur les ressentis thermiques UTCI du jour en France. Trouvez a quel pays ressemble chaque ville francaise aujourd'hui.",
+    "url": "https://www.cestchaud.fr/jeu",
+    "inLanguage": "fr",
+    "provider": {
+      "@type": "Organization",
+      "name": "cestchaud.fr",
+      "url": "https://www.cestchaud.fr",
+    },
+    "educationalUse": "Self-assessment",
+    "about": {
+      "@type": "Thing",
+      "name": "Jumeaux climatiques et anomalies thermiques en France",
+    },
+  }
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JeuClient questions={questions} />
+    </>
+  )
 }
