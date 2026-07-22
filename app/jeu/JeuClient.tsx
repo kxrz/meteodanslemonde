@@ -87,9 +87,9 @@ export default function JeuClient({ questions }: Props) {
             >
               Partager mon score
             </button>
-            <Link href="/jeu" className="block text-center text-sm text-neutral-400 hover:text-neutral-700 transition-colors">
+            <button onClick={() => { window.location.href = "/jeu" }} className="block w-full text-center text-sm text-neutral-400 hover:text-neutral-700 transition-colors">
               Rejouer (nouvelles villes)
-            </Link>
+            </button>
           </div>
         </div>
         </div>
