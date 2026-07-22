@@ -792,7 +792,7 @@ export default async function Home() {
             <Link href="/jeu" className="bg-[#fdf4ff] rounded-3xl p-5 hover:bg-[#f5e6ff] transition-colors group flex flex-col">
               <div className="flex items-start justify-between mb-3">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50">Jeu</p>
-                <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-600 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-600 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
               </div>
               <p className="text-base font-black text-purple-900 leading-snug mb-2">Le jeu du jumeau</p>
               <p className="text-xs text-purple-900/60 leading-relaxed flex-1">

@@ -13,7 +13,7 @@ const NAV_EXPLORER = [
   },
   {
     items: [
-      { href: "/feux", label: "Ça brûle", desc: "Détections NASA FIRMS, 7 jours" },
+      { href: "/feux", label: "Anomalies thermiques", desc: "Détections NASA FIRMS, 7 jours" },
       { href: "/alertes", label: "Dangers du mois", desc: "Nuits tropicales et canicule" },
       { href: "/explorer", label: "Et ailleurs dans le monde ?", desc: "Votre ville dans le monde" },
       { href: "/terrain", label: "Vues d'en haut", desc: "Avant / après, sécheresse" },

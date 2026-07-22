@@ -18,13 +18,11 @@ export const metadata: Metadata = {
     siteName: "cestchaud.fr",
     locale: "fr_FR",
     type: "website",
-    images: [{ url: "/og/jeu.png", width: 1200, height: 630, alt: "Le jeu du jumeau climatique · cestchaud.fr" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Le jeu du jumeau climatique · cestchaud.fr",
     description: "Bordeaux ressemble aujourd'hui a quelle ville du monde ? 5 questions, donnees du jour.",
-    images: ["/og/jeu.png"],
   },
 }
 
