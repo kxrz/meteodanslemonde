@@ -696,16 +696,14 @@ export default async function Home() {
                 variant="inline"
               />
             </div>
-            <div className="bg-white rounded-3xl p-5 flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">Notifications</p>
+            <Link href="/notifications" className="bg-white rounded-3xl p-5 flex flex-col hover:bg-neutral-50 transition-colors group">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">Briefing matinal</p>
               <p className="text-base font-black text-neutral-900 leading-snug mb-2">Le ressenti de ta ville, chaque matin</p>
               <p className="text-xs text-neutral-500 leading-relaxed flex-1">
-                Choisis une ville française et reçois chaque matin son ressenti max, son anomalie vs la normale ERA5, et son jumeau climatique du jour. Aucun compte requis.
+                Choisis une ville française et reçois chaque matin son ressenti max, son anomalie ERA5 et son jumeau climatique du jour. Aucun compte requis.
               </p>
-              <span className="mt-4 inline-flex items-center gap-2 bg-neutral-200 text-neutral-600 font-semibold text-sm rounded-2xl px-5 py-3 cursor-not-allowed self-start">
-                Bientôt disponible
-              </span>
-            </div>
+              <span className="mt-4 text-sm font-semibold text-neutral-400 group-hover:text-neutral-700 transition-colors">S&apos;abonner &rarr;</span>
+            </Link>
           </div>
 
           {/* ── Séparateur ── */}
