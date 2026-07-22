@@ -27,10 +27,11 @@ export const metadata: Metadata = {
 }
 
 export type QuizQuestion = {
-  cityFR: { name: string; region: string; apparentTempMax: number; anomaly: number | null }
+  cityFR: { name: string; region: string; apparentTempMax: number; anomaly: number | null; normal: number | null; monthName: string }
   correctCountry: string
   correctCity: string
-  choices: string[] // 4 pays dont 1 correct
+  correctClimateLabel: string
+  choices: string[]
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -50,6 +51,8 @@ function pickDisctractors(correct: string, world: CityWorld[], n: number): strin
   return shuffle(countries).slice(0, n)
 }
 
+const MONTH_NAMES = ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout", "septembre", "octobre", "novembre", "decembre"]
+
 export default async function JeuPage() {
   const [{ citiesFR, citiesWorld }, climateMap] = await Promise.all([
     getWeatherData(),
@@ -57,6 +60,7 @@ export default async function JeuPage() {
   ])
 
   const month = new Date().getMonth()
+  const monthName = MONTH_NAMES[month]
 
   // Villes FR avec un jumeau monde clair
   const candidates = citiesFR.filter((c) => {
@@ -76,9 +80,10 @@ export default async function JeuPage() {
     const choices = shuffle([twin.country, ...distractors])
 
     return {
-      cityFR: { name: city.name, region: city.region, apparentTempMax: city.apparent_temp_max, anomaly },
+      cityFR: { name: city.name, region: city.region, apparentTempMax: city.apparent_temp_max, anomaly, normal, monthName },
       correctCountry: twin.country,
       correctCity: twin.name,
+      correctClimateLabel: twin.climateLabel,
       choices,
     }
   })

@@ -153,9 +153,9 @@ export default function JeuClient({ questions }: Props) {
           <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">{q.cityFR.region}</p>
           <p className="text-2xl font-black text-neutral-900 mb-4">{q.cityFR.name}</p>
 
-          <div className="flex items-end gap-4 mb-1">
+          <div className="flex items-end gap-4 mb-3">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-400 mb-0.5">Ressenti max aujourd'hui</p>
+              <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-400 mb-0.5">Ressenti max aujourd&apos;hui</p>
               <p className="text-4xl font-black text-neutral-900 leading-none">{q.cityFR.apparentTempMax}°C</p>
             </div>
             {q.cityFR.anomaly !== null && (
@@ -164,6 +164,18 @@ export default function JeuClient({ questions }: Props) {
               </div>
             )}
           </div>
+
+          {q.cityFR.normal !== null && (
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              La normale ERA5 pour {q.cityFR.name} en {q.cityFR.monthName} est de{" "}
+              <strong className="text-neutral-600">{q.cityFR.normal}°C</strong>.{" "}
+              {q.cityFR.anomaly !== null && q.cityFR.anomaly > 0
+                ? `Aujourd'hui il fait ${q.cityFR.anomaly}°C de plus que d'habitude.`
+                : q.cityFR.anomaly !== null && q.cityFR.anomaly < 0
+                ? `Aujourd'hui il fait ${Math.abs(q.cityFR.anomaly)}°C de moins que d'habitude.`
+                : "Dans la normale saisonniere."}
+            </p>
+          )}
         </div>
 
         {/* Question */}
@@ -195,7 +207,10 @@ export default function JeuClient({ questions }: Props) {
               <button key={country} className={cls} onClick={() => handleChoice(country)} disabled={!!chosen}>
                 <p className="text-sm font-bold text-neutral-900">{country}</p>
                 {isCorrect && chosen && (
-                  <p className="text-xs text-green-600 mt-0.5">{q.correctCity}</p>
+                  <>
+                    <p className="text-xs text-green-700 font-semibold mt-0.5">{q.correctCity}</p>
+                    <p className="text-[10px] text-green-600/80 mt-1 leading-snug">{q.correctClimateLabel}</p>
+                  </>
                 )}
               </button>
             )
