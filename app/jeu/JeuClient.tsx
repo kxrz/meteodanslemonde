@@ -47,50 +47,85 @@ export default function JeuClient({ questions }: Props) {
   }
 
   if (isDone) {
-    const shareText = `J'ai trouvé ${score}/5 au quiz Jumeau climatique sur cestchaud.fr — et toi ?`
+    const emoji = ["❌", "❌", "🟠", "🟠", "🟢", "🟢"][score]
+    const scoreBlocks = answers.map((a) => a.correct ? "🟩" : "🟥").join("")
+    const shareText = score === 5
+      ? `${scoreBlocks} 5/5 au jeu du jumeau climatique. Aujourd'hui la France ressemble a l'Afrique du Nord, tu savais ? cestchaud.fr/jeu`
+      : `${scoreBlocks} ${score}/5 au jeu du jumeau climatique. Peux-tu faire mieux ? cestchaud.fr/jeu`
+
+    const resultLabel = score === 5
+      ? "Sans faute. Tu connais vraiment tes jumeaux climatiques."
+      : score >= 3
+      ? "Bien joue. Quelques jumeaux t'ont echappe."
+      : "Ces resultats montrent a quel point les equivalences climatiques sont surprenantes."
+
+    const learnNote = score < 5
+      ? "Un mauvais score n'est pas une honte : personne ne sait intuitivement qu'en juillet, Strasbourg ressemble a Istanbul ou que Bordeaux rejoint Tunis. C'est justement pour ca que ces donnees existent."
+      : null
+
     return (
       <div className="min-h-screen bg-[#f5f4f0] flex flex-col">
         <SiteHeader asLink subtitle="Le jeu du jumeau climatique" />
         <div className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-3xl p-8 mb-4 text-center">
+        <div className="w-full max-w-md space-y-3">
+
+          {/* Score */}
+          <div className="bg-white rounded-3xl p-8 text-center">
+            <p className="text-5xl mb-2">{emoji}</p>
             <p className="text-6xl font-black text-neutral-900 mb-1">{score}<span className="text-3xl text-neutral-300">/5</span></p>
-            <p className="text-sm text-neutral-500 mb-6">
-              {score === 5 ? "Parfait. La France n'a plus de secrets pour toi." :
-               score >= 3 ? "Pas mal. Les jumeaux climatiques sont traitres." :
-               "Le climat mondial, ca s'apprend."}
-            </p>
-            <div className="flex justify-center gap-2 mb-6">
-              {answers.map((a, i) => (
-                <div key={i} className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${a.correct ? "bg-green-100 text-green-700" : "bg-red-100 text-red-500"}`}>
-                  {a.correct ? "✓" : "✗"}
+            <p className="text-sm text-neutral-500 mt-2">{resultLabel}</p>
+          </div>
+
+          {/* Recap educatif */}
+          <div className="bg-white rounded-3xl p-6 space-y-3">
+            {questions.map((q, i) => {
+              const correct = answers[i]?.correct
+              return (
+                <div key={i} className={`rounded-2xl p-4 ${correct ? "bg-green-50" : "bg-orange-50"}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-bold text-neutral-800">{q.cityFR.name}</span>
+                    <span className={`text-xs font-bold ${correct ? "text-green-600" : "text-orange-600"}`}>
+                      {correct ? "Trouve" : "Rate"}
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-600">
+                    Ressemble aujourd&apos;hui a <strong>{q.correctCity}</strong>, {q.correctCountry}
+                    {q.cityFR.apparentTempMax ? ` (${q.cityFR.apparentTempMax}°C)` : ""}
+                    {!correct && (
+                      <span className="block mt-1 text-neutral-400">Tu avais choisi : {answers[i]?.chosen}</span>
+                    )}
+                  </p>
                 </div>
-              ))}
+              )
+            })}
+          </div>
+
+          {/* Note pedagogique si score faible */}
+          {learnNote && (
+            <div className="bg-neutral-900 rounded-3xl p-6">
+              <p className="text-xs text-white/70 leading-relaxed">{learnNote}</p>
             </div>
-            <div className="space-y-2 text-left mb-6">
-              {questions.map((q, i) => (
-                <div key={i} className="flex items-center justify-between text-sm">
-                  <span className="text-neutral-700 font-medium">{q.cityFR.name}</span>
-                  <span className={answers[i]?.correct ? "text-green-600" : "text-red-500"}>{q.correctCity}, {q.correctCountry}</span>
-                </div>
-              ))}
-            </div>
+          )}
+
+          {/* Actions */}
+          <div className="space-y-2">
             <button
               onClick={() => {
                 if (navigator.share) {
                   navigator.share({ text: shareText, url: "https://www.cestchaud.fr/jeu" }).catch(() => {})
                 } else {
-                  navigator.clipboard.writeText(shareText + " https://www.cestchaud.fr/jeu")
+                  navigator.clipboard.writeText(shareText)
                 }
               }}
-              className="w-full bg-neutral-900 text-white rounded-2xl py-3 text-sm font-bold hover:bg-neutral-700 transition-colors mb-3"
+              className="w-full bg-neutral-900 text-white rounded-2xl py-3.5 text-sm font-bold hover:bg-neutral-700 transition-colors"
             >
               Partager mon score
             </button>
-            <button onClick={() => { window.location.href = "/jeu" }} className="block w-full text-center text-sm text-neutral-400 hover:text-neutral-700 transition-colors">
-              Rejouer (nouvelles villes)
+            <button onClick={() => { window.location.href = "/jeu" }} className="w-full text-center text-sm text-neutral-400 hover:text-neutral-700 transition-colors py-2 block">
+              Rejouer avec de nouvelles villes
             </button>
           </div>
+
         </div>
         </div>
         <PageFooter />
