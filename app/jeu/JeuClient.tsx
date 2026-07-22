@@ -112,7 +112,7 @@ export default function JeuClient({ questions }: Props) {
             <button
               onClick={() => {
                 if (navigator.share) {
-                  navigator.share({ text: shareText, url: "https://www.cestchaud.fr/jeu" }).catch(() => {})
+                  navigator.share({ text: shareText }).catch(() => {})
                 } else {
                   navigator.clipboard.writeText(shareText)
                 }
