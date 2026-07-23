@@ -111,7 +111,7 @@ export default function FirePageClient({
     <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
 
       {/* Gauche : carte */}
-      <div className="h-[55vw] max-h-[420px] lg:max-h-none lg:h-auto lg:w-[55%] shrink-0 relative p-3 lg:p-4">
+      <div className="h-[75vw] min-h-[320px] max-h-[520px] lg:max-h-none lg:h-auto lg:w-[55%] shrink-0 relative p-3 lg:p-4">
         <div className="w-full h-full rounded-3xl overflow-hidden">
           <FireMap geojson={geojson} cities={cities} flyToRef={flyToRef} filter={filter} clusters={clusters} />
         </div>
