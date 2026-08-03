@@ -273,16 +273,15 @@ export default async function Home() {
     <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
       <SiteHeader subtitle={`Données du ${dataLabel}. Ressenti max, anomalies ERA5, projections GIEC 2030-2050.`} />
 
-      <main className="flex-1 px-3 lg:px-4 pb-4">
-        <div className="space-y-3">
+      <main className="flex-1 px-3 lg:px-4 pb-8">
+        <div className="space-y-6">
 
           {/* ── 0. Intro + Recherche ── */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div>
-              <h1 className="text-xl font-black text-neutral-900 leading-tight">Il fait vraiment chaud aujourd&apos;hui ?</h1>
-              <p className="text-sm text-neutral-500 mt-1 leading-relaxed">
-                Chaque jour, ce site compare la chaleur réelle en France avec les moyennes historiques ERA5.
-                Cherchez votre ville pour voir l&apos;anomalie du jour, la tendance sur 30 ans et les projections GIEC 2050.
+              <h1 className="text-2xl font-black text-neutral-900 leading-tight">Il fait vraiment chaud aujourd&apos;hui ?</h1>
+              <p className="text-sm text-neutral-500 mt-1.5">
+                Anomalie du jour, tendance ERA5 sur 30 ans et projections GIEC 2050 pour votre ville.
               </p>
             </div>
             <div className="flex items-center gap-2 max-w-lg">
@@ -294,55 +293,56 @@ export default async function Home() {
           </div>
 
           {/* ── 1. Records du jour ── */}
-          <div className="flex items-baseline gap-3">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">En ce moment en France</p>
-            <p className="text-xs text-neutral-400">· ressenti maximal du jour · {monthName}</p>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <Link href={`/a/${slugify(hottest.name)}`} className="bg-[#fed7aa]/80 hover:bg-[#fbbf77]/80 transition-colors rounded-3xl p-5 group">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-3">Plus chaud aujourd&apos;hui</p>
-              <div className="text-4xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}&deg;C</div>
-              <p className="text-sm font-bold text-orange-900/80 mt-1.5 truncate group-hover:underline">{hottest.name}</p>
-              <p className="text-xs text-orange-900/50 truncate">{hottest.region}</p>
-            </Link>
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">En ce moment en France &middot; ressenti maximal &middot; {monthName}</p>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <Link href={`/a/${slugify(hottest.name)}`} className="bg-[#fed7aa]/80 hover:bg-[#fbbf77]/80 transition-colors rounded-3xl p-6 group">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50 mb-4">Plus chaud</p>
+                <div className="text-5xl font-black text-orange-900 leading-none">{hottest.apparent_temp_max}&deg;</div>
+                <p className="text-sm font-bold text-orange-900/80 mt-3 truncate group-hover:underline">{hottest.name}</p>
+                <p className="text-xs text-orange-900/50 truncate">{hottest.region}</p>
+              </Link>
 
-            <Link href={`/a/${slugify(coolest.name)}`} className="bg-[#bfdbfe]/70 hover:bg-[#93c5fd]/60 transition-colors rounded-3xl p-5 group">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">Plus frais aujourd&apos;hui</p>
-              <div className="text-4xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}&deg;C</div>
-              <p className="text-sm font-bold text-blue-900/80 mt-1.5 truncate group-hover:underline">{coolest.name}</p>
-              <p className="text-xs text-blue-900/50 truncate">{coolest.region}</p>
-            </Link>
+              <Link href={`/a/${slugify(coolest.name)}`} className="bg-[#bfdbfe]/70 hover:bg-[#93c5fd]/60 transition-colors rounded-3xl p-6 group">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-4">Plus frais</p>
+                <div className="text-5xl font-black text-blue-900 leading-none">{coolest.apparent_temp_max}&deg;</div>
+                <p className="text-sm font-bold text-blue-900/80 mt-3 truncate group-hover:underline">{coolest.name}</p>
+                <p className="text-xs text-blue-900/50 truncate">{coolest.region}</p>
+              </Link>
 
-            <div className="bg-white rounded-3xl p-5">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">Moyenne France</p>
-              <div className="text-4xl font-black text-neutral-900 leading-none">{avgTemp}&deg;C</div>
-              <p className="text-xs text-neutral-400 mt-1.5">ressenti max &middot; {monthName}</p>
-              {avgAnomaly !== null && (
-                <p className={`text-xs font-semibold mt-1 ${avgAnomaly > 0 ? "text-orange-600" : "text-blue-600"}`}>
-                  {fmtDelta(avgAnomaly)}&deg;C vs normale
-                </p>
-              )}
-            </div>
-
-            <div className={`rounded-3xl p-5 ${
-              avgAnomaly !== null && avgAnomaly > 2 ? "bg-[#f4a27a]"
-              : avgAnomaly !== null && avgAnomaly > 0 ? "bg-[#fde68a]"
-              : avgAnomaly !== null && avgAnomaly < -2 ? "bg-[#a8c4d4]"
-              : avgAnomaly !== null ? "bg-[#d1fae5]"
-              : "bg-neutral-200"
-            }`}>
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">Anomalie nationale</p>
-              {avgAnomaly !== null ? (
-                <>
-                  <div className="text-4xl font-black text-neutral-900 leading-none">{fmtDelta(avgAnomaly)}&deg;C</div>
-                  <p className="text-xs text-black/50 mt-1.5">
-                    {avgAnomaly > 2 ? "nettement au-dessus" : avgAnomaly > 0 ? "légèrement au-dessus" : avgAnomaly < -2 ? "nettement en dessous" : "dans la normale"} de la normale ERA5
+              <div className="bg-white rounded-3xl p-6">
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">Moyenne France</p>
+                <div className="text-5xl font-black text-neutral-900 leading-none">{avgTemp}&deg;</div>
+                {avgAnomaly !== null && (
+                  <p className={`text-sm font-semibold mt-3 ${avgAnomaly > 0 ? "text-orange-600" : "text-blue-600"}`}>
+                    {fmtDelta(avgAnomaly)}&deg;C vs normale
                   </p>
-                  <p className="text-[10px] text-black/30 mt-2 leading-relaxed">Écart par rapport à la moyenne du mois calculée sur 1940-2023.</p>
-                </>
-              ) : (
-                <div className="text-2xl font-black text-black/20">-</div>
-              )}
+                )}
+              </div>
+
+              <div className={`rounded-3xl p-6 relative overflow-hidden ${
+                avgAnomaly !== null && avgAnomaly > 2 ? "bg-[#f4a27a]"
+                : avgAnomaly !== null && avgAnomaly > 0 ? "bg-[#fde68a]"
+                : avgAnomaly !== null && avgAnomaly < -2 ? "bg-[#a8c4d4]"
+                : avgAnomaly !== null ? "bg-[#d1fae5]"
+                : "bg-neutral-200"
+              }`}>
+                {/* Large background thermometer icon */}
+                <svg className="absolute right-3 bottom-3 w-16 h-16 opacity-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+                </svg>
+                <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-4">Anomalie nationale</p>
+                {avgAnomaly !== null ? (
+                  <>
+                    <div className="text-5xl font-black text-neutral-900 leading-none">{fmtDelta(avgAnomaly)}&deg;</div>
+                    <p className="text-sm text-black/50 mt-3">
+                      {avgAnomaly > 2 ? "nettement au-dessus" : avgAnomaly > 0 ? "légèrement au-dessus" : avgAnomaly < -2 ? "nettement en dessous" : "dans la normale"} ERA5
+                    </p>
+                  </>
+                ) : (
+                  <div className="text-2xl font-black text-black/20">-</div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -369,7 +369,6 @@ export default async function Home() {
                     <>
                       <p className="text-2xl font-black text-green-900 leading-none">{fmtDelta(avgTrend)}&deg;C</p>
                       <p className="text-sm text-green-900/60 mt-1.5">depuis 1990 en {monthName}</p>
-                      <p className="text-[10px] text-green-900/40 mt-1">Ce que le thermomètre a gagné en trois décennies sur toute la France.</p>
                     </>
                   ) : (
                     <p className="text-xl font-black text-green-900/20">N/A</p>
@@ -383,7 +382,6 @@ export default async function Home() {
                       <>
                         <p className="text-2xl font-black text-purple-900 leading-none">+{top3Anomaly[0].proj2050.toFixed(1)}&deg;C</p>
                         <p className="text-sm text-purple-900/60 mt-1.5">supplémentaires à {top3Anomaly[0].name}</p>
-                        <p className="text-[10px] text-purple-900/40 mt-1">Projection médiane scénario SSP2-4.5 (émissions modérées).</p>
                       </>
                     ) : (
                       <p className="text-xl font-black text-purple-900/20">N/A</p>
@@ -456,13 +454,12 @@ export default async function Home() {
           </div>
 
           {/* ── Séparateur ── */}
-          <div className="space-y-1 py-1">
+          <div className="space-y-1 py-2">
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-neutral-200" />
               <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Zoom sur aujourd&apos;hui</span>
               <div className="flex-1 h-px bg-neutral-200" />
             </div>
-            <p className="text-center text-[10px] text-neutral-400">Une ville tirée au sort chaque matin, ses anomalies ERA5 et ce que le GIEC projette pour 2050.</p>
           </div>
 
           {/* ── 3. Ville du jour ── */}
@@ -522,12 +519,11 @@ export default async function Home() {
 
             <div className="grid grid-cols-1 gap-3">
               {insights.slice(0, 2).map((ins, i) => (
-                <div key={i} className={`${ins.color} rounded-3xl p-5`}>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-2">{ins.label}</p>
-                  <div className="text-3xl font-black text-neutral-900 leading-none mb-2">{ins.value}</div>
-                  <p className="text-sm text-black/60 leading-relaxed">{ins.detail}</p>
+                <div key={i} className={`${ins.color} rounded-3xl p-6`}>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">{ins.label}</p>
+                  <div className="text-4xl font-black text-neutral-900 leading-none mb-3">{ins.value}</div>
                   {ins.slug && (
-                    <Link href={`/a/${ins.slug}`} className="mt-2 text-xs font-semibold text-black/40 hover:text-black/70 transition-colors block">
+                    <Link href={`/a/${ins.slug}`} className="text-xs font-semibold text-black/40 hover:text-black/70 transition-colors block">
                       Fiche de la ville &rarr;
                     </Link>
                   )}
@@ -540,12 +536,11 @@ export default async function Home() {
           {insights.length > 2 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {insights.slice(2).map((ins, i) => (
-                <div key={i} className={`${ins.color} rounded-3xl p-5`}>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-2">{ins.label}</p>
-                  <div className="text-3xl font-black text-neutral-900 leading-none mb-2">{ins.value}</div>
-                  <p className="text-sm text-black/60 leading-relaxed">{ins.detail}</p>
+                <div key={i} className={`${ins.color} rounded-3xl p-6`}>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-black/40 mb-3">{ins.label}</p>
+                  <div className="text-4xl font-black text-neutral-900 leading-none mb-3">{ins.value}</div>
                   {ins.slug && (
-                    <Link href={`/a/${ins.slug}`} className="mt-2 text-xs font-semibold text-black/40 hover:text-black/70 transition-colors block">
+                    <Link href={`/a/${ins.slug}`} className="text-xs font-semibold text-black/40 hover:text-black/70 transition-colors block">
                       Fiche de la ville &rarr;
                     </Link>
                   )}
@@ -561,20 +556,23 @@ export default async function Home() {
             if (hotNightCities.length === 0 && heatwaveCities.length === 0) return null
             return (
               <>
-                <div className="space-y-1 py-1">
+                <div className="py-2">
                   <div className="flex items-center gap-3">
                     <div className="flex-1 h-px bg-neutral-200" />
                     <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Alertes du jour</span>
                     <div className="flex-1 h-px bg-neutral-200" />
                   </div>
-                  <p className="text-center text-[10px] text-neutral-400">Villes où les conditions sont potentiellement dangereuses pour la santé aujourd&apos;hui.</p>
                 </div>
                 <div className={`grid gap-3 ${hotNightCities.length > 0 && heatwaveCities.length > 0 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
                   {hotNightCities.length > 0 && (
-                    <Link href="/alertes" className="bg-[#1e293b] rounded-3xl p-5 hover:brightness-110 transition-all">
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-300 mb-3">Nuits tropicales</p>
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className="text-4xl font-black text-white leading-none">{hotNightCities.length}</span>
+                    <Link href="/alertes" className="bg-[#1e293b] rounded-3xl p-6 hover:brightness-110 transition-all relative overflow-hidden">
+                      {/* Moon icon */}
+                      <svg className="absolute right-5 top-5 w-12 h-12 opacity-10 text-sky-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                      </svg>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-300 mb-4">Nuits tropicales</p>
+                      <div className="flex items-baseline gap-2 mb-3">
+                        <span className="text-5xl font-black text-white leading-none">{hotNightCities.length}</span>
                         <span className="text-sm text-sky-200/80">ville{hotNightCities.length > 1 ? "s" : ""} &gt; 20°C cette nuit</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-3">
@@ -590,10 +588,18 @@ export default async function Home() {
                     </Link>
                   )}
                   {heatwaveCities.length > 0 && (
-                    <Link href="/alertes" className="bg-[#7f1d1d] rounded-3xl p-5 hover:brightness-110 transition-all">
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-300 mb-3">Canicule aujourd&apos;hui</p>
-                      <div className="flex items-baseline gap-2 mb-2">
-                        <span className="text-4xl font-black text-white leading-none">{heatwaveCities.length}</span>
+                    <Link href="/alertes" className="bg-[#7f1d1d] rounded-3xl p-6 hover:brightness-110 transition-all relative overflow-hidden">
+                      {/* Sun / heat icon */}
+                      <svg className="absolute right-5 top-5 w-12 h-12 opacity-10 text-red-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                      </svg>
+                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-300 mb-4">Canicule aujourd&apos;hui</p>
+                      <div className="flex items-baseline gap-2 mb-3">
+                        <span className="text-5xl font-black text-white leading-none">{heatwaveCities.length}</span>
                         <span className="text-sm text-red-200/80">ville{heatwaveCities.length > 1 ? "s" : ""} au-dessus de 35°C</span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-3">
@@ -616,22 +622,24 @@ export default async function Home() {
           {/* ── 4c. Anomalies thermiques ── */}
           {fireSummary && fireSummary.activeCount > 0 && (
             <>
-              <div className="space-y-1 py-1">
+              <div className="py-2">
                 <div className="flex items-center gap-3">
                   <div className="flex-1 h-px bg-neutral-200" />
                   <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Anomalies thermiques</span>
                   <div className="flex-1 h-px bg-neutral-200" />
                 </div>
-                <p className="text-center text-[10px] text-neutral-400">Zones plus chaudes que leur environnement, détectées par satellite. Peut inclure feux de forêt, écobuages, ou autres sources de chaleur.</p>
               </div>
               <div className={`grid gap-3 ${homeAirQuality?.aqi !== null ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
-                <Link href="/feux" className="bg-[#431407] rounded-3xl p-5 block hover:brightness-110 transition-all group">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-3">Anomalies thermiques · France</p>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-4xl font-black text-white leading-none">{fireSummary.activeCount}</span>
+                <Link href="/feux" className="bg-[#431407] rounded-3xl p-6 block hover:brightness-110 transition-all group relative overflow-hidden">
+                  {/* Flame icon */}
+                  <svg className="absolute right-5 top-5 w-12 h-12 opacity-10 text-orange-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                  </svg>
+                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-300 mb-4">Anomalies thermiques · France</p>
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <span className="text-5xl font-black text-white leading-none">{fireSummary.activeCount}</span>
                     <span className="text-sm text-orange-200/80">zones · 7 derniers jours</span>
                   </div>
-                  <p className="text-xs text-orange-200/50 mb-4">Détectées par satellite NASA FIRMS/VIIRS, mises a jour toutes les heures.</p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     {(["provence-alpes-cote-d-azur", "occitanie", "nouvelle-aquitaine", "corse", "auvergne-rhone-alpes"] as const).map((slug) => (
                       <span key={slug} className="text-xs bg-orange-900/60 text-orange-100 rounded-lg px-2 py-0.5">
@@ -683,12 +691,9 @@ export default async function Home() {
 
           {/* ── 5. Ces données vous ont surpris ? + Notifications ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-2">Ces données vous ont surpris ?</p>
-              <p className="text-base font-black text-white leading-snug mb-3">Partagez l&apos;état du jour</p>
-              <p className="text-xs text-white/70 leading-relaxed flex-1 mb-4">
-                Anomalies ERA5, tendance sur 30 ans, projections GIEC 2050 : ces données méritent d&apos;être vues.
-              </p>
+            <div className="bg-neutral-900 rounded-3xl p-6 flex flex-col">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">Ces données vous ont surpris ?</p>
+              <p className="text-lg font-black text-white leading-snug mb-4">Partagez l&apos;état du jour</p>
               <ShareButton
                 text={`En France ce ${dataLabel} : ressenti moyen ${avgTemp}°C${avgAnomaly !== null ? `, soit ${avgAnomaly > 0 ? "+" : ""}${avgAnomaly.toFixed(1)}°C vs la normale ERA5` : ""}${top3Anomaly[0] ? `. Anomalie max : ${top3Anomaly[0].name} à ${top3Anomaly[0].anomaly !== null ? (top3Anomaly[0].anomaly > 0 ? "+" : "") + top3Anomaly[0].anomaly.toFixed(1) + "°C" : ""}` : ""}.`}
                 url="https://www.cestchaud.fr"
@@ -696,18 +701,16 @@ export default async function Home() {
                 variant="inline"
               />
             </div>
-            <Link href="/notifications" className="bg-white rounded-3xl p-5 flex flex-col hover:bg-neutral-50 transition-colors group">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-2">Briefing matinal</p>
-              <p className="text-base font-black text-neutral-900 leading-snug mb-2">Le ressenti de ta ville, chaque matin</p>
-              <p className="text-xs text-neutral-500 leading-relaxed flex-1">
-                Choisis une ville française et reçois chaque matin son ressenti max, son anomalie ERA5 et son jumeau climatique du jour. Aucun compte requis.
-              </p>
+            <Link href="/notifications" className="bg-white rounded-3xl p-6 flex flex-col hover:bg-neutral-50 transition-colors group">
+              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 mb-3">Briefing matinal</p>
+              <p className="text-lg font-black text-neutral-900 leading-snug mb-3">Le ressenti de ta ville, chaque matin</p>
+              <p className="text-xs text-neutral-500 leading-relaxed flex-1">Anomalie ERA5, jumeau climatique du jour. Aucun compte requis.</p>
               <span className="mt-4 text-sm font-semibold text-neutral-400 group-hover:text-neutral-700 transition-colors">S&apos;abonner &rarr;</span>
             </Link>
           </div>
 
           {/* ── Séparateur ── */}
-          <div className="flex items-center gap-3 py-1">
+          <div className="flex items-center gap-3 py-2">
             <div className="flex-1 h-px bg-neutral-200" />
             <span className="text-[10px] uppercase tracking-[0.15em] text-neutral-500 font-semibold">Explorer</span>
             <div className="flex-1 h-px bg-neutral-200" />
@@ -715,88 +718,74 @@ export default async function Home() {
 
           {/* ── 6. Pages du site ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Link href="/explorer" className="bg-white rounded-3xl p-5 hover:bg-neutral-50 transition-colors group flex flex-col">
-              <div className="flex items-start justify-between mb-3">
+            <Link href="/explorer" className="bg-white rounded-3xl p-6 hover:bg-neutral-50 transition-colors group flex flex-col">
+              <div className="flex items-start justify-between mb-4">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Explorer</p>
                 <svg className="w-5 h-5 text-neutral-300 group-hover:text-neutral-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="m14.5 9-5 2.5L7 17l5-2.5L14.5 9z"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
               </div>
               <p className="text-base font-black text-neutral-900 leading-snug mb-2">Jumeaux climatiques</p>
-              <p className="text-xs text-neutral-500 leading-relaxed flex-1">
-                Cliquez une ville française et découvrez ses équivalents dans le monde entier. Ces villes vivent aujourd&apos;hui ce que la France vivra demain.
-              </p>
-              <span className="text-neutral-300 group-hover:text-neutral-700 text-sm transition-colors mt-4 block">Comparer &rarr;</span>
+              <p className="text-xs text-neutral-500 flex-1">Quelle ville dans le monde vit ce que la France vivra demain ?</p>
+              <span className="text-neutral-300 group-hover:text-neutral-700 text-sm transition-colors mt-5 block">Comparer &rarr;</span>
             </Link>
 
-            <Link href="/carte" className="bg-[#fff1e6] rounded-3xl p-5 hover:bg-[#ffe0c8] transition-colors group flex flex-col">
-              <div className="flex items-start justify-between mb-3">
+            <Link href="/carte" className="bg-[#fff1e6] rounded-3xl p-6 hover:bg-[#ffe0c8] transition-colors group flex flex-col">
+              <div className="flex items-start justify-between mb-4">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-900/50">Carte</p>
                 <svg className="w-5 h-5 text-orange-300 group-hover:text-orange-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
               <p className="text-base font-black text-orange-900 leading-snug mb-2">Carte de chaleur</p>
-              <p className="text-xs text-orange-900/60 leading-relaxed flex-1">
-                Visualisez les anomalies thermiques du jour sur toute la France en un coup d&apos;oeil. Où fait-il anormalement chaud aujourd&apos;hui ?
-              </p>
-              <span className="text-orange-400 group-hover:text-orange-600 text-sm transition-colors mt-4 block">Voir la carte &rarr;</span>
+              <p className="text-xs text-orange-900/60 flex-1">Où fait-il anormalement chaud aujourd&apos;hui ?</p>
+              <span className="text-orange-400 group-hover:text-orange-600 text-sm transition-colors mt-5 block">Voir la carte &rarr;</span>
             </Link>
 
-            <Link href="/terrain" className="bg-[#e8f5e9] rounded-3xl p-5 hover:bg-[#d0ecd2] transition-colors group flex flex-col">
-              <div className="flex items-start justify-between mb-3">
+            <Link href="/terrain" className="bg-[#e8f5e9] rounded-3xl p-6 hover:bg-[#d0ecd2] transition-colors group flex flex-col">
+              <div className="flex items-start justify-between mb-4">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50">Satellite</p>
                 <svg className="w-5 h-5 text-green-400 group-hover:text-green-600 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
               </div>
               <p className="text-base font-black text-green-900 leading-snug mb-2">Terrain</p>
-              <p className="text-xs text-green-900/60 leading-relaxed flex-1">
-                Anomalies thermiques, lacs asséchés, glaciers en recul. Les images satellite avant/apres montrent ce que les chiffres ERA5 décrivent en degrés.
-              </p>
-              <span className="text-green-400 group-hover:text-green-700 text-sm transition-colors mt-4 block">Voir les images &rarr;</span>
+              <p className="text-xs text-green-900/60 flex-1">Avant / après : lacs asséchés, glaciers en recul vus du ciel.</p>
+              <span className="text-green-400 group-hover:text-green-700 text-sm transition-colors mt-5 block">Voir les images &rarr;</span>
             </Link>
 
-            <Link href="/en/france" className="bg-[#dbeafe] rounded-3xl p-5 hover:bg-[#bfdbfe] transition-colors group flex flex-col">
-              <div className="flex items-start justify-between mb-3">
+            <Link href="/en/france" className="bg-[#dbeafe] rounded-3xl p-6 hover:bg-[#bfdbfe] transition-colors group flex flex-col">
+              <div className="flex items-start justify-between mb-4">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50">France</p>
                 <svg className="w-5 h-5 text-blue-300 group-hover:text-blue-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 3h18v18H3z"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
               </div>
               <p className="text-base font-black text-blue-900 leading-snug mb-2">France en chiffres</p>
-              <p className="text-xs text-blue-900/60 leading-relaxed flex-1">
-                62 villes, leurs anomalies du jour, leurs tendances sur 30 ans et ce que le GIEC prédit pour 2030, 2040 et 2050.
-              </p>
-              <span className="text-blue-400 group-hover:text-blue-600 text-sm transition-colors mt-4 block">Toutes les données &rarr;</span>
+              <p className="text-xs text-blue-900/60 flex-1">62 villes, anomalies ERA5 et projections GIEC 2030-2050.</p>
+              <span className="text-blue-400 group-hover:text-blue-600 text-sm transition-colors mt-5 block">Toutes les données &rarr;</span>
             </Link>
 
-            <Link href="/r" className="bg-[#f3e8ff] rounded-3xl p-5 hover:bg-[#e9d5ff] transition-colors group flex flex-col">
-              <div className="flex items-start justify-between mb-3">
+            <Link href="/r" className="bg-[#f3e8ff] rounded-3xl p-6 hover:bg-[#e9d5ff] transition-colors group flex flex-col">
+              <div className="flex items-start justify-between mb-4">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50">Régions</p>
                 <svg className="w-5 h-5 text-purple-300 group-hover:text-purple-500 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
               </div>
               <p className="text-base font-black text-purple-900 leading-snug mb-2">Par région</p>
-              <p className="text-xs text-purple-900/60 leading-relaxed flex-1">
-                Tendances, villes les plus chaudes et données de sécheresse région par région.
-              </p>
-              <span className="text-purple-400 group-hover:text-purple-700 text-sm transition-colors mt-4 block">Choisir une région &rarr;</span>
+              <p className="text-xs text-purple-900/60 flex-1">Tendances et anomalies région par région.</p>
+              <span className="text-purple-400 group-hover:text-purple-700 text-sm transition-colors mt-5 block">Choisir une région &rarr;</span>
             </Link>
 
-            <Link href="/alertes" className="bg-[#1e293b] rounded-3xl p-5 hover:bg-[#0f172a] transition-colors group flex flex-col">
-              <div className="flex items-start justify-between mb-3">
+            <Link href="/alertes" className="bg-[#1e293b] rounded-3xl p-6 hover:bg-[#0f172a] transition-colors group flex flex-col">
+              <div className="flex items-start justify-between mb-4">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-sky-300">Alertes</p>
                 <svg className="w-5 h-5 text-sky-300 group-hover:text-sky-400 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
               </div>
-              <p className="text-base font-black text-white leading-snug mb-2">Nuits tropicales & canicule</p>
-              <p className="text-xs text-sky-100/70 leading-relaxed flex-1">
-                Quelles villes ne dorment pas ? Où la canicule dure depuis plusieurs jours ? Le tableau complet des 62 villes.
-              </p>
-              <span className="text-sky-300 group-hover:text-sky-200 text-sm transition-colors mt-4 block">Voir les alertes &rarr;</span>
+              <p className="text-base font-black text-white leading-snug mb-2">Nuits tropicales &amp; canicule</p>
+              <p className="text-xs text-sky-100/70 flex-1">Les 62 villes : qui ne dort pas, où la canicule dure.</p>
+              <span className="text-sky-300 group-hover:text-sky-200 text-sm transition-colors mt-5 block">Voir les alertes &rarr;</span>
             </Link>
 
-            <Link href="/jeu" className="bg-[#fdf4ff] rounded-3xl p-5 hover:bg-[#f5e6ff] transition-colors group flex flex-col">
-              <div className="flex items-start justify-between mb-3">
+            <Link href="/jeu" className="bg-[#fdf4ff] rounded-3xl p-6 hover:bg-[#f5e6ff] transition-colors group flex flex-col">
+              <div className="flex items-start justify-between mb-4">
                 <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50">Jeu</p>
                 <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-600 transition-colors shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
               </div>
               <p className="text-base font-black text-purple-900 leading-snug mb-2">Le jeu du jumeau</p>
-              <p className="text-xs text-purple-900/60 leading-relaxed flex-1">
-                Trouvez a quel pays ressemble votre ville aujourd&apos;hui. 5 questions, donnees du jour en direct, score a partager.
-              </p>
-              <span className="text-purple-400 group-hover:text-purple-700 text-sm transition-colors mt-4 block">Jouer &rarr;</span>
+              <p className="text-xs text-purple-900/60 flex-1">5 questions, données du jour, score à partager.</p>
+              <span className="text-purple-400 group-hover:text-purple-700 text-sm transition-colors mt-5 block">Jouer &rarr;</span>
             </Link>
           </div>
 
@@ -807,12 +796,8 @@ export default async function Home() {
               <h2 className="text-2xl font-black text-white leading-tight mb-4">
                 La science mesure. Le Sénat légifère.
               </h2>
-              <p className="text-sm text-white/70 leading-relaxed mb-3">
-                Les données ERA5 et CMIP6 documentent ce qui se passe et ce qui viendra. Mais transformer ces courbes en politiques publiques, c&apos;est le rôle des élus.
-                Les sénateurs siègent dans les commissions qui définissent les normes de construction, les plans canicule, les codes de l&apos;urbanisme, la gestion de l&apos;eau.
-              </p>
               <p className="text-sm text-white/70 leading-relaxed mb-5">
-                Un email personnel, factuel, reçu par plusieurs citoyens d&apos;une même région a plus d&apos;impact qu&apos;une pétition. C&apos;est documentable, traçable, et ça reste dans les archives parlementaires.
+                Un email personnel et factuel, reçu par plusieurs citoyens d&apos;une même région, a plus d&apos;impact qu&apos;une pétition. Ça reste dans les archives parlementaires.
               </p>
               <Link
                 href="/citoyens"
