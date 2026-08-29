@@ -4,433 +4,433 @@
     "max_date": "2026-06-24",
     "min": -3,
     "min_date": "2026-01-03",
-    "updated_at": "2026-08-28T17:30:34.500Z"
+    "updated_at": "2026-08-29T11:42:11.418Z"
   },
   "paris": {
     "max": 42,
     "max_date": "2026-06-24",
     "min": -4,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:30:36.706Z"
+    "updated_at": "2026-08-29T11:42:13.591Z"
   },
   "marseille": {
     "max": 38,
     "max_date": "2026-07-16",
     "min": -2,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:30:38.922Z"
+    "updated_at": "2026-08-29T11:42:15.763Z"
   },
   "bordeaux": {
     "max": 43,
     "max_date": "2026-06-22",
     "min": -2,
     "min_date": "2026-01-01",
-    "updated_at": "2026-08-28T17:30:41.138Z"
+    "updated_at": "2026-08-29T11:42:17.941Z"
   },
   "lyon": {
     "max": 39,
     "max_date": "2026-06-22",
     "min": -6,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:30:43.335Z"
+    "updated_at": "2026-08-29T11:42:20.086Z"
   },
   "nantes": {
     "max": 43,
     "max_date": "2026-06-23",
     "min": -2,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:30:45.553Z"
+    "updated_at": "2026-08-29T11:42:22.269Z"
   },
   "strasbourg": {
     "max": 41,
     "max_date": "2026-06-27",
     "min": -6,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:30:47.726Z"
+    "updated_at": "2026-08-29T11:42:24.444Z"
   },
   "toulouse": {
     "max": 41,
     "max_date": "2026-07-14",
     "min": -5,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:30:49.934Z"
+    "updated_at": "2026-08-29T11:42:26.614Z"
   },
   "nice": {
     "max": 39,
     "max_date": "2026-06-29",
     "min": 5,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:30:52.116Z"
+    "updated_at": "2026-08-29T11:42:28.782Z"
   },
   "montpellier": {
     "max": 41,
     "max_date": "2026-07-08",
     "min": 0,
     "min_date": "2026-01-04",
-    "updated_at": "2026-08-28T17:30:54.224Z"
+    "updated_at": "2026-08-29T11:42:30.896Z"
   },
   "rennes": {
     "max": 43,
     "max_date": "2026-06-23",
     "min": 0,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:30:56.401Z"
+    "updated_at": "2026-08-29T11:42:33.103Z"
   },
   "grenoble": {
     "max": 40,
     "max_date": "2026-06-28",
     "min": -5,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:30:58.570Z"
+    "updated_at": "2026-08-29T11:42:35.280Z"
   },
   "dijon": {
     "max": 37,
     "max_date": "2026-08-14",
     "min": -6,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:31:00.751Z"
+    "updated_at": "2026-08-29T11:42:37.442Z"
   },
   "angers": {
     "max": 43,
     "max_date": "2026-06-24",
     "min": -1,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:31:02.941Z"
+    "updated_at": "2026-08-29T11:42:39.624Z"
   },
   "reims": {
     "max": 41,
     "max_date": "2026-06-26",
     "min": -4,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:31:05.140Z"
+    "updated_at": "2026-08-29T11:42:41.806Z"
   },
   "le-mans": {
     "max": 42,
     "max_date": "2026-06-24",
     "min": -1,
     "min_date": "2026-01-01",
-    "updated_at": "2026-08-28T17:31:07.303Z"
+    "updated_at": "2026-08-29T11:42:44.009Z"
   },
   "amiens": {
     "max": 40,
     "max_date": "2026-06-24",
     "min": -3,
     "min_date": "2026-01-03",
-    "updated_at": "2026-08-28T17:31:09.555Z"
+    "updated_at": "2026-08-29T11:42:46.212Z"
   },
   "caen": {
     "max": 40,
     "max_date": "2026-06-22",
     "min": -1,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:11.728Z"
+    "updated_at": "2026-08-29T11:42:48.386Z"
   },
   "clermont": {
     "max": 37,
     "max_date": "2026-06-22",
     "min": -7,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:31:13.904Z"
+    "updated_at": "2026-08-29T11:42:50.553Z"
   },
   "tours": {
     "max": 42,
     "max_date": "2026-06-24",
     "min": -3,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:16.015Z"
+    "updated_at": "2026-08-29T11:42:52.660Z"
   },
   "metz": {
     "max": 40,
     "max_date": "2026-06-26",
     "min": -5,
     "min_date": "2026-01-03",
-    "updated_at": "2026-08-28T17:31:18.125Z"
+    "updated_at": "2026-08-29T11:42:54.770Z"
   },
   "brest": {
     "max": 42,
     "max_date": "2026-06-24",
     "min": 2,
     "min_date": "2026-01-09",
-    "updated_at": "2026-08-28T17:31:20.293Z"
+    "updated_at": "2026-08-29T11:42:56.942Z"
   },
   "orleans": {
     "max": 42,
     "max_date": "2026-06-24",
     "min": -4,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:22.455Z"
+    "updated_at": "2026-08-29T11:42:59.105Z"
   },
   "rouen": {
     "max": 41,
     "max_date": "2026-06-24",
     "min": -2,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:24.639Z"
+    "updated_at": "2026-08-29T11:43:01.285Z"
   },
   "limoges": {
     "max": 41,
     "max_date": "2026-06-22",
     "min": -4,
     "min_date": "2026-01-04",
-    "updated_at": "2026-08-28T17:31:26.748Z"
+    "updated_at": "2026-08-29T11:43:03.393Z"
   },
   "poitiers": {
     "max": 42,
     "max_date": "2026-06-22",
     "min": -2,
     "min_date": "2026-01-04",
-    "updated_at": "2026-08-28T17:31:28.931Z"
+    "updated_at": "2026-08-29T11:43:05.590Z"
   },
   "pau": {
     "max": 42,
     "max_date": "2026-06-21",
     "min": -2,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:31.117Z"
+    "updated_at": "2026-08-29T11:43:07.803Z"
   },
   "bayonne": {
     "max": 46,
     "max_date": "2026-06-23",
     "min": 0,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:33.295Z"
+    "updated_at": "2026-08-29T11:43:09.996Z"
   },
   "perpignan": {
     "max": 38,
     "max_date": "2026-07-09",
     "min": -2,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:35.481Z"
+    "updated_at": "2026-08-29T11:43:12.202Z"
   },
   "toulon": {
     "max": 39,
     "max_date": "2026-07-08",
     "min": 1,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:31:37.671Z"
+    "updated_at": "2026-08-29T11:43:14.394Z"
   },
   "ajaccio": {
     "max": 44,
     "max_date": "2026-07-16",
     "min": 6,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:31:39.839Z"
+    "updated_at": "2026-08-29T11:43:16.574Z"
   },
   "bastia": {
     "max": 43,
     "max_date": "2026-07-17",
     "min": 4,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:31:41.954Z"
+    "updated_at": "2026-08-29T11:43:18.692Z"
   },
   "la-rochelle": {
     "max": 42,
     "max_date": "2026-06-23",
     "min": -4,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:31:44.150Z"
+    "updated_at": "2026-08-29T11:43:20.855Z"
   },
   "valence": {
     "max": 40,
     "max_date": "2026-08-13",
     "min": -8,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:31:46.350Z"
+    "updated_at": "2026-08-29T11:43:23.039Z"
   },
   "besancon": {
     "max": 39,
     "max_date": "2026-06-26",
     "min": -6,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:31:48.547Z"
+    "updated_at": "2026-08-29T11:43:25.230Z"
   },
   "nimes": {
     "max": 41,
     "max_date": "2026-07-14",
     "min": -3,
     "min_date": "2026-01-04",
-    "updated_at": "2026-08-28T17:31:50.722Z"
+    "updated_at": "2026-08-29T11:43:27.420Z"
   },
   "le-havre": {
     "max": 39,
     "max_date": "2026-06-22",
     "min": -1,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:52.895Z"
+    "updated_at": "2026-08-29T11:43:29.617Z"
   },
   "cherbourg": {
     "max": 41,
     "max_date": "2026-06-23",
     "min": -1,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:31:55.000Z"
+    "updated_at": "2026-08-29T11:43:31.728Z"
   },
   "lorient": {
     "max": 42,
     "max_date": "2026-06-24",
     "min": 1,
     "min_date": "2026-01-01",
-    "updated_at": "2026-08-28T17:31:57.177Z"
+    "updated_at": "2026-08-29T11:43:33.907Z"
   },
   "vannes": {
     "max": 43,
     "max_date": "2026-06-24",
     "min": 0,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:31:59.343Z"
+    "updated_at": "2026-08-29T11:43:36.087Z"
   },
   "quimper": {
     "max": 42,
     "max_date": "2026-06-24",
     "min": 1,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:01.482Z"
+    "updated_at": "2026-08-29T11:43:38.248Z"
   },
   "saint-malo": {
     "max": 36,
     "max_date": "2026-06-23",
     "min": 0,
     "min_date": "2026-01-09",
-    "updated_at": "2026-08-28T17:32:03.665Z"
+    "updated_at": "2026-08-29T11:43:40.424Z"
   },
   "dunkerque": {
     "max": 37,
     "max_date": "2026-06-25",
     "min": -3,
     "min_date": "2026-01-04",
-    "updated_at": "2026-08-28T17:32:05.860Z"
+    "updated_at": "2026-08-29T11:43:42.603Z"
   },
   "valenciennes": {
     "max": 39,
     "max_date": "2026-06-25",
     "min": -4,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:32:08.046Z"
+    "updated_at": "2026-08-29T11:43:44.758Z"
   },
   "calais": {
     "max": 35,
     "max_date": "2026-06-25",
     "min": -3,
     "min_date": "2026-01-03",
-    "updated_at": "2026-08-28T17:32:10.230Z"
+    "updated_at": "2026-08-29T11:43:46.938Z"
   },
   "arras": {
     "max": 39,
     "max_date": "2026-06-24",
     "min": -3,
     "min_date": "2026-01-03",
-    "updated_at": "2026-08-28T17:32:12.408Z"
+    "updated_at": "2026-08-29T11:43:49.096Z"
   },
   "nancy": {
     "max": 39,
     "max_date": "2026-06-26",
     "min": -6,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:32:14.584Z"
+    "updated_at": "2026-08-29T11:43:51.262Z"
   },
   "mulhouse": {
     "max": 41,
     "max_date": "2026-06-27",
     "min": -5,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:32:16.759Z"
+    "updated_at": "2026-08-29T11:43:53.430Z"
   },
   "troyes": {
     "max": 41,
     "max_date": "2026-06-26",
     "min": -5,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:18.965Z"
+    "updated_at": "2026-08-29T11:43:55.602Z"
   },
   "aix-en-provence": {
     "max": 41,
     "max_date": "2026-07-16",
     "min": -3,
     "min_date": "2026-01-07",
-    "updated_at": "2026-08-28T17:32:21.203Z"
+    "updated_at": "2026-08-29T11:43:57.782Z"
   },
   "avignon": {
     "max": 40,
     "max_date": "2026-07-14",
     "min": -6,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:32:23.386Z"
+    "updated_at": "2026-08-29T11:43:59.971Z"
   },
   "saint-etienne": {
     "max": 39,
     "max_date": "2026-06-26",
     "min": -9,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:32:25.595Z"
+    "updated_at": "2026-08-29T11:44:02.184Z"
   },
   "annecy": {
     "max": 38,
     "max_date": "2026-06-27",
     "min": -5,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:27.772Z"
+    "updated_at": "2026-08-29T11:44:04.364Z"
   },
   "chamonix": {
     "max": 32,
     "max_date": "2026-06-27",
     "min": -7,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:32:29.970Z"
+    "updated_at": "2026-08-29T11:44:06.558Z"
   },
   "chambery": {
     "max": 40,
     "max_date": "2026-07-13",
     "min": -5,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:32:32.137Z"
+    "updated_at": "2026-08-29T11:44:08.733Z"
   },
   "chartres": {
     "max": 41,
     "max_date": "2026-06-24",
     "min": -4,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:34.308Z"
+    "updated_at": "2026-08-29T11:44:10.915Z"
   },
   "bourges": {
     "max": 40,
     "max_date": "2026-06-24",
     "min": -4,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:36.476Z"
+    "updated_at": "2026-08-29T11:44:13.120Z"
   },
   "albi": {
     "max": 42,
     "max_date": "2026-06-22",
     "min": -6,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:38.667Z"
+    "updated_at": "2026-08-29T11:44:15.299Z"
   },
   "montauban": {
     "max": 41,
     "max_date": "2026-06-24",
     "min": -5,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:40.847Z"
+    "updated_at": "2026-08-29T11:44:17.473Z"
   },
   "la-roche-sur-yon": {
     "max": 42,
     "max_date": "2026-06-23",
     "min": -4,
     "min_date": "2026-01-06",
-    "updated_at": "2026-08-28T17:32:43.070Z"
+    "updated_at": "2026-08-29T11:44:19.620Z"
   },
   "chalon-sur-saone": {
     "max": 40,
     "max_date": "2026-06-21",
     "min": -5,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:45.240Z"
+    "updated_at": "2026-08-29T11:44:21.793Z"
   },
   "belfort": {
     "max": 39,
     "max_date": "2026-06-27",
     "min": -7,
     "min_date": "2026-01-05",
-    "updated_at": "2026-08-28T17:32:47.436Z"
+    "updated_at": "2026-08-29T11:44:23.981Z"
   }
 }
