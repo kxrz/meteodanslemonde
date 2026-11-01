@@ -2,6 +2,7 @@
 // Les seuils sont les mêmes partout sur le site.
 
 import { FROST_THRESHOLD } from "@/lib/frost"
+import { meteoUrl } from "@/lib/open-meteo"
 
 /** Nuit tropicale : la minimale ne descend pas sous 20 °C (≥ 20 °C). */
 export const TROPICAL_NIGHT = 20
@@ -101,16 +102,20 @@ export function summarizeSeries(s: DailySeries, w: Pick<SignalWindow, "start" | 
 
 // ── Archive Open-Meteo ────────────────────────────────────────────────────
 
-export const ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 
 export type ArchiveResult = { id: string; ok: true; series: DailySeries } | { id: string; ok: false }
 
 const BATCH = 10
 
 async function fetchBatch(cities: { id: string; lat: number; lon: number }[], start: string, end: string, revalidate: number): Promise<ArchiveResult[]> {
-  const url =
-    `${ARCHIVE_URL}?latitude=${cities.map((c) => c.lat).join(",")}&longitude=${cities.map((c) => c.lon).join(",")}` +
-    `&daily=temperature_2m_min,apparent_temperature_max&start_date=${start}&end_date=${end}&timezone=Europe%2FParis`
+  const url = meteoUrl("archive", {
+    latitude: cities.map((c) => c.lat).join(","),
+    longitude: cities.map((c) => c.lon).join(","),
+    daily: "temperature_2m_min,apparent_temperature_max",
+    start_date: start,
+    end_date: end,
+    timezone: "Europe/Paris",
+  })
   try {
     const res = await fetch(url, { next: { revalidate }, signal: AbortSignal.timeout(15_000) })
     if (!res.ok) throw new Error(`status ${res.status}`)

@@ -1,3 +1,4 @@
+import { meteoUrl } from "@/lib/open-meteo"
 // Source : NASA FIRMS — CSV public, sans clé API, mis à jour plusieurs fois/jour
 // https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/
 const FIRMS_7D = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/suomi-npp-viirs-c2/csv/SUOMI_VIIRS_C2_Europe_7d.csv"
@@ -100,9 +101,7 @@ function computeLevel(tempMax: number, humMin: number, windMax: number, precip3d
 export async function fetchFireRisk(lat: number, lon: number): Promise<FireRisk | null> {
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&daily=temperature_2m_max,relative_humidity_2m_min,wind_speed_10m_max,precipitation_sum` +
-      `&past_days=2&forecast_days=1`,
+      meteoUrl("forecast", { latitude: lat, longitude: lon, daily: "temperature_2m_max,relative_humidity_2m_min,wind_speed_10m_max,precipitation_sum", past_days: 2, forecast_days: 1 }),
       { next: { revalidate: 86400 } }
     )
     if (!res.ok) return null
@@ -132,13 +131,11 @@ export async function fetchFireZoneWeather(lat: number, lon: number): Promise<Fi
   try {
     const [aqRes, windRes] = await Promise.all([
       fetch(
-        `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}` +
-        `&current=european_aqi,pm10,pm2_5&domains=cams_europe`,
+        meteoUrl("air-quality", { latitude: lat, longitude: lon, current: "european_aqi,pm10,pm2_5", domains: "cams_europe" }),
         { next: { revalidate: 3600 } }
       ),
       fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-        `&current=wind_speed_10m,wind_direction_10m`,
+        meteoUrl("forecast", { latitude: lat, longitude: lon, current: "wind_speed_10m,wind_direction_10m" }),
         { next: { revalidate: 3600 } }
       ),
     ])

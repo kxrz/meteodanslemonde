@@ -24,6 +24,9 @@ jobs:
 
       - name: Fetch frost normals
         run: npx tsx scripts/fetch-frost-normals.ts
+        env:
+          # facultatif : clé Open-Meteo payante (Settings → Secrets → Actions)
+          OPEN_METEO_API_KEY: ${{ secrets.OPEN_METEO_API_KEY }}
 
       - name: Commit if changed
         run: |

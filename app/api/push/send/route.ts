@@ -3,6 +3,7 @@ import { loadSubs } from "@/lib/blob-subscriptions"
 import webpush from "web-push"
 import { loadClimateMap } from "@/lib/climate"
 import { slugify } from "@/lib/slugify"
+import { meteoUrl } from "@/lib/open-meteo"
 
 const citiesFR = require("@/data/cities-fr.json") as Array<{ id: string; name: string; lat: number; lon: number }>
 const citiesWorld = require("@/data/cities-world.json") as Array<{ id: string; name: string; lat: number; lon: number }>
@@ -10,7 +11,7 @@ const citiesWorld = require("@/data/cities-world.json") as Array<{ id: string; n
 async function fetchTemp(lat: number, lon: number): Promise<number | null> {
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=apparent_temperature_max&forecast_days=1`
+      meteoUrl("forecast", { latitude: lat, longitude: lon, daily: "apparent_temperature_max", forecast_days: 1 })
     )
     if (!res.ok) return null
     const data = await res.json()
