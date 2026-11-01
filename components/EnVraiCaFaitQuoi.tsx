@@ -2,6 +2,7 @@ import type { Impact } from "@/lib/climate-impacts"
 import { impactStatus } from "@/lib/city-page"
 import { fmtDelta } from "@/lib/format"
 import Card from "@/components/ui/Card"
+import MobileMore from "@/components/ui/MobileMore"
 import Eyebrow from "@/components/ui/Eyebrow"
 import { cn } from "@/lib/cn"
 
@@ -40,20 +41,22 @@ export default function EnVraiCaFaitQuoi({ impacts, seasonTrend, seasonLabel, cl
               ? { text: "Déjà observé en France", cls: "bg-signal text-ink" }
               : { text: "Seuil pas encore atteint ici", cls: "bg-paper text-ink" }
         return (
-          <Card key={impact.id} as="article" tone="ink" className="flex flex-col gap-4">
+          <Card key={impact.id} as="article" tone="ink" className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
             <div className="flex flex-wrap items-center gap-2">
               <span className={cn("rounded-xl px-3 py-1 font-mono text-[12px] font-semibold", badge.cls)}>{badge.text}</span>
               <Eyebrow as="span" className="text-paper/70">{THEME_LABEL[impact.theme] ?? impact.theme}</Eyebrow>
             </div>
-            <p className="font-display text-[1.35rem] font-extrabold leading-tight">{impact.fait}</p>
-            <div className="flex flex-col gap-1">
-              <Eyebrow as="span" className="text-paper/70">Pourquoi</Eyebrow>
-              <p className="text-[15px] leading-relaxed text-paper/85">{impact.pourquoi}</p>
-            </div>
-            <div className="flex flex-col gap-1">
-              <Eyebrow as="span" className="text-signal">Ce que ça implique</Eyebrow>
-              <p className="text-[15px] leading-relaxed text-paper/85">{impact.implication}</p>
-            </div>
+            <p className="font-display text-[1.15rem] font-extrabold leading-tight sm:text-[1.35rem]">{impact.fait}</p>
+            <MobileMore label="Pourquoi, et ce que ça implique" invert>
+              <div className="flex flex-col gap-1">
+                <Eyebrow as="span" className="text-paper/70">Pourquoi</Eyebrow>
+                <p className="text-[15px] leading-relaxed text-paper/85">{impact.pourquoi}</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <Eyebrow as="span" className="text-signal">Ce que ça implique</Eyebrow>
+                <p className="text-[15px] leading-relaxed text-paper/85">{impact.implication}</p>
+              </div>
+            </MobileMore>
             <a
               href={impact.source_url}
               target="_blank"

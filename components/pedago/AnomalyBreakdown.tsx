@@ -17,6 +17,8 @@ interface Props {
   trend: number // tendance observée du mois
   today: number // ressenti max du jour
   compact?: boolean
+  /** false : pas de titre interne (la section qui l'entoure a déjà le sien) */
+  heading?: boolean
 }
 
 /**
@@ -25,7 +27,7 @@ interface Props {
  *   météo   = ce que la journée ajoute (ou retire) en plus
  * Une journée froide peut tomber sur un climat qui s'est réchauffé : c'est exactement ce que montre l'étape 3.
  */
-export default function AnomalyBreakdown({ city, monthLabel, normal, trend, today, compact = false }: Props) {
+export default function AnomalyBreakdown({ city, monthLabel, normal, trend, today, compact = false, heading = true }: Props) {
   const root = useRef<HTMLDivElement>(null)
   const [step, setStep] = useState(3)
   const tl = useRef<gsap.core.Timeline | null>(null)
@@ -80,34 +82,34 @@ export default function AnomalyBreakdown({ city, monthLabel, normal, trend, toda
       : <>L&apos;écart du jour vient surtout de la météo. La tendance de fond pour {monthLabel} est de <strong>{fmtDelta(trend)}&#8239;°C</strong>.</>
 
   return (
-    <div ref={root} className={cn("flex flex-col gap-5 rounded-[var(--radius-card)] bg-white p-5 sm:p-7", compact && "p-4")}>
-      <div className="flex flex-col gap-1">
+    <div ref={root} className={cn("flex flex-col gap-4 rounded-[var(--radius-card)] bg-white p-4 sm:gap-5 sm:p-7", compact && "p-4")}>
+      {heading && <div className="flex flex-col gap-1">
         <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-mute">Décomposer l&apos;écart · {city}</p>
         <h3 className="font-display text-[1.6rem] font-extrabold leading-tight tracking-tight">
           Météo du jour ou climat qui change&#8239;?
           <Explain term="meteoClimat" />
         </h3>
-      </div>
+      </div>}
 
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Étapes">
-        {["La normale", "Le climat a bougé", "La météo du jour"].map((label, i) => (
+      <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:gap-2" role="group" aria-label="Étapes">
+        {[["La normale", "Normale"], ["Le climat a bougé", "Climat"], ["La météo du jour", "Météo"]].map(([label, short], i) => (
           <button
             key={label}
             type="button"
             onClick={() => go(i + 1)}
             aria-pressed={step === i + 1}
             className={cn(
-              "min-h-11 rounded-full border-2 px-4 font-display text-[14px] font-bold transition-colors",
+              "min-h-11 rounded-full border-2 px-2 font-display text-[14px] font-bold transition-colors sm:px-4",
               step === i + 1 ? "border-ink bg-ink text-paper" : "border-line bg-paper text-ink hover:border-ink",
             )}
           >
-            <span className="mr-1.5 font-mono text-[12px] opacity-70">{i + 1}</span>{label}
+            <span className="mr-1.5 font-mono text-[12px] opacity-70">{i + 1}</span><span className="sm:hidden">{short}</span><span className="hidden sm:inline">{label}</span>
           </button>
         ))}
       </div>
 
       {/* Échelle */}
-      <div className="relative mt-10 h-28 select-none" aria-hidden="true">
+      <div className="relative mt-6 h-28 select-none sm:mt-10" aria-hidden="true">
         <div className="absolute inset-x-0 bottom-6 h-px bg-line" />
         {/* graduations */}
         {Array.from({ length: hi - lo + 1 }, (_, i) => lo + i).filter((v) => v % 2 === 0).map((v) => (
@@ -126,18 +128,18 @@ export default function AnomalyBreakdown({ city, monthLabel, normal, trend, toda
         <span data-part="today" className={cn("absolute bottom-[1.6rem] h-5 w-5 -translate-x-1/2 rounded-full border-[3px] border-white shadow", colder ? "bg-froid" : "bg-chaud")} style={{ left: pct(today) }} />
       </div>
 
-      <dl className="grid gap-3 sm:grid-cols-3">
-        <div data-label="normal" className="rounded-2xl bg-paper p-3">
-          <dt className="text-[13px] text-mute">Normale de {monthLabel} (1991-2020)</dt>
-          <dd className="font-display text-2xl font-extrabold tabular">{fmt(normal)}&#8239;°C</dd>
+      <dl className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div data-label="normal" className="rounded-2xl bg-paper p-2.5 sm:p-3">
+          <dt className="text-[13px] leading-tight text-mute">Normale<span className="hidden sm:inline"> de {monthLabel} (1991-2020)</span></dt>
+          <dd className="font-display text-xl font-extrabold tabular sm:text-2xl">{fmt(normal)}&#8239;°C</dd>
         </div>
-        <div data-label="climat" className="rounded-2xl bg-hl-chaud p-3">
-          <dt className="text-[13px] text-ink-soft">Climat : ce que 30 ans ont ajouté</dt>
-          <dd className="font-display text-2xl font-extrabold tabular">{fmtDelta(trend)}&#8239;°C</dd>
+        <div data-label="climat" className="rounded-2xl bg-hl-chaud p-2.5 sm:p-3">
+          <dt className="text-[13px] leading-tight text-ink-soft">Climat<span className="hidden sm:inline"> : ce que 30 ans ont ajouté</span></dt>
+          <dd className="font-display text-xl font-extrabold tabular sm:text-2xl">{fmtDelta(trend)}&#8239;°C</dd>
         </div>
-        <div data-label="meteo" className={cn("rounded-2xl p-3", colder ? "bg-hl-froid" : "bg-hl-signal")}>
-          <dt className="text-[13px] text-ink-soft">Météo : ce que la journée ajoute</dt>
-          <dd className="font-display text-2xl font-extrabold tabular">{fmtDelta(weather)}&#8239;°C</dd>
+        <div data-label="meteo" className={cn("rounded-2xl p-2.5 sm:p-3", colder ? "bg-hl-froid" : "bg-hl-signal")}>
+          <dt className="text-[13px] leading-tight text-ink-soft">Météo<span className="hidden sm:inline"> : ce que la journée ajoute</span></dt>
+          <dd className="font-display text-xl font-extrabold tabular sm:text-2xl">{fmtDelta(weather)}&#8239;°C</dd>
         </div>
       </dl>
 

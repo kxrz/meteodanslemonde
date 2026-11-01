@@ -22,6 +22,7 @@ import Num from "@/components/ui/Num"
 import Card from "@/components/ui/Card"
 import Stat from "@/components/ui/Stat"
 import Eyebrow from "@/components/ui/Eyebrow"
+import MobileMore from "@/components/ui/MobileMore"
 import Explain from "@/components/ui/Explain"
 import { ButtonLink, Arrow } from "@/components/ui/Button"
 import AnomalyBreakdown from "@/components/pedago/AnomalyBreakdown"
@@ -219,7 +220,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
     <PageShell crumbs={crumbs}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="flex flex-col gap-16 sm:gap-20">
+      <div className="flex flex-col gap-10 sm:gap-20">
         {/* ── 1. En-tête : la phrase du jour ── */}
         <header className="flex flex-col gap-6 pt-4 sm:pt-8">
           <div className="flex items-start justify-between gap-4">
@@ -272,7 +273,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             intro={<>La normale {deMonth(month)} a déjà bougé de {fmtDeltaTemp(trendNow)} en 30 ans <Explain term="tendance" />. L&apos;écart du jour se lit par-dessus.</>}
           >
             {today != null ? (
-              <AnomalyBreakdown city={city.name} monthLabel={monthName} normal={normal} trend={trendNow} today={today} />
+              <AnomalyBreakdown city={city.name} monthLabel={monthName} normal={normal} trend={trendNow} today={today} heading={false} />
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
                 <Card><Stat label={`Normale ${deMonth(month)}`} value={<Num value={normal} decimals={1} unit="&#8239;°C" />} sub="Ressenti maximal moyen, 1991-2020." explain="normale" /></Card>
@@ -287,8 +288,6 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
           <Section
             id="saisons"
             eyebrow="Saison par saison"
-            title={<>Le calendrier de {city.name} <Hl>glisse</Hl>.</>}
-            intro="La courbe de l'année, telle qu'elle était sur 1991-2020, telle qu'elle est aujourd'hui, et telle qu'elle pourrait être en 2050."
           >
             <SeasonCurve
               city={city.name}
@@ -298,6 +297,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
               proj2050={full.ssp245?.proj2050 ?? Array(12).fill(null)}
               month={month}
               shiftDays={shiftDays}
+              headingAs="h2"
             />
           </Section>
         )}
@@ -310,7 +310,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             title={p2050?.central != null
               ? <>En 2050, {inSeason(season)} : <Hl tone="chaud">{fmtDeltaTemp(p2050.central)}</Hl>.</>
               : <>Et <Hl tone="chaud">demain</Hl>&#8239;?</>}
-            intro={<>Hausse projetée par rapport au climat 2000-2020 (la courbe ci-dessus part, elle, de 1991-2020) : médiane des modèles climatiques et fourchette entre modèles <Explain term="projection" />. Jusqu&apos;en 2050, les trajectoires d&apos;émissions divergent encore peu : la suite dépend de nos émissions.</>}
+            intro={<>Par rapport à 2000-2020 : médiane des modèles climatiques et fourchette entre modèles <Explain term="projection" />.<span className="hidden sm:inline"> Jusqu&apos;en 2050, les trajectoires d&apos;émissions divergent encore peu : la suite dépend de nos émissions.</span></>}
           >
             <ScenarioRange city={city.name} bySeason={bySeason} initial={season} />
           </Section>
@@ -319,11 +319,11 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         {/* ── 5. Extrêmes de l'année ── */}
         {extremes && (
           <Section id="extremes" eyebrow={`Extrêmes de ${extremesYear}, jusqu'ici`} title={<>L&apos;année {extremesYear} à {city.name}, <Hl>en deux jours</Hl>.</>}>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Card tone="white">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <Card tone="white" className="p-4 sm:p-6">
                 <Stat label={extremes.hot.label} value={<span className="text-chaud"><Num value={extremes.hot.value} unit="&#8239;°C" /></span>} sub={<>{capitalize(extremes.hot.detail)}, le {frDate(extremes.hot.date)}.</>} explain="ressenti" />
               </Card>
-              <Card tone="white">
+              <Card tone="white" className="p-4 sm:p-6">
                 <Stat label={extremes.cold.label} value={<span className="text-froid"><Num value={extremes.cold.value} unit="&#8239;°C" /></span>} sub={<>{capitalize(extremes.cold.detail)}, le {frDate(extremes.cold.date)}.</>} />
               </Card>
             </div>
@@ -419,7 +419,9 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
           <Section id="portrait" eyebrow="Portrait climatique" title={<>Portrait de <Hl>{city.name}</Hl>.</>}>
             <Card tone="paper" className="flex max-w-4xl flex-col gap-3">
               {isFR && narrativeIsSummer && !isHotSeason(month) && <Eyebrow>Ce portrait décrit l&apos;été</Eyebrow>}
-              <p className="text-[17px] leading-relaxed text-ink-soft">{narrative}</p>
+              <MobileMore label="Lire le portrait">
+                <p className="text-[17px] leading-relaxed text-ink-soft">{narrative}</p>
+              </MobileMore>
             </Card>
           </Section>
         )}
@@ -427,26 +429,26 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
         {/* ── 10. Aller plus loin ── */}
         <Section eyebrow="Aller plus loin" title={<>Comparer, suivre, <Hl tone="chaud">agir</Hl>.</>}>
           {isFR ? (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <Card href={`/jumeaux?ville=${slug}`} tone="ink" className="flex flex-col gap-3">
-                <Eyebrow className="text-paper/70">Jumeau 2050</Eyebrow>
-                <p className="font-display text-xl font-extrabold leading-tight">Le climat de {city.name} en 2050 existe déjà ailleurs.</p>
-                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold text-signal">Trouver son jumeau <Arrow /></span>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
+              <Card href={`/jumeaux?ville=${slug}`} tone="ink" className="flex flex-col gap-2 p-4 sm:gap-3 sm:p-6">
+                <Eyebrow className="hidden text-paper/70 sm:block">Jumeau 2050</Eyebrow>
+                <p className="font-display text-[17px] font-extrabold leading-tight sm:text-xl">Le climat de {city.name} en 2050 existe déjà ailleurs.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display text-[14px] font-bold sm:text-base text-signal">Trouver son jumeau <Arrow /></span>
               </Card>
-              <Card href={`/r/${regionSlug}`} tone="white" className="flex flex-col gap-3">
-                <Eyebrow>Région</Eyebrow>
-                <p className="font-display text-xl font-extrabold leading-tight">{city.region}, ville par ville.</p>
-                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">Voir la région <Arrow /></span>
+              <Card href={`/r/${regionSlug}`} tone="white" className="flex flex-col gap-2 p-4 sm:gap-3 sm:p-6">
+                <Eyebrow className="hidden sm:block">Région</Eyebrow>
+                <p className="font-display text-[17px] font-extrabold leading-tight sm:text-xl">{city.region}, ville par ville.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display text-[14px] font-bold sm:text-base">Voir la région <Arrow /></span>
               </Card>
-              <Card href="/notifications" tone="signal" className="flex flex-col gap-3">
-                <Eyebrow>Briefing</Eyebrow>
-                <p className="font-display text-xl font-extrabold leading-tight">L&apos;écart de {city.name}, chaque matin.</p>
-                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">S&apos;inscrire <Arrow /></span>
+              <Card href="/notifications" tone="signal" className="flex flex-col gap-2 p-4 sm:gap-3 sm:p-6">
+                <Eyebrow className="hidden sm:block">Briefing</Eyebrow>
+                <p className="font-display text-[17px] font-extrabold leading-tight sm:text-xl">L&apos;écart de {city.name}, chaque matin.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display text-[14px] font-bold sm:text-base">S&apos;inscrire <Arrow /></span>
               </Card>
-              <Card href="/citoyens" tone="outline" className="flex flex-col gap-3">
-                <Eyebrow>Agir</Eyebrow>
-                <p className="font-display text-xl font-extrabold leading-tight">Écrire à vos élus avec ces chiffres.</p>
-                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">Préparer mon message <Arrow /></span>
+              <Card href="/citoyens" tone="outline" className="flex flex-col gap-2 p-4 sm:gap-3 sm:p-6">
+                <Eyebrow className="hidden sm:block">Agir</Eyebrow>
+                <p className="font-display text-[17px] font-extrabold leading-tight sm:text-xl">Écrire à vos élus avec ces chiffres.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display text-[14px] font-bold sm:text-base">Préparer mon message <Arrow /></span>
               </Card>
             </div>
           ) : (

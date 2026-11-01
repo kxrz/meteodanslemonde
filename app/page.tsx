@@ -199,7 +199,7 @@ export default async function Home() {
             intro="L'écart du jour mélange deux choses : ce que le climat a déjà ajouté à la normale en 30 ans, et ce que la journée ajoute par-dessus. On les sépare."
             action={<ButtonLink href={`/a/${spot.slug}`} variant="ghost">Fiche {spot.name} <Arrow /></ButtonLink>}
           >
-            <AnomalyBreakdown city={spot.name} monthLabel={monthName} normal={spot.normal} trend={spotTrend} today={spot.temp} />
+            <AnomalyBreakdown city={spot.name} monthLabel={monthName} normal={spot.normal} trend={spotTrend} today={spot.temp} heading={false} />
           </Section>
         )}
 

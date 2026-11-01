@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { fmt, fmtDelta } from "@/lib/format"
 import { MONTHS } from "@/lib/season"
 import Explain from "@/components/ui/Explain"
+import MobileMore from "@/components/ui/MobileMore"
 import { cn } from "@/lib/cn"
 
 gsap.registerPlugin(useGSAP, ScrollTrigger)
@@ -19,6 +20,8 @@ interface Props {
   proj2050: (number | null)[]
   month: number
   shiftDays: number | null
+  /** niveau du titre interne : h2 quand la section qui l'entoure n'a pas de titre */
+  headingAs?: "h2" | "h3"
 }
 
 const W = 680, H = 280, L = 40, R = 14, T = 20, B = 30
@@ -33,7 +36,7 @@ function smooth(arr: number[]): number[] {
  * La courbe qui glisse : la normale mensuelle, puis la même courbe avec le réchauffement observé,
  * puis 2050. Les écarts sont lissés sur 3 mois (le bruit mensuel ferait croire à des « baisses »).
  */
-export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, month, shiftDays }: Props) {
+export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, month, shiftDays, headingAs: HeadingTag = "h3" }: Props) {
   const root = useRef<HTMLDivElement>(null)
   const uid = useId()
   const [step, setStep] = useState(2)
@@ -80,10 +83,10 @@ export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, m
   const slope = normal[(month + 1) % 12] - normal[(month + 11) % 12]
 
   return (
-    <div ref={root} className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-white p-5 sm:p-7">
+    <div ref={root} className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-white p-4 sm:p-7">
       <div className="flex flex-col gap-1">
         <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.14em] text-mute">La courbe qui glisse · {city}</p>
-        <h3 className="font-display text-[1.6rem] font-extrabold leading-tight tracking-tight">
+        <HeadingTag className="font-display text-[1.5rem] font-extrabold leading-tight tracking-tight sm:text-[1.6rem]">
           {shiftDays != null && Math.abs(shiftDays) >= 3 ? (
             slope < 0
               ? <>Votre {MONTHS[month]} ressemble à celui d&apos;il y a 30 ans… <span className="hl hl-chaud" data-anim="hl">avec {Math.abs(shiftDays)} jours de retard</span>.</>
@@ -91,22 +94,22 @@ export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, m
           ) : (
             <>Toute l&apos;année <span className="hl hl-chaud" data-anim="hl">glisse vers le haut</span>.</>
           )}
-        </h3>
+        </HeadingTag>
       </div>
 
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Courbes affichées">
-        {["Normale 1991-2020", "Aujourd'hui", "2050"].map((label, i) => (
+      <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap sm:gap-2" role="group" aria-label="Courbes affichées">
+        {[["Normale 1991-2020", "1991-2020"], ["Aujourd'hui", "Aujourd'hui"], ["2050", "2050"]].map(([label, short], i) => (
           <button
             key={label}
             type="button"
             onClick={() => setStep(i)}
             aria-pressed={step === i}
             className={cn(
-              "min-h-11 rounded-full border-2 px-4 font-display text-[14px] font-bold transition-colors",
+              "min-h-11 rounded-full border-2 px-2 font-display text-[14px] font-bold transition-colors sm:px-4",
               step === i ? "border-ink bg-ink text-paper" : "border-line bg-paper text-ink hover:border-ink",
             )}
           >
-            {label}
+            <span className="sm:hidden">{short}</span><span className="hidden sm:inline">{label}</span>
           </button>
         ))}
       </div>
@@ -139,21 +142,23 @@ export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, m
         </svg>
       </div>
 
-      <dl className="grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl bg-hl-froid p-3">
-          <dt className="text-[13px] text-ink-soft">{MONTHS[month]} 1991-2020 <Explain term="normale" /></dt>
-          <dd className="font-display text-2xl font-extrabold tabular">{fmt(normal[month])}&#8239;°C</dd>
+      <dl className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div className="rounded-2xl bg-hl-froid p-2.5 sm:p-3">
+          <dt className="text-[13px] leading-tight text-ink-soft">1991-2020<span className="hidden sm:inline"> en {MONTHS[month]}</span> <Explain term="normale" /></dt>
+          <dd className="font-display text-xl font-extrabold tabular sm:text-2xl">{fmt(normal[month])}&#8239;°C</dd>
         </div>
-        <div className="rounded-2xl bg-hl-chaud p-3">
-          <dt className="text-[13px] text-ink-soft">Déjà observé <Explain term="tendance" /></dt>
-          <dd className="font-display text-2xl font-extrabold tabular">{fmtDelta(deltaNow)}&#8239;°C</dd>
+        <div className="rounded-2xl bg-hl-chaud p-2.5 sm:p-3">
+          <dt className="text-[13px] leading-tight text-ink-soft">Déjà observé <Explain term="tendance" /></dt>
+          <dd className="font-display text-xl font-extrabold tabular sm:text-2xl">{fmtDelta(deltaNow)}&#8239;°C</dd>
         </div>
-        <div className="rounded-2xl bg-chaud p-3 text-white">
-          <dt className="text-[13px] opacity-90">En 2050 (observé + hausse projetée) <Explain term="projection" invert /></dt>
-          <dd className="font-display text-2xl font-extrabold tabular">{fmtDelta(delta2050)}&#8239;°C</dd>
+        <div className="rounded-2xl bg-chaud p-2.5 text-white sm:p-3">
+          <dt className="text-[13px] leading-tight opacity-90">En 2050<span className="hidden sm:inline"> (observé + hausse projetée)</span> <Explain term="projection" invert /></dt>
+          <dd className="font-display text-xl font-extrabold tabular sm:text-2xl">{fmtDelta(delta2050)}&#8239;°C</dd>
         </div>
       </dl>
-      <p className="text-[13px] text-mute">Écarts lissés sur trois mois pour retirer le bruit mensuel. 2050 = réchauffement déjà observé (ERA5) + hausse supplémentaire projetée entre 2030 et 2050 par les modèles climatiques CMIP6 (médiane). Un ordre de grandeur.</p>
+      <MobileMore label="Comment c'est calculé">
+        <p className="text-[13px] text-mute">Écarts lissés sur trois mois pour retirer le bruit mensuel. 2050 = réchauffement déjà observé (ERA5) + hausse supplémentaire projetée entre 2030 et 2050 par les modèles climatiques CMIP6 (médiane). Un ordre de grandeur.</p>
+      </MobileMore>
     </div>
   )
 }

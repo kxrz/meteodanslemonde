@@ -5,6 +5,7 @@ import type { SeasonalProjection } from "@/lib/climate-season"
 import { SEASON_LABEL, type Season } from "@/lib/season"
 import { fmtDelta } from "@/lib/format"
 import Explain from "@/components/ui/Explain"
+import MobileMore from "@/components/ui/MobileMore"
 import { cn } from "@/lib/cn"
 
 const ORDER: Season[] = ["hiver", "printemps", "ete", "automne"]
@@ -32,8 +33,8 @@ export default function ScenarioRange({ city, bySeason, initial }: Props) {
   const has = rows.some((r) => r.central != null)
 
   return (
-    <div className="flex flex-col gap-5 rounded-[var(--radius-card)] bg-white p-5 sm:p-7">
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Choisir la saison">
+    <div className="flex flex-col gap-4 rounded-[var(--radius-card)] bg-white p-4 sm:gap-5 sm:p-7">
+      <div className="grid grid-cols-4 gap-1.5 sm:flex sm:flex-wrap sm:gap-2" role="group" aria-label="Choisir la saison">
         {ORDER.map((s) => (
           <button
             key={s}
@@ -41,7 +42,7 @@ export default function ScenarioRange({ city, bySeason, initial }: Props) {
             onClick={() => setSeason(s)}
             aria-pressed={season === s}
             className={cn(
-              "min-h-11 rounded-full border-2 px-4 font-display text-[14px] font-bold capitalize transition-colors",
+              "min-h-11 rounded-full border-2 px-1 font-display text-[13px] font-bold capitalize transition-colors sm:px-4 sm:text-[14px]",
               season === s ? "border-ink bg-ink text-paper" : "border-line bg-paper text-ink hover:border-ink",
             )}
           >
@@ -51,10 +52,10 @@ export default function ScenarioRange({ city, bySeason, initial }: Props) {
       </div>
 
       {has ? (
-        <ul className="flex flex-col gap-6" aria-label={`Projections à ${city}, saison : ${SEASON_LABEL[season]}`}>
+        <ul className="flex flex-col gap-3 sm:gap-6" aria-label={`Projections à ${city}, saison : ${SEASON_LABEL[season]}`}>
           {rows.map((r) => (
-            <li key={r.year} className="grid grid-cols-[3.5rem_1fr] items-center gap-x-4 gap-y-1 sm:grid-cols-[4rem_1fr_13rem]">
-              <span className="font-display text-[22px] font-extrabold tabular">{r.year}</span>
+            <li key={r.year} className="grid grid-cols-[3rem_1fr_4.5rem] items-center gap-x-3 gap-y-1 sm:grid-cols-[4rem_1fr_13rem] sm:gap-x-4">
+              <span className="font-display text-[19px] font-extrabold tabular sm:text-[22px]">{r.year}</span>
               <div className="relative h-8" aria-hidden="true">
                 <span className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-paper-deep" />
                 <span className="absolute top-1/2 h-full w-px -translate-y-1/2 bg-ink/30" style={{ left: pct(0) }} />
@@ -68,15 +69,15 @@ export default function ScenarioRange({ city, bySeason, initial }: Props) {
                   <span className="absolute top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white bg-chaud shadow" style={{ left: pct(r.central) }} />
                 )}
               </div>
-              <p className="col-start-2 text-[15px] leading-snug text-ink-soft sm:col-start-3">
+              <p className="text-right text-[15px] leading-snug text-ink-soft sm:text-left">
                 <strong className="font-display text-[19px] font-extrabold text-ink">{fmtDelta(r.central)}&#8239;°C</strong>
                 {r.low != null && r.high != null && r.high - r.low >= 0.1 && (
-                  <> · de {fmtDelta(r.low)} à {fmtDelta(r.high)}&#8239;°C</>
+                  <span className="hidden sm:inline"> · de {fmtDelta(r.low)} à {fmtDelta(r.high)}&#8239;°C</span>
                 )}
               </p>
             </li>
           ))}
-          <li aria-hidden="true" className="grid grid-cols-[3.5rem_1fr] gap-x-4 sm:grid-cols-[4rem_1fr_13rem]">
+          <li aria-hidden="true" className="grid grid-cols-[3rem_1fr_4.5rem] gap-x-3 sm:grid-cols-[4rem_1fr_13rem] sm:gap-x-4">
             <span />
             <div className="relative h-4">
               {ticks.map((t) => (
@@ -95,9 +96,11 @@ export default function ScenarioRange({ city, bySeason, initial }: Props) {
         <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-chaud" /> médiane des modèles</span>
         <span className="inline-flex items-center gap-2"><span className="h-3 w-6 rounded-full bg-a-p1" /> fourchette entre modèles <Explain term="ssp" /></span>
       </div>
-      <p className="text-[13px] text-mute">
-        Écart du ressenti maximal moyen de la saison par rapport au climat modélisé 2000-2020 (modèles CMIP6, GIEC AR6). Moyenne des trois mois de la saison.
-      </p>
+      <MobileMore label="Comment c'est calculé">
+        <p className="text-[13px] text-mute">
+          Écart du ressenti maximal moyen de la saison par rapport au climat modélisé 2000-2020 (modèles CMIP6, GIEC AR6). Moyenne des trois mois de la saison. La barre claire montre la fourchette entre modèles.
+        </p>
+      </MobileMore>
     </div>
   )
 }
