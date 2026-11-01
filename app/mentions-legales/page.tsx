@@ -1,6 +1,9 @@
+import Link from "next/link"
 import { Metadata } from "next"
-import SiteHeader from "@/components/SiteHeader"
-import PageFooter from "@/components/PageFooter"
+import PageShell from "@/components/ui/PageShell"
+import Title from "@/components/ui/Title"
+import Hl from "@/components/ui/Hl"
+import Eyebrow from "@/components/ui/Eyebrow"
 
 export const revalidate = 604800
 
@@ -9,79 +12,67 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.cestchaud.fr/mentions-legales" },
 }
 
+function Block({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="flex flex-col gap-2 border-t-2 border-ink pt-5">
+      <h2 className="font-display text-xl font-extrabold">{title}</h2>
+      <div className="text-[16px] leading-relaxed text-ink-soft [&_strong]:text-ink">{children}</div>
+    </section>
+  )
+}
+
 export default function MentionsLegalesPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
-      <SiteHeader asLink />
+    <PageShell width="text" crumbs={[{ label: "Mentions légales" }]}>
+      <div className="flex flex-col gap-8 pt-2 sm:pt-6">
+        <header className="flex flex-col gap-3">
+          <Eyebrow>Informations légales · mise à jour : novembre 2026</Eyebrow>
+          <Title as="h1" size="xl">Mentions <Hl>légales</Hl>.</Title>
+        </header>
 
-      <div className="flex-1 flex flex-col lg:flex-row">
-
-        {/* Left */}
-        <div className="lg:w-[40%] shrink-0 p-5 lg:p-8 lg:sticky lg:top-0 lg:h-screen flex flex-col border-b lg:border-b-0 lg:border-r border-black/[0.06]">
-          <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-            Informations légales
+        <Block title="Éditeur">
+          <p>
+            <strong>LesWWW</strong>, EURL<br />
+            SIREN 912 258 050, RCS Lille Métropole<br />
+            TVA intracommunautaire FR60 912 258 050 · code NAF 73.11Z<br />
+            Siège : chez NOW Coworking, 40 place du Théâtre, 59800 Lille
           </p>
-          <h1 className="text-3xl font-black text-neutral-900 leading-tight">
-            Mentions légales
-          </h1>
-          <p className="text-xs text-neutral-400 mt-3">Mise à jour : Mai 2026</p>
-        </div>
+        </Block>
 
-        {/* Right */}
-        <div className="flex-1 p-5 lg:p-8 overflow-y-auto">
-          <div className="max-w-lg space-y-4">
+        <Block title="Directeur de la publication">
+          <p><strong>Florent Bertiaux</strong>, gérant de LesWWW.</p>
+        </Block>
 
-            <div className="bg-white rounded-3xl p-6 space-y-2">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Éditeur</p>
-              <p className="text-sm text-neutral-700 leading-relaxed">
-                <strong className="text-neutral-900">LesWWW</strong>, EURL<br />
-                SIREN : 912 258 050, RCS Lille Métropole<br />
-                N° TVA : FR60 912 258 050<br />
-                Code NAF : 73.11Z<br />
-                Gérant : Florent Bertiaux<br />
-                Bureau : Chez NOW Coworking, 40 Place du Théâtre, 59800 Lille
-              </p>
-            </div>
+        <Block title="Contact">
+          <p>Par la <Link href="/contact" className="font-semibold text-ink underline underline-offset-2">page Contact</Link>. Aucune adresse email directe n&apos;est affichée publiquement.</p>
+        </Block>
 
-            <div className="bg-white rounded-3xl p-6 space-y-2">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Contact</p>
-              <p className="text-sm text-neutral-700 leading-relaxed">
-                Via la <a href="/contact" className="underline hover:text-neutral-900">page Contact</a> de ce site. Aucune adresse e-mail directe affichée publiquement.
-              </p>
-            </div>
+        <Block title="Hébergement">
+          <p><strong>Vercel Inc.</strong>, 440 N Barranca Avenue #4133, Covina, CA 91723, États-Unis.</p>
+        </Block>
 
-            <div className="bg-white rounded-3xl p-6 space-y-2">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Hébergement</p>
-              <p className="text-sm text-neutral-700">
-                Vercel Inc., San Francisco, CA (infrastructure européenne).
-              </p>
-            </div>
+        <Block title="Données personnelles">
+          <p>
+            Pas de publicité, pas de cookie, pas de revente. La mesure d&apos;audience (Vercel Analytics) fonctionne sans cookie. Les polices sont hébergées sur nos serveurs. Tout le détail, dont la durée de conservation des abonnements, est dans la{" "}
+            <Link href="/confidentialite" className="font-semibold text-ink underline underline-offset-2">politique de confidentialité</Link>.
+          </p>
+        </Block>
 
-            <div className="bg-white rounded-3xl p-6 space-y-2">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Propriété intellectuelle</p>
-              <p className="text-sm text-neutral-700 leading-relaxed">
-                L&apos;ensemble du site est protégé par la législation sur la propriété intellectuelle. Toute reproduction nécessite l&apos;accord écrit de LesWWW.
-              </p>
-            </div>
+        <Block title="Données et sources">
+          <p>
+            Les données climatiques proviennent de sources ouvertes (Open-Meteo, Copernicus ERA5, GIEC CMIP6, NASA FIRMS), citées sur chaque page et détaillées dans la{" "}
+            <Link href="/a-propos" className="font-semibold text-ink underline underline-offset-2">méthode</Link>. Elles restent soumises à leurs licences respectives.
+          </p>
+        </Block>
 
-            <div className="bg-white rounded-3xl p-6 space-y-2">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Données personnelles</p>
-              <p className="text-sm text-neutral-700 leading-relaxed">
-                Pas de tracking analytics, pas de cookie publicitaire. Les échanges via le formulaire de contact ne sont ni revendus ni loués.
-              </p>
-            </div>
+        <Block title="Propriété intellectuelle">
+          <p>Les textes, la mise en forme et la marque cestchaud.fr appartiennent à LesWWW. Toute reproduction nécessite son accord écrit, en dehors des citations courtes avec lien vers la source.</p>
+        </Block>
 
-            <div className="bg-white rounded-3xl p-6 space-y-2">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400">Responsabilité</p>
-              <p className="text-sm text-neutral-700 leading-relaxed">
-                Les informations sont mises à jour avec soin mais sans garantie d&apos;exactitude permanente. Toute utilisation du site se fait sous votre responsabilité.
-              </p>
-            </div>
-
-          </div>
-        </div>
+        <Block title="Responsabilité">
+          <p>Les informations sont mises à jour avec soin, sans garantie d&apos;exactitude permanente. Elles ne remplacent pas les vigilances officielles de Météo-France.</p>
+        </Block>
       </div>
-      <PageFooter className="px-5 py-3" />
-    </div>
+    </PageShell>
   )
 }

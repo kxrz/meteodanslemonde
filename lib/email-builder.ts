@@ -1,136 +1,187 @@
-import { fmt, fmtDelta } from "@/lib/format"
+// Email quotidien « briefing matinal ». Structure en tables (Outlook), styles en ligne.
+// Textes valables toute l'année : vocabulaire de l'écart à la normale, conseils selon les conditions
+// réelles du jour (chaleur, gel), jamais « chaleur » codé en dur.
+
+import { fmt, fmtDeltaTemp, fmtTemp } from "@/lib/format"
 import { BASE_URL } from "@/lib/resend"
+import { anomalyWords } from "@/lib/anomaly"
+import { MONTHS, deMonth, seasonOf, type Season } from "@/lib/season"
+import { mythOfTheDay } from "@/lib/myths"
+import type { SeasonalProjection } from "@/lib/climate-season"
+import { EMAIL_COLORS as C, emailFooterText, emailShell, escapeHtml } from "@/lib/email-layout"
+
+const FONT = "Arial,Helvetica,sans-serif"
 
 export interface CityEmailData {
   slug: string
   name: string
+  /** ressenti maximal prévu du jour (Open-Meteo), null si la prévision n'a pas répondu */
   apparentTempMax: number | null
-  anomaly: number | null
-  proj2050: number | null
+  /** normale 1991-2020 du ressenti maximal pour ce mois (ERA5) */
   normal: number | null
+  anomaly: number | null
+  /** évolution de la normale du mois en 30 ans, lissée sur 3 mois (ERA5) */
+  trend?: number | null
+  /** saison en cours projetée en 2050 (centrale SSP2-4.5 + fourchette entre scénarios) */
+  projection?: SeasonalProjection | null
+  /** température minimale prévue (air), pour repérer les nuits de gel */
+  tempMin?: number | null
+  /** jours consécutifs avec un ressenti ≥ 35 °C */
   caniculeStreak?: number
   climateTwin?: { name: string; country: string } | null
 }
 
-function anomalyLabel(a: number): { label: string; color: string; severity: string } {
-  if (a >= 8)  return { label: "Chaleur extrême", color: "#dc2626", severity: "extreme" }
-  if (a >= 5)  return { label: "Chaleur très forte", color: "#ea580c", severity: "high" }
-  if (a >= 2)  return { label: "Chaleur notable", color: "#f97316", severity: "medium" }
-  if (a >= 0)  return { label: "Légèrement au-dessus des normales", color: "#f59e0b", severity: "low" }
-  if (a >= -2) return { label: "Proche des normales", color: "#6b7280", severity: "normal" }
-  return       { label: "En dessous des normales", color: "#3b82f6", severity: "cool" }
+const SEASON_2050: Record<Season, string> = {
+  hiver: "L'hiver 2050",
+  printemps: "Le printemps 2050",
+  ete: "L'été 2050",
+  automne: "L'automne 2050",
 }
 
-function healthAdvice(severity: string): string {
-  switch (severity) {
-    case "extreme":
-      return "Restez à l'intérieur entre 11h et 19h, hydratez-vous régulièrement (au moins 1,5 L d'eau) et vérifiez sur vos proches âgés ou isolés. Le corps peut se déshydrater sans ressentir la soif en forte chaleur."
-    case "high":
-      return "Limitez les efforts physiques aux heures fraîches (avant 10h, après 19h). Pensez à aérer la nuit et à occulter les fenêtres exposées au soleil dans la journée."
-    case "medium":
-      return "Hydratez-vous davantage que d'habitude et évitez l'exposition directe au soleil aux heures de pointe. Une douche fraîche en milieu de journée aide à réguler la température corporelle."
-    default:
-      return "Les conditions sont supportables, mais restez attentif à votre hydratation tout au long de la journée."
-  }
+/** Couleur du texte d'écart : rouge au-dessus, bleu en dessous, encre autour de la normale. */
+export function anomalyColor(a: number | null): string {
+  if (a == null) return C.mute
+  if (a >= 0.5) return C.chaud
+  if (a <= -0.5) return C.froid
+  return C.ink
 }
 
-function climateNarrative(anomaly: number, proj2050: number | null, month: number): string {
-  const monthNames = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"]
-  const m = monthNames[month]
-  let text = ""
-
-  if (anomaly >= 5) {
-    text = `Un écart de ${fmtDelta(anomaly)}°C par rapport aux normales de ${m} est statistiquement exceptionnel. Ce type d'événement, rare il y a 30 ans, devient plus fréquent à mesure que les moyennes de fond augmentent.`
-  } else if (anomaly >= 2) {
-    text = `${fmtDelta(anomaly)}°C au-dessus des normales de ${m}. Ce type de journée s'observe plus souvent depuis les années 2000, reflet d'un réchauffement de fond progressif.`
-  } else {
-    text = `Les températures restent proches des normales de ${m}, même si la tendance de long terme continue à faire monter ces normales d'environ +0,2°C par décennie.`
+/**
+ * Conseil du jour, uniquement quand les conditions le justifient (valable en toute saison).
+ * Retourne null les jours ordinaires : pas de conseil de principe.
+ */
+export function dailyAdvice({ apparentTempMax, tempMin, caniculeStreak }: Pick<CityEmailData, "apparentTempMax" | "tempMin" | "caniculeStreak">): { title: string; text: string; tone: "chaud" | "froid" } | null {
+  if (apparentTempMax != null && (apparentTempMax >= 35 || (caniculeStreak ?? 0) >= 3)) {
+    return {
+      title: "Forte chaleur",
+      tone: "chaud",
+      text: "Évitez les efforts entre 11 h et 19 h, buvez régulièrement sans attendre la soif, et prenez des nouvelles des personnes âgées ou isolées. Fermez volets et fenêtres le jour, aérez la nuit.",
+    }
   }
-
-  if (proj2050 !== null) {
-    text += ` Selon le scénario GIEC SSP2-4.5, cette région pourrait connaître ${fmtDelta(proj2050)}°C supplémentaires en été d'ici 2050 par rapport à la période 1981-2010.`
+  if (apparentTempMax != null && apparentTempMax >= 30) {
+    return {
+      title: "Journée chaude",
+      tone: "chaud",
+      text: "Buvez davantage que d'habitude et décalez les efforts aux heures fraîches.",
+    }
   }
+  if (tempMin != null && tempMin <= 0) {
+    return {
+      title: "Nuit de gel",
+      tone: "froid",
+      text: "Prudence sur les trottoirs et les routes au petit matin. Pensez aux plantes en pot et, si vous croisez une personne à la rue, au 115.",
+    }
+  }
+  if (apparentTempMax != null && apparentTempMax <= -5) {
+    return {
+      title: "Froid marqué",
+      tone: "froid",
+      text: "Couvrez les extrémités et limitez les longues expositions. Si vous croisez une personne à la rue, appelez le 115.",
+    }
+  }
+  return null
+}
 
-  return text
+function calloutBlock(title: string, html: string, tone: "chaud" | "froid" | "signal" | "neutre"): string {
+  const bar = tone === "chaud" ? C.chaud : tone === "froid" ? C.froid : tone === "signal" ? C.ink : C.line
+  const bg = tone === "signal" ? C.signal : C.paper
+  return `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:14px 0 0">
+    <tr><td style="background:${bg};border-left:4px solid ${bar};padding:12px 16px">
+      <p style="margin:0;font-family:${FONT};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:${C.ink}">${title}</p>
+      <p style="margin:6px 0 0;font-family:${FONT};font-size:14px;color:${C.inkSoft};line-height:1.6">${html}</p>
+    </td></tr>
+  </table>`
 }
 
 function buildCityBlock(city: CityEmailData, month: number, unsubToken?: string): string {
-  const { slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin } = city
+  const { slug, apparentTempMax, anomaly, normal, trend, projection, tempMin, caniculeStreak, climateTwin } = city
+  const name = escapeHtml(city.name)
+  const monthName = MONTHS[month]
+  const season = seasonOf(month)
 
-  if (!apparentTempMax) {
+  const links = `
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 0">
+    <tr>
+      <td style="padding:0 18px 0 0"><a href="${BASE_URL}/a/${slug}" style="font-family:${FONT};font-size:14px;color:${C.ink};font-weight:700;text-decoration:underline">Fiche de ${name} &rarr;</a></td>
+      ${unsubToken ? `<td><a href="${BASE_URL}/profil/desabonnement?token=${unsubToken}&amp;city=${encodeURIComponent(slug)}" style="font-family:${FONT};font-size:13px;color:${C.mute};text-decoration:underline">Retirer cette ville</a></td>` : ""}
+    </tr>
+  </table>`
+
+  // `== null` et non `!x` : un ressenti de 0 °C en hiver est une vraie valeur.
+  if (apparentTempMax == null) {
     return `
-      <tr>
-        <td style="padding:24px 0;border-top:1px solid #f3f4f6">
-          <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#9ca3af">${name}</p>
-          <p style="margin:8px 0 0;font-size:14px;color:#9ca3af">Données météo indisponibles aujourd'hui (couverture nuageuse ou station hors ligne).</p>
-        </td>
-      </tr>`
+    <tr><td style="padding:22px 0;border-top:1px solid ${C.line}">
+      <p style="margin:0;font-family:${FONT};font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${C.mute}">${name}</p>
+      <p style="margin:8px 0 0;font-family:${FONT};font-size:15px;color:${C.inkSoft};line-height:1.6">Relevé indisponible ce matin : le service de prévision n'a pas répondu. Normale, tendance et projections restent consultables sur la fiche de la ville.</p>
+      ${links}
+    </td></tr>`
   }
 
-  const info = anomaly !== null ? anomalyLabel(anomaly) : null
-  const advice = info ? healthAdvice(info.severity) : ""
-  const narrative = anomaly !== null ? climateNarrative(anomaly, proj2050, month) : ""
+  const advice = dailyAdvice({ apparentTempMax, tempMin, caniculeStreak })
+  const blocks: string[] = []
+
+  if (advice) blocks.push(calloutBlock(advice.title, advice.text, advice.tone))
+
+  if ((caniculeStreak ?? 0) >= 3) {
+    blocks.push(calloutBlock(
+      "Chaleur qui dure",
+      `Ressenti maximal &ge; 35&nbsp;°C depuis <strong>${caniculeStreak} jours</strong>. Le corps récupère mal quand la chaleur s'installe. Ce compteur n'est pas la vigilance officielle : consultez <a href="https://vigilance.meteofrance.fr" style="color:${C.ink}">vigilance.meteofrance.fr</a>.`,
+      "chaud",
+    ))
+  }
+
+  if (tempMin != null && tempMin <= 0 && !(advice && advice.title === "Nuit de gel")) {
+    blocks.push(calloutBlock("Nuit de gel", `Minimale prévue : ${fmtTemp(tempMin)}.`, "froid"))
+  }
+
+  const climateLines: string[] = []
+  if (trend != null) {
+    climateLines.push(`En 30 ans, la normale ${deMonth(month)} a déjà bougé de <strong>${fmtDeltaTemp(trend)}</strong> à ${name} (ERA5, années 1990 comparées à 2015-2024). Une journée, c'est de la météo ; cette dérive, c'est le climat.`)
+  }
+  if (projection?.central != null) {
+    const range = projection.low != null && projection.high != null && projection.high - projection.low >= 0.1
+      ? `, entre ${fmtDeltaTemp(projection.low)} et ${fmtDeltaTemp(projection.high)} selon les scénarios`
+      : ""
+    climateLines.push(`${SEASON_2050[season]} à ${name} : <strong>${fmtDeltaTemp(projection.central)}</strong> par rapport à 2000-2020 (scénario intermédiaire SSP2-4.5${range}).`)
+  }
+  if (climateLines.length) {
+    blocks.push(calloutBlock("Le climat derrière la météo", climateLines.join("<br><br>"), "neutre"))
+  }
+
+  if (climateTwin) {
+    blocks.push(calloutBlock(
+      "Jumeau du jour",
+      `Aujourd'hui, ${name} a le même ressenti maximal que <strong>${escapeHtml(climateTwin.name)}</strong> (${escapeHtml(climateTwin.country)}).`,
+      "neutre",
+    ))
+  }
+
+  const anomalyLine = anomaly != null
+    ? `<p style="margin:10px 0 0;font-family:${FONT};font-size:16px;font-weight:700;color:${anomalyColor(anomaly)}">${fmtDeltaTemp(anomaly)} par rapport à un ${monthName} normal${normal != null ? ` (${fmtTemp(normal)})` : ""} : ${anomalyWords(anomaly)}.</p>`
+    : `<p style="margin:10px 0 0;font-family:${FONT};font-size:14px;color:${C.mute}">Normale du mois indisponible pour cette ville.</p>`
 
   return `
-    <tr>
-      <td style="padding:24px 0;border-top:1px solid #f3f4f6">
-        <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#9ca3af">${name}</p>
+    <tr><td style="padding:22px 0;border-top:1px solid ${C.line}">
+      <p style="margin:0;font-family:${FONT};font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${C.mute}">${name}</p>
+      <p style="margin:8px 0 0;font-family:${FONT};font-size:44px;font-weight:800;color:${C.ink};line-height:1">${fmt(apparentTempMax, 0)}°<span style="font-size:15px;color:${C.mute};font-weight:400"> ressenti max prévu</span></p>
+      ${anomalyLine}
+      ${blocks.join("")}
+      ${links}
+    </td></tr>`
+}
 
-        <p style="margin:8px 0 0;font-size:40px;font-weight:900;color:#111111;line-height:1">
-          ${fmt(apparentTempMax)}°
-          <span style="font-size:16px;color:#9ca3af;font-weight:400"> ressenti max aujourd'hui</span>
-        </p>
-
-        ${info && anomaly !== null ? `
-        <p style="margin:8px 0 0;font-size:14px;font-weight:700;color:${info.color}">${info.label} &mdash; ${anomaly > 0 ? "+" : ""}${anomaly}°C vs normale de saison${normal !== null ? ` (${fmt(normal)}°C)` : ""}</p>
-        ` : ""}
-
-        ${advice ? `
-        <table width="100%" cellpadding="0" cellspacing="0" style="margin:14px 0 0">
-          <tr>
-            <td style="background:#fffbeb;border-left:3px solid #f97316;border-radius:0 8px 8px 0;padding:12px 16px">
-              <p style="margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#92400e">Conseils du jour</p>
-              <p style="margin:6px 0 0;font-size:13px;color:#78350f;line-height:1.6">${advice}</p>
-            </td>
-          </tr>
-        </table>
-        ` : ""}
-
-        ${caniculeStreak && caniculeStreak >= 3 ? `
-        <table width="100%" cellpadding="0" cellspacing="0" style="margin:14px 0 0">
-          <tr>
-            <td style="background:#fef2f2;border-left:3px solid #dc2626;border-radius:0 8px 8px 0;padding:12px 16px">
-              <p style="margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#991b1b">Alerte canicule</p>
-              <p style="margin:6px 0 0;font-size:13px;color:#7f1d1d;line-height:1.6">Episode en cours depuis <strong>${caniculeStreak} jour${caniculeStreak > 1 ? "s" : ""}</strong> (ressenti &ge; 35°C). Un épisode caniculaire prolongé est le facteur de risque le plus dangereux : le corps ne récupère pas entre les journées.</p>
-            </td>
-          </tr>
-        </table>
-        ` : caniculeStreak && caniculeStreak > 0 ? `
-        <p style="margin:14px 0 0;font-size:13px;color:#dc2626;font-weight:600">Ressenti &ge; 35°C depuis ${caniculeStreak} jour${caniculeStreak > 1 ? "s" : ""} &mdash; seuil d'alerte canicule.</p>
-        ` : ""}
-
-        ${climateTwin ? `
-        <table width="100%" cellpadding="0" cellspacing="0" style="margin:14px 0 0">
-          <tr>
-            <td style="background:#f0fdf4;border-left:3px solid #16a34a;border-radius:0 8px 8px 0;padding:12px 16px">
-              <p style="margin:0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#14532d">Jumeau climatique du jour</p>
-              <p style="margin:6px 0 0;font-size:13px;color:#166534;line-height:1.6">Aujourd'hui, <strong>${name}</strong> vit la même chaleur que <strong>${climateTwin.name}</strong> (${climateTwin.country}). Une façon concrète de visualiser votre ressenti à l'échelle mondiale.</p>
-            </td>
-          </tr>
-        </table>
-        ` : ""}
-
-        ${narrative ? `
-        <p style="margin:14px 0 0;font-size:13px;color:#6b7280;line-height:1.7">${narrative}</p>
-        ` : ""}
-
-        <p style="margin:14px 0 0;display:flex;gap:16px;align-items:center">
-          <a href="${BASE_URL}/a/${slug}" style="font-size:12px;color:#f97316;font-weight:600;text-decoration:none">Voir la carte climatique de ${name} &rarr;</a>
-          ${unsubToken ? `<a href="${BASE_URL}/api/unsubscribe-city?token=${unsubToken}&city=${slug}" style="font-size:11px;color:#d1d5db;text-decoration:none">Retirer cette ville</a>` : ""}
-        </p>
-        ${unsubToken ? `<p style="margin:6px 0 0"><a href="${BASE_URL}/profil?token=${unsubToken}" style="font-size:11px;color:#d1d5db;text-decoration:none">Gerer mon profil</a></p>` : ""}
-      </td>
-    </tr>`
+function mythBlock(month: number, date: Date): string {
+  const myth = mythOfTheDay(seasonOf(month), date)
+  return `
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px">
+    <tr><td style="background:${C.signal};border-radius:16px;padding:20px 22px">
+      <p style="margin:0;font-family:${FONT};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:${C.ink}">Idée reçue du jour</p>
+      <p style="margin:10px 0 0;font-family:${FONT};font-size:15px;color:${C.inkSoft};line-height:1.5">« ${escapeHtml(myth.claim)} »</p>
+      <p style="margin:8px 0 0;font-family:${FONT};font-size:19px;font-weight:800;color:${C.ink};line-height:1.3">${escapeHtml(myth.answer)}</p>
+      <p style="margin:12px 0 0"><a href="${BASE_URL}/idees-recues#${myth.slug}" style="font-family:${FONT};font-size:14px;font-weight:700;color:${C.ink};text-decoration:underline">Comprendre en 1 minute &rarr;</a></p>
+    </td></tr>
+  </table>`
 }
 
 export function buildDailyEmailHtml({
@@ -139,73 +190,46 @@ export function buildDailyEmailHtml({
   dateLabel,
   month,
   unsubToken,
+  date = new Date(),
 }: {
   firstName: string
   cities: CityEmailData[]
   dateLabel: string
   month: number
   unsubToken?: string
+  date?: Date
 }) {
-  const cityBlocks = cities.map(c => buildCityBlock(c, month, unsubToken)).join("")
-  const unsubUrl = unsubToken
-    ? `${BASE_URL}/profil?token=${unsubToken}`
-    : `${BASE_URL}/notifications`
+  const cityBlocks = cities.map((c) => buildCityBlock(c, month, unsubToken)).join("")
+  const profilUrl = unsubToken ? `${BASE_URL}/profil?token=${unsubToken}` : `${BASE_URL}/notifications`
+  const unsubUrl = unsubToken ? `${BASE_URL}/profil/desabonnement?token=${unsubToken}` : `${BASE_URL}/notifications`
 
   const intro = cities.length === 1
-    ? `Voici votre briefing thermique pour <strong>${cities[0].name}</strong>.`
-    : `Voici votre briefing thermique pour vos ${cities.length} villes suivies.`
+    ? `Le chiffre du jour de <strong>${escapeHtml(cities[0].name)}</strong>, en 10 secondes.`
+    : `Le chiffre du jour de vos ${cities.length} villes, en 10 secondes.`
 
-  return `<!DOCTYPE html>
-<html lang="fr">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f5f4f0;font-family:'DM Sans',system-ui,sans-serif;color:#111111">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px">
-    <tr><td align="center">
-      <table width="100%" style="max-width:520px;background:#ffffff;border-radius:20px;overflow:hidden">
+  const header = `
+    <p style="margin:0;font-family:${FONT};font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:${C.signal}">
+      <a href="${BASE_URL}" style="color:${C.signal};text-decoration:none">cestchaud&#8203;.fr</a> &middot; briefing matinal
+    </p>
+    <p style="margin:6px 0 0;font-family:${FONT};font-size:22px;font-weight:800;color:#ffffff">${escapeHtml(dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1))}</p>`
 
-        <tr>
-          <td style="background:#f97316;padding:24px 36px">
-            <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#ffffff">
-              <a href="${BASE_URL}" style="color:#ffffff;text-decoration:none">cestchaud&#8203;.fr</a> &middot; briefing matinal
-            </p>
-            <p style="margin:6px 0 0;font-size:20px;font-weight:900;color:#ffffff;text-transform:capitalize">${dateLabel}</p>
-          </td>
-        </tr>
+  const body = `
+    <p style="margin:0 0 6px;font-family:${FONT};font-size:15px;color:${C.inkSoft};line-height:1.6">
+      ${firstName.trim() ? `Bonjour ${escapeHtml(firstName.trim())},` : "Bonjour,"}<br>${intro}
+    </p>
+    <p style="margin:0 0 4px;font-family:${FONT};font-size:13px;color:${C.mute};line-height:1.6">
+      Ressenti du jour : prévision Open-Meteo de ce matin. Normales : réanalyse ERA5, 1991-2020. Projections : modèles du GIEC (CMIP6).
+    </p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">${cityBlocks}</table>
+    ${mythBlock(month, date)}
+    <p style="margin:0 0 6px;font-family:${FONT};font-size:14px;font-weight:700;color:${C.ink}">Comment lire ces chiffres</p>
+    <p style="margin:0 0 18px;font-family:${FONT};font-size:13px;color:${C.inkSoft};line-height:1.7">
+      Le ressenti maximal est la température apparente calculée par Open-Meteo à partir de l'air, de l'humidité, du vent et du rayonnement. La normale est la moyenne de ce ressenti pour le même mois entre 1991 et 2020. L'écart du jour, c'est la différence entre les deux : il se lit pareil en janvier et en juillet. <a href="${BASE_URL}/a-propos" style="color:${C.ink}">La méthode en détail</a>.
+    </p>`
 
-        <tr>
-          <td style="padding:28px 36px 8px">
-            <p style="margin:0;font-size:15px;color:#374151;line-height:1.6">
-              Bonjour ${firstName},<br>
-              ${intro}
-              Chaque matin, nous compilons pour vous les données ERA5 de la veille et les projections climatiques GIEC CMIP6.
-            </p>
-            <table width="100%" cellpadding="0" cellspacing="0">
-              ${cityBlocks}
-            </table>
-          </td>
-        </tr>
+  const footer = emailFooterText(`cestchaud.fr &middot; Open-Meteo, Copernicus ERA5 &amp; GIEC CMIP6<br>
+    <a href="${profilUrl}" style="color:${C.inkSoft};text-decoration:underline">Gérer mon profil</a> &middot;
+    <a href="${unsubUrl}" style="color:${C.inkSoft};text-decoration:underline">Se désabonner</a>`)
 
-        <tr>
-          <td style="padding:24px 36px;background:#f9fafb;border-top:1px solid #f3f4f6">
-            <p style="margin:0;font-size:12px;font-weight:700;color:#374151">Pourquoi ces chiffres ?</p>
-            <p style="margin:6px 0 0;font-size:12px;color:#6b7280;line-height:1.7">
-              Le "ressenti max" combine température, humidité et vent (indice UTCI). Les normales de saison sont calculées sur la période ERA5 1981-2010. L'anomalie mesure l'écart entre aujourd'hui et cette référence historique pour le même mois. Les projections 2050 sont issues du modèle CMIP6 sous scénario SSP2-4.5 (trajectoire intermédiaire).
-            </p>
-          </td>
-        </tr>
-
-        <tr>
-          <td style="padding:20px 36px 28px;border-top:1px solid #f3f4f6">
-            <p style="margin:0;font-size:11px;color:#d1d5db;text-align:center">
-              cestchaud.fr &middot; données ERA5 &amp; GIEC CMIP6 &middot;
-              <a href="${unsubUrl}" style="color:#d1d5db">Gerer mon profil / se desabonner</a>
-            </p>
-          </td>
-        </tr>
-
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`
+  return emailShell({ preheader: `Votre briefing du ${escapeHtml(dateLabel)}`, header, body, footer })
 }

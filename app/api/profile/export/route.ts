@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSql } from "@/lib/db"
+import { isToken, RETENTION } from "@/lib/subscription"
 
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token")
-  if (!token) return NextResponse.json({ error: "Token manquant" }, { status: 400 })
+  if (!isToken(token)) return NextResponse.json({ error: "Lien invalide" }, { status: 400 })
 
   const sql = getSql()
   const rows = await sql`
@@ -31,7 +32,7 @@ export async function GET(req: NextRequest) {
       beta_tester: rows[0].beta_tester,
     },
     cities: rows[0].cities ?? [],
-    data_retention: "Données conservées pendant la durée de l'abonnement + 3 ans (RGPD Art. 17)",
+    data_retention: RETENTION.long,
   }
 
   return new NextResponse(JSON.stringify(data, null, 2), {

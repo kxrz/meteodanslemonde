@@ -59,13 +59,18 @@ function emptyResult() {
 
 export async function fetchCityWeather(lat: number, lon: number) {
   try {
-    const url = meteoUrl("forecast", { latitude: lat, longitude: lon, daily: "apparent_temperature_max,weathercode", forecast_days: 1 })
+    const url = meteoUrl("forecast", { latitude: lat, longitude: lon, daily: "apparent_temperature_max,temperature_2m_min,weathercode", forecast_days: 1, timezone: "Europe/Paris" })
     const res = await fetch(url, { next: { revalidate: 86400 } })
     if (!res.ok) return null
     const data = await res.json()
+    const atMax = data.daily?.apparent_temperature_max?.[0]
+    const tMin = data.daily?.temperature_2m_min?.[0]
+    // Valeur absente = null (jamais un 0 silencieux : 0 °C est une vraie valeur en hiver)
+    if (atMax == null) return null
     return {
-      apparent_temp_max: Math.round(data.daily.apparent_temperature_max[0]) as number,
-      weathercode: data.daily.weathercode[0] as number,
+      apparent_temp_max: Math.round(atMax) as number,
+      temp_min: tMin == null ? null : (Math.round(tMin) as number),
+      weathercode: data.daily.weathercode?.[0] as number,
     }
   } catch {
     return null

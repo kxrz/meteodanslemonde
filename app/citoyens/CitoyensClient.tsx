@@ -1,11 +1,18 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import SiteHeader from "@/components/SiteHeader"
-import PageFooter from "@/components/PageFooter"
-import Breadcrumb from "@/components/Breadcrumb"
+import { useId, useMemo, useRef, useState } from "react"
+import Title from "@/components/ui/Title"
+import Hl from "@/components/ui/Hl"
+import Eyebrow from "@/components/ui/Eyebrow"
+import Card from "@/components/ui/Card"
+import Button from "@/components/ui/Button"
+import Explain from "@/components/ui/Explain"
+import { buildLetter, theSeason, type LetterFacts } from "@/lib/elus-letter"
+import { fmtDeltaTemp, fmtTemp } from "@/lib/format"
+import { MONTHS } from "@/lib/season"
+import { cn } from "@/lib/cn"
 
-interface Senator {
+export interface Senator {
   id: string
   civilite: string
   nom: string
@@ -21,34 +28,18 @@ interface Senator {
   deptName: string | null
 }
 
-const EMAIL_TEMPLATE = `Madame la Sénatrice, Monsieur le Sénateur,
-
-Je vous écris en tant que citoyen(ne), pour vous alerter sur une réalité que les données scientifiques rendent désormais incontournable : le dérèglement climatique n'est plus une projection lointaine, il est mesurable aujourd'hui, dans nos villes, jour après jour.
-
-Le site cestchaud.fr, qui s'appuie sur les données ERA5 de Copernicus (programme européen d'observation de la Terre) et les modèles CMIP6 du GIEC, permet de visualiser en temps réel les anomalies de température dans les grandes villes françaises. Les chiffres sont édifiants : des ressentis thermiques qui dépassent régulièrement la normale de 8 à 15°C, des records battus presque chaque été, et des projections qui annoncent entre +2°C et +4°C supplémentaires sur ces pics de chaleur d'ici 2050.
-
-Ces écarts ne sont pas des abstractions statistiques. Ils représentent des nuits sans sommeil, des personnes âgées en danger, des travailleurs en plein air épuisés, des agriculteurs qui voient leurs récoltes brûler. La chaleur extrême tue davantage en France que tous les autres événements climatiques réunis.
-
-En tant que représentant(e) de notre territoire au Sénat, vous avez le pouvoir d'agir sur les politiques d'adaptation, sur les normes de construction, sur la protection des espaces verts urbains, sur les plans de prévention canicule. Ces décisions se prennent maintenant, pour un impact dans dix ans.
-
-Je vous encourage à prendre connaissance des données disponibles sur votre territoire via cestchaud.fr, et à faire de la résilience climatique un axe prioritaire de votre travail législatif.
-
-Merci de l'attention que vous porterez à ce message.
-
-Avec mes cordiales salutations,
-[Votre prénom et nom]
-[Votre ville]`
+interface CityOption { id: string; name: string; facts: LetterFacts }
 
 const COMMISSION_FILTERS = [
-  { value: "all", label: "Toutes", short: "Toutes" },
-  { value: "env", label: "Environnement & territoire", short: "Environnement" },
-  { value: "eco", label: "Affaires économiques", short: "Économie" },
-  { value: "fin", label: "Finances", short: "Finances" },
-  { value: "lois", label: "Commission des lois", short: "Lois" },
-  { value: "social", label: "Affaires sociales", short: "Social" },
-  { value: "culture", label: "Culture & éducation", short: "Culture" },
-  { value: "europe", label: "Affaires européennes", short: "Europe" },
-  { value: "defense", label: "Défense & affaires étrangères", short: "Défense" },
+  { value: "all", short: "Toutes" },
+  { value: "env", short: "Environnement" },
+  { value: "eco", short: "Économie" },
+  { value: "fin", short: "Finances" },
+  { value: "lois", short: "Lois" },
+  { value: "social", short: "Social" },
+  { value: "culture", short: "Culture" },
+  { value: "europe", short: "Europe" },
+  { value: "defense", short: "Défense" },
 ]
 
 const COMMISSION_KEYWORDS: Record<string, string> = {
@@ -63,389 +54,286 @@ const COMMISSION_KEYWORDS: Record<string, string> = {
 }
 
 const COMMISSION_SHORT: Record<string, string> = {
-  "aménagement du territoire": "Environnement & territoire",
+  "aménagement du territoire": "Aménagement du territoire et développement durable",
   "affaires économiques": "Affaires économiques",
-  "affaires étrangères": "Défense & affaires étrangères",
+  "affaires étrangères": "Affaires étrangères et défense",
   "affaires européennes": "Affaires européennes",
   "affaires sociales": "Affaires sociales",
-  "culture": "Culture & éducation",
-  "finances": "Finances",
-  "lois constitutionnelles": "Commission des lois",
+  culture: "Culture et éducation",
+  finances: "Finances",
+  "lois constitutionnelles": "Lois",
 }
 
 function shortCommission(c: string): string {
   const lower = c.toLowerCase()
-  for (const [kw, short] of Object.entries(COMMISSION_SHORT)) {
-    if (lower.includes(kw)) return short
-  }
+  for (const [kw, short] of Object.entries(COMMISSION_SHORT)) if (lower.includes(kw)) return short
   const match = c.match(/Commission[^|]+/)
   return match ? match[0].trim() : c
 }
 
 function getRole(c: string): string {
-  if (c.startsWith("Président") || c.startsWith("Présidente")) return "Président(e)"
-  if (c.startsWith("Vice-Président")) return "Vice-Président(e)"
+  if (c.startsWith("Président")) return "Président(e)"
+  if (c.startsWith("Vice-Président")) return "Vice-président(e)"
   return "Membre"
-}
-
-function buildMailto(senator: Senator, template: string): string {
-  const subject = encodeURIComponent("Urgence climatique · données cestchaud.fr")
-  const body = encodeURIComponent(template)
-  return `mailto:${senator.email}?subject=${subject}&body=${body}`
 }
 
 function normStr(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
 }
 
-export default function CitoyensClient({ senators }: { senators: Senator[] }) {
+function buildMailto(email: string, letter: string): string {
+  return `mailto:${email}?subject=${encodeURIComponent("Le climat change déjà dans notre territoire")}&body=${encodeURIComponent(letter)}`
+}
+
+export default function CitoyensClient({ senators, cities }: { senators: Senator[]; cities: CityOption[] }) {
+  const [cityId, setCityId] = useState("")
+  const [edited, setEdited] = useState<string | null>(null)
+  const [showLetter, setShowLetter] = useState(false)
+  const [copyState, setCopyState] = useState<"idle" | "ok" | "fallback">("idle")
   const [search, setSearch] = useState("")
   const [commission, setCommission] = useState("all")
   const [dept, setDept] = useState("")
-  const [template, setTemplate] = useState(EMAIL_TEMPLATE)
-  const [showTemplate, setShowTemplate] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [limit, setLimit] = useState(12)
+  const textRef = useRef<HTMLTextAreaElement>(null)
+  const ids = { city: useId(), letter: useId(), search: useId(), dept: useId(), list: useId() }
 
-  // Build sorted département list from data
+  const city = cities.find((c) => c.id === cityId) ?? null
+  const generated = useMemo(() => buildLetter(city?.facts ?? null), [city])
+  const letter = edited ?? generated
+
   const deptOptions = useMemo(() => {
     const seen = new Map<string, string>()
-    for (const s of senators) {
-      if (s.dept && s.deptName) seen.set(s.dept, s.deptName)
-    }
-    return [...seen.entries()]
-      .sort((a, b) => {
-        const aNum = parseInt(a[0]) || 999
-        const bNum = parseInt(b[0]) || 999
-        return aNum - bNum
-      })
-      .map(([num, name]) => ({ num, name }))
+    for (const s of senators) if (s.dept && s.deptName) seen.set(s.dept, s.deptName)
+    return [...seen.entries()].sort((a, b) => (parseInt(a[0]) || 999) - (parseInt(b[0]) || 999)).map(([num, name]) => ({ num, name }))
   }, [senators])
 
   const filtered = useMemo(() => {
     let list = senators
-
     if (commission !== "all") {
       const kw = COMMISSION_KEYWORDS[commission]
-      list = list.filter(s => s.commissions.some(c => c.toLowerCase().includes(kw)))
+      list = list.filter((s) => s.commissions.some((c) => c.toLowerCase().includes(kw)))
     }
-
-    if (dept) {
-      list = list.filter(s => s.dept === dept)
-    }
-
+    if (dept) list = list.filter((s) => s.dept === dept)
     if (search.trim()) {
       const q = normStr(search)
-      list = list.filter(s => normStr(s.fullName).includes(q))
+      list = list.filter((s) => normStr(s.fullName).includes(q))
     }
-
-    return [...list].sort((a, b) => {
-      if (a.isEnvCommission && !b.isEnvCommission) return -1
-      if (!a.isEnvCommission && b.isEnvCommission) return 1
-      return a.nom.localeCompare(b.nom, "fr")
-    })
+    return [...list].sort((a, b) => Number(b.isEnvCommission) - Number(a.isEnvCommission) || a.nom.localeCompare(b.nom, "fr"))
   }, [senators, search, commission, dept])
 
-  const envCount = senators.filter(s => s.isEnvCommission).length
-  const hasFilters = search || commission !== "all" || dept
+  const reachable = senators.filter((s) => s.email).length
+  const envCount = senators.filter((s) => s.isEnvCommission).length
+  const hasFilters = !!search || commission !== "all" || !!dept
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(letter)
+      setCopyState("ok")
+    } catch {
+      // Presse-papiers refusé (navigateur, permissions) : on ouvre et sélectionne le texte
+      setShowLetter(true)
+      requestAnimationFrame(() => {
+        textRef.current?.focus()
+        textRef.current?.select()
+      })
+      setCopyState("fallback")
+    }
+  }
+
+  const f = city?.facts
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
-      <SiteHeader asLink />
-      <Breadcrumb crumbs={[{ label: "Écrire à vos élus" }]} />
+    <div className="flex flex-col gap-10">
+      <header className="flex max-w-3xl flex-col gap-4 pt-2 sm:pt-6">
+        <Eyebrow>Agir · {reachable} sénateurs joignables</Eyebrow>
+        <Title as="h1" size="hero" animate>
+          Vos élus votent. <Hl tone="chaud">Écrivez-leur.</Hl>
+        </Title>
+        <p className="text-[18px] leading-snug text-ink-soft">Une lettre courte, avec les vrais chiffres de votre ville. Vous la relisez, vous l&apos;envoyez.</p>
+      </header>
 
-      <div className="flex-1 flex flex-col lg:flex-row">
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        {/* ── Étape 1 : la lettre ── */}
+        <section aria-labelledby="etape-1" className="flex min-w-0 flex-col gap-4 lg:sticky lg:top-20 lg:max-h-[calc(100dvh-6rem)] lg:overflow-y-auto lg:pb-4 lg:pr-1">
+          <h2 id="etape-1" className="font-display text-2xl font-extrabold">1. Votre ville</h2>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor={ids.city} className="text-[15px] font-semibold">Les chiffres de quelle ville&#8239;?</label>
+            <select
+              id={ids.city}
+              value={cityId}
+              onChange={(e) => { setCityId(e.target.value); setEdited(null); setCopyState("idle") }}
+              className="min-h-12 w-full rounded-2xl border-2 border-ink bg-white px-4 text-[16px] text-ink"
+            >
+              <option value="">Choisir parmi les {cities.length} villes suivies</option>
+              {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
 
-        {/* Left panel */}
-        <div className="lg:w-[36%] shrink-0 p-5 lg:p-8 flex flex-col border-b lg:border-b-0 border-black/[0.06] lg:sticky lg:top-0 lg:h-screen">
-          <div className="space-y-5">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                Action citoyenne
-              </p>
-              <h1 className="text-3xl font-black text-neutral-900 leading-tight">
-                Écrire à vos élus
-              </h1>
-              <p className="text-sm text-neutral-500 mt-3 leading-relaxed">
-                Les données climatiques sont réelles. Vos représentants au Sénat ont le pouvoir d'agir. Écrivez-leur : un email citoyen compte.
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-white rounded-2xl p-4">
-                <p className="text-2xl font-black text-neutral-900">{senators.filter(s => s.email).length}</p>
-                <p className="text-xs text-neutral-500 mt-0.5">sénateurs joignables</p>
+          {f && (
+            <Card tone="ink" className="grid grid-cols-3 gap-3 p-4 sm:p-5" as="div">
+              <div className="min-w-0">
+                <p className="flex items-center gap-1 font-mono text-[12px] uppercase tracking-wider text-paper/75">Normale <Explain term="normale" invert /></p>
+                <p className="font-display text-2xl font-extrabold">{fmtTemp(f.normalMonth)}</p>
+                <p className="text-[13px] text-paper/75">{MONTHS[f.month]}, 1991-2020</p>
               </div>
-              <div className="bg-orange-50 rounded-2xl p-4 border border-orange-100">
-                <p className="text-2xl font-black text-orange-600">{envCount}</p>
-                <p className="text-xs text-neutral-500 mt-0.5">commission environnement</p>
+              <div className="min-w-0">
+                <p className="flex items-center gap-1 font-mono text-[12px] uppercase tracking-wider text-paper/75">30 ans <Explain term="tendance" invert /></p>
+                <p className="font-display text-2xl font-extrabold text-signal">{fmtDeltaTemp(f.trendSeason)}</p>
+                <p className="text-[13px] text-paper/75">{theSeason(f.season)}, déjà</p>
               </div>
-            </div>
+              <div className="min-w-0">
+                <p className="flex items-center gap-1 font-mono text-[12px] uppercase tracking-wider text-paper/75">2050 <Explain term="projection" invert /></p>
+                <p className="font-display text-2xl font-extrabold text-signal">{fmtDeltaTemp(f.proj2050?.central)}</p>
+                <p className="text-[13px] text-paper/75">{f.proj2050?.low != null && f.proj2050?.high != null && f.proj2050.high - f.proj2050.low >= 0.1 ? <>de {fmtDeltaTemp(f.proj2050.low)} à {fmtDeltaTemp(f.proj2050.high)}</> : "SSP2-4.5"}</p>
+              </div>
+            </Card>
+          )}
 
-            {/* Template */}
-            <div className="bg-neutral-950 rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-white">Modèle d'email</p>
-                <button
-                  onClick={() => setShowTemplate(!showTemplate)}
-                  className="text-[11px] text-white/60 hover:text-white transition-colors"
-                >
-                  {showTemplate ? "Masquer" : "Personnaliser →"}
+          <div className="flex flex-col gap-3 rounded-[var(--radius-card)] border-2 border-ink bg-white p-4">
+            <button
+              type="button"
+              aria-expanded={showLetter}
+              aria-controls={ids.letter}
+              onClick={() => setShowLetter((v) => !v)}
+              className="flex min-h-11 items-center justify-between gap-3 text-left font-display text-lg font-extrabold"
+            >
+              {showLetter ? "Masquer la lettre" : "Lire et modifier la lettre"}
+              <svg className={cn("h-5 w-5 shrink-0 transition-transform", showLetter && "rotate-180")} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            <div id={ids.letter} hidden={!showLetter} className="flex flex-col gap-2">
+              <label htmlFor={`${ids.letter}-txt`} className="text-[14px] font-semibold">Texte de la lettre (modifiable)</label>
+              <textarea
+                id={`${ids.letter}-txt`}
+                ref={textRef}
+                value={letter}
+                onChange={(e) => setEdited(e.target.value)}
+                rows={14}
+                className="w-full resize-y rounded-2xl border-2 border-line bg-paper p-3 text-[15px] leading-relaxed text-ink focus:border-ink focus:outline-none"
+              />
+              {edited != null && (
+                <button type="button" onClick={() => setEdited(null)} className="min-h-11 self-start text-[14px] font-semibold underline underline-offset-2">
+                  Revenir au modèle
                 </button>
-              </div>
-              {showTemplate ? (
-                <>
-                  <textarea
-                    value={template}
-                    onChange={e => setTemplate(e.target.value)}
-                    className="w-full text-[11px] text-white/80 bg-white/5 rounded-xl p-3 resize-none h-52 leading-relaxed focus:outline-none focus:bg-white/10 transition-colors"
-                  />
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(template)
-                      setCopied(true)
-                      setTimeout(() => setCopied(false), 2000)
-                    }}
-                    className="mt-2 text-[11px] text-white/60 hover:text-white transition-colors"
-                  >
-                    {copied ? "✓ Copié" : "Copier le texte"}
-                  </button>
-                </>
-              ) : (
-                <p className="text-[11px] text-white/50 leading-relaxed line-clamp-3">
-                  {template.substring(0, 160)}…
-                </p>
               )}
             </div>
-
-            <p className="text-[11px] text-neutral-400 leading-relaxed">
-              En cliquant sur "Écrire un email", votre messagerie s'ouvre avec l'objet et le corps pré-remplis. Vous gardez la main avant d'envoyer.
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="ghost" onClick={copy}>Copier la lettre</Button>
+              <p aria-live="polite" className="text-[14px] font-semibold">
+                {copyState === "ok" ? "Copiée ✓" : copyState === "fallback" ? "Texte sélectionné : copiez-le (Ctrl+C, ou appui long puis Copier)." : ""}
+              </p>
+            </div>
           </div>
-        </div>
+          <p className="text-[13px] text-mute">
+            Le bouton « Écrire » ouvre votre messagerie avec la lettre déjà remplie. Rien ne part sans vous. Sources : Copernicus ERA5, GIEC CMIP6.
+          </p>
+        </section>
 
-        {/* Right panel */}
-        <div className="flex-1 lg:overflow-y-auto">
-
-          {/* Filters */}
-          <div className="sticky top-0 bg-[#f5f4f0]/95 backdrop-blur-sm z-10 px-5 pt-4 pb-3 lg:px-8 border-b border-black/[0.06] space-y-3">
-
-            {/* Search + Dept */}
-            <div className="flex gap-2">
-              <input
-                type="search"
-                placeholder="Rechercher par nom…"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="flex-1 bg-white border border-neutral-200 rounded-xl px-4 py-2.5 text-sm placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition-colors"
-              />
-              <select
-                value={dept}
-                onChange={e => setDept(e.target.value)}
-                className="bg-white border border-neutral-200 rounded-xl px-3 py-2.5 text-sm text-neutral-700 focus:outline-none focus:border-neutral-400 transition-colors cursor-pointer"
-              >
+        {/* ── Étape 2 : l'élu ── */}
+        <section aria-labelledby="etape-2" className="flex min-w-0 flex-col gap-4">
+          <h2 id="etape-2" className="font-display text-2xl font-extrabold">2. Votre élu</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor={ids.search} className="text-[15px] font-semibold">Nom</label>
+              <input id={ids.search} type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Ex. Dupont" className="min-h-12 rounded-2xl border-2 border-ink bg-white px-4 text-[16px] placeholder:text-mute" />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor={ids.dept} className="text-[15px] font-semibold">Département</label>
+              <select id={ids.dept} value={dept} onChange={(e) => setDept(e.target.value)} className="min-h-12 w-full min-w-0 rounded-2xl border-2 border-ink bg-white px-3 text-[16px]">
                 <option value="">Tous les départements</option>
-                {deptOptions.map(d => (
-                  <option key={d.num} value={d.num}>
-                    {d.num} · {d.name}
-                  </option>
-                ))}
+                {deptOptions.map((d) => <option key={d.num} value={d.num}>{d.num} · {d.name}</option>)}
               </select>
             </div>
-
-            {/* Commission chips */}
-            <div className="flex gap-1.5 flex-wrap">
-              {COMMISSION_FILTERS.map(opt => (
-                <button
-                  key={opt.value}
-                  onClick={() => setCommission(opt.value)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap ${
-                    commission === opt.value
-                      ? opt.value === "env"
-                        ? "bg-orange-500 text-white"
-                        : "bg-neutral-900 text-white"
-                      : "bg-white text-neutral-600 hover:bg-neutral-100"
-                  }`}
-                >
-                  {opt.short}
-                </button>
-              ))}
-            </div>
-
-            {/* Result count + reset */}
-            <div className="flex items-center justify-between">
-              <p className="text-[11px] text-neutral-400">
-                {filtered.length} sénateur{filtered.length > 1 ? "s" : ""}
-                {dept && deptOptions.find(d => d.num === dept) && (
-                  <span> · {deptOptions.find(d => d.num === dept)?.name}</span>
+          </div>
+          <div role="group" aria-label="Filtrer par commission" className="flex flex-wrap gap-2">
+            {COMMISSION_FILTERS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                aria-pressed={commission === opt.value}
+                onClick={() => setCommission(opt.value)}
+                className={cn(
+                  "min-h-11 rounded-full border-2 px-4 text-[14px] font-semibold",
+                  commission === opt.value ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink hover:border-ink",
                 )}
-              </p>
-              {hasFilters && (
-                <button
-                  onClick={() => { setSearch(""); setCommission("all"); setDept("") }}
-                  className="text-[11px] text-neutral-400 hover:text-neutral-700 transition-colors"
-                >
-                  Effacer les filtres
-                </button>
-              )}
-            </div>
+              >
+                {opt.short}
+              </button>
+            ))}
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[14px] text-ink-soft" aria-live="polite">
+              {filtered.length} sénateur{filtered.length > 1 ? "s" : ""} · {envCount} à la commission environnement
+            </p>
+            {hasFilters && (
+              <button type="button" onClick={() => { setSearch(""); setCommission("all"); setDept("") }} className="min-h-11 text-[14px] font-semibold underline underline-offset-2">
+                Effacer les filtres
+              </button>
+            )}
           </div>
 
-          {/* List */}
-          <div className="p-5 lg:p-8 pt-4">
-            <div className="space-y-2">
-              {filtered.map(senator => (
-                <SenatorCard key={senator.id} senator={senator} template={template} />
-              ))}
-              {filtered.length === 0 && (
-                <div className="text-center py-16 text-neutral-400 text-sm">
-                  Aucun résultat
-                  {search && <span> pour "{search}"</span>}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+          <ul id={ids.list} className="flex flex-col gap-2">
+            {filtered.slice(0, limit).map((s) => <SenatorCard key={s.id} senator={s} letter={letter} />)}
+          </ul>
+          {filtered.length > limit && (
+            <Button variant="ghost" onClick={() => setLimit((l) => l + 24)} className="self-start">
+              Voir plus ({filtered.length - limit} autres)
+            </Button>
+          )}
+          {filtered.length === 0 && (
+            <p className="rounded-2xl bg-paper-deep p-6 text-center text-[15px]">Aucun résultat{search && <> pour « {search} »</>}.</p>
+          )}
+        </section>
       </div>
-      <PageFooter className="px-5 py-3" />
     </div>
   )
 }
 
-function SenatorCard({ senator, template }: { senator: Senator; template: string }) {
+function SenatorCard({ senator, letter }: { senator: Senator; letter: string }) {
   const [open, setOpen] = useState(false)
-
-  const mainCommission = senator.commissions.find(c =>
-    c.toLowerCase().includes("aménagement du territoire")
-  ) || senator.commissions[0] || ""
-
-  const commissionLabel = shortCommission(mainCommission)
+  const panelId = useId()
+  const main = senator.commissions.find((c) => c.toLowerCase().includes("aménagement du territoire")) || senator.commissions[0] || ""
 
   return (
-    <div
-      className={`bg-white rounded-2xl overflow-hidden ${
-        senator.isEnvCommission ? "ring-1 ring-orange-200" : ""
-      }`}
-    >
-      <button
-        className="w-full text-left px-4 py-3.5 flex items-center gap-3"
-        onClick={() => setOpen(!open)}
-      >
-        {/* Avatar */}
-        <div
-          className={`w-9 h-9 rounded-full shrink-0 flex items-center justify-center text-xs font-black ${
-            senator.isEnvCommission
-              ? "bg-orange-100 text-orange-700"
-              : "bg-neutral-100 text-neutral-600"
-          }`}
-        >
-          {senator.prenom[0]}{senator.nom[0]}
-        </div>
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-bold text-neutral-900 truncate">
-              {senator.fullName}
-            </p>
-            {senator.deptName && (
-              <span className="text-[10px] bg-neutral-100 text-neutral-500 font-semibold px-1.5 py-0.5 rounded shrink-0">
-                {senator.dept}
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-neutral-500 truncate mt-0.5">
-            {commissionLabel}
-            {senator.deptName && (
-              <span className="text-neutral-400"> · {senator.deptName}</span>
-            )}
-          </p>
-        </div>
-
-        {/* Right */}
-        <div className="flex items-center gap-2 shrink-0">
-          {senator.isEnvCommission && (
-            <span className="hidden sm:inline text-[10px] bg-orange-100 text-orange-700 font-semibold px-2 py-0.5 rounded-full">
-              Env.
-            </span>
-          )}
-          {senator.email && (
-            <span className="text-[10px] bg-neutral-100 text-neutral-500 font-medium px-2 py-0.5 rounded-full hidden sm:inline">
-              ✉
-            </span>
-          )}
-          <svg
-            className={`w-4 h-4 text-neutral-300 transition-transform ${open ? "rotate-180" : ""}`}
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
+    <li className={cn("overflow-hidden rounded-2xl border-2 bg-white", senator.isEnvCommission ? "border-ink" : "border-line")}>
+      <button type="button" aria-expanded={open} aria-controls={panelId} onClick={() => setOpen(!open)} className="flex min-h-14 w-full items-center gap-3 px-4 py-3 text-left">
+        <span aria-hidden="true" className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-display text-[14px] font-extrabold", senator.isEnvCommission ? "bg-signal" : "bg-paper-deep")}>
+          {senator.prenom[0]}{senator.nom.replace(/^(de la |de |du |d['’]|le |la )/i, "")[0]?.toUpperCase()}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-display text-[16px] font-bold">{senator.fullName}</span>
+          <span className="block truncate text-[13px] text-ink-soft">
+            {shortCommission(main)}{senator.deptName && <> · {senator.dept} {senator.deptName}</>}
+          </span>
+        </span>
+        {senator.isEnvCommission && (
+          <span className="hidden shrink-0 rounded-full bg-signal px-2.5 py-0.5 text-[12px] font-semibold sm:inline">Environnement</span>
+        )}
+        {senator.isEnvCommission && <span className="sr-only">, membre de la commission environnement</span>}
+        {!senator.email && <span className="sr-only">, pas d&apos;email public</span>}
+        <svg className={cn("h-5 w-5 shrink-0 transition-transform", open && "rotate-180")} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
       </button>
 
-      {open && (
-        <div className="px-4 pb-4 pt-1 border-t border-neutral-100">
-          {/* Commissions */}
-          <div className="mb-3 space-y-1">
-            {senator.commissions.map((c, i) => (
-              <p key={i} className="text-xs text-neutral-600 leading-relaxed">
-                <span className="text-neutral-400">{getRole(c)} · </span>
-                {shortCommission(c)}
-              </p>
-            ))}
-            {senator.fonction && (
-              <p className="text-xs font-semibold text-neutral-700 mt-1">{senator.fonction}</p>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-wrap gap-2">
-            {senator.email ? (
-              <a
-                href={buildMailto(senator, template)}
-                className="inline-flex items-center gap-1.5 bg-neutral-900 text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-neutral-700 transition-colors"
-              >
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                Écrire un email
-              </a>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-400 text-xs px-4 py-2 rounded-xl">
-                Email non public
-              </span>
-            )}
-
-            {senator.twitter && (
-              <a
-                href={`https://x.com/${senator.twitter}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 py-2 rounded-xl hover:bg-neutral-200 transition-colors"
-              >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-                X/Twitter
-              </a>
-            )}
-
-            {senator.facebook && (
-              <a
-                href={senator.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 bg-neutral-100 text-neutral-700 text-xs font-semibold px-3 py-2 rounded-xl hover:bg-neutral-200 transition-colors"
-              >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                Facebook
-              </a>
-            )}
-          </div>
+      <div id={panelId} hidden={!open} className="border-t border-line px-4 pb-4 pt-3">
+        <ul className="mb-3 flex flex-col gap-1 text-[14px] text-ink-soft">
+          {senator.commissions.map((c, i) => <li key={i}><span className="text-mute">{getRole(c)} · </span>{shortCommission(c)}</li>)}
+          {senator.fonction && <li className="font-semibold text-ink">{senator.fonction}</li>}
+        </ul>
+        <div className="flex flex-wrap gap-2">
+          {senator.email ? (
+            <a href={buildMailto(senator.email, letter)} className="inline-flex min-h-11 items-center rounded-full bg-chaud px-5 font-display text-[15px] font-bold text-white hover:bg-chaud-deep">
+              Écrire à {senator.civilite === "Mme" ? "la sénatrice" : "le sénateur"}
+            </a>
+          ) : (
+            <span className="inline-flex min-h-11 items-center rounded-full bg-paper-deep px-5 text-[14px] text-ink-soft">Pas d&apos;email public</span>
+          )}
+          {senator.twitter && (
+            <a href={`https://x.com/${senator.twitter}`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-full border-2 border-ink px-4 text-[14px] font-semibold">X<span className="sr-only"> (nouvel onglet)</span></a>
+          )}
+          {senator.facebook && (
+            <a href={senator.facebook} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center rounded-full border-2 border-ink px-4 text-[14px] font-semibold">Facebook<span className="sr-only"> (nouvel onglet)</span></a>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </li>
   )
 }
