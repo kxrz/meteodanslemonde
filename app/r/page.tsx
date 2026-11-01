@@ -1,18 +1,34 @@
 import Link from "next/link"
-import { Metadata } from "next"
-import SiteHeader from "@/components/SiteHeader"
-import PageFooter from "@/components/PageFooter"
-import Breadcrumb from "@/components/Breadcrumb"
+import type { Metadata } from "next"
+import CitySearch from "@/components/CitySearch"
+import GeolocateButton from "@/components/GeolocateButton"
+import PageShell from "@/components/ui/PageShell"
+import Section from "@/components/ui/Section"
+import Title from "@/components/ui/Title"
+import Hl from "@/components/ui/Hl"
+import Card from "@/components/ui/Card"
+import Eyebrow from "@/components/ui/Eyebrow"
+import Explain from "@/components/ui/Explain"
+import AnomalyChip from "@/components/ui/AnomalyChip"
+import ScaleLegend from "@/components/ui/ScaleLegend"
+import { Arrow } from "@/components/ui/Button"
+import { getWeatherData } from "@/lib/weather-data"
+import { loadClimateFull } from "@/lib/climate-season"
+import { deMonth, seasonOf, seasonalMean } from "@/lib/season"
+import { hasLiveData, mean1, theSeason } from "@/lib/city-page"
+import { REGIONS } from "@/lib/regions"
+import { fmtDeltaTemp } from "@/lib/format"
+import { slugify } from "@/lib/slugify"
 
 export const revalidate = 86400
 
 export const metadata: Metadata = {
-  title: "Chaleur par région · cestchaud.fr",
-  description: "Données ERA5 et projections GIEC 2050 pour les 13 régions métropolitaines françaises. Tendances de chaleur, anomalies et villes les plus exposées.",
+  title: "Ma ville : l'écart à la normale de 129 villes · cestchaud.fr",
+  description: "Trouvez votre ville : l'écart du jour à la normale, la tendance sur 30 ans et les projections GIEC, pour 62 villes françaises par région et 67 villes du monde.",
   alternates: { canonical: "https://www.cestchaud.fr/r" },
   openGraph: {
-    title: "Chaleur par région · cestchaud.fr",
-    description: "ERA5 et projections GIEC 2050 pour les 13 régions françaises.",
+    title: "Ma ville · cestchaud.fr",
+    description: "L'écart du jour à la normale, ville par ville, région par région.",
     url: "https://www.cestchaud.fr/r",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
@@ -20,53 +36,114 @@ export const metadata: Metadata = {
   },
 }
 
-const REGIONS = [
-  { slug: "bretagne", label: "Bretagne", cities: "Rennes, Brest, Lorient, Vannes, Quimper, Saint-Malo" },
-  { slug: "occitanie", label: "Occitanie", cities: "Toulouse, Montpellier, Perpignan, Nîmes, Albi, Montauban" },
-  { slug: "provence-alpes-cote-d-azur", label: "Provence-Alpes-Côte d'Azur", cities: "Marseille, Nice, Toulon, Aix-en-Provence, Avignon" },
-  { slug: "auvergne-rhone-alpes", label: "Auvergne-Rhône-Alpes", cities: "Lyon, Grenoble, Clermont-Ferrand, Valence, Saint-Étienne, Annecy" },
-  { slug: "nouvelle-aquitaine", label: "Nouvelle-Aquitaine", cities: "Bordeaux, Limoges, Poitiers, Pau, Bayonne, La Rochelle" },
-  { slug: "hauts-de-france", label: "Hauts-de-France", cities: "Lille, Amiens, Dunkerque, Valenciennes, Calais, Arras" },
-  { slug: "ile-de-france", label: "Île-de-France", cities: "Paris" },
-  { slug: "grand-est", label: "Grand Est", cities: "Strasbourg, Reims, Metz, Nancy, Mulhouse, Troyes" },
-  { slug: "pays-de-la-loire", label: "Pays de la Loire", cities: "Nantes, Angers, Le Mans, La Roche-sur-Yon" },
-  { slug: "bourgogne-franche-comte", label: "Bourgogne-Franche-Comté", cities: "Dijon, Besançon, Chalon-sur-Saône, Belfort" },
-  { slug: "normandie", label: "Normandie", cities: "Caen, Rouen, Le Havre, Cherbourg" },
-  { slug: "centre-val-de-loire", label: "Centre-Val de Loire", cities: "Tours, Orléans, Chartres, Bourges" },
-  { slug: "corse", label: "Corse", cities: "Ajaccio, Bastia" },
-]
+function anomalyOf(temp: number | undefined, normal: number | undefined) {
+  return temp != null && normal != null ? Math.round((temp - normal) * 10) / 10 : null
+}
 
-export default function RegionsIndexPage() {
+export default async function MaVillePage() {
+  const { citiesFR, citiesWorld, fetchedAt } = await getWeatherData()
+  const live = hasLiveData(citiesFR)
+  const refDate = live ? new Date(fetchedAt) : new Date()
+  const month = refDate.getMonth()
+  const season = seasonOf(month)
+  const full = loadClimateFull()
+
+  const regions = Object.entries(REGIONS).map(([slug, r]) => {
+    const cities = citiesFR
+      .filter((c) => c.region === r.label)
+      .map((c) => ({ id: c.id, name: c.name, slug: slugify(c.name), anomaly: live ? anomalyOf(c.apparent_temp_max, full[c.id]?.normal?.[month]) : null }))
+    return { slug, label: r.label, cities, trend: mean1(cities.map((c) => seasonalMean(full[c.id]?.trend, season))) }
+  })
+
+  const world = [...citiesWorld]
+    .sort((a, b) => a.country.localeCompare(b.country, "fr") || a.name.localeCompare(b.name, "fr"))
+    .map((c) => ({ id: c.id, name: c.name, country: c.country, slug: slugify(c.name), anomaly: live ? anomalyOf(c.apparent_temp_max, full[c.id]?.normal?.[month]) : null }))
+
+  const searchCities = citiesFR.map((c) => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon, region: c.region }))
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#f5f4f0]">
-      <SiteHeader asLink subtitle="Chaleur et projections GIEC par région française" />
-      <Breadcrumb crumbs={[{ label: "Régions" }]} />
-
-      <main className="flex-1 px-5 py-6 max-w-4xl mx-auto w-full">
-        <div className="mb-8">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400 mb-1">France métropolitaine</p>
-          <h1 className="text-4xl font-black text-neutral-900 leading-tight mb-4">Chaleur par région</h1>
-          <p className="text-sm text-neutral-600 leading-relaxed max-w-2xl">
-            Explorez les données de chaleur pour chaque région de France métropolitaine : anomalies ERA5 sur 30 ans,
-            normales saisonnières et projections GIEC CMIP6 à l'horizon 2050.
+    <PageShell crumbs={[{ label: "Ma ville" }]}>
+      <div className="flex flex-col gap-16 sm:gap-20">
+        <header className="flex flex-col gap-6 pt-4 sm:pt-8">
+          <Eyebrow>Ma ville · {citiesFR.length + citiesWorld.length} villes suivies</Eyebrow>
+          <Title as="h1" size="hero" animate className="max-w-5xl">
+            Votre ville, <Hl tone="chaud">à l&apos;écart</Hl> près.
+          </Title>
+          <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink-soft">
+            Chaque ville est comparée à sa propre normale {deMonth(month)} <Explain term="normale" /> : 10&#8239;°C, c&apos;est doux à Lille en janvier et froid à Nice en juillet.
           </p>
-        </div>
+          <div className="flex max-w-xl flex-col gap-2">
+            <label htmlFor="city-search" className="font-display text-[17px] font-bold">Chercher une commune</label>
+            <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
+              <div className="w-full sm:flex-1"><CitySearch cities={searchCities} /></div>
+              <GeolocateButton cities={searchCities} />
+            </div>
+          </div>
+          {live ? (
+            <ScaleLegend className="max-w-xl" />
+          ) : (
+            <p className="max-w-3xl rounded-2xl bg-signal p-4 font-display text-lg font-bold" role="status">
+              Relevés du jour indisponibles : les écarts ne sont pas affichés, les fiches restent consultables.
+            </p>
+          )}
+        </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {REGIONS.map((r) => (
-            <Link
-              key={r.slug}
-              href={`/r/${r.slug}`}
-              className="bg-white rounded-2xl p-4 hover:shadow-md transition-shadow group"
-            >
-              <p className="font-black text-neutral-900 group-hover:text-orange-500 transition-colors mb-1">{r.label}</p>
-              <p className="text-xs text-neutral-400 leading-snug">{r.cities}</p>
-            </Link>
-          ))}
-        </div>
-      </main>
+        <Section
+          id="regions"
+          eyebrow="France · 13 régions"
+          title={<>Toutes les villes, <Hl>région par région</Hl>.</>}
+          intro={<>Sous chaque région : la tendance moyenne de {theSeason(season)} sur 30 ans <Explain term="tendance" />. À côté de chaque ville : son écart du jour.</>}
+        >
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {regions.map((r) => (
+              <div key={r.slug} className="flex flex-col gap-2">
+                <Card href={`/r/${r.slug}`} tone="ink" className="p-4 sm:p-5">
+                  <span className="flex items-end justify-between gap-3">
+                  <span className="flex min-w-0 flex-col gap-1">
+                    <span className="font-display text-[1.35rem] font-extrabold leading-tight">{r.label}</span>
+                    <span className="text-[13px] text-paper/80">
+                      {r.trend != null ? <>{theSeason(season).replace(/^./, (m) => m.toUpperCase())} : {fmtDeltaTemp(r.trend)} en 30 ans</> : "Tendance indisponible"}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-signal"><Arrow /></span>
+                  </span>
+                </Card>
+                <ul className="flex flex-col">
+                  {r.cities.map((c) => (
+                    <li key={c.id}>
+                      <Link href={`/a/${c.slug}`} className="flex min-h-11 items-center justify-between gap-3 border-b border-line px-1 text-[16px] font-semibold hover:bg-paper-deep">
+                        <span>{c.name}</span>
+                        {c.anomaly != null && <AnomalyChip value={c.anomaly} />}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </Section>
 
-      <PageFooter className="px-5 py-4" />
-    </div>
+        <Section
+          id="monde"
+          eyebrow={`Monde · ${world.length} villes`}
+          title={<>Et <Hl tone="froid">ailleurs</Hl>&#8239;?</>}
+          intro="Les mêmes chiffres pour des villes du monde entier, chacune comparée à sa propre normale."
+        >
+          <ul className="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-3">
+            {world.map((c) => (
+              <li key={c.id}>
+                <Link href={`/a/${c.slug}`} className="flex min-h-11 items-center justify-between gap-3 border-b border-line px-1 hover:bg-paper-deep">
+                  <span className="min-w-0 truncate text-[16px] font-semibold">
+                    {c.name} <span className="text-[13px] font-normal text-mute">{c.country}</span>
+                  </span>
+                  {c.anomaly != null && <AnomalyChip value={c.anomaly} />}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="text-[13px] text-mute">Sources : ressenti maximal du jour Open-Meteo ; normales et tendances Copernicus ERA5 (1991-2020).</p>
+        </Section>
+      </div>
+    </PageShell>
   )
 }

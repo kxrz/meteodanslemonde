@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og"
 import { loadClimateMap } from "@/lib/climate"
 import { loadOgFonts } from "@/lib/og-fonts"
-import { fmtDelta } from "@/lib/format"
+import { fmt, fmtDelta } from "@/lib/format"
 
 export const runtime = "nodejs"
 export const revalidate = 86400
@@ -125,7 +125,7 @@ export default async function Image({ params }: { params: Promise<{ region: stri
               <span style={{ fontSize: 48, fontWeight: 700, color: "#171717", lineHeight: 1 }}>
                 {hottestCity.name}
               </span>
-              <span style={{ fontSize: 14, color: "#a3a3a3", marginTop: 6 }}>{hottestCity.normal?.toFixed(1)}°C normale</span>
+              <span style={{ fontSize: 14, color: "#a3a3a3", marginTop: 6 }}>{fmt(hottestCity.normal)} °C normale</span>
             </div>
           )}
         </div>
