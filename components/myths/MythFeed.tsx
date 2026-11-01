@@ -39,7 +39,7 @@ export default function MythFeed({ myths, ctx, inSeason }: { myths: Myth[]; ctx:
           tone={TONES[i % TONES.length]}
           shareText={mythShareText(m, mythFact(m, facts))}
           shareUrl={`${SITE}/idees-recues/${m.slug}`}
-          storyHref={`/idees-recues/${m.slug}/story-image`}
+          storyHref={`/idees-recues/${m.slug}/story`}
         >
           <MythDetails myth={m} ctx={ctx} />
         </MythCard>

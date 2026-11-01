@@ -36,7 +36,7 @@ export default async function MythPage({ params, searchParams }: { params: Promi
   const ctx = await loadPedagoContext(ville)
 
   return (
-    <PageShell crumbs={[{ label: "Accueil", href: "/" }, { label: "Idées reçues", href: "/idees-recues" }, { label: "Vrai ou faux ?" }]}>
+    <PageShell crumbs={[{ label: "Idées reçues", href: "/idees-recues" }, { label: "Vrai ou faux ?" }]}>
       <div className="flex flex-col gap-8">
         <h1 className="sr-only">Idée reçue : « {myth.claim} »</h1>
         <MythFeed myths={[myth]} ctx={ctx} inSeason={(m) => m.seasons.includes(ctx.season)} />

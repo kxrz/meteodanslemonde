@@ -123,7 +123,7 @@ export default function MythCard({ slug, claim, answer, highlight, index, total,
             if (dx < -50 && Math.abs(dx) > Math.abs(dy) * 1.5) reveal()
           }}
         >
-          <h2 id={`${slug}-titre`} className={cn("font-display text-[clamp(2.1rem,7.5vw,4.4rem)] font-extrabold leading-[1] tracking-tight transition-opacity duration-500", revealed && "opacity-60")}>
+          <h2 id={`${slug}-titre`} className={cn("font-display text-[clamp(2.5rem,10.5vw,4.6rem)] font-extrabold leading-[1] tracking-tight transition-opacity duration-500", revealed && "opacity-60")}>
             <span aria-hidden="true">«&#8239;</span>
             <span
               data-strike

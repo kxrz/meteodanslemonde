@@ -44,13 +44,15 @@ export default function CityPicker({ cities, value, label, keep = {}, tone = "li
           onChange={(e) => onChange(e.target.value)}
           aria-busy={pending}
           className={cn(
-            "min-h-11 w-full max-w-sm cursor-pointer appearance-none rounded-full border-2 bg-no-repeat pl-5 pr-12 font-display font-bold",
-            "bg-[length:14px] bg-[right_1.1rem_center]",
+            "min-h-11 w-full max-w-sm cursor-pointer appearance-none rounded-full border-2 pl-5 pr-12 font-display font-bold",
             size === "xl" ? "min-h-16 text-[clamp(1.4rem,2.6vw,2.2rem)]" : "text-[17px]",
             tone === "dark" ? "border-paper bg-ink text-paper" : "border-ink bg-white text-ink",
           )}
           style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='${tone === "dark" ? "%23f5f4f0" : "%23111111"}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "16px",
+            backgroundPosition: "right 1.1rem center",
           }}
         >
           {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}

@@ -39,7 +39,7 @@ export default async function IdeesRecuesPage({ searchParams }: { searchParams: 
       : <>Vous l&apos;avez entendu. C&apos;est <Hl tone="chaud">faux</Hl>.</>
 
   return (
-    <PageShell crumbs={[{ label: "Accueil", href: "/" }, { label: "Idées reçues" }]}>
+    <PageShell crumbs={[{ label: "Idées reçues" }]}>
       <div className="flex flex-col gap-8 sm:gap-12">
         <header className="flex flex-col gap-5 pt-2 sm:pt-6">
           <Eyebrow>{all.length} idées reçues · édition {SEASON_LABEL[ctx.season]}</Eyebrow>
@@ -55,16 +55,17 @@ export default async function IdeesRecuesPage({ searchParams }: { searchParams: 
           <ol className="flex flex-wrap gap-2">
             {all.map((m, i) => (
               <li key={m.slug} className={cn(i === current.length && "basis-full pt-2")}>
-                {i === current.length && <Eyebrow as="span" className="mb-3 block">Toute l&apos;année et les autres saisons</Eyebrow>}
+                {i === current.length && <Eyebrow as="span" className="mb-2 block">Toute l&apos;année et les autres saisons</Eyebrow>}
                 <Link
                   href={`#${m.slug}`}
                   className={cn(
-                    "inline-flex min-h-11 items-center gap-2 rounded-full border-2 px-4 py-1.5 text-left text-[15px] font-semibold leading-snug transition-colors",
-                    i < current.length ? "border-ink bg-white hover:bg-ink hover:text-paper" : "border-line bg-paper hover:border-ink",
+                    "inline-flex min-h-11 items-center gap-2 rounded-full border-2 text-left text-[15px] font-semibold leading-snug transition-colors",
+                    "max-sm:w-11 max-sm:justify-center sm:px-4 sm:py-1.5",
+                    i < current.length ? "border-ink bg-white hover:bg-ink hover:text-paper max-sm:bg-ink max-sm:text-paper" : "border-line bg-paper hover:border-ink",
                   )}
                 >
-                  <span className="font-mono text-[12px] text-mute">{String(i + 1).padStart(2, "0")}</span>
-                  {m.claim}
+                  <span className="font-mono text-[15px] font-bold sm:text-[12px] sm:font-normal sm:text-mute">{i + 1}</span>
+                  <span className="max-sm:sr-only">{m.claim}</span>
                 </Link>
               </li>
             ))}
