@@ -254,15 +254,34 @@ export default async function SignauxPage() {
                   {mild.length === 0 ? (
                     <p className="text-[15px] leading-snug">Aucune ville n&apos;est à +{MILD_ANOMALY}&#8239;°C de sa normale aujourd&apos;hui. Une journée ordinaire ne contredit pas la tendance : c&apos;est la répétition qui compte.</p>
                   ) : (
-                    <ul className="flex flex-wrap gap-2" aria-label="Villes très douces aujourd'hui">
-                      {mild.map((c) => (
-                        <li key={c.id}>
-                          <Link href={`/a/${c.slug}`} className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-line bg-paper pl-4 pr-1.5 font-display text-[15px] font-bold hover:border-ink">
-                            {c.name} <AnomalyChip value={c.anomaly} />
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
+                    <>
+                      <ul className="flex flex-wrap gap-2" aria-label="Villes très douces aujourd'hui">
+                        {mild.slice(0, 12).map((c) => (
+                          <li key={c.id}>
+                            <Link href={`/a/${c.slug}`} className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-line bg-paper pl-4 pr-1.5 font-display text-[15px] font-bold hover:border-ink">
+                              {c.name} <AnomalyChip value={c.anomaly} />
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                      {mild.length > 12 && (
+                        <details className="mt-3 group">
+                          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center rounded-full border-2 border-ink px-4 font-display text-[14px] font-bold hover:bg-ink hover:text-paper">
+                            <span className="group-open:hidden">Voir les {mild.length - 12} autres villes</span>
+                            <span className="hidden group-open:inline">Masquer</span>
+                          </summary>
+                          <ul className="mt-3 flex flex-wrap gap-2">
+                            {mild.slice(12).map((c) => (
+                              <li key={c.id}>
+                                <Link href={`/a/${c.slug}`} className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-line bg-paper pl-4 pr-1.5 font-display text-[15px] font-bold hover:border-ink">
+                                  {c.name} <AnomalyChip value={c.anomaly} />
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </details>
+                      )}
+                    </>
                   )}
                 </Card>
               </div>
