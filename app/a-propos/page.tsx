@@ -1,19 +1,27 @@
 import Link from "next/link"
 import { Metadata } from "next"
-import SiteHeader from "@/components/SiteHeader"
-import PageFooter from "@/components/PageFooter"
+import PageShell from "@/components/ui/PageShell"
+import Title from "@/components/ui/Title"
+import Hl from "@/components/ui/Hl"
+import Num from "@/components/ui/Num"
+import Eyebrow from "@/components/ui/Eyebrow"
+import Card from "@/components/ui/Card"
+import Explain from "@/components/ui/Explain"
+import { ButtonLink, Arrow } from "@/components/ui/Button"
+import { anomalyWords } from "@/lib/anomaly"
+import { fmt, fmtDelta } from "@/lib/format"
+import { loadClimateFull } from "@/lib/climate-season"
+import type { GlossaryKey } from "@/lib/glossary"
 
 export const revalidate = 604800
 
 export const metadata: Metadata = {
-  title: "Méthodologie & sources · cestchaud.fr",
-  description:
-    "Sources de données, méthodes de calcul et choix éditoriaux de cestchaud.fr : Open-Meteo, ERA5 (ECMWF), CMIP6 (GIEC AR6), NASA FIRMS, INRAE, ONF, IFREMER.",
+  title: "Méthode et sources · cestchaud.fr",
+  description: "D'où viennent les chiffres de cestchaud.fr et comment ils sont calculés : ressenti Open-Meteo, normales ERA5 1991-2020, projections CMIP6, avec un exemple pas à pas.",
   alternates: { canonical: "https://www.cestchaud.fr/a-propos" },
   openGraph: {
-    title: "Méthodologie & sources · cestchaud.fr",
-    description:
-      "Sources de données, méthodes de calcul et choix éditoriaux de cestchaud.fr.",
+    title: "Méthode et sources · cestchaud.fr",
+    description: "D'où viennent les chiffres de cestchaud.fr et comment ils sont calculés.",
     url: "https://www.cestchaud.fr/a-propos",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
@@ -21,485 +29,183 @@ export const metadata: Metadata = {
   },
 }
 
-/* ── Icônes ──────────────────────────────────────────────────────────────── */
+const TOC = [
+  { id: "exemple", label: "Un exemple pas à pas" },
+  { id: "ressenti", label: "Le ressenti" },
+  { id: "normales", label: "Les normales" },
+  { id: "tendance", label: "La tendance sur 30 ans" },
+  { id: "projections", label: "Les projections" },
+  { id: "chaleur", label: "Chaleur : notre seuil, pas une vigilance" },
+  { id: "jumeau", label: "Le jumeau du jour" },
+  { id: "impacts", label: "Les faits d'impact" },
+  { id: "limites", label: "Limites" },
+  { id: "site", label: "Le site lui-même" },
+  { id: "projet", label: "Le projet" },
+]
 
-function IconExternal() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline shrink-0 mb-0.5 ml-1 opacity-50">
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
-    </svg>
-  )
+function G({ k, children }: { k: GlossaryKey; children: React.ReactNode }) {
+  return <Link href={`/atelier/glossaire#${k}`} className="font-semibold text-ink underline decoration-signal decoration-[3px] underline-offset-2">{children}</Link>
 }
 
-/* ── Composants ──────────────────────────────────────────────────────────── */
-
-function Label({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+function Part({ id, eyebrow, title, children }: { id: string; eyebrow: string; title: React.ReactNode; children: React.ReactNode }) {
   return (
-    <p className={`text-[10px] uppercase tracking-[0.18em] font-bold mb-3 ${light ? "text-white/50" : "text-neutral-400"}`}>
-      {children}
-    </p>
-  )
-}
-
-function Stat({ value, label, sub }: { value: string; label: string; sub?: string }) {
-  return (
-    <div className="bg-white rounded-2xl px-5 py-4">
-      <p className="text-3xl font-black text-neutral-900 leading-none">{value}</p>
-      <p className="text-xs font-semibold text-neutral-700 mt-1.5">{label}</p>
-      {sub && <p className="text-[10px] text-neutral-400 mt-0.5">{sub}</p>}
-    </div>
-  )
-}
-
-function Source({
-  bg, labelColor, name, badge, badgeBg, body, url, urlLabel,
-}: {
-  bg: string; labelColor: string; name: string; badge?: string; badgeBg?: string;
-  body: React.ReactNode; url: string; urlLabel: string;
-}) {
-  return (
-    <section className={`${bg} rounded-3xl p-6 lg:p-8`}>
-      <div className="flex items-start justify-between gap-3 mb-4">
-        <div>
-          <Label light={bg.includes("111") || bg.includes("neutral-9")}>{badge ?? "Source de données"}</Label>
-          <h2 className={`text-xl font-black ${labelColor} leading-tight`}>{name}</h2>
-        </div>
-        {badgeBg && (
-          <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg shrink-0 mt-1 ${badgeBg}`}>
-            Open data
-          </span>
-        )}
-      </div>
-      <div className={`text-sm leading-relaxed space-y-2 ${labelColor.includes("white") ? "text-white/75" : labelColor.replace("font-black", "").replace("text-", "text-") + "/70"}`}>
-        {body}
-      </div>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`inline-flex items-center gap-1 text-xs font-semibold mt-5 underline underline-offset-2 ${labelColor.includes("white") ? "text-white/60 hover:text-white" : "text-neutral-600 hover:text-neutral-900"} transition-colors`}
-      >
-        {urlLabel}
-        <IconExternal />
-      </a>
+    <section id={id} aria-labelledby={`${id}-t`} className="scroll-mt-24 flex flex-col gap-4 border-t-2 border-ink pt-8">
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <Title id={`${id}-t`} size="lg">{title}</Title>
+      <div className="flex max-w-[68ch] flex-col gap-3 text-[17px] leading-relaxed text-ink-soft [&_strong]:text-ink">{children}</div>
     </section>
   )
 }
 
-/* ── Page ────────────────────────────────────────────────────────────────── */
-
 export default function AProposPage() {
+  // Exemple pas à pas avec une vraie normale : Bordeaux en novembre (12 °C, ERA5 1991-2020).
+  const bordeaux = loadClimateFull().bordeaux
+  const normal = bordeaux?.normal?.[10] ?? 12
+  const forecast = Math.round((normal + 4.1) * 10) / 10
+  const delta = Math.round((forecast - normal) * 10) / 10
+
   return (
-    <div className="flex flex-col min-h-screen bg-[#f5f4f0]">
-      <SiteHeader asLink />
-
-      {/* Hero */}
-      <section className="bg-[#111111] text-white">
-        <div className="max-w-4xl mx-auto px-5 py-16 lg:py-20">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-orange-400 mb-5">
-            Méthodologie & sources
+    <PageShell crumbs={[{ label: "Méthode et sources" }]}>
+      <div className="flex flex-col gap-12">
+        <header className="flex max-w-4xl flex-col gap-5 pt-2 sm:pt-6">
+          <Eyebrow>Méthode et sources</Eyebrow>
+          <Title as="h1" size="hero" animate>
+            Chaque chiffre a <Hl tone="chaud">une source</Hl>.
+          </Title>
+          <p className="max-w-2xl text-[18px] leading-snug text-ink-soft">
+            Données publiques uniquement, calculs simples, et on vous montre lesquels. Aucun texte n&apos;est rédigé par une IA à partir des données : les phrases sont écrites à la main et remplies avec les chiffres.
           </p>
-          <h1
-            className="text-4xl lg:text-5xl font-black leading-[1.06] tracking-tight mb-5 max-w-2xl"
-            style={{ textWrap: "balance" } as React.CSSProperties}
-          >
-            Des données scientifiques ouvertes,{" "}
-            <span className="text-orange-400">rendues lisibles.</span>
-          </h1>
-          <p className="text-white/70 text-base leading-relaxed max-w-xl mb-10">
-            cestchaud.fr ne génère aucun contenu. Chaque chiffre affiché provient de sources
-            scientifiques publiques : réanalyses climatiques, modèles de projection, satellites
-            NASA, études INRAE, IFREMER, ONF. Voici précisément ce qu'on utilise, comment,
-            et pourquoi.
-          </p>
-
-          {/* Chiffres clés */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Stat value="129" label="villes couvertes" sub="62 FR · 67 monde" />
-            <Stat value="1940" label="point de départ" sub="archives ERA5" />
-            <Stat value="2050" label="horizon projeté" sub="GIEC CMIP6 SSP2-4.5" />
-            <Stat value="63" label="faits sourcés" sub="INRAE, ONF, IFREMER…" />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4" data-anim="stagger">
+            <Card tone="ink" className="p-4"><p className="font-display text-4xl font-extrabold"><Num value={129} /></p><p className="text-[14px] text-paper/80">villes : 62 en France, 67 dans le monde</p></Card>
+            <Card className="p-4"><p className="font-display text-4xl font-extrabold">1991-2020</p><p className="text-[14px] text-ink-soft">période des normales</p></Card>
+            <Card className="p-4"><p className="font-display text-4xl font-extrabold"><Num value={2050} /></p><p className="text-[14px] text-ink-soft">horizon des projections</p></Card>
+            <Card tone="signal" className="p-4"><p className="font-display text-4xl font-extrabold"><Num value={63} /></p><p className="text-[14px] text-ink-soft">faits d&apos;impact sourcés</p></Card>
           </div>
-        </div>
-      </section>
+        </header>
 
-      <div className="max-w-4xl mx-auto px-5 py-12 w-full space-y-16">
-
-        {/* Sources de données */}
-        <section>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400 mb-5">
-            Sources de données
-          </p>
-          <div className="space-y-4">
-
-            {/* Open-Meteo */}
-            <section className="bg-[#dbeafe] rounded-3xl p-6 lg:p-8">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <Label>Météo temps réel & archive climatique</Label>
-                  <h2 className="text-xl font-black text-blue-900 leading-tight">Open-Meteo</h2>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg shrink-0 mt-1 bg-blue-200 text-blue-800">
-                  Open source · gratuit
-                </span>
-              </div>
-              <div className="text-sm text-blue-900/75 leading-relaxed space-y-2">
-                <p>
-                  API météo open source utilisée pour deux usages distincts : les prévisions du jour
-                  (modèles <strong className="text-blue-900">ECMWF, GFS et Météo-France</strong> en temps réel)
-                  et les archives climatiques depuis 1940 via la réanalyse ERA5.
-                </p>
-                <p>
-                  L'indice retenu est l'<strong className="text-blue-900">UTCI</strong> (Universal
-                  Thermal Climate Index), qui intègre température, humidité, rayonnement et vent pour
-                  donner le ressenti thermique réel, et non la température de l'air seule.
-                  Jusqu'à 10 000 requêtes gratuites par jour, sans clé API ni authentification.
-                </p>
-              </div>
-              <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold mt-5 underline underline-offset-2 text-blue-800/70 hover:text-blue-900 transition-colors">
-                open-meteo.com <IconExternal />
-              </a>
-            </section>
-
-            {/* ERA5 */}
-            <section className="bg-[#b8d4b0] rounded-3xl p-6 lg:p-8">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <Label>Normales & tendances historiques</Label>
-                  <h2 className="text-xl font-black text-green-900 leading-tight">
-                    ERA5 · ECMWF · Copernicus
-                  </h2>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg shrink-0 mt-1 bg-green-200 text-green-900">
-                  Open data
-                </span>
-              </div>
-              <div className="text-sm text-green-900/75 leading-relaxed space-y-2">
-                <p>
-                  ERA5 est la réanalyse de référence mondiale produite par le{" "}
-                  <strong className="text-green-900">Centre européen pour les prévisions météorologiques
-                  à moyen terme (ECMWF)</strong>, distribuée librement via le programme Copernicus
-                  de l'Union européenne. Elle couvre la planète entière depuis 1940 avec une résolution
-                  de 31 km, à partir de la fusion de milliards d'observations historiques et de modèles
-                  numériques.
-                </p>
-                <p>
-                  Les normales climatiques mensuelles affichées sur cestchaud.fr sont calculées sur la
-                  période <strong className="text-green-900">1991–2020</strong> (référence OMM en vigueur).
-                  La tendance sur 30 ans est l'écart linéaire entre les températures de la période
-                  récente et celles de la période de référence, calculé mois par mois.
-                </p>
-                <p>
-                  L'<strong className="text-green-900">anomalie du jour</strong> est la différence entre
-                  le ressenti UTCI prévu par Open-Meteo et la normale ERA5 du même mois. C'est ce chiffre
-                  qui dit si aujourd'hui est vraiment exceptionnel, ou juste dans la norme.
-                </p>
-              </div>
-              <a href="https://cds.climate.copernicus.eu" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold mt-5 underline underline-offset-2 text-green-900/60 hover:text-green-900 transition-colors">
-                Copernicus Climate Data Store <IconExternal />
-              </a>
-            </section>
-
-            {/* CMIP6 / GIEC */}
-            <section className="bg-[#c4b8d4] rounded-3xl p-6 lg:p-8">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <Label>Projections climatiques 2030–2050</Label>
-                  <h2 className="text-xl font-black text-purple-900 leading-tight">
-                    CMIP6 · GIEC AR6
-                  </h2>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg shrink-0 mt-1 bg-purple-200 text-purple-900">
-                  Open data
-                </span>
-              </div>
-              <div className="text-sm text-purple-900/75 leading-relaxed space-y-2">
-                <p>
-                  Les projections affichées proviennent des modèles{" "}
-                  <strong className="text-purple-900">CMIP6</strong> (Coupled Model Intercomparison
-                  Project, 6e phase), utilisés dans le{" "}
-                  <strong className="text-purple-900">6e rapport d'évaluation du GIEC (AR6)</strong>,
-                  publié en 2021–2022. Ces modèles constituent aujourd'hui la référence scientifique
-                  mondiale sur l'évolution future du climat.
-                </p>
-                <p>
-                  Le scénario retenu est le <strong className="text-purple-900">SSP2-4.5</strong>{" "}
-                  (trajectoire intermédiaire, ni optimiste ni catastrophiste), qui suppose que les
-                  politiques climatiques actuelles se poursuivent sans accélération majeure.
-                  Les valeurs représentent l'écart de température projeté par rapport à la période
-                  de référence <strong className="text-purple-900">2000–2020</strong>.
-                </p>
-                <p>
-                  Ces données sont pré-calculées et embarquées dans le projet sous forme de fichiers
-                  légers. Elles sont mises à jour manuellement à chaque publication d'un nouveau rapport GIEC.
-                </p>
-              </div>
-              <a href="https://www.ipcc.ch/report/ar6/wg1/" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold mt-5 underline underline-offset-2 text-purple-900/60 hover:text-purple-900 transition-colors">
-                GIEC · Rapport AR6, Groupe de travail I <IconExternal />
-              </a>
-            </section>
-
-            {/* NASA FIRMS */}
-            <section className="bg-[#431407] rounded-3xl p-6 lg:p-8">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <Label light>Détections d'incendies en temps réel</Label>
-                  <h2 className="text-xl font-black text-white leading-tight">
-                    NASA FIRMS · VIIRS
-                  </h2>
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg shrink-0 mt-1 bg-orange-900 text-orange-200">
-                  Open data
-                </span>
-              </div>
-              <div className="text-sm text-orange-100/80 leading-relaxed space-y-2">
-                <p>
-                  La carte des feux utilise{" "}
-                  <strong className="text-white">NASA FIRMS</strong> (Fire Information for Resource
-                  Management System), le système de surveillance des incendies par satellite de la NASA.
-                  Les détections proviennent du capteur{" "}
-                  <strong className="text-white">VIIRS</strong> (Visible Infrared Imaging Radiometer
-                  Suite), embarqué sur les satellites Suomi-NPP et NOAA-20.
-                </p>
-                <p>
-                  Chaque point sur la carte représente une détection de chaleur radiative anormale
-                  à la surface, mise à jour{" "}
-                  <strong className="text-white">toutes les heures</strong>. La résolution spatiale
-                  est de 375 mètres. L'accès est libre via une clé API gratuite.
-                </p>
-              </div>
-              <a href="https://firms.modaps.eosdis.nasa.gov" target="_blank" rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-xs font-semibold mt-5 underline underline-offset-2 text-orange-300/70 hover:text-orange-200 transition-colors">
-                NASA FIRMS <IconExternal />
-              </a>
-            </section>
-
-          </div>
-        </section>
-
-        {/* Ce qu'on calcule */}
-        <section>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400 mb-5">
-            Ce qu'on calcule
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              {
-                title: "L'anomalie du jour",
-                body: "Différence entre le ressenti UTCI prévu par Open-Meteo et la normale mensuelle ERA5 (1991–2020) pour la ville concernée. Un chiffre positif signifie qu'il fait plus chaud que d'habitude pour la saison. C'est la donnée centrale du site.",
-              },
-              {
-                title: "La normale de saison",
-                body: "Moyenne mensuelle du ressenti UTCI calculée sur la période de référence 1991–2020, issue des archives ERA5. Elle représente ce qu'on attend «normalement» pour un mois donné dans une ville donnée.",
-              },
-              {
-                title: "Le jumeau climatique",
-                body: "Deux villes sont jumelles si leur ressenti maximal du jour diffère de moins de 4°C. Le jumeau est calculé en comparant la ville française à 67 villes mondiales (ou l'inverse). Il rend concret ce que signifie une température : «aujourd'hui à Lyon, il fait comme à Tunis».",
-              },
-              {
-                title: "L'alerte canicule",
-                body: "Un épisode de canicule est identifié quand le ressenti max dépasse 35°C durant au moins 3 jours consécutifs (seuil Météo-France). Le compteur est calculé sur les 10 derniers jours d'archive ERA5.",
-              },
-              {
-                title: "La tendance sur 30 ans",
-                body: "Écart entre les températures moyennes de la période récente et celles de la référence historique, calculé mois par mois à partir des archives ERA5 depuis 1990. Ce chiffre mesure le réchauffement déjà survenu, pas une projection.",
-              },
-              {
-                title: "Les projections GIEC",
-                body: "Réchauffement additionnel projeté pour 2030, 2040 et 2050 sous scénario SSP2-4.5, par rapport à la période 2000–2020. Ces valeurs sont pré-calculées à partir des modèles CMIP6 et embarquées dans le projet.",
-              },
-            ].map(({ title, body }) => (
-              <div key={title} className="bg-white rounded-3xl p-6">
-                <div className="w-2 h-2 rounded-full bg-orange-400 mb-4" />
-                <p className="font-black text-neutral-900 text-sm mb-2">{title}</p>
-                <p className="text-xs text-neutral-500 leading-relaxed">{body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* En vrai, ça fait quoi */}
-        <section>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400 mb-5">
-            En vrai, ça fait quoi ?
-          </p>
-          <div className="bg-[#111111] rounded-3xl p-6 lg:p-8">
-            <h2 className="text-lg font-black text-white mb-4 leading-tight">
-              63 faits d'impact sourcés, contextualisés selon l'anomalie du jour
-            </h2>
-            <p className="text-sm text-white/75 leading-relaxed mb-5">
-              Sur chaque page de ville et de région, un bloc affiche un fait concret sur les
-              conséquences observées du réchauffement dans cette zone, avec la cause, le mécanisme,
-              et ce que ça implique réellement. Un badge indique si le phénomène est{" "}
-              <span className="text-orange-400 font-semibold">déjà en cours ici</span>,{" "}
-              <span className="text-amber-300 font-semibold">en cours en France</span> ou{" "}
-              <span className="text-neutral-400 font-semibold">en approche</span> selon l'anomalie du jour.
-            </p>
-            <p className="text-sm text-white/60 leading-relaxed mb-6">
-              Ces faits ne sont pas des projections : ce sont des observations mesurées et publiées
-              par des institutions scientifiques françaises et internationales.
-            </p>
-            {/* Sources listées */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {[
-                { name: "INRAE", desc: "Agriculture & vigne" },
-                { name: "ONF", desc: "Santé des forêts" },
-                { name: "IFREMER", desc: "Milieu marin" },
-                { name: "LPO / STOC", desc: "Oiseaux migrateurs" },
-                { name: "ANSES", desc: "Moustique tigre" },
-                { name: "GLACIOCLIM", desc: "Glaciers alpins" },
-                { name: "CNRS / INEE", desc: "Écosystèmes marins" },
-                { name: "Météo-France", desc: "ClimSnow, enneigement" },
-                { name: "Haut Conseil Climat", desc: "Rapport annuel 2025" },
-              ].map(({ name, desc }) => (
-                <div key={name} className="bg-white/8 rounded-xl px-3 py-2.5">
-                  <p className="text-xs font-black text-white">{name}</p>
-                  <p className="text-[10px] text-white/50 mt-0.5">{desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Ce que ce site ne fait pas */}
-        <section>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400 mb-5">
-            Limites & engagements
-          </p>
-          <div className="bg-white rounded-3xl p-6 lg:p-8">
-            <h2 className="text-lg font-black text-neutral-900 mb-5">Ce que cestchaud.fr ne fait pas</h2>
-            <ul className="space-y-3">
-              {[
-                {
-                  titre: "Pas de contenu généré ou interprété.",
-                  corps: "Tous les chiffres proviennent directement des APIs et jeux de données sources. Aucun texte de synthèse n'est produit par un modèle de langage ou une IA générative.",
-                },
-                {
-                  titre: "Pas d'extrapolations non vérifiées.",
-                  corps: "Les faits d'impact (\"En vrai, ça fait quoi ?\") sont sourcés individuellement. Si une source n'existe pas pour une ville donnée, le fait n'est pas affiché.",
-                },
-                {
-                  titre: "Les projections sont des tendances, pas des prévisions.",
-                  corps: "Le scénario SSP2-4.5 décrit une trajectoire probable si les politiques actuelles se poursuivent. Ce n'est pas une certitude : c'est la meilleure estimation scientifique disponible.",
-                },
-                {
-                  titre: "Le ressenti UTCI est différent de la température de l'air.",
-                  corps: "L'UTCI intègre vent, humidité et rayonnement. Les valeurs peuvent différer significativement de la température officielle Météo-France, surtout en cas de vent fort ou d'ensoleillement intense.",
-                },
-                {
-                  titre: "Les données ERA5/CMIP6 sont pré-calculées.",
-                  corps: "Les normales et projections sont mises à jour manuellement lors des nouvelles publications scientifiques. Elles ne se rafraîchissent pas quotidiennement.",
-                },
-              ].map(({ titre, corps }) => (
-                <li key={titre} className="flex items-start gap-3">
-                  <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="#f97316" strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M20 6 9 17l-5-5" />
-                  </svg>
-                  <p className="text-sm text-neutral-600 leading-relaxed">
-                    <strong className="text-neutral-900">{titre}</strong>{" "}{corps}
-                  </p>
+        <div className="grid gap-10 lg:grid-cols-[16rem_minmax(0,1fr)]">
+          <nav aria-labelledby="sommaire" className="lg:sticky lg:top-20 lg:self-start">
+            <h2 id="sommaire" className="mb-3 font-display text-lg font-extrabold">Sommaire</h2>
+            <ol className="flex flex-col gap-0.5 text-[15px]">
+              {TOC.map((t, i) => (
+                <li key={t.id}>
+                  <a href={`#${t.id}`} className="flex min-h-11 items-center gap-2 rounded-lg px-2 hover:bg-paper-deep">
+                    <span className="w-5 font-mono text-[12px] text-mute">{i + 1}</span>{t.label}
+                  </a>
                 </li>
               ))}
-            </ul>
-          </div>
-        </section>
+            </ol>
+          </nav>
 
-        {/* Projet & contact */}
-        <section>
-          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-400 mb-5">
-            Le projet
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex min-w-0 flex-col gap-12">
+            <Part id="exemple" eyebrow="Le chiffre central" title={<>De {fmt(normal, 0)}&#8239;°C à <Hl tone="chaud">{fmtDelta(delta)}&#8239;°C</Hl>, pas à pas.</>}>
+              <p>Le chiffre que vous voyez partout sur le site, c&apos;est l&apos;<G k="anomalie">écart à la normale</G>. Exemple à Bordeaux, un jour de novembre :</p>
+              <ol className="flex flex-col gap-3">
+                <li className="rounded-2xl bg-white p-4"><strong>1. Ce qu&apos;on attend.</strong> La <G k="normale">normale</G> de novembre à Bordeaux, c&apos;est un ressenti maximal de <strong>{fmt(normal, 0)}&#8239;°C</strong> en moyenne sur 1991-2020.</li>
+                <li className="rounded-2xl bg-white p-4"><strong>2. Ce qui est prévu.</strong> Ce matin, Open-Meteo prévoit un <G k="ressenti">ressenti</G> maximal de <strong>{fmt(forecast)}&#8239;°C</strong>.</li>
+                <li className="rounded-2xl bg-white p-4"><strong>3. La soustraction.</strong> {fmt(forecast)} − {fmt(normal, 0)} = <strong>{fmtDelta(delta)}&#8239;°C</strong>.</li>
+                <li className="rounded-2xl bg-signal p-4"><strong>4. Ce que ça veut dire.</strong> Une journée « {anomalyWords(delta)} ». Ce n&apos;est pas une preuve de réchauffement à elle seule : une journée, c&apos;est de la <G k="meteoClimat">météo</G>. C&apos;est l&apos;accumulation de ces écarts, année après année, qui dessine le climat.</li>
+              </ol>
+              <p>L&apos;écart se lit pareil en janvier et en juillet. C&apos;est pour ça qu&apos;on l&apos;affiche avant la température : 8&#8239;°C peut être doux en janvier à Lille et froid en mai à Marseille.</p>
+            </Part>
 
-            <div className="bg-white rounded-3xl p-6">
-              <Label>Auteur</Label>
-              <h2 className="text-lg font-black text-neutral-900 mb-3">Florent Bertiaux</h2>
-              <p className="text-sm text-neutral-500 leading-relaxed mb-4">
-                Créatif technologique basé en France. cestchaud.fr est né de la conviction que
-                les données climatiques méritent d'être lues autrement, sans jargon, sans filtre,
-                accessibles à tous. Le projet est indépendant, sans publicité, sans investisseur.
+            <Part id="ressenti" eyebrow="Open-Meteo" title={<>Le ressenti, c&apos;est la <Hl>température apparente</Hl>.</>}>
+              <p>
+                Nous utilisons la température apparente maximale du jour (<code className="font-mono text-[15px]">apparent_temperature_max</code>) fournie par <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer" className="font-semibold text-ink underline underline-offset-2">Open-Meteo</a>. Elle part de la température de l&apos;air et la corrige avec l&apos;humidité, le vent et le rayonnement solaire : par vent fort, elle descend sous le thermomètre ; par temps lourd et ensoleillé, elle monte au-dessus. <Explain term="ressenti" />
               </p>
-              <a href="https://leswww.com" target="_blank" rel="noopener noreferrer"
-                className="text-sm font-semibold text-neutral-900 hover:underline inline-flex items-center gap-1">
-                leswww.com <IconExternal />
-              </a>
-            </div>
+              <p>Ce n&apos;est pas un indice de confort thermique, ni la température officielle sous abri de Météo-France. C&apos;est la même grandeur pour les prévisions du jour, les normales et les projections, ce qui rend les comparaisons cohérentes.</p>
+            </Part>
 
-            <div className="bg-[#111111] rounded-3xl p-6 flex flex-col justify-between">
-              <div>
-                <Label light>Contact presse & partenariats</Label>
-                <p className="text-sm text-white/75 leading-relaxed mb-5">
-                  Pour toute demande d'information, de partenariat éditorial ou d'interview
-                  autour du projet cestchaud.fr et de ses données.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Link
-                  href="/contact"
-                  className="flex items-center justify-between bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl px-5 py-3 text-sm transition-colors group"
-                >
-                  Formulaire de contact
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/terrain"
-                  className="flex items-center justify-between bg-white/10 hover:bg-white/15 text-white/80 font-semibold rounded-xl px-5 py-3 text-sm transition-colors"
-                >
-                  Images satellite avant/après
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    strokeWidth="2.5" strokeLinecap="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
+            <Part id="normales" eyebrow="Copernicus ERA5" title={<>La normale : <Hl>30 ans</Hl> de mesures, 1991-2020.</>}>
+              <p>
+                Pour chaque ville et chaque mois, la normale est la moyenne du ressenti maximal quotidien entre <strong>1991 et 2020</strong>, la période de référence recommandée par l&apos;Organisation météorologique mondiale. Les valeurs viennent de <G k="era5">ERA5</G>, la réanalyse du service européen Copernicus (ECMWF), qui reconstitue l&apos;atmosphère heure par heure depuis 1940 à partir de millions d&apos;observations.
+              </p>
+              <p>Ces normales sont calculées une fois, par un script, et embarquées dans le site : elles ne changent pas d&apos;un jour à l&apos;autre.</p>
+            </Part>
 
+            <Part id="tendance" eyebrow="Ce qui a déjà changé" title={<>La tendance compare <Hl>les années 1990</Hl> à 2015-2024.</>}>
+              <p>
+                La <G k="tendance">tendance sur 30 ans</G>{" "}est l&apos;écart entre la moyenne d&apos;un mois sur 1991-2000 et sur 2015-2024, toujours avec ERA5. C&apos;est du réchauffement déjà mesuré, pas une projection.
+              </p>
+              <p>Mois par mois, ce chiffre est bruité (une décennie, c&apos;est peu d&apos;années). Le site le lisse donc sur trois mois, ou l&apos;affiche par saison.</p>
+            </Part>
+
+            <Part id="projections" eyebrow="Modèles CMIP6" title={<>Les projections partent de <Hl>2000-2020</Hl>.</>}>
+              <p>
+                Les <G k="projection">projections</G> viennent de l&apos;API climat d&apos;Open-Meteo, qui diffuse des modèles <G k="cmip6">CMIP6</G> à haute résolution (EC-Earth3P-HR, MPI-ESM1-2-XR, MRI-AGCM3-2-S). Pour chaque mois, on calcule l&apos;écart entre la moyenne des modèles sur une période future et leur moyenne sur <strong>2000-2020</strong> :
+              </p>
+              <ul className="list-disc pl-5">
+                <li>« 2030 » = moyenne 2021-2039 ;</li>
+                <li>« 2040 » = moyenne 2031-2050 ;</li>
+                <li>« 2050 » = moyenne 2041-2050.</li>
+              </ul>
+              <p>
+                Le site les montre <strong>par saison</strong>, avec une valeur centrale et une fourchette entre les séries disponibles, jamais un mois isolé : les valeurs mensuelles brutes sont trop bruitées. Une projection n&apos;est pas une prévision, c&apos;est « si les émissions suivent cette trajectoire, voici le climat moyen attendu ». <Explain term="ssp" />
+              </p>
+            </Part>
+
+            <Part id="chaleur" eyebrow="Mise au point" title={<>35&#8239;°C ressentis : <Hl tone="chaud">notre repère</Hl>, pas une vigilance.</>}>
+              <p>
+                Le site compte les jours où le ressenti maximal atteint 35&#8239;°C et parle de « chaleur qui dure » au-delà de 3 jours. C&apos;est un <strong>repère propre à cestchaud.fr</strong>.
+              </p>
+              <p>
+                La vigilance canicule de Météo-France fonctionne autrement : elle compare la moyenne sur trois jours des températures minimales et maximales <strong>de l&apos;air</strong> à des seuils fixés <strong>département par département</strong>. Pour savoir s&apos;il y a canicule chez vous, la référence reste <a href="https://vigilance.meteofrance.fr" target="_blank" rel="noopener noreferrer" className="font-semibold text-ink underline underline-offset-2">vigilance.meteofrance.fr</a>.
+              </p>
+            </Part>
+
+            <Part id="jumeau" eyebrow="Pour se représenter" title={<>Le jumeau du jour, à <Hl>4&#8239;°C près</Hl>.</>}>
+              <p>
+                Chaque jour, on cherche parmi 67 villes du monde celle dont le ressenti maximal prévu est le plus proche de celui de votre ville, à 4&#8239;°C près au plus. C&apos;est une image du jour, pas une comparaison de climats. Le <G k="jumeau">jumeau climatique 2050</G>, lui, compare des normales projetées à des normales actuelles.
+              </p>
+            </Part>
+
+            <Part id="impacts" eyebrow="En vrai, ça fait quoi ?" title={<><Hl>63 faits</Hl> observés, chacun avec sa source.</>}>
+              <p>
+                Sur les fiches ville et région, un bloc décrit une conséquence déjà observée du réchauffement (vigne, forêts, littoral, moustique tigre, glaciers…), avec sa cause et sa source : INRAE, ONF, IFREMER, LPO, ANSES, GLACIOCLIM, CNRS, Météo-France, Haut Conseil pour le climat. Sans source pour une zone, rien ne s&apos;affiche.
+              </p>
+            </Part>
+
+            <Part id="limites" eyebrow="Honnêtement" title={<>Ce que ces chiffres <Hl>ne disent pas</Hl>.</>}>
+              <ul className="flex list-disc flex-col gap-2 pl-5">
+                <li>Une ville = un point de grille ERA5 (environ 30 km) : ce n&apos;est pas la station de votre quartier.</li>
+                <li>Le ressenti du jour est une <strong>prévision</strong> du matin, pas une mesure.</li>
+                <li>Les séries de projection affichées comme « scénario intermédiaire » (SSP2-4.5) et « émissions élevées » (SSP5-8.5) se distinguent, dans nos scripts, par les modèles retenus. Pour quelques villes, faute de ressenti dans les modèles, la projection porte sur la température de l&apos;air.</li>
+                <li>Normales, tendances et projections sont recalculées à la main, lors des mises à jour des données sources.</li>
+              </ul>
+            </Part>
+
+            <Part id="site" eyebrow="Technique" title={<>Un site <Hl>sobre</Hl>, sans traceur publicitaire.</>}>
+              <p>
+                Les polices (Bricolage Grotesque, DM Sans, JetBrains Mono) sont <strong>hébergées sur nos serveurs</strong> : aucun appel à Google Fonts. La mesure d&apos;audience utilise <strong>Vercel Analytics</strong>, sans cookie ni profil. Les fonds de carte viennent de CARTO, la recherche de commune de geo.api.gouv.fr. Détails dans la <Link href="/confidentialite" className="font-semibold text-ink underline underline-offset-2">politique de confidentialité</Link>, et les coulisses techniques dans <Link href="/backstage" className="font-semibold text-ink underline underline-offset-2">Backstage</Link>.
+              </p>
+            </Part>
+
+            <Part id="projet" eyebrow="Qui fait ça" title={<>Un projet <Hl>indépendant</Hl>.</>}>
+              <p>
+                cestchaud.fr est conçu par <strong>Florent Bertiaux</strong>{" "}et édité par LesWWW. Pas de publicité, pas d&apos;investisseur. Une erreur, une question, une demande presse : écrivez-nous.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <ButtonLink href="/contact" variant="chaud" className="group">Nous écrire <Arrow /></ButtonLink>
+              </div>
+              <p className="text-[15px]">
+                Sources :{" "}
+                {[
+                  ["Open-Meteo", "https://open-meteo.com"],
+                  ["Copernicus ERA5", "https://cds.climate.copernicus.eu"],
+                  ["GIEC AR6", "https://www.ipcc.ch/report/ar6/wg1/"],
+                  ["NASA FIRMS", "https://firms.modaps.eosdis.nasa.gov"],
+                  ["Météo-France vigilance", "https://vigilance.meteofrance.fr"],
+                  ["Haut Conseil pour le climat", "https://www.hautconseilclimat.fr"],
+                ].map(([label, href], i, arr) => (
+                  <span key={href}>
+                    <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2">{label}</a>{i < arr.length - 1 ? " · " : ""}
+                  </span>
+                ))}
+              </p>
+            </Part>
           </div>
-        </section>
-
-        {/* Liens utiles */}
-        <div className="border-t border-black/[0.06] pt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs text-neutral-400">
-          <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            Open-Meteo
-          </a>
-          <a href="https://cds.climate.copernicus.eu" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            Copernicus / ERA5
-          </a>
-          <a href="https://www.ipcc.ch/report/ar6/wg1/" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            GIEC AR6
-          </a>
-          <a href="https://firms.modaps.eosdis.nasa.gov" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            NASA FIRMS
-          </a>
-          <a href="https://www.inrae.fr" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            INRAE
-          </a>
-          <a href="https://www.onf.fr" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            ONF
-          </a>
-          <a href="https://www.ifremer.fr" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            IFREMER
-          </a>
-          <a href="https://www.hautconseilclimat.fr" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-700 transition-colors">
-            Haut Conseil pour le Climat
-          </a>
         </div>
-
       </div>
-
-      <div className="max-w-4xl mx-auto px-5 pb-8 w-full">
-        <PageFooter />
-      </div>
-    </div>
+    </PageShell>
   )
 }
