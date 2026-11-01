@@ -10,11 +10,11 @@ L'approche est comparative et ancrée dans le present : on montre ce que les hab
 
 ## Methodologie des donnees
 
-### Ressenti thermique (UTCI)
+### Ressenti thermique (température apparente)
 
-L'indice UTCI (Universal Thermal Climate Index) est l'indicateur retenu pour les comparaisons. Il integre la temperature de l'air, l'humidite, le rayonnement solaire et le vent. Il reflete mieux le stress thermique ressenti par le corps humain que la simple temperature de l'air (temperature de bulbe sec).
+L'indicateur retenu est la température apparente maximale du jour fournie par Open-Meteo (apparent_temperature_max). Elle combine la température de l'air, l'humidité, le vent et le rayonnement solaire. Ce n'est pas l'indice UTCI.
 
-Toutes les valeurs de ressenti sur ce site sont des valeurs UTCI ou apparent_temperature (temperature ressentie equivalente), selon la disponibilite via Open-Meteo.
+Toutes les valeurs de ressenti du site (valeur du jour, normales ERA5 1991-2020, tendances, projections) utilisent cette même mesure, ce qui rend les comparaisons cohérentes en toute saison.
 
 ### Normales climatiques (ERA5)
 
@@ -24,17 +24,19 @@ Les tendances (en °C de hausse depuis les annees 1990) sont calculees par regre
 
 ### Anomalie du jour
 
-Anomalie = Ressenti UTCI max du jour (Open-Meteo) - Normale ERA5 du mois en cours (1991-2020).
+Anomalie = Ressenti maximal du jour (Open-Meteo) - Normale ERA5 du mois en cours (1991-2020).
 
-Une anomalie positive signifie qu'il fait plus chaud que la normale historique. Les anomalies de +3°C et plus sont considerees significatives. Les alertes canicule se declenchent a partir de seuils UTCI definis par arrondissement de ville (typiquement 38-42°C UTCI selon les villes).
+Une anomalie positive signifie qu'il fait plus chaud que la normale historique. Une anomalie négative signifie qu'il fait plus frais que d'habitude. Le site considère une journée comme « très douce » à partir de +3 °C. Une anomalie d'un seul jour relève de la météo ; c'est la tendance sur des décennies qui décrit le climat.
 
 ### Jumeaux climatiques
 
-L'algorithme compare le ressenti UTCI journalier de chaque ville française avec celui de 67 villes mondiales. Un "jumeau" est une ville mondiale dont le ressenti du jour est dans la plage [ressenti_FR - 4°C, ressenti_FR + 4°C]. Quand plusieurs jumeaux existent, on prefere la ville la plus connue (Paris > Lyon, etc.). La correspondance se fait sur le même jour calendaire (pas de decalage saisonnier).
+Jumeau 2050 : pour chaque ville française, le climat cible 2050 = normale ERA5 1991-2020 + hausse projetée (CMIP6 SSP2-4.5 à 2050, lissée sur 3 mois, jamais inférieure à la tendance déjà observée). On le compare mois par mois aux normales actuelles des 67 villes du monde (écart quadratique moyen sur 12 mois) ; la plus proche est le jumeau. Au-delà de 2,5 °C d'écart moyen, le site indique qu'aucun jumeau proche n'existe dans sa liste.
+
+À part, la page Jumeaux montre aussi les villes du monde où le ressenti du jour est proche (±4 °C) : c'est une comparaison météo du jour, pas climatique.
 
 ### Projections GIEC (CMIP6)
 
-Les projections 2030, 2040, 2050 sont issues des modeles CMIP6, rapport AR6 du GIEC, scenario SSP2-4.5 (emissions moderees, compatible avec un rechauffement global de +2,5°C en 2100). Les valeurs representent la hausse mediane du ressenti mensuel par rapport a la periode de reference 1991-2020.
+Les projections 2030, 2040, 2050 sont issues des modeles CMIP6, rapport AR6 du GIEC, scenario SSP2-4.5 (emissions moderees, compatible avec un rechauffement global de +2,5°C en 2100). Les valeurs représentent la hausse moyenne d'ensemble du ressenti par rapport à la période modélisée 2000-2020. Le site les présente par saison, avec la fourchette entre scénarios SSP1-2.6, SSP2-4.5 et SSP5-8.5, car les valeurs mensuelles isolées sont trop bruitées.
 
 ### Feux actifs (NASA FIRMS VIIRS)
 
@@ -52,7 +54,7 @@ Classification des feux :
 Pour `/a/bordeaux` un jour de juillet type :
 
 ```
-Ressenti max : 38°C UTCI
+Ressenti max : 38 °C ressentis
 Normale juillet (ERA5 1991-2020) : 31°C
 Anomalie : +7°C
 Tendance ERA5 annuelle depuis 1990 : +2.3°C
@@ -66,12 +68,12 @@ Record annee : 42°C (15 aout)
 ### Page ville `/a/[slug]`
 
 Chaque ville française (62 villes) et mondiale (67 villes) a une fiche. Les donnees affichees :
-- Ressenti UTCI max du jour (Open-Meteo, mis a jour chaque matin)
+- Ressenti maximal du jour (Open-Meteo, mis a jour chaque matin)
 - Normale ERA5 pour le mois en cours
 - Anomalie (difference)
 - Tendance ERA5 sur 30 ans (annuelle, toutes saisons)
 - Projections GIEC 2030 / 2040 / 2050 (scenario SSP2-4.5)
-- Record de l'annee en cours (max UTCI depuis le 1er janvier)
+- Record de l'annee en cours (ressenti maximal depuis le 1er janvier)
 - Jumeau climatique mondial
 - 2 faits d'impact contextualises selon l'anomalie
 - Lien vers la fiche de la region
@@ -90,7 +92,7 @@ Chaque ville française (62 villes) et mondiale (67 villes) a une fiche. Les don
 ## Briefings email
 
 Les abonnes recoivent chaque matin un email par ville suivie contenant :
-- Ressenti max prevu du jour (UTCI)
+- Ressenti max prevu du jour (température apparente)
 - Anomalie vs normale ERA5
 - Alerte si seuil canicule atteint
 - Jumeau climatique du jour
@@ -100,7 +102,7 @@ Les emails sont envoyes via Resend. L'abonne peut gerer ses villes, se desabonne
 
 ## Limites editoriales
 
-1. **Les donnees ne sont pas des previsions** : le ressenti UTCI affiche est celui du jour actuel (ou de la veille selon l'heure de la mise a jour), pas une prediction future.
+1. **Les donnees ne sont pas des previsions** : le ressenti affiche est celui du jour actuel (ou de la veille selon l'heure de la mise a jour), pas une prediction future.
 2. **Les normales ERA5 sont des moyennes** : l'anomalie mesure un ecart a une moyenne sur 30 ans, pas a un record.
 3. **Les projections GIEC sont des medianes de modeles** : les incertitudes sont importantes, surtout apres 2040. SSP2-4.5 est un scenario median, ni optimiste ni pessimiste.
 4. **Les feux VIIRS peuvent avoir des faux positifs** : malgre le masque industriel, certaines sources de chaleur industrielles ou agricoles (sechage, brulage agricole) peuvent apparaitre. On filtre les permanents mais pas tous les agricoles.
