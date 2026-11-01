@@ -18,7 +18,7 @@ Aucun contenu n'est genere par IA generative. Toutes les donnees proviennent de 
 ## Pages
 
 - `/` : tableau de bord climatique du jour. Records nationaux (plus chaud, plus frais), spectre de chaleur, top 3 anomalies, ville du jour, insights ERA5 et GIEC, navigation.
-- `/explorer` : carte interactive mondiale et jumeaux climatiques. Cliquer une ville française revele les villes du monde a ressenti equivalent aujourd'hui.
+- `/jumeaux?ville=[slug]` : jumeaux 2050. La normale ERA5 d'une ville française plus la projection CMIP6 SSP2-4.5 à 2050, comparée mois par mois aux normales actuelles de 67 villes du monde. `/jumeaux/jeu` : le jeu quotidien (5 questions).
 - `/en/france` : vue d'ensemble de la chaleur en France (62 villes, classement par anomalie du jour).
 - `/carte` : carte de chaleur interactive. Anomalies du jour pour les villes françaises colorees par ecart a la normale.
 - `/a/[slug]` : fiche climatique par ville (française ou mondiale). Ressenti max, normale historique ERA5, anomalie du jour, tendance 30 ans, projections GIEC 2030/2040/2050, records annuels, jumeau climatique mondial, faits d'impact contextualisés, partage social.
