@@ -1,33 +1,56 @@
-// Silhouette simplifiée de la France métropolitaine (lat, lon), assumée comme un pictogramme :
-// l'« hexagone » de la marque. Suffisant pour placer 62 villes, pas pour de la cartographie fine.
+// Fond de carte de la France, style « Liner » (LesWWW) : graticule en pointillés, voisins en trait fin,
+// la France en trait épais remplie d'une trame de points, les villes en anneaux.
+// Contours issus de github.com/kxrz/leswww-liner (licence MIT), construits par scripts/build-geo.mjs.
 
-export const FRANCE_OUTLINE: [number, number][] = [
-  [51.09, 2.55], [50.95, 1.6], [50.37, 1.55], [50.06, 1.4], [49.72, 0.18], [49.43, 0.2], [49.3, -0.4],
-  [49.38, -1.1], [49.72, -1.3], [49.65, -1.95], [49.2, -1.6], [48.65, -1.4], [48.68, -2.0], [48.53, -2.75],
-  [48.86, -3.2], [48.68, -4.05], [48.62, -4.75], [48.36, -4.78], [48.0, -4.5], [47.8, -4.0], [47.6, -3.1],
-  [47.3, -2.5], [47.1, -2.15], [46.75, -1.95], [46.3, -1.25], [45.9, -1.15], [45.55, -1.15], [44.65, -1.2],
-  [44.0, -1.35], [43.55, -1.5], [43.38, -1.78], [43.05, -1.4], [42.8, -0.3], [42.7, 0.7], [42.5, 1.7],
-  [42.43, 3.15], [43.0, 3.05], [43.3, 3.55], [43.52, 4.2], [43.35, 4.85], [43.2, 5.5], [43.08, 6.15],
-  [43.25, 6.75], [43.55, 7.05], [43.78, 7.52], [44.15, 7.66], [44.45, 6.9], [45.1, 7.1], [45.9, 7.0],
-  [46.4, 6.8], [46.15, 6.2], [46.6, 6.12], [47.1, 6.9], [47.5, 7.0], [47.6, 7.55], [48.1, 7.6],
-  [48.98, 8.2], [49.15, 6.75], [49.5, 6.35], [49.6, 5.8], [49.85, 4.85], [50.15, 4.2], [50.3, 4.0],
-  [50.6, 3.3], [50.8, 2.75], [51.09, 2.55],
-]
+import geo from "@/data/geo/france.json"
 
-export const CORSICA_OUTLINE: [number, number][] = [
-  [43.0, 9.45], [42.6, 9.55], [42.1, 9.55], [41.4, 9.2], [41.6, 8.8], [41.95, 8.6], [42.35, 8.55], [42.7, 9.1], [43.0, 9.45],
-]
+type LonLat = [number, number]
 
-export const BOUNDS = { latMin: 41.3, latMax: 51.15, lonMin: -5.0, lonMax: 9.7 }
+export const BOUNDS = { latMin: 41.2, latMax: 51.25, lonMin: -5.2, lonMax: 9.8 }
 const K = Math.cos((46.5 * Math.PI) / 180)
 export const PX_PER_DEG = 62
+const PAD = 10
 
-export const VIEW_W = Math.round((BOUNDS.lonMax - BOUNDS.lonMin) * K * PX_PER_DEG) + 20
-export const VIEW_H = Math.round((BOUNDS.latMax - BOUNDS.latMin) * PX_PER_DEG) + 20
+export const VIEW_W = Math.round((BOUNDS.lonMax - BOUNDS.lonMin) * K * PX_PER_DEG) + PAD * 2
+export const VIEW_H = Math.round((BOUNDS.latMax - BOUNDS.latMin) * PX_PER_DEG) + PAD * 2
 
+/** (lat, lon) → (x, y) dans le repère SVG de la carte */
 export function project(lat: number, lon: number): [number, number] {
-  return [10 + (lon - BOUNDS.lonMin) * K * PX_PER_DEG, 10 + (BOUNDS.latMax - lat) * PX_PER_DEG]
+  return [PAD + (lon - BOUNDS.lonMin) * K * PX_PER_DEG, PAD + (BOUNDS.latMax - lat) * PX_PER_DEG]
 }
+
+function ringsToPath(rings: LonLat[][]): string {
+  return rings.map((r) => r.map(([lon, lat], i) => {
+    const [x, y] = project(lat, lon)
+    return `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`
+  }).join("") + "Z").join("")
+}
+
+export const FRANCE_RINGS = geo.france as LonLat[][]
+export const NEIGHBOUR_RINGS = geo.neighbours as LonLat[][]
+
+/** Tracés prêts à l'emploi (calculés une fois) */
+export const FRANCE_PATH = ringsToPath(FRANCE_RINGS)
+export const NEIGHBOURS_PATH = ringsToPath(NEIGHBOUR_RINGS)
+
+/** Graticule tous les `step` degrés, à tracer en pointillés */
+export function graticulePath(step = 2): string {
+  let d = ""
+  for (let lon = Math.ceil(BOUNDS.lonMin / step) * step; lon <= BOUNDS.lonMax; lon += step) {
+    const [x] = project(0, lon)
+    d += `M${x.toFixed(1)} 0V${VIEW_H}`
+  }
+  for (let lat = Math.ceil(BOUNDS.latMin / step) * step; lat <= BOUNDS.latMax; lat += step) {
+    const [, y] = project(lat, 0)
+    d += `M0 ${y.toFixed(1)}H${VIEW_W}`
+  }
+  return d
+}
+
+// ── Compatibilité avec la première version (anneaux en [lat, lon]) ──
+const byArea = [...FRANCE_RINGS].sort((a, b) => b.length - a.length)
+export const FRANCE_OUTLINE: [number, number][] = byArea[0].map(([lon, lat]) => [lat, lon])
+export const CORSICA_OUTLINE: [number, number][] = (FRANCE_RINGS.find((r) => r[0][0] > 8) ?? byArea[1]).map(([lon, lat]) => [lat, lon])
 
 export function outlinePath(points: [number, number][]): string {
   return points.map(([lat, lon], i) => {

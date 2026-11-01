@@ -14,6 +14,9 @@ import Explain from "@/components/ui/Explain"
 import Logo from "@/components/brand/Logo"
 import Mark from "@/components/brand/Mark"
 import MotionDemo from "@/components/brand/MotionDemo"
+import LinerFrance from "@/components/brand/LinerFrance"
+import DotWorld, { EURAFRICA_BOUNDS, makeProjection } from "@/components/brand/DotWorld"
+import { project as projectFR } from "@/lib/france-shape"
 import { ANOMALY_STEPS } from "@/lib/anomaly"
 
 export const metadata: Metadata = {
@@ -160,6 +163,41 @@ export default function BrandPage() {
             <p className="text-[17px]">Texte courant · 17</p>
             <p className="text-[13px] text-mute">Légende · 13 (minimum pour du texte à lire)</p>
           </Card>
+        </Section>
+
+        {/* ── Cartes ── */}
+        <Section
+          id="cartes"
+          eyebrow="Fonds de carte"
+          title={<>Des cartes <Hl>en points</Hl>, pas en tuiles.</>}
+          intro="Hérités du projet Liner (LesWWW) : graticule en pointillés, voisins en trait fin, le pays en trait épais rempli d'une trame de points, les lieux en anneaux. Aucun fond de carte à charger : c'est du dessin vectoriel, léger, lisible sur un téléphone et animable."
+        >
+          <div className="grid gap-3 lg:grid-cols-2">
+            <Card tone="white" className="flex flex-col gap-3">
+              <LinerFrance id="brand-fr" className="h-auto w-full" label="France, style Liner">
+                {([[48.85, 2.35, "#dc2626"], [43.3, 5.37, "#fb923c"], [50.63, 3.07, "#bfdbfe"]] as const).map(([lat, lon, fill]) => {
+                  const [x, y] = projectFR(lat, lon)
+                  return <circle key={`${lat}`} cx={x} cy={y} r="10" fill={fill} stroke="var(--color-ink)" strokeWidth="2.5" />
+                })}
+              </LinerFrance>
+              <p className="text-[14px] text-mute">France métropolitaine · les villes prennent la couleur de leur écart.</p>
+            </Card>
+            <Card tone="ink" className="flex flex-col gap-3">
+              {(() => {
+                const { project } = makeProjection(EURAFRICA_BOUNDS, 720)
+                const [px, py] = project(48.85, 2.35)
+                const [sx, sy] = project(37.39, -5.98)
+                return (
+                  <DotWorld bounds={EURAFRICA_BOUNDS} className="h-auto w-full" dotColor="var(--color-paper)" dotOpacity={0.35} label="Planisphère en points">
+                    <path d={`M${px} ${py} Q ${px - 60} ${(py + sy) / 2} ${sx} ${sy}`} fill="none" stroke="var(--color-signal)" strokeWidth="2.5" strokeDasharray="4 5" />
+                    <circle cx={px} cy={py} r="7" fill="var(--color-chaud)" stroke="var(--color-paper)" strokeWidth="2.5" />
+                    <circle cx={sx} cy={sy} r="7" fill="var(--color-signal)" stroke="var(--color-paper)" strokeWidth="2.5" />
+                  </DotWorld>
+                )
+              })()}
+              <p className="text-[14px] text-paper/75">Planisphère en points · exemple de trajet « jumeau 2050 ».</p>
+            </Card>
+          </div>
         </Section>
 
         {/* ── Ton ── */}
