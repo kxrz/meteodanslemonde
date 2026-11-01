@@ -1,25 +1,27 @@
+import type { Metadata } from "next"
 import Link from "next/link"
-import { Metadata } from "next"
-import { fetchFirePoints, fetchFireZoneWeather, clusterFirePoints } from "@/lib/fire-data"
-import SiteHeader from "@/components/SiteHeader"
-import PageFooter from "@/components/PageFooter"
+import PageShell from "@/components/ui/PageShell"
+import Title from "@/components/ui/Title"
+import Hl from "@/components/ui/Hl"
+import Num from "@/components/ui/Num"
+import Card from "@/components/ui/Card"
+import Eyebrow from "@/components/ui/Eyebrow"
+import Explain from "@/components/ui/Explain"
+import { ButtonLink, Arrow } from "@/components/ui/Button"
 import FirePageClient from "@/components/FirePageClient"
+import { fetchFirePointsResult, fetchFireZoneWeather, clusterFirePoints } from "@/lib/fire-data"
+import { MONTHS, isHotSeason } from "@/lib/season"
+import { parisISODate } from "@/lib/signals"
 
-const META_TITLE = "Anomalies thermiques en France · Lecture satellite 7 jours"
-const META_DESC = "Carte des anomalies thermiques détectées par satellite NASA FIRMS / VIIRS en France métropolitaine et Corse. Usage pédagogique de données ouvertes, mis à jour toutes les heures."
+const META_TITLE = "Anomalies thermiques en France · lecture satellite 7 jours · cestchaud.fr"
+const META_DESC = "Les points anormalement chauds repérés par le satellite NASA FIRMS / VIIRS en France métropolitaine et en Corse sur 7 jours : feux, brûlages, sites industriels. Comment les lire sans se tromper."
+const URL = "https://www.cestchaud.fr/signaux/anomalies-thermiques"
 
 export const metadata: Metadata = {
   title: META_TITLE,
   description: META_DESC,
-  alternates: { canonical: "https://www.cestchaud.fr/feux" },
-  openGraph: {
-    title: META_TITLE,
-    description: META_DESC,
-    url: "https://www.cestchaud.fr/feux",
-    siteName: "cestchaud.fr",
-    locale: "fr_FR",
-    type: "website",
-  },
+  alternates: { canonical: URL },
+  openGraph: { title: META_TITLE, description: META_DESC, url: URL, siteName: "cestchaud.fr", locale: "fr_FR", type: "website" },
   twitter: { card: "summary_large_image", title: META_TITLE, description: META_DESC },
 }
 
@@ -46,29 +48,67 @@ const citiesFR = require("@/data/cities-fr.json") as Array<{
   id: string; name: string; lat: number; lon: number; region: string
 }>
 
-export default async function FeuxPage() {
-  const points = await fetchFirePoints()
+const CRUMBS = [{ label: "Signaux du mois", href: "/signaux" }, { label: "Anomalies thermiques" }]
 
+/** Le bloc d'explication unique de la page. */
+function WhatPointsShow() {
+  return (
+    <Card tone="paper" as="section" className="flex flex-col gap-3">
+      <h2 className="flex items-center gap-2 font-display text-[1.35rem] font-bold leading-tight">
+        Ce que montrent ces points <Explain term="firms" />
+      </h2>
+      <ul className="flex max-w-3xl list-disc flex-col gap-2 pl-5 text-[15px] leading-snug text-ink-soft">
+        <li><strong className="text-ink">Un point = un pixel de 375&#8239;m plus chaud que ses voisins</strong> au passage du satellite (deux fois par jour). Ce n&apos;est pas un incendie déclaré.</li>
+        <li>Feu de végétation, brûlage agricole, torchère, site industriel ou reflet : le capteur ne fait pas la différence. Les sites industriels connus et les sources actives 5 jours sur 7 sont signalés à part.</li>
+        <li>Les nuages créent des angles morts. Ce n&apos;est pas un outil d&apos;alerte : en cas de feu, appelez le 18 ou le 112.</li>
+      </ul>
+    </Card>
+  )
+}
 
+export default async function AnomaliesThermiquesPage() {
+  const month = Number(parisISODate(new Date()).slice(5, 7)) - 1
+  const monthName = MONTHS[month]
+  const hot = isHotSeason(month)
+  const result = await fetchFirePointsResult()
+  const points = result.ok ? result.points : []
+
+  const offSeason = (
+    <>En {monthName}, les détections sont surtout des <strong>brûlages agricoles</strong> et des <strong>sites industriels</strong> : la saison des feux de végétation, c&apos;est surtout de juin à septembre.</>
+  )
+
+  // ── Flux injoignable ou aucune détection : un vrai état éditorial ──
   if (points.length === 0) {
     return (
-      <>
-        <SiteHeader asLink />
-        <main className="max-w-2xl mx-auto px-4 py-20 text-center">
-          <p className="text-neutral-500 text-sm mb-4">Aucune détection VIIRS en France sur les 7 derniers jours.</p>
-          <Link href="/" className="text-sm text-neutral-400 hover:text-neutral-900 transition-colors">Retour à l&apos;accueil</Link>
-        </main>
-        <PageFooter />
-      </>
+      <PageShell crumbs={CRUMBS}>
+        <div className="flex flex-col gap-10 pt-4 sm:pt-8">
+          <header className="flex flex-col gap-5">
+            <Eyebrow>Satellite NASA · 7 derniers jours</Eyebrow>
+            <Title as="h1" size="hero" animate className="max-w-5xl">
+              {result.ok ? <>Aucun point chaud <Hl>vu de l&apos;espace</Hl>.</> : <>Le satellite <Hl>ne répond pas</Hl>.</>}
+            </Title>
+            <p className="max-w-3xl font-display text-[clamp(1.2rem,2.4vw,1.6rem)] font-bold leading-snug">
+              {result.ok
+                ? "Aucune anomalie thermique en France ces 7 derniers jours. Ni en métropole, ni en Corse."
+                : "Le flux NASA FIRMS n'a pas répondu. Pas de carte vide trompeuse : on réessaie toutes les heures."}
+            </p>
+            {!hot && <p className="max-w-3xl text-[17px] leading-relaxed text-ink-soft">{offSeason}</p>}
+          </header>
+          <WhatPointsShow />
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href="/signaux">Les signaux du mois <Arrow /></ButtonLink>
+            <ButtonLink href="/r" variant="ghost">Toutes les régions</ButtonLink>
+          </div>
+        </div>
+      </PageShell>
     )
   }
 
-  // Centroïde des feux pour les données météo
+  // Centroïde des détections pour l'air et le vent
   const centroidLat = points.reduce((s, p) => s + p.lat, 0) / points.length
   const centroidLon = points.reduce((s, p) => s + p.lon, 0) / points.length
   const zoneWeather = await fetchFireZoneWeather(centroidLat, centroidLon)
 
-  // Agrégations
   const byDay: Record<string, number> = {}
   for (const p of points) byDay[p.date] = (byDay[p.date] ?? 0) + 1
   const days = Object.keys(byDay).sort()
@@ -81,24 +121,24 @@ export default async function FeuxPage() {
     byRegion[r].frpTotal += p.frp
   }
 
-  const highConf = points.filter(p => p.confidence === "high").length
-  const hasFrp = points.some(p => p.frp > 0)
+  const highConf = points.filter((p) => p.confidence === "high").length
+  const hasFrp = points.some((p) => p.frp > 0)
   const maxFrp = hasFrp ? points.reduce((m, p) => Math.max(m, p.frp), 0) : 0
-  const peakDay = days.reduce((a, b) => (byDay[a] ?? 0) >= (byDay[b] ?? 0) ? a : b, days[0] ?? "")
+  const peakDay = days.reduce((a, b) => ((byDay[a] ?? 0) >= (byDay[b] ?? 0) ? a : b), days[0] ?? "")
   const peakCount = byDay[peakDay] ?? 0
 
   const regionRanking = Object.entries(byRegion)
     .filter(([key]) => key !== "autres")
     .sort((a, b) => b[1].count - a[1].count)
     .map(([key, data]) => ({ key, ...REGION_BOXES[key], count: data.count, frpTotal: data.frpTotal }))
-    .filter(r => r.label)
+    .filter((r) => r.label)
 
   const autresCount = byRegion["autres"]?.count ?? 0
   const clusters = clusterFirePoints(points)
 
   const geojson = {
     type: "FeatureCollection" as const,
-    features: points.map(p => ({
+    features: points.map((p) => ({
       type: "Feature" as const,
       geometry: { type: "Point" as const, coordinates: [p.lon, p.lat] as [number, number] },
       properties: { firedate: p.date, confidence: p.confidence, frp: p.frp },
@@ -106,40 +146,50 @@ export default async function FeuxPage() {
   }
 
   return (
-    <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
-      <SiteHeader asLink />
-      <nav className="text-xs text-neutral-400 flex items-center gap-1.5 px-5 py-2">
-        <Link href="/" className="hover:text-neutral-700 transition-colors">Accueil</Link>
-        <span>/</span>
-        <span className="text-neutral-700">Anomalies thermiques</span>
-      </nav>
-      <div className="px-5 py-3 border-b border-neutral-200 bg-[#f5f4f0] space-y-3">
-        <p className="text-xs text-neutral-500 leading-relaxed max-w-3xl">
-          Cette page affiche des <strong className="text-neutral-700">anomalies thermiques détectées depuis l&apos;espace</strong>, pas des incendies déclarés. Un capteur satellite voit une zone plus chaude que son environnement : cela peut être un feu de forêt, un site industriel, un écobuage ou un reflet solaire. Il n&apos;existe pas en France d&apos;API publique centralisant les déclarations d&apos;incendies en cours. Cette carte est un usage pédagogique de données ouvertes, pas un outil métier.
-        </p>
-        <div className="max-w-3xl bg-white border border-neutral-200 rounded-2xl px-4 py-3 flex gap-3 items-start">
-          <span className="text-base shrink-0">💬</span>
-          <p className="text-xs text-neutral-500 leading-relaxed">
-            <strong className="text-neutral-700">Mis à jour grâce aux retours d&apos;experts.</strong> Des géomaticiens et spécialistes des risques ont commenté cette page et signalé des imprécisions. Leurs bonnes pratiques ont permis d&apos;améliorer la lecture des données : masque des zones industrielles connues, détection des sources thermiques permanentes, reformulation des niveaux de certitude. Leurs avis sont les bienvenus.
+    <PageShell crumbs={CRUMBS}>
+      <div className="flex flex-col gap-10 pt-4 sm:pt-8">
+        <header className="flex flex-col gap-5">
+          <Eyebrow>Satellite NASA · 7 derniers jours</Eyebrow>
+          <Title as="h1" size="hero" animate className="max-w-5xl">
+            {hot ? <>Ce que le satellite <Hl tone="chaud">voit chauffer</Hl>.</> : <>En {monthName}, le satellite voit <Hl>surtout des brûlages</Hl>.</>}
+          </Title>
+          <p className="max-w-3xl font-display text-[clamp(1.2rem,2.4vw,1.6rem)] font-bold leading-snug">
+            <Num value={points.length} /> anomalies thermiques repérées en France en 7 jours, dont <Num value={highConf} /> à haute confiance.
+            {clusters.some((c) => c.isMajor) && <> <Num value={clusters.filter((c) => c.isMajor).length} /> foyers groupés se détachent.</>}
+          </p>
+          {!hot && <p className="max-w-3xl text-[17px] leading-relaxed text-ink-soft">Brûlages agricoles, sites industriels. Les feux de végétation, c&apos;est surtout de juin à septembre.</p>}
+        </header>
+
+        <WhatPointsShow />
+
+        <FirePageClient
+          geojson={geojson}
+          cities={citiesFR}
+          totalCount={points.length}
+          highConf={highConf}
+          hasFrp={hasFrp}
+          maxFrp={maxFrp}
+          peakDay={peakDay}
+          peakCount={peakCount}
+          days={days}
+          byDay={byDay}
+          regionRanking={regionRanking}
+          autresCount={autresCount}
+          zoneWeather={zoneWeather}
+          clusters={clusters}
+        />
+
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href="/signaux">Les signaux du mois <Arrow /></ButtonLink>
+            <ButtonLink href="/r" variant="ghost">Toutes les régions</ButtonLink>
+          </div>
+          <p className="text-[13px] text-mute">
+            Source : NASA FIRMS, capteur VIIRS (Suomi NPP), fichier Europe 7 jours. Regroupement des points à moins de 5&#8239;km par un calcul de distance, sans intelligence artificielle. Qualité de l&apos;air : Copernicus CAMS ; vent : Open-Meteo.{" "}
+            <Link href="/a-propos" className="underline underline-offset-2">Méthode détaillée</Link>.
           </p>
         </div>
       </div>
-      <FirePageClient
-        geojson={geojson}
-        cities={citiesFR}
-        totalCount={points.length}
-        highConf={highConf}
-        hasFrp={hasFrp}
-        maxFrp={maxFrp}
-        peakDay={peakDay}
-        peakCount={peakCount}
-        days={days}
-        byDay={byDay}
-        regionRanking={regionRanking}
-        autresCount={autresCount}
-        zoneWeather={zoneWeather}
-        clusters={clusters}
-      />
-    </div>
+    </PageShell>
   )
 }
