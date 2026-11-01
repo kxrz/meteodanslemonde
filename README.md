@@ -59,6 +59,7 @@ npm test
 | Variable | Usage |
 |----------|-------|
 | `RESEND_API_KEY` | Emails (contact, briefing) |
+| `RESEND_WEBHOOK_SECRET` | Signature des webhooks Resend (`whsec_…`) : obligatoire, sinon le webhook refuse tout |
 | `DATABASE_URL` | Base des abonnés (Neon) |
 | `CRON_SECRET`, `PUSH_SECRET`, `VAPID_*` | Tâches planifiées et notifications |
 | `OPEN_METEO_API_KEY` | Facultatif : clé Open-Meteo payante (usage commercial ou quota dépassé) |

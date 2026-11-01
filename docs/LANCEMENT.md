@@ -6,7 +6,8 @@
    GitHub → onglet *Actions* → workflow « Frost normals » → *Run workflow* sur `main`.
    Il écrit `data/frost-normals.json` et le commite. Tant qu'il n'a pas tourné, `/signaux`, les fiches ville et les idées reçues affichent les nuits de gel observées avec la mention « normale en cours de calcul ».
 2. **Relancer le relevé des extrêmes** pour obtenir le vrai minimum de l'année (`minTempLow`) : workflow « Daily year extremes » → *Run workflow* (sinon il tournera seul le lendemain à 5 h 30 UTC).
-3. Vérifier la page d'accueil, une fiche ville, `/signaux`, `/idees-recues`, `/jumeaux` sur téléphone.
+3. **Signer le webhook Resend** : Resend → Webhooks → l'endpoint `https://www.cestchaud.fr/api/webhooks/resend` → copier le *Signing secret* (`whsec_…`) dans Vercel, variable `RESEND_WEBHOOK_SECRET` (Production), puis redéployer. **Sans ce secret, le webhook refuse toutes les requêtes** (réponse 503) : les désinscriptions faites depuis Resend ne seraient plus répercutées en base. À faire avant ou juste après la fusion.
+4. Vérifier la page d'accueil, une fiche ville, `/signaux`, `/idees-recues`, `/jumeaux` sur téléphone.
 
 ## Si Open-Meteo devient payant (usage commercial ou quota dépassé)
 
