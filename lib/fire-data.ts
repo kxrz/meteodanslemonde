@@ -47,12 +47,18 @@ export function parseFirmsCSV(csv: string): FirmsPoint[] {
 }
 
 async function fetchFirmsPoints(): Promise<FirmsPoint[]> {
+  const r = await fetchFirePointsResult()
+  return r.ok ? r.points : []
+}
+
+/** Comme fetchFirePoints, mais distingue « aucune détection » (ok, liste vide) d'un flux NASA injoignable (ok: false). */
+export async function fetchFirePointsResult(): Promise<{ ok: true; points: FirmsPoint[] } | { ok: false }> {
   try {
-    const res = await fetch(FIRMS_7D, { next: { revalidate: 86400 } })
-    if (!res.ok) return []
-    return parseFirmsCSV(await res.text())
+    const res = await fetch(FIRMS_7D, { next: { revalidate: 86400 }, signal: AbortSignal.timeout(15_000) })
+    if (!res.ok) return { ok: false }
+    return { ok: true, points: parseFirmsCSV(await res.text()) }
   } catch {
-    return []
+    return { ok: false }
   }
 }
 

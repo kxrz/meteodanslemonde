@@ -1,5 +1,7 @@
 /**
- * Fetches the apparent temperature max/min for the current year for each FR city.
+ * Fetches, for the current year and each FR city, the highest and lowest daily apparent
+ * temperature max (fields max/min, kept for compatibility) and the true lowest minimum
+ * temperature (temperature_2m_min → minTempLow / minTempLowDate).
  * Output: data/year-extremes.json
  *
  * Run locally or via GitHub Actions (daily).
@@ -7,6 +9,7 @@
  */
 import fs from "fs"
 import path from "path"
+import { computeYearExtremes, type CityExtreme } from "../lib/year-extremes"
 
 // Load .env.local
 const envPath = path.join(process.cwd(), ".env.local")
@@ -26,14 +29,6 @@ const DATA_DIR = path.join(process.cwd(), "data")
 const OUTPUT_PATH = path.join(DATA_DIR, "year-extremes.json")
 const DELAY_MS = API_KEY ? 300 : 2000
 
-interface CityExtreme {
-  max: number
-  max_date: string
-  min: number
-  min_date: string
-  updated_at: string
-}
-
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
 }
@@ -49,7 +44,7 @@ async function fetchCityExtremes(
     `https://${ARCHIVE_HOST}/v1/archive` +
     `?latitude=${lat}&longitude=${lon}` +
     `&start_date=${startDate}&end_date=${endDate}` +
-    `&daily=apparent_temperature_max&timezone=Europe%2FParis` + API_SUFFIX
+    `&daily=apparent_temperature_max,temperature_2m_min&timezone=Europe%2FParis` + API_SUFFIX
 
   for (let attempt = 0; attempt <= 3; attempt++) {
     try {
@@ -66,7 +61,7 @@ async function fetchCityExtremes(
       }
 
       const text = await res.text()
-      let data: { daily?: { time?: string[]; apparent_temperature_max?: (number | null)[] } }
+      let data: { daily?: { time?: string[]; apparent_temperature_max?: (number | null)[]; temperature_2m_min?: (number | null)[] } }
       try {
         data = JSON.parse(text)
       } catch {
@@ -83,27 +78,12 @@ async function fetchCityExtremes(
         return null
       }
 
-      let max = -Infinity, min = Infinity
-      let max_date = "", min_date = ""
-      for (let i = 0; i < dates.length; i++) {
-        const v = values[i]
-        if (v == null) continue
-        if (v > max) { max = v; max_date = dates[i] }
-        if (v < min) { min = v; min_date = dates[i] }
-      }
-
-      if (!max_date || !min_date) {
+      const result = computeYearExtremes(dates, values, data.daily?.temperature_2m_min, new Date().toISOString())
+      if (!result) {
         console.warn(`    [${id}] no valid values`)
         return null
       }
-
-      return {
-        max: Math.round(max),
-        max_date,
-        min: Math.round(min),
-        min_date,
-        updated_at: new Date().toISOString(),
-      }
+      return result
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err)
       console.warn(`    [${id}] error: ${msg}`)
@@ -138,7 +118,7 @@ async function main() {
     if (result) {
       output[city.id] = result
       ok++
-      console.log(`max ${result.max}°C (${result.max_date}), min ${result.min}°C (${result.min_date})`)
+      console.log(`max ${result.max}°C (${result.max_date}), min ${result.min}°C (${result.min_date}), vrai min ${result.minTempLow ?? "?"}°C (${result.minTempLowDate ?? "?"})`)
     } else {
       console.log(`✗ skipped`)
     }
