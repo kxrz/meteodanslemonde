@@ -18,8 +18,9 @@ export default function ShareButton({ text, url, label = "Partager", variant = "
       try {
         await navigator.share({ text, url })
         return
-      } catch {
-        // user cancelled or not supported — fall through to clipboard
+      } catch (e) {
+        // annulation volontaire : on ne copie rien
+        if (e instanceof DOMException && e.name === "AbortError") return
       }
     }
     try {
@@ -109,13 +110,14 @@ export default function ShareButton({ text, url, label = "Partager", variant = "
   return (
     <button
       onClick={handleShare}
-      className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-400 hover:text-neutral-700 transition-colors"
+      type="button"
+      className="inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-5 font-display text-[15px] font-bold text-ink transition-colors hover:bg-ink hover:text-paper"
     >
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
         <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
       </svg>
-      {state === "copied" ? "Copié !" : label}
+      <span aria-live="polite">{state === "copied" ? "Copié" : label}</span>
     </button>
   )
 }

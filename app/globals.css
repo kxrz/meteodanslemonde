@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
+@import "@fontsource-variable/bricolage-grotesque/opsz.css";
+@import "@fontsource-variable/dm-sans/index.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
 
+/*
+  Identité cestchaud.fr v2 — voir /brand
+  Papier + encre, deux signaux (chaud / froid), une échelle d'anomalie unique,
+  et un surligneur pour les mots qui comptent.
+*/
 :root {
   --background: #f5f4f0;
   --foreground: #111111;
@@ -9,10 +17,102 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  /* Socle */
+  --color-paper: #f5f4f0;
+  --color-paper-deep: #ebe9e2;
+  --color-ink: #111111;
+  --color-ink-soft: #3d3d3a;
+  --color-mute: #5f5e58; /* gris le plus clair autorisé pour du texte sur papier (≥ 4.5:1) */
+  --color-line: #dcdad2;
+
+  /* Signaux */
+  --color-chaud: #e3261b;
+  --color-chaud-deep: #9f1710;
+  --color-froid: #1d4ed8;
+  --color-froid-deep: #172f80;
+  --color-signal: #ffe14d;
+
+  /* Surligneurs (fond des mots en gras animés) */
+  --color-hl-chaud: #ffc9b3;
+  --color-hl-froid: #c9dafc;
+  --color-hl-signal: #ffe98a;
+
+  /* Échelle d'anomalie (écart à la normale du mois) — unique sur tout le site */
+  --color-a-m4: #1e3a8a; /* ≤ −6 */
+  --color-a-m3: #2563eb; /* −6 … −3 */
+  --color-a-m2: #60a5fa; /* −3 … −1 */
+  --color-a-m1: #bfdbfe; /* −1 … −0,5 */
+  --color-a-0: #e7e5df;  /* −0,5 … +0,5 */
+  --color-a-p1: #fed7aa; /* +0,5 … +1 */
+  --color-a-p2: #fb923c; /* +1 … +3 */
+  --color-a-p3: #dc2626; /* +3 … +6 */
+  --color-a-p4: #7f1d1d; /* ≥ +6 */
+
+  --font-display: "Bricolage Grotesque Variable", "Arial Black", system-ui, sans-serif;
+  --font-sans: "DM Sans Variable", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
+
+  --radius-card: 1.25rem;
 }
 
 html, body {
   height: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01";
+}
+
+/* Titres : gras, serrés, équilibrés */
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Surligneur : le fond est un dégradé dont on anime la taille (GSAP) */
+.hl {
+  background-image: linear-gradient(var(--hl-color, var(--color-hl-signal)), var(--hl-color, var(--color-hl-signal)));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: 100% 0.42em;
+  padding-inline: 0.08em;
+  margin-inline: -0.08em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.hl-chaud { --hl-color: var(--color-hl-chaud); }
+.hl-froid { --hl-color: var(--color-hl-froid); }
+.hl-signal { --hl-color: var(--color-hl-signal); }
+.hl-ink { --hl-color: var(--color-ink); color: var(--color-paper); background-size: 100% 100%; background-position: 0 0; }
+
+/* Focus visible partout */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-froid);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  header nav, .no-print, .leaflet-control-container { display: none !important; }
+  body { background: #fff; }
+  a { color: inherit; text-decoration: none; }
 }
 
 @keyframes glow-border {
@@ -24,12 +124,6 @@ html, body {
   animation: glow-border 2.4s ease-in-out infinite;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
-}
-
 /* Tooltip feux — minimaliste */
 .fire-tooltip {
   background: rgba(255,255,255,0.95) !important;
@@ -37,14 +131,14 @@ body {
   box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
   border-radius: 8px !important;
   padding: 5px 8px !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-family: inherit !important;
   color: #374151 !important;
   white-space: nowrap;
 }
 .fire-tooltip::before { display: none !important; }
 .fire-tip-city { font-weight: 600; }
-.fire-tip-date { color: #9ca3af; margin-left: 4px; }
+.fire-tip-date { color: #6b7280; margin-left: 4px; }
 
 /* Popup feux — détaillé */
 .fire-popup .leaflet-popup-content-wrapper {
@@ -56,15 +150,15 @@ body {
 .fire-popup .leaflet-popup-tip-container { display: none; }
 .fire-popup .leaflet-popup-close-button {
   top: 8px !important; right: 10px !important;
-  font-size: 18px !important; color: #9ca3af !important; font-weight: 300 !important;
+  font-size: 18px !important; color: #6b7280 !important; font-weight: 300 !important;
 }
 .fire-popup .leaflet-popup-close-button:hover { color: #374151 !important; background: none !important; }
 .fire-pop { padding: 14px 16px; font-family: inherit; min-width: 170px; }
 .fire-pop-title { font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 2px; }
-.fire-pop-sub { font-size: 11px; color: #6b7280; margin-bottom: 8px; }
-.fire-pop-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; color: #6b7280; margin-top: 4px; }
+.fire-pop-sub { font-size: 12px; color: #4b5563; margin-bottom: 8px; }
+.fire-pop-row { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; color: #4b5563; margin-top: 4px; }
 .fire-pop-row strong { color: #111827; }
-.fire-pop-locating { color: #d1d5db !important; font-style: italic; }
+.fire-pop-locating { color: #9ca3af !important; font-style: italic; }
 .fire-pop-badge-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-.fire-pop-badge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
-.fire-pop-badge-desc { font-size: 10px; color: #9ca3af; }
+.fire-pop-badge { font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+.fire-pop-badge-desc { font-size: 11px; color: #6b7280; }

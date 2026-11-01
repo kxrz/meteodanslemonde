@@ -31,21 +31,21 @@ export default function Breadcrumb({ crumbs }: { crumbs: Crumb[] }) {
   return (
     <nav
       aria-label="Fil d'Ariane"
-      className="px-5 py-2 flex items-center gap-1.5 text-xs text-neutral-400 overflow-x-auto scrollbar-none"
+      className="px-4 sm:px-6 py-2 flex items-center gap-1.5 text-[13px] text-mute overflow-x-auto scrollbar-none"
     >
       {all.map((crumb, i) => {
         const isLast = i === all.length - 1
         const icon = crumb.icon ?? LABEL_ICONS[crumb.label] ?? null
         return (
           <span key={i} className="flex items-center gap-1.5 shrink-0">
-            {i > 0 && <span className="text-neutral-300">/</span>}
+            {i > 0 && <span className="text-line" aria-hidden="true">/</span>}
             {crumb.href && !isLast ? (
-              <Link href={crumb.href} className="flex items-center gap-1 hover:text-neutral-700 transition-colors">
+              <Link href={crumb.href} className="flex items-center gap-1 py-1.5 hover:text-ink underline-offset-2 hover:underline transition-colors">
                 {icon}
                 {crumb.label}
               </Link>
             ) : (
-              <span className={`flex items-center gap-1 ${isLast ? "text-neutral-700 font-semibold" : ""}`}>
+              <span aria-current={isLast ? "page" : undefined} className={`flex items-center gap-1 ${isLast ? "text-ink font-semibold" : ""}`}>
                 {icon}
                 {crumb.label}
               </span>

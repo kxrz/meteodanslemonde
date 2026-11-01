@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { slugify } from "@/lib/slugify"
 
 interface City {
@@ -56,20 +56,26 @@ interface Props {
   placeholder?: string
   onSelect?: (city: City) => void  // optional: called instead of navigating
   variant?: "navigate" | "select"  // navigate = link to /a/[slug], select = callback
+  id?: string
 }
 
+/** Recherche de ville : combobox accessible (flèches, Entrée, Échap), repli sur la liste locale si l'API des communes ne répond pas. */
 export default function CitySearch({
   cities,
-  placeholder = "Chercher une ville ou une région…",
+  placeholder = "Votre commune…",
   onSelect,
   variant = "navigate",
+  id = "city-search",
 }: Props) {
+  const router = useRouter()
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResult[]>([])
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [active, setActive] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const listId = `${id}-liste`
 
   const search = useCallback(async (q: string) => {
     if (q.length < 2) { setResults([]); return }
@@ -93,9 +99,9 @@ export default function CitySearch({
       }))
 
       // 2. Call geo.api.gouv.fr for any French commune
+      setResults(localMatches)
       const url = `https://geo.api.gouv.fr/communes?nom=${encodeURIComponent(q)}&fields=nom,centre,departement,region&boost=population&limit=6`
-      const res = await fetch(url)
-      const communes: GeoCommune[] = res.ok ? await res.json() : []
+      const communes: GeoCommune[] = await fetch(url).then((r) => (r.ok ? r.json() : [])).catch(() => [])
 
       const geoResults: SearchResult[] = []
       for (const commune of communes) {
@@ -123,8 +129,6 @@ export default function CitySearch({
       }
 
       setResults(merged.slice(0, 6))
-    } catch {
-      setResults([])
     } finally {
       setLoading(false)
     }
@@ -137,12 +141,14 @@ export default function CitySearch({
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
   }, [query, search])
 
+  useEffect(() => { setActive(-1) }, [results])
+
   useEffect(() => {
-    function handler(e: MouseEvent) {
+    function handler(e: PointerEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false)
     }
-    document.addEventListener("mousedown", handler)
-    return () => document.removeEventListener("mousedown", handler)
+    document.addEventListener("pointerdown", handler)
+    return () => document.removeEventListener("pointerdown", handler)
   }, [])
 
   const showDropdown = open && query.length >= 2
@@ -150,34 +156,52 @@ export default function CitySearch({
   function handleSelect(result: SearchResult) {
     setQuery("")
     setOpen(false)
-    if (variant === "select" && onSelect) {
-      onSelect(result.city)
-    }
+    if (variant === "select" && onSelect) onSelect(result.city)
+    else router.push(`/a/${slugify(result.city.name)}`)
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true); setActive((a) => Math.min(results.length - 1, a + 1)) }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => Math.max(-1, a - 1)) }
+    else if (e.key === "Enter") {
+      const pick = results[active >= 0 ? active : 0]
+      if (pick) { e.preventDefault(); handleSelect(pick) }
+    } else if (e.key === "Escape") { setOpen(false) }
   }
 
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none"
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
           <circle cx="11" cy="11" r="6" /><path strokeLinecap="round" d="M21 21l-4.35-4.35" />
         </svg>
         <input
+          id={id}
           type="search"
+          role="combobox"
+          aria-expanded={showDropdown && results.length > 0}
+          aria-controls={listId}
+          aria-autocomplete="list"
+          aria-activedescendant={active >= 0 ? `${listId}-${active}` : undefined}
           value={query}
           onChange={(e) => { setQuery(e.target.value); setOpen(true) }}
           onFocus={() => setOpen(true)}
+          onKeyDown={onKeyDown}
           placeholder={placeholder}
           autoComplete="off"
-          className="w-full pl-9 pr-9 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm placeholder-neutral-400 focus:outline-none focus:border-neutral-400 transition-colors"
+          className="min-h-12 w-full rounded-full border-2 border-ink bg-white py-3 pl-12 pr-11 text-[16px] text-ink placeholder:text-mute focus:outline-none focus-visible:ring-4 focus-visible:ring-froid/30"
         />
         {loading && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-neutral-200 border-t-neutral-400 rounded-full animate-spin" />
+          <div className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin rounded-full border-2 border-line border-t-ink" aria-hidden="true" />
         )}
         {!loading && query && (
-          <button onClick={() => { setQuery(""); setOpen(false); setResults([]) }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-neutral-600 transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <button
+            type="button"
+            aria-label="Effacer la recherche"
+            onClick={() => { setQuery(""); setOpen(false); setResults([]) }}
+            className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-mute hover:text-ink"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -185,42 +209,33 @@ export default function CitySearch({
       </div>
 
       {showDropdown && results.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 overflow-hidden">
-          <div className="py-1">
-            {results.map((result, i) => {
-              const content = (
-                <div className="flex items-center justify-between px-4 py-3 hover:bg-neutral-50 transition-colors group cursor-pointer">
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-neutral-900 truncate">{result.label}</p>
-                    <p className="text-xs text-neutral-400 truncate">
-                      {result.isExact ? result.sublabel : (
-                        <>
-                          <span className="text-amber-600">{result.sublabel}</span>
-                          {" · "}<span className="text-neutral-500">ville proche : {result.city.name} ({result.distanceKm} km)</span>
-                        </>
-                      )}
-                    </p>
-                  </div>
-                  <span className="text-neutral-300 group-hover:text-neutral-500 text-sm ml-3 shrink-0 transition-colors">&rarr;</span>
-                </div>
-              )
-
-              return variant === "select" ? (
-                <div key={i} onClick={() => handleSelect(result)}>{content}</div>
-              ) : (
-                <Link key={i} href={`/a/${slugify(result.city.name)}`} onClick={() => handleSelect(result)}>
-                  {content}
-                </Link>
-              )
-            })}
-          </div>
-        </div>
+        <ul id={listId} role="listbox" aria-label="Villes trouvées" className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-2xl border-2 border-ink bg-white py-1 shadow-[0_6px_0_0_var(--color-ink)]">
+          {results.map((result, i) => (
+            <li
+              key={i}
+              id={`${listId}-${i}`}
+              role="option"
+              aria-selected={i === active}
+              onPointerDown={(e) => e.preventDefault()}
+              onClick={() => handleSelect(result)}
+              className={`flex min-h-12 cursor-pointer items-center justify-between px-4 py-2.5 ${i === active ? "bg-signal" : "hover:bg-paper"}`}
+            >
+              <div className="min-w-0">
+                <p className="truncate font-display text-[16px] font-bold text-ink">{result.label}</p>
+                <p className="truncate text-[13px] text-mute">
+                  {result.isExact ? result.sublabel : <>{result.sublabel} · ville proche : <strong className="text-ink-soft">{result.city.name}</strong> ({result.distanceKm} km)</>}
+                </p>
+              </div>
+              <span className="ml-3 shrink-0 text-ink" aria-hidden="true">&rarr;</span>
+            </li>
+          ))}
+        </ul>
       )}
 
-      {showDropdown && !loading && query.length >= 2 && results.length === 0 && (
-        <div className="absolute top-full left-0 right-0 mt-1.5 bg-white border border-neutral-100 rounded-2xl shadow-lg z-50 p-4 text-center">
-          <p className="text-sm text-neutral-400">Aucune commune trouvée</p>
-        </div>
+      {showDropdown && !loading && results.length === 0 && (
+        <p role="status" className="absolute left-0 right-0 top-full z-50 mt-2 rounded-2xl border-2 border-ink bg-white p-4 text-center text-[15px] text-ink-soft">
+          Aucune commune trouvée pour « {query} ».
+        </p>
       )}
     </div>
   )
