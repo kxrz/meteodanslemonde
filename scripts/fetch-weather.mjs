@@ -11,12 +11,15 @@ const citiesWorld = JSON.parse(readFileSync(join(root, "data/cities-world.json")
 async function fetchBatch(cities) {
   const lats = cities.map((c) => c.lat).join(",")
   const lons = cities.map((c) => c.lon).join(",")
+  // Clé payante facultative (variable OPEN_METEO_API_KEY) : bascule sur l'hôte client d'Open-Meteo
+  const key = process.env.OPEN_METEO_API_KEY?.trim()
   const url =
-    `https://api.open-meteo.com/v1/forecast` +
+    `https://${key ? "customer-api" : "api"}.open-meteo.com/v1/forecast` +
     `?latitude=${lats}&longitude=${lons}` +
     `&current=temperature_2m,apparent_temperature,weathercode,relative_humidity_2m,wind_speed_10m` +
     `&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weathercode` +
-    `&wind_speed_unit=kmh&forecast_days=1`
+    `&wind_speed_unit=kmh&forecast_days=1` +
+    (key ? `&apikey=${encodeURIComponent(key)}` : "")
 
   const res = await fetch(url)
   if (!res.ok) {

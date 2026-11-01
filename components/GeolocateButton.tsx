@@ -46,17 +46,17 @@ export default function GeolocateButton({ cities }: { cities: City[] }) {
       onClick={handleClick}
       disabled={state === "loading"}
       title="Ma ville"
-      className="flex items-center gap-2 bg-white border border-neutral-200 hover:border-neutral-400 transition-colors rounded-xl px-3 py-2.5 text-sm text-neutral-500 hover:text-neutral-800 disabled:opacity-50 shrink-0"
+      className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-full border-2 border-ink bg-white px-4 font-display text-[15px] font-bold text-ink transition-colors hover:bg-ink hover:text-paper disabled:opacity-50"
     >
       {state === "loading" ? (
-        <div className="w-4 h-4 border-2 border-neutral-300 border-t-neutral-600 rounded-full animate-spin" />
+        <div className="w-4 h-4 border-2 border-line border-t-ink rounded-full animate-spin" aria-hidden="true" />
       ) : (
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <circle cx="12" cy="12" r="3" />
           <path strokeLinecap="round" d="M12 2v3M12 19v3M2 12h3M19 12h3" />
         </svg>
       )}
-      {state === "error" ? <span className="text-xs text-red-500">Localisation refusée</span> : <span className="text-xs font-semibold">Ma ville</span>}
+      {state === "error" ? <span role="status" className="text-chaud">Position indisponible</span> : <span>Me localiser</span>}
     </button>
   )
 }

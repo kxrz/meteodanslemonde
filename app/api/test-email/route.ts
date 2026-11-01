@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSql, initDb } from "@/lib/db"
 import { resend, FROM_EMAIL } from "@/lib/resend"
-import { fetchCityWeather, fetchCaniculeStreak, fetchClimateTwin } from "@/lib/weather-data"
-import { loadClimateMap } from "@/lib/climate"
-import { buildDailyEmailHtml, CityEmailData } from "@/lib/email-builder"
+import { buildDailyEmailHtml } from "@/lib/email-builder"
+import { buildCityEmailData } from "@/lib/briefing-data"
 
 // Route de test uniquement
 // Usage : GET /api/test-email?to=florent@leswww.com&secret=<CRON_SECRET>
@@ -40,39 +39,9 @@ export async function GET(req: NextRequest) {
     const citySlugs = city_slugs.split(",")
     const cityNames = city_names.split(",")
 
-    const climateMap = loadClimateMap()
     const month = new Date().getMonth()
-    const dateLabel = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
-    const citiesFR = require("@/data/cities-fr.json") as Array<{ id: string; name: string; lat: number; lon: number; region: string }>
-
-    const cityData: CityEmailData[] = []
-
-    for (let i = 0; i < citySlugs.length; i++) {
-      const slug = citySlugs[i]
-      const name = cityNames[i]
-      const city = citiesFR.find(c => c.id === slug || c.name.toLowerCase().replace(/[\s']/g, "-") === slug)
-
-      let apparentTempMax: number | null = null
-      if (city) {
-        try {
-          const w = await fetchCityWeather(city.lat, city.lon)
-          apparentTempMax = w?.apparent_temp_max ?? null
-        } catch {}
-      }
-
-      const climate = climateMap[slug] ?? null
-      const normal = climate?.normal?.[month] ?? null
-      const proj2050 = climate?.proj2050?.[month] ?? null
-      const anomaly = apparentTempMax !== null && normal !== null
-        ? Math.round((apparentTempMax - normal) * 10) / 10
-        : null
-
-      const [caniculeStreak, climateTwin] = city && apparentTempMax !== null
-        ? await Promise.all([fetchCaniculeStreak(city.lat, city.lon), fetchClimateTwin(apparentTempMax)])
-        : [0, null]
-
-      cityData.push({ slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin })
-    }
+    const dateLabel = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })
+    const cityData = await Promise.all(citySlugs.map((slug, i) => buildCityEmailData(slug, cityNames[i], month)))
 
     const html = buildDailyEmailHtml({ firstName: first_name, cities: cityData, dateLabel, month, unsubToken: confirm_token })
 

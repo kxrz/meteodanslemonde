@@ -18,11 +18,11 @@ export default async function Image() {
   const fontFamily = fonts ? "DM Sans" : "sans-serif"
 
   const features = [
-    "Ressenti max du jour",
-    "Anomalie vs normale ERA5",
-    "Alerte canicule",
-    "Jumeau climatique mondial",
-    "Projections GIEC 2050",
+    "Le ressenti du jour",
+    "L'écart à la normale 1991-2020",
+    "Le climat derrière la météo",
+    "Votre saison en 2050",
+    "L'idée reçue du jour",
   ]
 
   return new ImageResponse(

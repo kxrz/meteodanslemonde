@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/react"
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration"
 import PWAInstallBanner from "@/components/PWAInstallBanner"
+import MotionEngine from "@/components/motion/MotionEngine"
 import "./globals.css"
 
 export const viewport: Viewport = {
@@ -12,7 +13,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "En vrai, c'est chaud · cestchaud.fr",
-  description: "Quand Bordeaux atteint 34°C, où dans le monde est-ce la normale ? Jumeaux climatiques et projections GIEC.",
+  description: "L'écart à la normale du jour dans 62 villes françaises, les idées reçues démontées, et ce que le GIEC prévoit pour 2050. En toute saison.",
   metadataBase: new URL("https://www.cestchaud.fr"),
   manifest: "/manifest.json",
   appleWebApp: {
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "En vrai, c'est chaud · cestchaud.fr",
-    description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
+    description: "L'écart à la normale du jour, les idées reçues démontées, et votre ville en 2050.",
     url: "https://cestchaud.fr",
     siteName: "cestchaud.fr",
     locale: "fr_FR",
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "En vrai, c'est chaud · cestchaud.fr",
-    description: "Ressenti max du jour, villes jumelles climatiques, et projections GIEC 2030–2050.",
+    description: "L'écart à la normale du jour, les idées reçues démontées, et votre ville en 2050.",
     images: ["/og/home.png"],
   },
 }
@@ -44,12 +45,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr" className="h-full antialiased">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,900&display=swap"
-          rel="stylesheet"
-        />
         <link rel="dns-prefetch" href="https://api.open-meteo.com" />
         <link rel="dns-prefetch" href="https://basemaps.cartocdn.com" />
         <link rel="dns-prefetch" href="https://api.resend.com" />
@@ -58,8 +53,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="geo.position" content="46.5;2.5" />
         <meta name="ICBM" content="46.5, 2.5" />
       </head>
-      <body className="h-full">
+      <body className="min-h-full">
         {children}
+        <MotionEngine />
         <Analytics />
         <ServiceWorkerRegistration />
         <PWAInstallBanner />

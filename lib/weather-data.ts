@@ -1,6 +1,7 @@
 import citiesFRRaw from "@/data/cities-fr.json"
 import citiesWorldRaw from "@/data/cities-world.json"
 import { CityFR, CityWorld } from "./types"
+import { meteoUrl } from "@/lib/open-meteo"
 
 type FRBase = { id: string; name: string; lat: number; lon: number; region: string }
 type WorldBase = { id: string; name: string; country: string; lat: number; lon: number; climateProfile: string; climateLabel: string }
@@ -8,12 +9,14 @@ type WorldBase = { id: string; name: string; country: string; lat: number; lon: 
 async function fetchBatch(cities: { lat: number; lon: number }[]) {
   const lats = cities.map((c) => c.lat).join(",")
   const lons = cities.map((c) => c.lon).join(",")
-  const url =
-    `https://api.open-meteo.com/v1/forecast` +
-    `?latitude=${lats}&longitude=${lons}` +
-    `&current=temperature_2m,apparent_temperature,weathercode,relative_humidity_2m,wind_speed_10m` +
-    `&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weathercode` +
-    `&wind_speed_unit=kmh&forecast_days=1`
+  const url = meteoUrl("forecast", {
+    latitude: lats,
+    longitude: lons,
+    current: "temperature_2m,apparent_temperature,weathercode,relative_humidity_2m,wind_speed_10m",
+    daily: "temperature_2m_max,temperature_2m_min,apparent_temperature_max,weathercode",
+    wind_speed_unit: "kmh",
+    forecast_days: 1,
+  })
   const res = await fetch(url, { next: { revalidate: 86400 } })
   if (!res.ok) throw new Error(`Open-Meteo: ${res.status}`)
   const data = await res.json()
@@ -56,17 +59,18 @@ function emptyResult() {
 
 export async function fetchCityWeather(lat: number, lon: number) {
   try {
-    const url =
-      `https://api.open-meteo.com/v1/forecast` +
-      `?latitude=${lat}&longitude=${lon}` +
-      `&daily=apparent_temperature_max,weathercode` +
-      `&forecast_days=1`
+    const url = meteoUrl("forecast", { latitude: lat, longitude: lon, daily: "apparent_temperature_max,temperature_2m_min,weathercode", forecast_days: 1, timezone: "Europe/Paris" })
     const res = await fetch(url, { next: { revalidate: 86400 } })
     if (!res.ok) return null
     const data = await res.json()
+    const atMax = data.daily?.apparent_temperature_max?.[0]
+    const tMin = data.daily?.temperature_2m_min?.[0]
+    // Valeur absente = null (jamais un 0 silencieux : 0 °C est une vraie valeur en hiver)
+    if (atMax == null) return null
     return {
-      apparent_temp_max: Math.round(data.daily.apparent_temperature_max[0]) as number,
-      weathercode: data.daily.weathercode[0] as number,
+      apparent_temp_max: Math.round(atMax) as number,
+      temp_min: tMin == null ? null : (Math.round(tMin) as number),
+      weathercode: data.daily.weathercode?.[0] as number,
     }
   } catch {
     return null
@@ -80,11 +84,7 @@ export async function fetchCaniculeStreak(lat: number, lon: number): Promise<num
     const start = new Date(end)
     start.setDate(start.getDate() - 9)
     const fmt = (d: Date) => d.toISOString().slice(0, 10)
-    const url =
-      `https://archive-api.open-meteo.com/v1/archive` +
-      `?latitude=${lat}&longitude=${lon}` +
-      `&daily=apparent_temperature_max` +
-      `&start_date=${fmt(start)}&end_date=${fmt(end)}`
+    const url = meteoUrl("archive", { latitude: lat, longitude: lon, daily: "apparent_temperature_max", start_date: fmt(start), end_date: fmt(end) })
     const res = await fetch(url, { next: { revalidate: 86400 } })
     if (!res.ok) return 0
     const data = await res.json()
@@ -105,10 +105,7 @@ export async function fetchClimateTwin(apparentTempMax: number): Promise<{ name:
     const worldBase = citiesWorldRaw as WorldBase[]
     const lats = worldBase.map(c => c.lat).join(",")
     const lons = worldBase.map(c => c.lon).join(",")
-    const url =
-      `https://api.open-meteo.com/v1/forecast` +
-      `?latitude=${lats}&longitude=${lons}` +
-      `&daily=apparent_temperature_max&forecast_days=1`
+    const url = meteoUrl("forecast", { latitude: lats, longitude: lons, daily: "apparent_temperature_max", forecast_days: 1 })
     const res = await fetch(url, { next: { revalidate: 86400 } })
     if (!res.ok) return null
     const data = await res.json()

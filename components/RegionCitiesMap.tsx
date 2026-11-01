@@ -1,149 +1,74 @@
-"use client"
-
-import { useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { FRANCE_PATH, NEIGHBOURS_PATH, VIEW_H, VIEW_W, graticulePath, project } from "@/lib/france-shape"
+import { regionCrop } from "@/lib/city-page"
+import { anomalyHex } from "@/lib/anomaly"
+import { fmt, fmtDelta } from "@/lib/format"
 import { slugify } from "@/lib/slugify"
+import RegionFires from "@/components/RegionFires"
 
-interface City {
+export interface RegionMapCity {
   id: string
   name: string
   lat: number
   lon: number
-  normal: number | null
-  trend: number | null
+  /** écart du jour à la normale du mois (null si relevé indisponible) */
+  anomaly: number | null
+  temp: number | null
 }
 
-interface Props {
-  cities: City[]
-  showFires?: boolean
-}
+/**
+ * Carte de région en SVG, au style Liner (même fond que l'accueil, recadré sur la région) :
+ * chaque ville est un anneau rempli de la couleur de son ÉCART du jour (lib/anomaly), contour encre.
+ * Le fond reprend le tracé de components/brand/LinerFrance (qui n'accepte pas de recadrage) avec des traits
+ * insensibles au zoom. Pas de tuiles externes : rien à attribuer à OSM/CARTO, rien qui casse hors ligne.
+ */
+export default function RegionCitiesMap({ cities, showFires = false, label }: { cities: RegionMapCity[]; showFires?: boolean; label: string }) {
+  const pts = cities.map((c) => project(c.lat, c.lon))
+  const crop = regionCrop(pts, { minSpan: 110, ratio: 4 / 3, maxW: VIEW_W, maxH: VIEW_H })
+  // Tailles calées sur un affichage mobile (≈ 358 px de large) : libellés ≥ 13 px sur téléphone.
+  const s = crop.w / 358
+  const r = 8 * s
+  const font = 13 * s
+  const dot = 5 * s
 
-function trendColor(trend: number | null, normal: number | null): string {
-  const ref = normal ?? 20
-  if (ref < 15) return "#60a5fa"
-  if (ref < 20) return "#93c5fd"
-  if (ref < 25) return "#fde68a"
-  if (ref < 30) return "#fb923c"
-  if (ref < 35) return "#ef4444"
-  return "#b91c1c"
-}
+  return (
+    <svg viewBox={`${crop.x} ${crop.y} ${crop.w} ${crop.h}`} className="h-auto w-full bg-paper" role="group" aria-label={label}>
+      <defs>
+        <pattern id="trame-region" width={dot} height={dot} patternUnits="userSpaceOnUse">
+          <rect x={dot * 0.36} y={dot * 0.36} width={dot * 0.28} height={dot * 0.28} fill="var(--color-ink)" opacity="0.55" />
+        </pattern>
+      </defs>
+      <path d={graticulePath(1)} stroke="var(--color-ink)" strokeWidth="1" strokeDasharray="2 5" fill="none" opacity="0.45" vectorEffect="non-scaling-stroke" />
+      <path d={NEIGHBOURS_PATH} stroke="var(--color-ink)" strokeWidth="1" fill="none" opacity="0.55" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+      <path d={FRANCE_PATH} fill="url(#trame-region)" stroke="var(--color-ink)" strokeWidth="2.5" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
 
-export default function RegionCitiesMap({ cities, showFires = false }: Props) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
+      {showFires && <RegionFires crop={crop} radius={4 * s} />}
 
-  useEffect(() => {
-    if (typeof window === "undefined" || !containerRef.current || cities.length === 0) return
-
-    let map: import("leaflet").Map | null = null
-
-    const avgLat = cities.reduce((s, c) => s + c.lat, 0) / cities.length
-    const avgLon = cities.reduce((s, c) => s + c.lon, 0) / cities.length
-
-    const latRange = Math.max(...cities.map((c) => c.lat)) - Math.min(...cities.map((c) => c.lat))
-    const lonRange = Math.max(...cities.map((c) => c.lon)) - Math.min(...cities.map((c) => c.lon))
-    const spread = Math.max(latRange, lonRange)
-    const zoom = spread < 1 ? 9 : spread < 2 ? 8 : spread < 4 ? 7 : 6
-
-    import("leaflet").then((L) => {
-      if (!containerRef.current) return
-
-      const isMobile = window.matchMedia("(max-width: 768px)").matches
-
-      map = L.map(containerRef.current!, {
-        center: [avgLat, avgLon],
-        zoom,
-        zoomControl: false,
-        scrollWheelZoom: !isMobile,
-        attributionControl: false,
-      })
-
-      setTimeout(() => map?.invalidateSize(), 100)
-
-      L.control.zoom({ position: "bottomright" }).addTo(map)
-
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-        attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
-        subdomains: "abcd",
-        maxZoom: 19,
-      }).addTo(map)
-
-      cities.forEach((city) => {
-        const color = trendColor(city.trend, city.normal)
-
-        L.circleMarker([city.lat, city.lon], {
-          radius: isMobile ? 26 : 36,
-          fillColor: color,
-          color: "transparent",
-          weight: 0,
-          fillOpacity: 0.13,
-          interactive: false,
-        }).addTo(map!)
-
-        const trendStr = city.trend !== null
-          ? `<br><span style="color:${city.trend > 0 ? "#ea580c" : "#2563eb"}">${city.trend > 0 ? "+" : ""}${city.trend.toFixed(1)}°C tendance ERA5</span>`
-          : ""
-
-        L.circleMarker([city.lat, city.lon], {
-          radius: isMobile ? 9 : 11,
-          fillColor: color,
-          color: "rgba(0,0,0,0.2)",
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.9,
-        })
-          .addTo(map!)
-          .bindTooltip(
-            `<strong>${city.name}</strong>${city.normal !== null ? `<br>Normale : ${city.normal.toFixed(1)}°C` : ""}${trendStr}`,
-            { direction: "top", className: "leaflet-tooltip-clean" }
-          )
-          .on("click", () => router.push(`/a/${slugify(city.name)}`))
-      })
-
-      if (showFires) {
-        fetch("/api/fires")
-          .then(r => r.ok ? r.json() : null)
-          .then(geojson => {
-            if (!geojson || !map) return
-            L.geoJSON(geojson, {
-              style: (feature) => {
-                if (feature?.properties?._type === "burned") {
-                  return { color: "#ea580c", weight: 1.5, fillColor: "#f97316", fillOpacity: 0.35 }
-                }
-                return { color: "#dc2626", weight: 0, fillColor: "#dc2626", fillOpacity: 0 }
-              },
-              pointToLayer: (feature, latlng) => {
-                if (feature?.properties?._type === "active") {
-                  return L.circleMarker(latlng, {
-                    radius: 5,
-                    fillColor: "#ef4444",
-                    color: "#b91c1c",
-                    weight: 1,
-                    fillOpacity: 0.85,
-                  })
-                }
-                return L.circleMarker(latlng, { radius: 0 })
-              },
-              onEachFeature: (feature, layer) => {
-                const p = feature.properties ?? {}
-                if (p._type === "burned") {
-                  const ha = p.areaha ? `${Math.round(p.areaha)} ha brûlés` : ""
-                  const date = p.firedate ? `· ${p.firedate}` : ""
-                  layer.bindTooltip(`Feu détecté ${date}<br>${ha}`, { direction: "top" })
-                } else if (p._type === "active") {
-                  layer.bindTooltip(`Feu actif · ${p.firedate ?? ""}`, { direction: "top" })
-                }
-              },
-            }).addTo(map!)
-          })
-          .catch(() => {})
-      }
-    })
-
-    return () => {
-      map?.remove()
-    }
-  }, [cities, router, showFires])
-
-  return <div ref={containerRef} className="w-full h-full" />
+      {cities.map((c, i) => {
+        const [x, y] = pts[i]
+        const detail = c.anomaly != null ? `${fmtDelta(c.anomaly)} °C par rapport à la normale${c.temp != null ? `, ${fmt(c.temp, 0)} °C ressentis` : ""}` : "relevé indisponible"
+        const right = x < crop.x + crop.w * 0.7
+        return (
+          <a key={c.id} href={`/a/${slugify(c.name)}`} aria-label={`${c.name} : ${detail}`}>
+            <title>{`${c.name} : ${detail}`}</title>
+            <circle cx={x} cy={y} r={r * 2.2} fill="transparent" />
+            <circle cx={x} cy={y} r={r} fill={anomalyHex(c.anomaly)} stroke="var(--color-ink)" strokeWidth={r * 0.42} />
+            <text
+              x={right ? x + r * 1.6 : x - r * 1.6}
+              y={y + font * 0.35}
+              textAnchor={right ? "start" : "end"}
+              fontSize={font}
+              fontWeight={700}
+              fill="var(--color-ink)"
+              stroke="var(--color-paper)"
+              strokeWidth={font * 0.28}
+              paintOrder="stroke"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {c.name}
+            </text>
+          </a>
+        )
+      })}
+    </svg>
+  )
 }

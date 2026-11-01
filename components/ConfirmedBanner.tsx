@@ -1,41 +1,23 @@
 "use client"
+
 import { useSearchParams } from "next/navigation"
 
+/** Message de retour après une suppression de compte ou un lien invalide (paramètre ?action=). */
 export default function ConfirmedBanner() {
-  const params = useSearchParams()
-  const action = params.get("action")
+  const action = useSearchParams().get("action")
 
-  if (action === "deleted") {
-    return (
-      <div className="bg-neutral-100 border-b border-neutral-200">
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-start gap-3">
-          <span className="text-neutral-400 text-xl mt-0.5">✓</span>
-          <div>
-            <p className="font-semibold text-neutral-700 text-sm">Compte supprime</p>
-            <p className="text-neutral-500 text-sm mt-0.5">
-              Vos donnees ont ete supprimees. Vous pouvez vous reabonner a tout moment.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  const msg =
+    action === "deleted"
+      ? { title: "Compte supprimé.", text: "Vos données ont été effacées de notre base et de notre outil d'envoi. Vous pouvez vous réabonner quand vous voulez." }
+      : action === "invalid-token"
+        ? { title: "Lien invalide ou expiré.", text: "Ce lien ne correspond à aucun abonnement. Utilisez le lien de votre dernier email, ou réabonnez-vous ci-dessous." }
+        : null
 
-  if (action === "invalid-token") {
-    return (
-      <div className="bg-amber-50 border-b border-amber-200">
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-start gap-3">
-          <span className="text-amber-500 text-xl mt-0.5">ℹ</span>
-          <div>
-            <p className="font-semibold text-amber-800 text-sm">Lien invalide ou expire</p>
-            <p className="text-amber-700 text-sm mt-0.5">
-              Ce lien ne correspond a aucun abonnement actif. Retrouvez votre lien dans un email recapitulatif, ou reabonnez-vous depuis la page de votre ville.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  return null
+  if (!msg) return null
+  return (
+    <div role="status" className="mb-6 rounded-[var(--radius-card)] border-2 border-ink bg-signal p-4 sm:p-5">
+      <p className="font-display text-lg font-extrabold">{msg.title}</p>
+      <p className="text-[15px] text-ink-soft">{msg.text}</p>
+    </div>
+  )
 }

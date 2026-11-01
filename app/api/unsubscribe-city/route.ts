@@ -1,46 +1,14 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getSql } from "@/lib/db"
 import { BASE_URL } from "@/lib/resend"
+import { isToken } from "@/lib/subscription"
 
-// GET /api/unsubscribe-city?token=<confirm_token>&city=<slug>
+// GET /api/unsubscribe-city?token=<jeton>&city=<slug>
+// Ancien lien « Retirer cette ville » des emails. Un GET ne modifie plus rien (les scanners
+// d'emails et le préchargement suivent les liens) : il mène à une page de confirmation
+// dont le bouton envoie un POST (action serveur removeCity).
 export async function GET(req: NextRequest) {
   const token = req.nextUrl.searchParams.get("token")
-  const citySlug = req.nextUrl.searchParams.get("city")
-
-  if (!token || !citySlug) {
-    return NextResponse.redirect(`${BASE_URL}/notifications?unsub=invalid`)
-  }
-
-  const sql = getSql()
-
-  // Trouver l'abonné via son token
-  const rows = await sql`
-    SELECT id FROM subscribers WHERE confirm_token = ${token}
-  ` as { id: string }[]
-
-  if (!rows.length) {
-    return NextResponse.redirect(`${BASE_URL}/notifications?action=invalid-token`)
-  }
-
-  const subscriberId = rows[0].id
-
-  // Récupérer le nom de la ville avant suppression
-  const cityRows = await sql`
-    SELECT city_name FROM subscriptions
-    WHERE subscriber_id = ${subscriberId} AND city_slug = ${citySlug}
-  ` as { city_name: string }[]
-
-  if (!cityRows.length) {
-    return NextResponse.redirect(`${BASE_URL}/profil?token=${token}&action=city-not-found`)
-  }
-
-  const cityName = cityRows[0].city_name
-
-  await sql`
-    DELETE FROM subscriptions
-    WHERE subscriber_id = ${subscriberId} AND city_slug = ${citySlug}
-  `
-
-  const encoded = encodeURIComponent(cityName)
-  return NextResponse.redirect(`${BASE_URL}/profil?token=${token}&action=city-removed&city=${encoded}`)
+  const city = req.nextUrl.searchParams.get("city")
+  if (!isToken(token) || !city) return NextResponse.redirect(`${BASE_URL}/notifications?action=invalid-token`)
+  return NextResponse.redirect(`${BASE_URL}/profil/desabonnement?token=${token}&city=${encodeURIComponent(city)}`)
 }

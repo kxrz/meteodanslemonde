@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import type { FireCluster } from "@/lib/fire-data"
+import { fmt } from "@/lib/format"
 
 interface FireFeature {
   type: "Feature"
@@ -19,6 +20,8 @@ interface Props {
   flyToRef?: React.MutableRefObject<((lat: number, lon: number, zoom?: number) => void) | null>
   filter?: "all" | "confirmed"
   clusters?: FireCluster[]
+  /** false : la carte ne capte ni le glisser ni le pincer (le défilement de la page reste libre) */
+  interactive?: boolean
 }
 
 const MAX_CITY_DIST_DEG2 = 0.15 * 0.15 + 0.15 * 0.15
@@ -34,22 +37,23 @@ function nearestCity(lat: number, lon: number, cities: CityFR[]): CityFR | null 
   return best
 }
 
-const CONF_LABEL: Record<string, string> = { high: "Confirmé", nominal: "Probable", low: "Signal faible" }
+const CONF_LABEL: Record<string, string> = { high: "Haute confiance", nominal: "Confiance moyenne", low: "Signal faible" }
 const CONF_COLOR: Record<string, string> = { high: "#dc2626", nominal: "#f97316", low: "#fbbf24" }
 const CONF_DESC: Record<string, string> = {
-  high: "signal très intense, feu actif très probable",
+  high: "signal très intense : feu, brûlage ou site industriel",
   nominal: "peut être un feu, une usine ou un écobuage",
   low: "signal faible, source industrielle ou agricole possible",
 }
 
 const HEATMAP_ZOOM_THRESHOLD = 9
 
-export default function FireMap({ geojson, cities = [], flyToRef, filter = "all", clusters = [] }: Props) {
+export default function FireMap({ geojson, cities = [], flyToRef, filter = "all", clusters = [], interactive = true }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<import("leaflet").Map | null>(null)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const layersRef = useRef<{ heatAll: any; heatConfirmed: any; markersAll: any; markersConfirmed: any; updateZoom: () => void } | null>(null)
   const filterRef = useRef(filter)
+  const interactiveRef = useRef(interactive)
   const resizeObserverRef = useRef<ResizeObserver | null>(null)
 
   useEffect(() => {
@@ -57,8 +61,10 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
 
     let rafId: number
     rafId = requestAnimationFrame(() => {
-    import("leaflet").then(async (L) => {
+    import("leaflet").then(async (mod) => {
       if (!containerRef.current || mapRef.current) return
+      // Le namespace ESM n'est pas extensible : leaflet.heat doit greffer heatLayer sur l'objet Leaflet réel.
+      const L = ((mod as unknown as { default?: typeof mod }).default ?? mod) as typeof mod
       // leaflet.heat est un plugin UMD qui cherche L comme global
       ;(window as unknown as Record<string, unknown>).L = L
       await import("leaflet.heat")
@@ -68,6 +74,10 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
         zoom: 6,
         zoomControl: false,
         attributionControl: false,
+        // la molette ne zoome jamais : elle doit faire défiler la page
+        scrollWheelZoom: false,
+        dragging: interactiveRef.current,
+        touchZoom: interactiveRef.current,
       })
       mapRef.current = map
 
@@ -82,7 +92,9 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
       resizeObserverRef.current.observe(containerRef.current!)
       setTimeout(() => map.invalidateSize({ animate: false }), 200)
       L.control.zoom({ position: "bottomright" }).addTo(map)
-      L.control.attribution({ prefix: false }).addTo(map).addAttribution("&copy; CARTO · NASA FIRMS")
+      L.control.attribution({ prefix: false }).addTo(map).addAttribution(
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a> · NASA FIRMS',
+      )
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
         subdomains: "abcd", maxZoom: 19,
@@ -116,7 +128,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
           const label = CONF_LABEL[confidence] ?? confidence
           const desc = CONF_DESC[confidence] ?? ""
           const frpLine = frp > 0
-            ? `<div class="fire-pop-row"><span>Intensité</span><strong>${frp < 10 ? frp.toFixed(1) : Math.round(frp)} MW</strong></div>`
+            ? `<div class="fire-pop-row"><span>Intensité</span><strong>${fmt(frp, frp < 10 ? 1 : 0)} MW</strong></div>`
             : ""
 
           L.circleMarker([lat, lon], {
@@ -170,7 +182,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
                   if (popup?.isOpen()) {
                     popup.setContent(buildPopupHtml(locationLine))
                     marker.setTooltipContent(
-                      `<span class="fire-tip-city">${commune || dept || "Feu"}</span> <span class="fire-tip-date">${firedate}</span>`
+                      `<span class="fire-tip-city">${commune || dept || "Point chaud"}</span> <span class="fire-tip-date">${firedate}</span>`
                     )
                   }
                 })
@@ -192,7 +204,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
           ? c.dateFirst
           : `${c.dateFirst} → ${c.dateLast}`
         const frpLine = c.frpMax > 0
-          ? `<div class="fire-pop-row"><span>Intensité max</span><strong>${c.frpMax < 10 ? c.frpMax.toFixed(1) : Math.round(c.frpMax)} MW</strong></div>`
+          ? `<div class="fire-pop-row"><span>Intensité max</span><strong>${fmt(c.frpMax, c.frpMax < 10 ? 1 : 0)} MW</strong></div>`
           : ""
 
         // Halo
@@ -226,7 +238,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
           .bindPopup(
             `<div class="fire-pop">
               <div class="fire-pop-title">${c.isIndustrial ? "Zone industrielle connue" : c.isPermanent ? "Source thermique permanente" : c.isMajor ? "Foyer actif" : "Anomalie groupée"}</div>
-              <div class="fire-pop-sub">${c.count} détections · ${c.highConf} confirmées</div>
+              <div class="fire-pop-sub">${c.count} détections · ${c.highConf} à haute confiance</div>
               <div class="fire-pop-row"><span>Période</span><strong>${dateStr}</strong></div>
               ${frpLine}
               <div class="fire-pop-row fire-pop-badge-row">
@@ -245,7 +257,7 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
           L.marker([c.lat, c.lon], {
             icon: L.divIcon({
               className: "",
-              html: `<div style="background:#dc2626;color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:999px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.3)">${c.count} pts</div>`,
+              html: `<div style="background:#dc2626;color:#fff;font-size:12px;font-weight:800;padding:2px 6px;border-radius:999px;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,0.3)">${c.count} pts</div>`,
               iconAnchor: [20, -8],
             }),
             interactive: false,
@@ -309,6 +321,14 @@ export default function FireMap({ geojson, cities = [], flyToRef, filter = "all"
     filterRef.current = filter
     layersRef.current?.updateZoom()
   }, [filter])
+
+  useEffect(() => {
+    interactiveRef.current = interactive
+    const map = mapRef.current
+    if (!map) return
+    if (interactive) { map.dragging.enable(); map.touchZoom.enable() }
+    else { map.dragging.disable(); map.touchZoom.disable() }
+  }, [interactive])
 
   return <div ref={containerRef} className="w-full h-full" />
 }

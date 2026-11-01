@@ -2,43 +2,42 @@
 
 > Visualiser le dérèglement climatique en France avec des données scientifiques ouvertes : jumeaux climatiques, anomalies de chaleur en temps réel, projections GIEC 2050, incendies par satellite.
 
-cestchaud.fr compare le ressenti thermique journalier (indice UTCI) de villes françaises et mondiales. Il identifie des jumeaux climatiques : des villes qui vivent aujourd'hui les temperatures qu'une ville française vivra demain sous l'effet du rechauffement. Les donnees sont mises a jour quotidiennement depuis des sources scientifiques ouvertes.
+cestchaud.fr compare le ressenti maximal du jour (température apparente Open-Meteo) de 62 villes françaises et 67 villes du monde à leur normale 1991-2020, en toute saison. Il démonte les idées reçues sur le climat et identifie des jumeaux 2050 : des villes qui vivent aujourd'hui le climat qu'une ville française connaîtra en 2050. Les données sont mises à jour chaque jour depuis des sources scientifiques ouvertes.
 
 Aucun contenu n'est genere par IA generative. Toutes les donnees proviennent de sources scientifiques verifiables.
 
 ## Sources de donnees
 
-- **Open-Meteo** : temperatures ressenties en temps reel (UTCI, apparent_temperature_max), modeles ECMWF, GFS et Meteo-France. Mise a jour : quotidienne.
+- **Open-Meteo** : ressenti maximal du jour (apparent_temperature_max, température apparente calculée à partir de la température, de l'humidité, du vent et du rayonnement), archives quotidiennes. Mise à jour : quotidienne.
 - **ERA5 (ECMWF / Copernicus)** : normales climatiques 1991-2020 et tendances sur 30 ans par ville et par mois. Reference scientifique mondiale.
-- **CMIP6 / GIEC AR6** : projections climatiques 2030, 2040, 2050 (scenario SSP2-4.5, emissions moderees). Source : 6e rapport du GIEC.
+- **CMIP6 / GIEC AR6** : projections climatiques 2030, 2040, 2050 : médiane de plusieurs modèles haute résolution (HighResMIP, via Open-Meteo) et fourchette entre modèles, par rapport à 2000-2020. Aucun scénario d'émissions n'est choisi dans la requête ; le protocole HighResMIP suit une trajectoire d'émissions élevées.
 - **NASA FIRMS / VIIRS** : detections d'incendies par satellite, resolution 375 m, mise a jour horaire. Couverture France metropolitaine.
 - **INRAE, ONF, IFREMER, LPO/STOC, ANSES, GLACIOCLIM, Meteo-France, Haut Conseil pour le Climat** : faits d'impact observes et sources individuellement.
 - **VoxPublic** : contacts des senatrice et senateurs francais (emails, reseaux sociaux, commissions).
 
 ## Pages
 
-- `/` : tableau de bord climatique du jour. Records nationaux (plus chaud, plus frais), spectre de chaleur, top 3 anomalies, ville du jour, insights ERA5 et GIEC, navigation.
-- `/explorer` : carte interactive mondiale et jumeaux climatiques. Cliquer une ville française revele les villes du monde a ressenti equivalent aujourd'hui.
-- `/en/france` : vue d'ensemble de la chaleur en France (62 villes, classement par anomalie du jour).
-- `/carte` : carte de chaleur interactive. Anomalies du jour pour les villes françaises colorees par ecart a la normale.
-- `/a/[slug]` : fiche climatique par ville (française ou mondiale). Ressenti max, normale historique ERA5, anomalie du jour, tendance 30 ans, projections GIEC 2030/2040/2050, records annuels, jumeau climatique mondial, faits d'impact contextualisés, partage social.
-- `/r/[slug]` : fiche climatique par region française (13 regions). Donnees aggregees, anomalie regionale, precipitations du mois vs normale 2013-2022, risque incendie, faits d'impact regionaux.
-- `/r` : liste des 13 regions couvertes.
-- `/feux` : carte des incendies actifs en France metropolitaine. Donnees NASA FIRMS VIIRS temps reel, clustering spatial, distinction feux majeurs / permanents / industriels.
-- `/terrain` : images satellite avant/apres. Incendies (Landes 2022), lacs assèches (Montbel), zones humides (Camargue). Sources Copernicus / Sentinel.
-- `/citoyens` : action citoyenne. Contacter les 333 senateurs joignables par email, filtrage par departement et commission, email pre-redige sur le changement climatique.
-- `/notifications` : abonnement aux briefings climatiques matinaux par ville. Ressenti UTCI, anomalie ERA5, alerte canicule, jumeau climatique, projections GIEC. Envoi quotidien.
-- `/alertes` : gestion des alertes personnalisees de chaleur extreme.
-- `/a-propos` : methodologie complete, sources detaillees, limites editoriales.
-- `/contact` : formulaire de contact.
-- `/mentions-legales` : informations legales (LesWWW, EURL, SIREN 912 258 050).
-- `/confidentialite` : politique de confidentialite RGPD.
+- `/` : Aujourd'hui. Écart moyen de la France à la normale du mois, carte des 62 villes (bascule thermomètre / écart à la normale), décomposition météo du jour / climat pour une ville, idée reçue du jour, classement, signaux de saison. `/story/aujourdhui` : image verticale 1080×1920 du jour.
+- `/a/[slug]` : fiche climatique par ville (française ou mondiale). Ressenti du jour et écart à la normale ERA5 1991-2020, décomposition météo / climat, courbe des saisons, projections GIEC par saison avec fourchette entre scénarios SSP, extrêmes de l'année, signaux de saison, impacts sourcés.
+- `/r` : Ma ville. Les 62 villes françaises groupées par région, avec leur écart du jour. `/r/[slug]` : fiche par région (13 régions).
+- `/signaux` : signaux du mois selon la saison. En hiver, nuits de gel observées contre nuits attendues (normales 1991-2020) et journées très douces ; en été, nuits tropicales et séries de chaleur. `/signaux/anomalies-thermiques` : détections satellite NASA FIRMS VIIRS sur 7 jours.
+- `/idees-recues` : idées reçues sur le climat (« il fait froid, donc pas de réchauffement »…), chacune avec une réponse courte, une explication, des données réelles pour une ville et des sources. `/idees-recues/[slug]` : une idée reçue ; `/idees-recues/[slug]/story` : image story.
+- `/jumeaux?ville=[slug]` : jumeaux 2050. La normale ERA5 d'une ville française plus la projection médiane des modèles CMIP6 à 2050, comparée mois par mois aux normales actuelles de 67 villes du monde. `/jumeaux/jeu` : le jeu quotidien (5 questions).
+- `/atelier` : animer une séance sur grand écran (déroulés 15 et 45 min). `/atelier/projection` : diaporama plein écran. `/atelier/glossaire` : glossaire.
+- `/terrain` : images satellite avant/après (Landes, Montbel, Camargue).
+- `/citoyens` : écrire à ses sénateurs avec les chiffres de son territoire.
+- `/notifications` : briefing quotidien par email, le chiffre du jour de votre ville.
+- `/brand` : identité graphique, composants et fichiers de marque.
+- `/a-propos` : méthode, sources, limites.
+- `/contact`, `/mentions-legales`, `/confidentialite`.
+
+Anciennes adresses redirigées : `/carte` et `/en/france` → `/`, `/alertes` → `/signaux`, `/feux` → `/signaux/anomalies-thermiques`, `/explorer` → `/jumeaux`, `/jeu` → `/jumeaux/jeu`.
 
 ## Fonctionnalites cles
 
-- **Jumeaux climatiques** : algorithme de correspondance entre villes françaises et mondiales a ±4°C de ressenti UTCI (300+ paires possibles).
-- **Anomalie du jour** : ecart entre le ressenti UTCI observe et la normale historique ERA5 1991-2020, par ville et par mois.
-- **Projections GIEC** : modeles CMIP6 AR6, scenario SSP2-4.5. Affiche la hausse probable de ressenti en 2030, 2040 et 2050.
+- **Jumeaux 2050** : la ville du monde dont la normale actuelle ressemble le plus (écart quadratique moyen sur 12 mois) à la normale projetée d'une ville française en 2050.
+- **Anomalie du jour** : écart entre le ressenti maximal du jour et la normale ERA5 1991-2020 du même mois, par ville. Même échelle de couleurs sur tout le site.
+- **Projections** : médiane des modèles climatiques CMIP6 et fourchette entre modèles, par saison, pour 2030, 2040 et 2050.
 - **Feux actifs** : clustering spatial des detections FIRMS VIIRS, masque industriel sur 8 zones françaises (raffineries, papeteries, usines), distinction feux majeurs (>50 MW) et permanents.
 - **En vrai, ca fait quoi ?** : 26 faits d'impact climatique sources, contextualisés selon l'intensite de l'anomalie du jour (badge "Deja en cours ici", "En cours en France" ou "En approche").
 - **Briefings matinaux** : emails quotidiens par ville avec ressenti, anomalie, alerte et jumeau climatique. Gestion via profil abonne (RGPD-conforme, suppression a tout moment).

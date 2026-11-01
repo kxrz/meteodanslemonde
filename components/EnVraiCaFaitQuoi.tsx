@@ -1,124 +1,71 @@
 import type { Impact } from "@/lib/climate-impacts"
+import { impactStatus } from "@/lib/city-page"
+import { fmtDelta } from "@/lib/format"
+import Card from "@/components/ui/Card"
+import MobileMore from "@/components/ui/MobileMore"
+import Eyebrow from "@/components/ui/Eyebrow"
+import { cn } from "@/lib/cn"
 
-const THEME_ICONS: Record<string, string> = {
-  faune: "🐟",
-  flore: "🌿",
-  agriculture: "🌾",
-  sante: "🦟",
-  climat: "🌡️",
-}
-
-function getStatus(anomaly: number | null, anomalyMin: number): {
-  label: string
-  dotClass: string
-  textClass: string
-} {
-  if (anomaly !== null && anomaly >= anomalyMin) {
-    return {
-      label: "Déjà en cours ici",
-      dotClass: "bg-orange-400",
-      // orange-400 sur #111 → 5.6:1 ✓ AA
-      textClass: "text-orange-400",
-    }
-  }
-  if (anomalyMin === 0 || (anomaly !== null && anomaly > 0)) {
-    return {
-      label: "En cours en France",
-      dotClass: "bg-amber-300",
-      // amber-300 sur #111 → 8.1:1 ✓✓
-      textClass: "text-amber-300",
-    }
-  }
-  return {
-    label: "En approche",
-    dotClass: "bg-neutral-400",
-    // neutral-400 (#a3a3a3) sur #111 → 7.6:1 ✓✓
-    textClass: "text-neutral-400",
-  }
+const THEME_LABEL: Record<string, string> = {
+  faune: "Faune",
+  flore: "Flore",
+  agriculture: "Agriculture",
+  sante: "Santé",
+  climat: "Climat",
 }
 
 interface Props {
   impacts: Impact[]
-  anomaly?: number | null
+  /** tendance observée de la saison en cours (climat, 30 ans), PAS l'écart du jour */
+  seasonTrend: number | null
+  /** « l'automne », « l'hiver », « le printemps », « l'été » */
+  seasonLabel: string
   className?: string
 }
 
-export default function EnVraiCaFaitQuoi({ impacts, anomaly = null, className = "" }: Props) {
+/**
+ * Impacts concrets. Le statut repose sur la tendance de fond de la saison (le climat),
+ * jamais sur l'anomalie d'une seule journée (la météo).
+ */
+export default function EnVraiCaFaitQuoi({ impacts, seasonTrend, seasonLabel, className }: Props) {
   if (impacts.length === 0) return null
 
   return (
-    <div className={`col-span-2 space-y-3 ${className}`}>
-      <p className="text-[10px] uppercase tracking-[0.2em] font-semibold text-neutral-400">
-        En vrai, ça fait quoi ?
-      </p>
-
+    <div className={cn("grid gap-3 md:grid-cols-2", className)}>
       {impacts.map((impact) => {
-        const status = getStatus(anomaly, impact.anomaly_min)
+        const status = impactStatus(seasonTrend, impact.anomaly_min)
+        const badge =
+          status === "tendance"
+            ? { text: `Déjà là : ${seasonLabel} a pris ${fmtDelta(seasonTrend)} °C`, cls: "bg-chaud text-white" }
+            : status === "france"
+              ? { text: "Déjà observé en France", cls: "bg-signal text-ink" }
+              : { text: "Seuil pas encore atteint ici", cls: "bg-paper text-ink" }
         return (
-          <article key={impact.id} className="bg-[#111111] rounded-3xl overflow-hidden">
-
-            {/* Badge + fait */}
-            <div className="px-6 pt-6 pb-5 border-b border-white/10">
-              <div className="flex items-center gap-2 mb-4">
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${status.dotClass}`} />
-                {/* tracking forcé pour lisibilité sur fond sombre */}
-                <span className={`text-[10px] uppercase tracking-[0.18em] font-bold ${status.textClass}`}>
-                  {status.label}
-                </span>
+          <Card key={impact.id} as="article" tone="ink" className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={cn("rounded-xl px-3 py-1 font-mono text-[12px] font-semibold", badge.cls)}>{badge.text}</span>
+              <Eyebrow as="span" className="text-paper/70">{THEME_LABEL[impact.theme] ?? impact.theme}</Eyebrow>
+            </div>
+            <p className="font-display text-[1.15rem] font-extrabold leading-tight sm:text-[1.35rem]">{impact.fait}</p>
+            <MobileMore label="Pourquoi, et ce que ça implique" invert>
+              <div className="flex flex-col gap-1">
+                <Eyebrow as="span" className="text-paper/70">Pourquoi</Eyebrow>
+                <p className="text-[15px] leading-relaxed text-paper/85">{impact.pourquoi}</p>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="text-xl leading-none mt-0.5 shrink-0" aria-hidden>
-                  {THEME_ICONS[impact.theme] ?? "·"}
-                </span>
-                {/* white pur sur #111 → 19.4:1 ✓✓ */}
-                <p className="text-base font-black text-white leading-snug">
-                  {impact.fait}
-                </p>
+              <div className="flex flex-col gap-1">
+                <Eyebrow as="span" className="text-signal">Ce que ça implique</Eyebrow>
+                <p className="text-[15px] leading-relaxed text-paper/85">{impact.implication}</p>
               </div>
-            </div>
-
-            {/* Pourquoi */}
-            <div className="px-6 pt-5 pb-0">
-              {/* neutral-300 (#d4d4d4) sur #111 → 11.8:1 ✓✓ */}
-              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-neutral-300 mb-2">
-                Pourquoi
-              </p>
-              {/* white/80 effective → ~11:1 ✓✓ */}
-              <p className="text-sm text-white/80 leading-relaxed">
-                {impact.pourquoi}
-              </p>
-            </div>
-
-            {/* Ce que ça implique */}
-            <div className="px-6 pt-4 pb-5">
-              {/* orange-300 (#fdba74) sur #111 → 8.6:1 ✓✓ */}
-              <p className="text-[10px] uppercase tracking-[0.15em] font-bold text-orange-300 mb-2">
-                Ce que ça implique
-              </p>
-              {/* orange-100 (#ffedd5) sur #111 → 15:1 ✓✓ */}
-              <p className="text-sm text-orange-100 leading-relaxed">
-                {impact.implication}
-              </p>
-            </div>
-
-            {/* Source */}
-            <div className="px-6 pb-5 border-t border-white/10 pt-4">
-              <a
-                href={impact.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                // white/55 effective ≈ #8c8c8c sur #111 → 5.1:1 ✓ AA
-                className="inline-flex items-center gap-1.5 text-[10px] text-white/55 hover:text-white transition-colors underline underline-offset-2 decoration-white/20 hover:decoration-white/60"
-              >
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-                </svg>
-                Source : {impact.source}
-              </a>
-            </div>
-
-          </article>
+            </MobileMore>
+            <a
+              href={impact.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-auto inline-flex min-h-11 items-center text-[13px] text-paper/75 underline underline-offset-2 hover:text-paper"
+            >
+              Source : {impact.source}
+            </a>
+          </Card>
         )
       })}
     </div>

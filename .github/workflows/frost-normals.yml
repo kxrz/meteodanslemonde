@@ -1,0 +1,37 @@
+name: Frost normals (1991-2020)
+
+# Calcul ponctuel des normales de nuits de gel : à lancer à la main (onglet Actions).
+# ~62 villes × 15 s de pause : compter une vingtaine de minutes.
+on:
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install tsx
+        run: npm install -g tsx
+
+      - name: Fetch frost normals
+        run: npx tsx scripts/fetch-frost-normals.ts
+        env:
+          # facultatif : clé Open-Meteo payante (Settings → Secrets → Actions)
+          OPEN_METEO_API_KEY: ${{ secrets.OPEN_METEO_API_KEY }}
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/frost-normals.json
+          git diff --cached --quiet || git commit -m "chore: update frost normals [skip ci]"
+          git push
