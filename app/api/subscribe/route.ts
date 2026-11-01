@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSql, initDb } from "@/lib/db"
 import { resend, FROM_EMAIL, BASE_URL, RESEND_AUDIENCE_ID, RESEND_GENERAL_AUDIENCE_ID, confirmationEmailHtml } from "@/lib/resend"
+import { isValidEmail, normalizeFirstName, resolveBriefingCity } from "@/lib/subscription"
+import citiesFR from "@/data/cities-fr.json"
 
 let dbReady = false
 
@@ -9,14 +11,28 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json()
   } catch {
-    return NextResponse.json({ error: "Corps de requête invalide" }, { status: 400 })
+    return NextResponse.json({ error: "Corps de requête invalide", code: "invalid-body" }, { status: 400 })
   }
 
-  const { firstName, email, citySlug, cityName } = body as Record<string, string>
+  const raw = (body ?? {}) as Record<string, unknown>
+  const firstName = normalizeFirstName(typeof raw.firstName === "string" ? raw.firstName : "")
+  const email = typeof raw.email === "string" ? raw.email.trim() : ""
+  const citySlug = typeof raw.citySlug === "string" ? raw.citySlug.trim() : ""
 
-  if (!firstName?.trim() || !email?.trim() || !citySlug?.trim() || !cityName?.trim()) {
-    return NextResponse.json({ error: "Champs manquants" }, { status: 400 })
+  // Le prénom est facultatif : le formulaire ne montre au départ que l'email et la ville.
+  if (!email || !citySlug) {
+    return NextResponse.json({ error: "Champs manquants", code: "missing-fields" }, { status: 400 })
   }
+  if (!isValidEmail(email)) {
+    return NextResponse.json({ error: "Email invalide", code: "invalid-email" }, { status: 400 })
+  }
+  // Le briefing ne couvre que les villes suivies : une ville hors liste est refusée
+  // au lieu de recevoir chaque matin un email « données indisponibles ».
+  const city = resolveBriefingCity(citySlug, citiesFR)
+  if (!city) {
+    return NextResponse.json({ error: "Ville inconnue", code: "unknown-city" }, { status: 400 })
+  }
+  const cityName = city.name
 
   // Créer les tables au premier appel (idempotent, CREATE TABLE IF NOT EXISTS)
   if (!dbReady) {
@@ -25,12 +41,12 @@ export async function POST(req: NextRequest) {
   }
 
   const sql = getSql()
-  const emailLower = email.trim().toLowerCase()
+  const emailLower = email.toLowerCase()
 
   const rows = await sql`
     INSERT INTO subscribers (email, first_name)
-    VALUES (${emailLower}, ${firstName.trim()})
-    ON CONFLICT (email) DO UPDATE SET first_name = EXCLUDED.first_name
+    VALUES (${emailLower}, ${firstName})
+    ON CONFLICT (email) DO UPDATE SET first_name = COALESCE(NULLIF(EXCLUDED.first_name, ''), subscribers.first_name)
     RETURNING id, confirm_token, confirmed_at, resend_id
   ` as { id: string; confirm_token: string; confirmed_at: Date | null; resend_id: string | null }[]
   const subscriber = rows[0]
@@ -48,7 +64,7 @@ export async function POST(req: NextRequest) {
       const result = await resend.contacts.create({
         audienceId,
         email: emailLower,
-        firstName: firstName.trim(),
+        firstName: firstName || undefined,
         unsubscribed: false,
       })
       return result.data?.id ?? null
@@ -60,7 +76,7 @@ export async function POST(req: NextRequest) {
           const list = await resend.contacts.list({ audienceId, limit: 100, ...(cursor ? { after: cursor } : {}) } as Parameters<typeof resend.contacts.list>[0])
           const existing = list.data?.data?.find((c: { email: string }) => c.email === emailLower)
           if (existing?.id) {
-            await resend.contacts.update({ audienceId, id: existing.id, firstName: firstName.trim(), unsubscribed: false })
+            await resend.contacts.update({ audienceId, id: existing.id, ...(firstName ? { firstName } : {}), unsubscribed: false })
             return existing.id
           }
           cursor = list.data?.has_more ? list.data?.data?.at(-1)?.id : undefined
@@ -86,29 +102,25 @@ export async function POST(req: NextRequest) {
   }
 
   if (!subscriber.confirmed_at) {
-    const confirmUrl = `${BASE_URL}/api/confirm?token=${subscriber.confirm_token}`
+    // Le lien mène à une page qui demande un clic (POST) : un scanner d'emails qui suit
+    // les liens ne peut pas confirmer l'inscription à la place de la personne.
+    const confirmUrl = `${BASE_URL}/profil/confirmer?token=${subscriber.confirm_token}`
     try {
       const result = await resend.emails.send({
         from: FROM_EMAIL,
         to: emailLower,
         subject: `Confirmez votre briefing matinal · ${cityName}`,
-        html: confirmationEmailHtml({ firstName: firstName.trim(), cityName, confirmUrl }),
+        html: confirmationEmailHtml({ firstName, cityName, confirmUrl }),
       })
       if (result.error) {
         console.error("[subscribe] Resend error:", result.error)
-        return NextResponse.json(
-          { error: "Inscription enregistrée mais l'envoi de l'email a échoué. Vérifiez la configuration Resend." },
-          { status: 500 }
-        )
+        return NextResponse.json({ error: "Inscription enregistrée mais l'envoi de l'email a échoué.", code: "email-failed" }, { status: 502 })
       }
     } catch (err) {
       console.error("[subscribe] Resend exception:", err)
-      return NextResponse.json(
-        { error: "Inscription enregistrée mais l'envoi de l'email a échoué." },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: "Inscription enregistrée mais l'envoi de l'email a échoué.", code: "email-failed" }, { status: 502 })
     }
   }
 
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({ ok: true, cityName })
 }

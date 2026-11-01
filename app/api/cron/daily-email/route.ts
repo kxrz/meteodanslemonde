@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getSql } from "@/lib/db"
-import { resend, FROM_EMAIL } from "@/lib/resend"
-import { fetchCityWeather, fetchCaniculeStreak, fetchClimateTwin } from "@/lib/weather-data"
-import { loadClimateMap } from "@/lib/climate"
-import { buildDailyEmailHtml, CityEmailData } from "@/lib/email-builder"
+import { resend, FROM_EMAIL, BASE_URL } from "@/lib/resend"
+import { buildDailyEmailHtml } from "@/lib/email-builder"
+import { buildCityEmailData } from "@/lib/briefing-data"
 
 export async function GET(req: NextRequest) {
   const secret = process.env.CRON_SECRET
@@ -27,53 +26,36 @@ export async function GET(req: NextRequest) {
 
   if (!rows.length) return NextResponse.json({ sent: 0 })
 
-  const climateMap = loadClimateMap()
-  const month = new Date().getMonth()
-  const dateLabel = new Date().toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
-  const citiesFR = require("@/data/cities-fr.json") as Array<{ id: string; name: string; lat: number; lon: number; region: string }>
+  const now = new Date()
+  const month = now.getMonth()
+  const dateLabel = now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Paris" })
+
+  // Une ville suivie par plusieurs abonnés n'est calculée qu'une fois.
+  const cache = new Map<string, ReturnType<typeof buildCityEmailData>>()
+  const cityData = (slug: string, name: string) => {
+    if (!cache.has(slug)) cache.set(slug, buildCityEmailData(slug, name, month))
+    return cache.get(slug)!
+  }
 
   const emails: Parameters<typeof resend.batch.send>[0] = []
 
   for (const row of rows) {
     const citySlugs = row.city_slugs.split(",")
     const cityNames = row.city_names.split(",")
+    const cities = await Promise.all(citySlugs.map((slug, i) => cityData(slug, cityNames[i])))
 
-    const cityData: CityEmailData[] = []
-
-    for (let i = 0; i < citySlugs.length; i++) {
-      const slug = citySlugs[i]
-      const name = cityNames[i]
-      const city = citiesFR.find(c => c.id === slug || c.name.toLowerCase().replace(/[\s']/g, "-") === slug)
-
-      let apparentTempMax: number | null = null
-      if (city) {
-        try {
-          const w = await fetchCityWeather(city.lat, city.lon)
-          apparentTempMax = w?.apparent_temp_max ?? null
-        } catch {}
-      }
-
-      const climate = climateMap[slug] ?? null
-      const normal = climate?.normal?.[month] ?? null
-      const proj2050 = climate?.proj2050?.[month] ?? null
-      const anomaly = apparentTempMax !== null && normal !== null
-        ? Math.round((apparentTempMax - normal) * 10) / 10
-        : null
-
-      const [caniculeStreak, climateTwin] = city && apparentTempMax !== null
-        ? await Promise.all([fetchCaniculeStreak(city.lat, city.lon), fetchClimateTwin(apparentTempMax)])
-        : [0, null]
-
-      cityData.push({ slug, name, apparentTempMax, anomaly, proj2050, normal, caniculeStreak, climateTwin })
-    }
-
-    const html = buildDailyEmailHtml({ firstName: row.first_name, cities: cityData, dateLabel, month, unsubToken: row.confirm_token })
+    const html = buildDailyEmailHtml({ firstName: row.first_name, cities, dateLabel, month, unsubToken: row.confirm_token, date: now })
 
     emails.push({
       from: FROM_EMAIL,
       to: row.email,
       subject: `Briefing du ${dateLabel}`,
       html,
+      // Désabonnement en un clic des messageries (RFC 8058) : POST sur /api/unsubscribe
+      headers: {
+        "List-Unsubscribe": `<${BASE_URL}/api/unsubscribe?token=${row.confirm_token}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     })
   }
 
