@@ -20,8 +20,8 @@ export const GLOSSARY = {
   },
   anomalie: {
     term: "Anomalie",
-    short: "L'écart entre la valeur du jour et la normale du mois. +4 °C veut dire « 4 °C de plus que d'habitude à cette période ».",
-    long: "C'est le chiffre central du site. Une anomalie se lit pareil en janvier et en juillet : 8 °C en janvier à Lille peut être une anomalie plus forte que 30 °C en juillet. Une anomalie d'un seul jour, c'est de la météo ; c'est leur accumulation sur des années qui dessine le climat.",
+    short: "L'écart entre la valeur du jour et la normale du mois. +4 °C veut dire « 4 °C de plus que d'habitude à cette période ».",
+    long: "C'est le chiffre central du site. Une anomalie se lit pareil en janvier et en juillet : 8 °C en janvier à Lille peut être une anomalie plus forte que 30 °C en juillet. Une anomalie d'un seul jour, c'est de la météo ; c'est leur accumulation sur des années qui dessine le climat.",
   },
   tendance: {
     term: "Tendance 30 ans",
@@ -50,7 +50,7 @@ export const GLOSSARY = {
   jumeau: {
     term: "Jumeau climatique",
     short: "Une ville du monde dont le climat actuel ressemble à ce que votre ville vivra en 2050.",
-    long: "On compare la normale projetée de votre ville en 2050 (normale + projection) aux normales actuelles des villes du monde, saison par saison. Le jumeau le plus proche montre concrètement le changement attendu.",
+    long: "On compare la normale projetée de votre ville en 2050 (normale + projection) aux normales actuelles des villes du monde, mois par mois. Le jumeau le plus proche montre concrètement le changement attendu.",
   },
   nuitTropicale: {
     term: "Nuit tropicale",

@@ -85,7 +85,7 @@ export const MYTHS: Myth[] = [
     highlight: "plus rares et moins intenses",
     explanation: [
       "Le GIEC constate que les extrêmes froids sont devenus moins fréquents et moins sévères sur la plupart des régions du globe, tandis que les extrêmes chauds augmentent.",
-      "Le record froid de l'année d'une ville se lit à côté de sa tendance : un coup de froid ne renverse pas trente ans de mesures.",
+      "La journée la plus froide de l'année d'une ville se lit à côté de sa tendance : un coup de froid ne renverse pas trente ans de mesures.",
     ],
     module: "extremes",
     sources: [GIEC],

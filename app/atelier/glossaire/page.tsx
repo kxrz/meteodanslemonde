@@ -27,7 +27,7 @@ const USED_IN: Record<GlossaryKey, { href: string; label: string }[]> = {
   nuitTropicale: [{ href: "/signaux", label: "Signaux du mois" }, { href: "/idees-recues#clim-suffit", label: "La clim suffit ?" }],
   nuitGel: [{ href: "/signaux", label: "Signaux du mois" }, { href: "/idees-recues#pas-de-gel-tant-mieux", label: "Pas de gel, tant mieux ?" }],
   meteoClimat: [{ href: "/idees-recues#il-gele-donc", label: "Il gèle, donc… ?" }, { href: "/atelier", label: "L'atelier" }],
-  firms: [{ href: "/feux", label: "Les feux" }],
+  firms: [{ href: "/signaux/anomalies-thermiques", label: "Anomalies thermiques" }],
 }
 
 const letterOf = (term: string) => term.normalize("NFD").replace(/[̀-ͯ]/g, "")[0].toUpperCase()

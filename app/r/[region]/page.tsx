@@ -25,6 +25,7 @@ import { Arrow } from "@/components/ui/Button"
 import RegionCitiesMap from "@/components/RegionCitiesMap"
 import EnVraiCaFaitQuoi from "@/components/EnVraiCaFaitQuoi"
 import { cn } from "@/lib/cn"
+import { meteoUrl } from "@/lib/open-meteo"
 
 export const revalidate = 86400
 
@@ -53,11 +54,11 @@ async function fetchRain(city: { name: string; lat: number; lon: number }, now: 
   const daysInMonth = new Date(y, now.getMonth() + 1, 0).getDate()
   const daysElapsed = now.getDate()
   if (daysElapsed < 3) return { kind: "early", city: city.name }
-  const base = `https://archive-api.open-meteo.com/v1/archive?latitude=${city.lat}&longitude=${city.lon}&daily=precipitation_sum`
+  const rain = (start: string, end: string) => meteoUrl("archive", { latitude: city.lat, longitude: city.lon, daily: "precipitation_sum", start_date: start, end_date: end })
   try {
     const [rc, rn] = await Promise.all([
-      fetch(`${base}&start_date=${y}-${m}-01&end_date=${y}-${m}-${d}`, { next: { revalidate: 86400 } }),
-      fetch(`${base}&start_date=2013-${m}-01&end_date=2022-${m}-${String(daysInMonth).padStart(2, "0")}`, { next: { revalidate: 86400 } }),
+      fetch(rain(`${y}-${m}-01`, `${y}-${m}-${d}`), { next: { revalidate: 86400 } }),
+      fetch(rain(`2013-${m}-01`, `2022-${m}-${String(daysInMonth).padStart(2, "0")}`), { next: { revalidate: 86400 } }),
     ])
     if (!rc.ok || !rn.ok) throw new Error("archive")
     const [dc, dn] = await Promise.all([rc.json(), rn.json()])
@@ -285,7 +286,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
                     ))}
                   </dl>
                   {fireSummary && fireSummary.activeCount > 0 && (
-                    <Link href="/feux" className="inline-flex min-h-11 items-center gap-1 font-display font-bold underline underline-offset-2">
+                    <Link href="/signaux/anomalies-thermiques" className="inline-flex min-h-11 items-center gap-1 font-display font-bold underline underline-offset-2">
                       {fmt(fireSummary.activeCount, 0)} détections satellite en France (7 jours) <Explain term="firms" /> <Arrow />
                     </Link>
                   )}

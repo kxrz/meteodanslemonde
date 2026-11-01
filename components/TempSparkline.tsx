@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { anomalyHex } from "@/lib/anomaly"
 import { fmt, fmtDelta } from "@/lib/format"
 import Explain from "@/components/ui/Explain"
+import { meteoClientUrl } from "@/lib/open-meteo"
 
 interface Props {
   lat: number
@@ -30,8 +31,7 @@ export default function TempSparkline({ lat, lon, normals }: Props) {
     start.setDate(start.getDate() - 29)
     const d = (x: Date) => x.toISOString().slice(0, 10)
     fetch(
-      `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}` +
-        `&start_date=${d(start)}&end_date=${d(end)}&daily=apparent_temperature_max&timezone=auto`,
+      meteoClientUrl("archive", { latitude: lat, longitude: lon, start_date: d(start), end_date: d(end), daily: "apparent_temperature_max", timezone: "auto" }),
       { signal: ctrl.signal },
     )
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))

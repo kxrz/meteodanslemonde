@@ -6,6 +6,7 @@ import { fmtDelta } from "@/lib/format"
 import { loadClimateFull, seasonalProjections } from "@/lib/climate-season"
 import { seasonOf, SEASON_LABEL } from "@/lib/season"
 import type { ClimateEntry } from "@/lib/climate"
+import { meteoUrl } from "@/lib/open-meteo"
 
 export const runtime = "nodejs"
 export const revalidate = 86400
@@ -19,7 +20,7 @@ const citiesFR = require("@/data/cities-fr.json") as Array<{
 async function fetchApparentTemp(lat: number, lon: number): Promise<number | null> {
   try {
     const res = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=apparent_temperature_max&forecast_days=1`,
+      meteoUrl("forecast", { latitude: lat, longitude: lon, daily: "apparent_temperature_max", forecast_days: 1 }),
       { next: { revalidate: 86400 } }
     )
     if (!res.ok) return null

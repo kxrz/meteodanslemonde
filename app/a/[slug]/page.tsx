@@ -31,6 +31,7 @@ import ShareButton from "@/components/ShareButton"
 import TempSparkline from "@/components/TempSparkline"
 import EnVraiCaFaitQuoi from "@/components/EnVraiCaFaitQuoi"
 import CityLocator from "@/components/CityLocator"
+import { meteoUrl } from "@/lib/open-meteo"
 
 export const revalidate = 86400
 
@@ -116,8 +117,7 @@ async function fetchSignals(lat: number, lon: number, now: Date): Promise<Signal
   end.setDate(end.getDate() - 2)
   try {
     const res = await fetch(
-      `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}` +
-        `&daily=temperature_2m_min,apparent_temperature_max&start_date=${period.start}&end_date=${end.toISOString().slice(0, 10)}&timezone=Europe%2FParis`,
+      meteoUrl("archive", { latitude: lat, longitude: lon, daily: "temperature_2m_min,apparent_temperature_max", start_date: period.start, end_date: end.toISOString().slice(0, 10), timezone: "Europe/Paris" }),
       { next: { revalidate: 86400 } },
     )
     if (!res.ok) throw new Error(`archive ${res.status}`)

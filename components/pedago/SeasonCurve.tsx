@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useId, useRef, useState } from "react"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -35,6 +35,7 @@ function smooth(arr: number[]): number[] {
  */
 export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, month, shiftDays }: Props) {
   const root = useRef<HTMLDivElement>(null)
+  const uid = useId()
   const [step, setStep] = useState(2)
 
   const t = smooth(trend)
@@ -111,9 +112,9 @@ export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, m
       </div>
 
       <div className="overflow-x-auto">
-        <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full min-w-[520px]" role="img" aria-labelledby="sc-title sc-desc">
-          <title id="sc-title">{`Ressenti maximal moyen à ${city}, mois par mois`}</title>
-          <desc id="sc-desc">
+        <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full min-w-[520px]" role="img" aria-labelledby={`${uid}-t ${uid}-d`}>
+          <title id={`${uid}-t`}>{`Ressenti maximal moyen à ${city}, mois par mois`}</title>
+          <desc id={`${uid}-d`}>
             {`En ${MONTHS[month]}, normale ${fmt(normal[month])} °C, aujourd'hui ${fmt(series[1][month])} °C, en 2050 environ ${fmt(series[2][month])} °C.`}
           </desc>
           {Array.from({ length: (yMax - yMin) / 5 + 1 }, (_, i) => yMin + i * 5).map((v) => (

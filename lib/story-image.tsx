@@ -19,7 +19,27 @@ export async function storyImage({ eyebrow, struck, headline, highlight, tone = 
 }) {
   const fonts = await loadBrandFonts().catch(() => [])
   const hl = { chaud: "#ffc9b3", froid: "#c9dafc", signal: "#ffe14d" }[tone]
-  const [before, after] = highlight && headline.includes(highlight) ? headline.split(highlight) : [headline, ""]
+  // Découpage mot par mot (Satori ne coupe pas les lignes à l'intérieur d'un bloc flex) :
+  // la ponctuation reste collée au mot qui la précède, le surlignage suit les mots concernés.
+  const hasHl = Boolean(highlight && headline.includes(highlight))
+  const parts = hasHl ? headline.split(highlight!) : [headline]
+  const words: { w: string; hl: boolean }[] = []
+  parts.forEach((part, i) => {
+    part.split(/\s+/).filter(Boolean).forEach((w) => {
+      if (/^[.,;:!?…»)]+$/.test(w) && words.length) words[words.length - 1].w += w
+      else words.push({ w, hl: false })
+    })
+    if (hasHl && i < parts.length - 1) {
+      highlight!.split(/\s+/).filter(Boolean).forEach((w) => words.push({ w, hl: true }))
+    }
+  })
+  // ponctuation qui suit immédiatement le surlignage (« … +4,8 °C. »)
+  for (let i = words.length - 1; i > 0; i--) {
+    if (/^[.,;:!?…»)]+/.test(words[i].w) && !words[i].hl && words[i - 1].hl && !/\s/.test(words[i].w)) {
+      const m = words[i].w.match(/^[.,;:!?…»)]+/)![0]
+      if (m === words[i].w) { words[i - 1].w += m; words.splice(i, 1) }
+    }
+  }
   const display = fonts.length ? "Bricolage" : "sans-serif"
   const body = fonts.length ? "DM Sans" : "sans-serif"
   return new ImageResponse(
@@ -32,10 +52,10 @@ export async function storyImage({ eyebrow, struck, headline, highlight, tone = 
               « {struck} »
             </div>
           )}
-          <div style={{ display: "flex", flexWrap: "wrap", fontFamily: display, fontSize: 112, lineHeight: 1, letterSpacing: -3 }}>
-            {before && <span>{before}</span>}
-            {highlight && headline.includes(highlight) && <span style={{ background: hl, padding: "0 10px" }}>{highlight}</span>}
-            {after && <span>{after}</span>}
+          <div style={{ display: "flex", flexWrap: "wrap", fontFamily: display, fontSize: 112, lineHeight: 1.04, letterSpacing: -3, columnGap: 26, rowGap: 6 }}>
+            {words.map((t, i) => (
+              <span key={i} style={t.hl ? { background: hl, padding: "0 13px", margin: "0 -13px" } : {}}>{t.w}</span>
+            ))}
           </div>
           {sub && <div style={{ display: "flex", fontSize: 44, lineHeight: 1.3, color: "#3d3d3a" }}>{sub}</div>}
         </div>
