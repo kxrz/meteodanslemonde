@@ -17,7 +17,7 @@ interface Props {
 }
 
 /**
- * Projections par saison : valeur centrale SSP2-4.5 et fourchette entre scénarios (SSP1-2.6 → SSP5-8.5).
+ * Projections par saison : médiane des modèles et fourchette entre modèles (voir lib/climate-season.ts).
  * Écart au climat modélisé 2000-2020. Une barre par horizon, sur une échelle commune aux 4 saisons.
  */
 export default function ScenarioRange({ city, bySeason, initial }: Props) {
@@ -92,8 +92,8 @@ export default function ScenarioRange({ city, bySeason, initial }: Props) {
       )}
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-mute">
-        <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-chaud" /> scénario central SSP2-4.5</span>
-        <span className="inline-flex items-center gap-2"><span className="h-3 w-6 rounded-full bg-a-p1" /> fourchette entre scénarios <Explain term="ssp" /></span>
+        <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-chaud" /> médiane des modèles</span>
+        <span className="inline-flex items-center gap-2"><span className="h-3 w-6 rounded-full bg-a-p1" /> fourchette entre modèles <Explain term="ssp" /></span>
       </div>
       <p className="text-[13px] text-mute">
         Écart du ressenti maximal moyen de la saison par rapport au climat modélisé 2000-2020 (modèles CMIP6, GIEC AR6). Moyenne des trois mois de la saison.

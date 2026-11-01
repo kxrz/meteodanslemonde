@@ -202,7 +202,7 @@ export default async function RegionPage({ params }: { params: Promise<{ region:
             <Stat
               label={`2050, ${inSeason(season)}`}
               value={<Num value={avg2050} signed decimals={1} unit="&#8239;°C" />}
-              sub={avg2050Low != null && avg2050High != null ? `Scénario SSP2-4.5 ; de ${fmtDelta(avg2050Low)} à ${fmtDelta(avg2050High)} °C selon les scénarios.` : "Scénario SSP2-4.5."}
+              sub={avg2050Low != null && avg2050High != null ? `Médiane des modèles ; de ${fmtDelta(avg2050Low)} à ${fmtDelta(avg2050High)} °C selon les modèles.` : "Médiane des modèles climatiques."}
               explain="ssp"
             />
           </Card>

@@ -154,7 +154,7 @@ export default async function JumeauxPage({ searchParams }: { searchParams: Sear
               <ul className="flex list-disc flex-col gap-2 pl-5 text-[16px] leading-snug">
                 <li>Mois par mois, le ressenti maximal moyen attendu à {city.name} vers 2050 ressemble à celui qu&apos;on mesure aujourd&apos;hui à {ref.name}.</li>
                 <li>Le réchauffement n&apos;est pas un chiffre abstrait : c&apos;est un déplacement de climat de plusieurs centaines de kilomètres, en une génération.</li>
-                <li>C&apos;est une estimation prudente : scénario SSP2-4.5 <Explain term="ssp" />, celui des politiques actuelles.</li>
+                <li>C&apos;est un ordre de grandeur : la projection médiane des modèles climatiques <Explain term="ssp" />, pas une prévision.</li>
               </ul>
             </Card>
             <Card tone="outline" className="flex flex-col gap-3">
@@ -168,7 +168,7 @@ export default async function JumeauxPage({ searchParams }: { searchParams: Sear
             </Card>
           </div>
           <p className="flex flex-wrap items-center gap-1 text-[13px] text-mute">
-            <span>Méthode : normale ERA5 1991-2020 du ressenti maximal + projection CMIP6 SSP2-4.5 (2041-2050 vs 2000-2020), lissée sur trois mois et jamais inférieure à la tendance déjà observée ; comparaison aux normales actuelles par écart quadratique moyen sur 12 mois. Au-delà de {fmt(TWIN_MAX_RMSE)}&#8239;°C, on ne parle plus de jumeau.</span>
+            <span>Méthode : normale ERA5 1991-2020 du ressenti maximal + projection médiane des modèles CMIP6 (2041-2050 vs 2000-2020), lissée sur trois mois et jamais inférieure à la tendance déjà observée ; comparaison aux normales actuelles par écart quadratique moyen sur 12 mois. Au-delà de {fmt(TWIN_MAX_RMSE)}&#8239;°C, on ne parle plus de jumeau.</span>
             <Explain term="jumeau" />
             <Link href="/a-propos" className="underline underline-offset-2">Méthode détaillée</Link>
           </p>

@@ -42,7 +42,7 @@ const DEROULES = [
       ["6 min", "Météo ou climat ?", "La décomposition en trois étapes."],
       ["5 min", "La courbe qui glisse", "1991-2020, aujourd'hui, 2050 : toute l'année monte."],
       ["12 min", "Trois idées reçues", "Affirmation, vote, révélation, explication. 4 minutes chacune."],
-      ["5 min", "Et en 2050 ?", "Par saison, avec la fourchette entre scénarios."],
+      ["5 min", "Et en 2050 ?", "Par saison, avec la fourchette entre modèles climatiques."],
       ["3 min", "Le jumeau climatique", "Devinez la ville du monde qui a déjà votre climat de 2050."],
       ["4 min", "Et maintenant ?", "Écrire à ses élus, recevoir le briefing, partager."],
     ],

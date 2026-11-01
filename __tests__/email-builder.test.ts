@@ -79,7 +79,7 @@ describe("buildDailyEmailHtml", () => {
     })
     expect(html).toContain("la normale de novembre a déjà bougé de <strong>+0,9 °C</strong>")
     expect(html).toContain("L'automne 2050 à Lyon : <strong>+1,4 °C</strong>")
-    expect(html).toContain("entre +1,1 °C et +1,9 °C selon les scénarios")
+    expect(html).toContain("entre +1,1 °C et +1,9 °C selon les modèles")
   })
 
   it("signale une nuit de gel en saison froide", () => {

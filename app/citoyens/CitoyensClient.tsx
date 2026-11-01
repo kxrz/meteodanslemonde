@@ -184,7 +184,7 @@ export default function CitoyensClient({ senators, cities }: { senators: Senator
               <div className="min-w-0">
                 <p className="flex items-center gap-1 font-mono text-[12px] uppercase tracking-wider text-paper/75">2050 <Explain term="projection" invert /></p>
                 <p className="font-display text-2xl font-extrabold text-signal">{fmtDeltaTemp(f.proj2050?.central)}</p>
-                <p className="text-[13px] text-paper/75">{f.proj2050?.low != null && f.proj2050?.high != null && f.proj2050.high - f.proj2050.low >= 0.1 ? <>de {fmtDeltaTemp(f.proj2050.low)} à {fmtDeltaTemp(f.proj2050.high)}</> : "SSP2-4.5"}</p>
+                <p className="text-[13px] text-paper/75">{f.proj2050?.low != null && f.proj2050?.high != null && f.proj2050.high - f.proj2050.low >= 0.1 ? <>de {fmtDeltaTemp(f.proj2050.low)} à {fmtDeltaTemp(f.proj2050.high)}</> : "médiane des modèles"}</p>
               </div>
             </Card>
           )}

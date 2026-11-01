@@ -1,6 +1,10 @@
 /**
  * ONE-TIME SCRIPT — run during paid Open-Meteo subscription.
- * Collects CMIP6 projections for SSP2-4.5 and SSP5-8.5 with a multi-model ensemble.
+ * Collects CMIP6 (HighResMIP) projections with two multi-model ensembles.
+ *
+ * ⚠ Les clés « ssp245 » et « ssp585 » sont historiques : l'API climat d'Open-Meteo ne prend
+ * aucun paramètre de scénario, les deux séries ne diffèrent que par la liste de modèles.
+ * Le site les affiche donc comme « médiane des modèles » et « fourchette entre modèles ».
  *
  * Output: data/climate-full.json
  * Structure per city:

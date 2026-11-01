@@ -230,7 +230,7 @@ export function FutureSlide({ d, step }: { d: DeckData; step: number }) {
             </div>
           ))}
           <p className="text-[20px] opacity-85">
-            Par rapport à 2000-2020, moyenne de chaque saison. Barre rouge&#8239;: scénario intermédiaire (SSP2-4.5). Cadre jaune&#8239;: fourchette entre scénarios (SSP1-2.6 à SSP5-8.5). Modèles du GIEC (CMIP6).
+            Par rapport à 2000-2020, moyenne de chaque saison. Barre rouge&#8239;: médiane des modèles. Cadre jaune&#8239;: fourchette entre modèles. Modèles climatiques du CMIP6.
           </p>
           {summer && <p className="sr-only">Été 2050 : {fmtDelta(summer.central)} degrés.</p>}
         </div>

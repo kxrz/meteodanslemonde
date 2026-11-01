@@ -153,7 +153,7 @@ export default function SeasonCurve({ city, normal, trend, proj2030, proj2050, m
           <dd className="font-display text-2xl font-extrabold tabular">{fmtDelta(delta2050)}&#8239;°C</dd>
         </div>
       </dl>
-      <p className="text-[13px] text-mute">Écarts lissés sur trois mois pour retirer le bruit mensuel. 2050 = réchauffement déjà observé (ERA5) + hausse supplémentaire projetée entre 2030 et 2050 par les modèles CMIP6 (SSP2-4.5). Une estimation prudente.</p>
+      <p className="text-[13px] text-mute">Écarts lissés sur trois mois pour retirer le bruit mensuel. 2050 = réchauffement déjà observé (ERA5) + hausse supplémentaire projetée entre 2030 et 2050 par les modèles climatiques CMIP6 (médiane). Un ordre de grandeur.</p>
     </div>
   )
 }

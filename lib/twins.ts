@@ -38,8 +38,8 @@ export function smooth3(values: number[]): number[] {
  * Écart de réchauffement retenu pour 2050, mois par mois.
  *
  * Choix documenté :
- * 1. On part de la projection SSP2-4.5 à l'horizon 2050 (moyenne 2041-2050 de l'ensemble CMIP6,
- *    comparée à 2000-2020). C'est le scénario « politiques actuelles ».
+ * 1. On part de la projection médiane des modèles à l'horizon 2050 (série « ssp245 » : moyenne
+ *    2041-2050 de l'ensemble CMIP6, comparée à 2000-2020 ; voir l'avertissement de lib/climate-season.ts).
  * 2. On la lisse sur 3 mois : une valeur mensuelle brute de projection est bruitée
  *    (deux modèles seulement, dix années), un mois isolé peut « baisser » sans signification physique.
  * 3. On ne descend jamais sous la tendance déjà observée (ERA5, 1991-2000 → 2015-2024), elle aussi lissée :

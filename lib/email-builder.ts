@@ -22,7 +22,7 @@ export interface CityEmailData {
   anomaly: number | null
   /** évolution de la normale du mois en 30 ans, lissée sur 3 mois (ERA5) */
   trend?: number | null
-  /** saison en cours projetée en 2050 (centrale SSP2-4.5 + fourchette entre scénarios) */
+  /** saison en cours projetée en 2050 (médiane des modèles + fourchette entre modèles) */
   projection?: SeasonalProjection | null
   /** température minimale prévue (air), pour repérer les nuits de gel */
   tempMin?: number | null
@@ -141,9 +141,9 @@ function buildCityBlock(city: CityEmailData, month: number, unsubToken?: string)
   }
   if (projection?.central != null) {
     const range = projection.low != null && projection.high != null && projection.high - projection.low >= 0.1
-      ? `, entre ${fmtDeltaTemp(projection.low)} et ${fmtDeltaTemp(projection.high)} selon les scénarios`
+      ? `, entre ${fmtDeltaTemp(projection.low)} et ${fmtDeltaTemp(projection.high)} selon les modèles`
       : ""
-    climateLines.push(`${SEASON_2050[season]} à ${name} : <strong>${fmtDeltaTemp(projection.central)}</strong> par rapport à 2000-2020 (scénario intermédiaire SSP2-4.5${range}).`)
+    climateLines.push(`${SEASON_2050[season]} à ${name} : <strong>${fmtDeltaTemp(projection.central)}</strong> par rapport à 2000-2020 (médiane des modèles climatiques${range}).`)
   }
   if (climateLines.length) {
     blocks.push(calloutBlock("Le climat derrière la météo", climateLines.join("<br><br>"), "neutre"))

@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const season = seasonOf(new Date().getMonth())
   const p2050 = seasonalProjections(loadClimateFull()[city.id], season).find((p) => p.year === 2050)?.central ?? null
-  const projStr = p2050 != null ? ` En 2050, ${inSeason(season)} : ${fmtDeltaTemp(p2050)} (GIEC, SSP2-4.5).` : ""
+  const projStr = p2050 != null ? ` En 2050, ${inSeason(season)} : ${fmtDeltaTemp(p2050)} (modèles climatiques CMIP6).` : ""
   const location = city.isWorld ? city.country : city.region
   const description = `L'écart à la normale du jour, la tendance ERA5 sur 30 ans et les projections GIEC saison par saison pour ${city.name} (${location}).${projStr}`
   const title = `${city.name} : écart à la normale, tendance et projections · cestchaud.fr`
@@ -310,7 +310,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             title={p2050?.central != null
               ? <>En 2050, {inSeason(season)} : <Hl tone="chaud">{fmtDeltaTemp(p2050.central)}</Hl>.</>
               : <>Et <Hl tone="chaud">demain</Hl>&#8239;?</>}
-            intro={<>Hausse projetée par rapport au climat 2000-2020 (la courbe ci-dessus part, elle, de 1991-2020) : valeur centrale du scénario intermédiaire et fourchette entre scénarios <Explain term="projection" />. Jusqu&apos;en 2050, les scénarios divergent encore peu : la suite dépend de nos émissions.</>}
+            intro={<>Hausse projetée par rapport au climat 2000-2020 (la courbe ci-dessus part, elle, de 1991-2020) : médiane des modèles climatiques et fourchette entre modèles <Explain term="projection" />. Jusqu&apos;en 2050, les trajectoires d&apos;émissions divergent encore peu : la suite dépend de nos émissions.</>}
           >
             <ScenarioRange city={city.name} bySeason={bySeason} initial={season} />
           </Section>

@@ -169,7 +169,7 @@ export default function AProposPage() {
               <ul className="flex list-disc flex-col gap-2 pl-5">
                 <li>Une ville = un point de grille ERA5 (environ 30 km) : ce n&apos;est pas la station de votre quartier.</li>
                 <li>Le ressenti du jour est une <strong>prévision</strong> du matin, pas une mesure.</li>
-                <li>Les séries de projection affichées comme « scénario intermédiaire » (SSP2-4.5) et « émissions élevées » (SSP5-8.5) se distinguent, dans nos scripts, par les modèles retenus. Pour quelques villes, faute de ressenti dans les modèles, la projection porte sur la température de l&apos;air.</li>
+                <li>Les projections viennent des simulations climatiques haute résolution du CMIP6 (protocole HighResMIP) servies par Open-Meteo. Notre requête ne choisit pas de scénario d&apos;émissions : elle combine plusieurs modèles. Le protocole HighResMIP suit une trajectoire d&apos;émissions élevées (SSP5-8.5) ; jusqu&apos;en 2050 les trajectoires divergent encore peu, mais nos chiffres sont plutôt dans le haut de la fourchette. On affiche donc la <strong>médiane des modèles</strong> et la <strong>fourchette entre modèles</strong>, sans nom de scénario. Pour quelques villes, faute de ressenti dans les modèles, la projection porte sur la température de l&apos;air.</li>
                 <li>Normales, tendances et projections sont recalculées à la main, lors des mises à jour des données sources.</li>
               </ul>
             </Part>

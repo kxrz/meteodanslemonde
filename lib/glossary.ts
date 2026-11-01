@@ -31,12 +31,12 @@ export const GLOSSARY = {
   projection: {
     term: "Projection",
     short: "Ce que les modèles climatiques du GIEC (CMIP6) calculent pour 2030, 2040 et 2050, par rapport à 2000-2020.",
-    long: "Une projection n'est pas une prévision : elle dit « si les émissions suivent tel scénario, voici le climat moyen attendu ». Le site affiche des moyennes par saison et la fourchette entre scénarios, plus robustes qu'une valeur mensuelle isolée.",
+    long: "Une projection n'est pas une prévision : elle dit « si les émissions suivent tel scénario, voici le climat moyen attendu ». Le site affiche des moyennes par saison, la médiane des modèles et la fourchette entre modèles, plus robustes qu'une valeur mensuelle isolée.",
   },
   ssp: {
-    term: "Scénario SSP",
-    short: "Une trajectoire d'émissions de gaz à effet de serre. SSP1-2.6 = fortes baisses, SSP2-4.5 = politiques actuelles, SSP5-8.5 = émissions en hausse.",
-    long: "Les « Shared Socioeconomic Pathways » sont les scénarios du 6e rapport du GIEC (AR6). Le chiffre après le tiret (2.6, 4.5, 8.5) est le forçage radiatif en 2100, en W/m². Jusqu'en 2050, les scénarios divergent encore peu : c'est après que l'écart se creuse.",
+    term: "Modèles et scénarios",
+    short: "Nos projections sont la médiane de plusieurs modèles climatiques du CMIP6, avec la fourchette entre ces modèles. Ce n'est pas une prévision.",
+    long: "Les modèles simulent le climat selon une trajectoire d'émissions (les scénarios SSP du GIEC : SSP1-2.6 = fortes baisses, SSP2-4.5 = politiques actuelles, SSP5-8.5 = émissions élevées). Nos données viennent des simulations haute résolution HighResMIP, servies par Open-Meteo, dont le protocole suit une trajectoire d'émissions élevées. Jusqu'en 2050, les trajectoires divergent encore peu ; c'est après que l'écart se creuse. La fourchette affichée est l'écart entre modèles, pas entre scénarios.",
   },
   era5: {
     term: "ERA5",

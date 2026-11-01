@@ -1,5 +1,8 @@
 // Lecture « robuste » des données climatiques pour la pédagogie :
-// - les projections sont agrégées par saison, avec la fourchette entre scénarios SSP ;
+// - les projections sont agrégées par saison, avec la fourchette entre séries de modèles.
+//   Attention : les clés ssp126/ssp245/ssp585 de climate-full.json ne correspondent pas à des scénarios
+//   demandés à Open-Meteo (scripts/fetch-climate-scenarios.ts ne choisit que des listes de modèles).
+//   On affiche donc « médiane des modèles » (série ssp245) et « fourchette entre modèles ».
 // - le glissement des saisons est exprimé en jours, à partir de la courbe des normales.
 // Les valeurs mensuelles brutes sont trop bruitées (2040 > 2050 dans 83 cases) pour être montrées seules.
 
@@ -36,13 +39,13 @@ export const HORIZONS: { key: Horizon; year: number }[] = [
 
 export interface SeasonalProjection {
   year: number
-  central: number | null // SSP2-4.5
-  low: number | null // minimum entre scénarios disponibles
-  high: number | null // maximum entre scénarios disponibles
+  central: number | null // série « ssp245 » : médiane des modèles affichée
+  low: number | null // minimum entre séries de modèles
+  high: number | null // maximum entre séries de modèles
 }
 
 /**
- * Projection saisonnière par horizon, avec la fourchette entre scénarios.
+ * Projection saisonnière par horizon, avec la fourchette entre séries de modèles.
  * On impose la monotonie de l'affichage (une valeur centrale ne peut pas redescendre
  * d'un horizon au suivant) : la baisse viendrait du bruit des modèles, pas d'un signal.
  */

@@ -125,7 +125,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               <span style={{ fontSize: 48, fontWeight: 700, color: proj2050 > 0 ? "#ea580c" : "#2563eb", lineHeight: 1 }}>
                 {fmtDelta(proj2050)} °C
               </span>
-              <span style={{ fontSize: 14, color: "#a3a3a3", marginTop: 6 }}>scénario SSP2-4.5</span>
+              <span style={{ fontSize: 14, color: "#a3a3a3", marginTop: 6 }}>médiane des modèles CMIP6</span>
             </div>
           )}
         </div>

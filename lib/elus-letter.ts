@@ -13,7 +13,7 @@ export interface LetterFacts {
   normalMonth: number | null
   /** évolution de la saison en 30 ans (moyenne des 3 mois) */
   trendSeason: number | null
-  /** projection 2050 de la saison : centrale SSP2-4.5 et fourchette entre scénarios */
+  /** projection 2050 de la saison : médiane et fourchette entre modèles */
   proj2050: { central: number | null; low: number | null; high: number | null } | null
 }
 
@@ -59,7 +59,7 @@ export function buildLetter(f: LetterFacts | null): string {
       const range = f.proj2050.low != null && f.proj2050.high != null && f.proj2050.high - f.proj2050.low >= 0.1
         ? `, entre ${fmtDeltaTemp(f.proj2050.low)} et ${fmtDeltaTemp(f.proj2050.high)} selon les trajectoires d'émissions`
         : ""
-      facts.push(`- d'ici 2050, ${theSeason(f.season)} pourrait y gagner encore ${fmtDeltaTemp(f.proj2050.central)} par rapport à 2000-2020 (scénario intermédiaire SSP2-4.5 des modèles du GIEC${range}).`)
+      facts.push(`- d'ici 2050, ${theSeason(f.season)} pourrait y gagner encore ${fmtDeltaTemp(f.proj2050.central)} par rapport à 2000-2020 (médiane des modèles climatiques utilisés par le GIEC${range}).`)
     }
   }
 

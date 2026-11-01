@@ -25,7 +25,7 @@ cestchaud.fr compare chaque jour le ressenti de 62 villes françaises (et 67 vil
 |--------|-------|
 | [Open-Meteo](https://open-meteo.com/) | Ressenti maximal du jour (température apparente), archives quotidiennes |
 | [ERA5 / Copernicus](https://cds.climate.copernicus.eu/) | Normales 1991-2020, tendance 1991-2000 → 2015-2024 |
-| [CMIP6 / GIEC AR6](https://www.ipcc.ch/report/ar6/wg1/) | Projections 2030, 2040, 2050 (SSP1-2.6, SSP2-4.5, SSP5-8.5), par rapport à 2000-2020 |
+| [CMIP6 / GIEC AR6](https://www.ipcc.ch/report/ar6/wg1/) | Projections 2030, 2040, 2050 : médiane et fourchette de modèles haute résolution (HighResMIP, via Open-Meteo), par rapport à 2000-2020 |
 | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | Anomalies thermiques détectées par satellite |
 | [leswww-liner](https://github.com/kxrz/leswww-liner) | Contours des pays pour les fonds de carte en points (MIT) |
 

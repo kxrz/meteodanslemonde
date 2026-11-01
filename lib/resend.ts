@@ -42,7 +42,7 @@ export function welcomeEmailHtml({ firstName, cityName, profilUrl }: { firstName
       <ul style="margin:0 0 24px;padding-left:20px;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#3d3d3a;line-height:1.8">
         <li>le ressenti maximal du jour et son écart à la normale du mois (1991-2020) ;</li>
         <li>ce que le climat a déjà ajouté à cette normale en 30 ans ;</li>
-        <li>la saison en cours projetée en 2050, avec la fourchette entre scénarios du GIEC ;</li>
+        <li>la saison en cours projetée en 2050, avec la fourchette entre modèles climatiques ;</li>
         <li>selon la saison : nuit de gel ou chaleur qui dure ;</li>
         <li>l'idée reçue du jour, démontée en une phrase, et le jumeau climatique du jour.</li>
       </ul>
