@@ -130,6 +130,16 @@ export default async function Home() {
             </p>
           )}
 
+          {hasData && avgAnomaly != null && (
+            <div className="flex flex-wrap gap-2">
+              <a href="/story/aujourdhui" download="cestchaud-story-du-jour.png" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 font-display text-[15px] font-bold text-paper hover:bg-ink-soft">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></svg>
+                Story du jour
+              </a>
+              <ShareButton text={shareText} url="https://www.cestchaud.fr" />
+            </div>
+          )}
+
           <div className="flex max-w-xl flex-col gap-2">
             <label htmlFor="city-search" className="font-display text-[17px] font-bold">Et chez vous&#8239;?</label>
             <div className="flex items-center gap-2">

@@ -6,7 +6,8 @@ import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { absoluteHex, anomalyHex, anomalyWords } from "@/lib/anomaly"
 import { fmt, fmtDelta } from "@/lib/format"
-import { CORSICA_OUTLINE, FRANCE_OUTLINE, VIEW_H, VIEW_W, outlinePath, project } from "@/lib/france-shape"
+import { project } from "@/lib/france-shape"
+import LinerFrance from "@/components/brand/LinerFrance"
 import ScaleLegend from "@/components/ui/ScaleLegend"
 import { cn } from "@/lib/cn"
 
@@ -102,9 +103,7 @@ export default function FranceDotMap({ cities, monthLabel, initialMode = "ecart"
             </button>
           ))}
         </div>
-        <svg viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} className="h-auto w-full" role="group" aria-label={`Carte des ${cities.length} villes. Choisissez une ville pour voir son détail.`}>
-          <path data-outline d={outlinePath(FRANCE_OUTLINE)} fill="var(--color-paper-deep)" stroke="var(--color-ink)" strokeWidth="2.5" strokeLinejoin="round" />
-          <path data-outline d={outlinePath(CORSICA_OUTLINE)} fill="var(--color-paper-deep)" stroke="var(--color-ink)" strokeWidth="2.5" strokeLinejoin="round" />
+        <LinerFrance id="carte-du-jour" className="h-auto w-full" label={`Carte des ${cities.length} villes. Choisissez une ville pour voir son détail.`}>
           {placed.map((c) => {
             const isSel = selected?.id === c.id
             return (
@@ -113,10 +112,10 @@ export default function FranceDotMap({ cities, monthLabel, initialMode = "ecart"
                   data-dot={c.id}
                   cx={c.x}
                   cy={c.y}
-                  r={isSel ? 13 : 10}
+                  r={isSel ? 13 : 9.5}
                   fill={colorOf(c, mode)}
-                  stroke={isSel ? "var(--color-ink)" : "#ffffff"}
-                  strokeWidth={isSel ? 3.5 : 2}
+                  stroke="var(--color-ink)"
+                  strokeWidth={isSel ? 4 : 2.5}
                 />
                 {/* zone de clic élargie */}
                 <circle
@@ -135,7 +134,7 @@ export default function FranceDotMap({ cities, monthLabel, initialMode = "ecart"
               </g>
             )
           })}
-        </svg>
+        </LinerFrance>
         <div className="mt-3">
           {mode === "ecart" ? <ScaleLegend /> : (
             <figure className="flex flex-col gap-1.5" aria-label="Légende : température ressentie">
