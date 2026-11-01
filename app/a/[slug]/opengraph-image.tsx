@@ -3,6 +3,8 @@ import { slugify } from "@/lib/slugify"
 import { loadClimateMap } from "@/lib/climate"
 import { loadOgFonts } from "@/lib/og-fonts"
 import { fmtDelta } from "@/lib/format"
+import { loadClimateFull, seasonalProjections } from "@/lib/climate-season"
+import { seasonOf, SEASON_LABEL } from "@/lib/season"
 import type { ClimateEntry } from "@/lib/climate"
 
 export const runtime = "nodejs"
@@ -52,7 +54,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   const climate = (climateMap[city.id] ?? null) as ClimateEntry
   const m = new Date().getMonth()
   const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
-  const proj2050 = climate?.proj2050?.[m] ?? null
+  const season = seasonOf(m)
+  const proj2050 = seasonalProjections(loadClimateFull()[city.id], season).find((p) => p.year === 2050)?.central ?? null
   const normal = climate?.normal?.[m] ?? null
   const temp = await fetchApparentTemp(city.lat, city.lon)
   const anomaly = temp !== null && normal !== null ? Math.round((temp - normal) * 10) / 10 : null
@@ -108,7 +111,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               </span>
               {anomaly !== null && (
                 <span style={{ fontSize: 18, fontWeight: 700, color: isHot ? "#ea580c" : isCold ? "#2563eb" : "#737373", marginTop: 6 }}>
-                  {anomaly > 0 ? "+" : ""}{anomaly.toFixed(1)}°C vs normale
+                  {fmtDelta(anomaly)} °C vs normale
                 </span>
               )}
             </div>
@@ -116,10 +119,10 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           {proj2050 !== null && (
             <div style={{ display: "flex", flexDirection: "column", background: "#ffffff", borderRadius: 20, padding: "16px 24px" }}>
               <span style={{ fontSize: 12, fontWeight: 400, letterSpacing: "0.15em", textTransform: "uppercase", color: "#a3a3a3", marginBottom: 6 }}>
-                GIEC 2050
+                GIEC 2050 · {SEASON_LABEL[season]}
               </span>
               <span style={{ fontSize: 48, fontWeight: 700, color: proj2050 > 0 ? "#ea580c" : "#2563eb", lineHeight: 1 }}>
-                {fmtDelta(proj2050)}°C
+                {fmtDelta(proj2050)} °C
               </span>
               <span style={{ fontSize: 14, color: "#a3a3a3", marginTop: 6 }}>scénario SSP2-4.5</span>
             </div>

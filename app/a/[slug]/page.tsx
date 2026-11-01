@@ -1,60 +1,66 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Metadata } from "next"
+import type { Metadata } from "next"
+import * as fs from "fs"
+import * as path from "path"
 import { slugify } from "@/lib/slugify"
-import { loadClimateMap } from "@/lib/climate"
-import { fmt, fmtDelta } from "@/lib/format"
-import type { ClimateEntry } from "@/lib/climate"
-import SiteHeader from "@/components/SiteHeader"
-import PageFooter from "@/components/PageFooter"
-import CityMapWrapper from "@/components/CityMapWrapper"
-import Breadcrumb from "@/components/Breadcrumb"
+import { fmt, fmtDelta, fmtDeltaTemp } from "@/lib/format"
+import { anomalyWords } from "@/lib/anomaly"
+import { MONTHS, deMonth, isColdHalf, isHotSeason, seasonOf, seasonalMean, type Season } from "@/lib/season"
+import { loadClimateFull, seasonalProjections, seasonShiftDays, smoothedAt, type SeasonalProjection } from "@/lib/climate-season"
+import {
+  countDays, expectedNights, extremesView, hasLiveData, inSeason, isSummerNarrative, signalPeriod, theSeason, trailingStreak,
+  type SignalPeriod, type YearExtremeRaw,
+} from "@/lib/city-page"
+import { getWeatherData, fetchCityWeather } from "@/lib/weather-data"
+import { getImpacts } from "@/lib/climate-impacts"
+import PageShell from "@/components/ui/PageShell"
+import Section from "@/components/ui/Section"
+import Title from "@/components/ui/Title"
+import Hl from "@/components/ui/Hl"
+import Num from "@/components/ui/Num"
+import Card from "@/components/ui/Card"
+import Stat from "@/components/ui/Stat"
+import Eyebrow from "@/components/ui/Eyebrow"
+import Explain from "@/components/ui/Explain"
+import { ButtonLink, Arrow } from "@/components/ui/Button"
+import AnomalyBreakdown from "@/components/pedago/AnomalyBreakdown"
+import SeasonCurve from "@/components/pedago/SeasonCurve"
+import ScenarioRange from "@/components/pedago/ScenarioRange"
 import ShareButton from "@/components/ShareButton"
 import TempSparkline from "@/components/TempSparkline"
-import { getWeatherData } from "@/lib/weather-data"
-import PushOptIn from "@/components/PushOptIn"
 import EnVraiCaFaitQuoi from "@/components/EnVraiCaFaitQuoi"
-import { getImpacts } from "@/lib/climate-impacts"
+import CityLocator from "@/components/CityLocator"
 
 export const revalidate = 86400
 
-const citiesFR = require("@/data/cities-fr.json") as Array<{
-  id: string; name: string; lat: number; lon: number; region: string
-}>
-
-const citiesWorld = require("@/data/cities-world.json") as Array<{
-  id: string; name: string; lat: number; lon: number; country: string
-}>
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const citiesFR = require("@/data/cities-fr.json") as Array<{ id: string; name: string; lat: number; lon: number; region: string }>
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const citiesWorld = require("@/data/cities-world.json") as Array<{ id: string; name: string; lat: number; lon: number; country: string }>
 
 type CityFR = { id: string; name: string; lat: number; lon: number; region: string; isWorld?: false }
 type CityWorld = { id: string; name: string; lat: number; lon: number; country: string; isWorld: true }
 type AnyCity = CityFR | CityWorld
 
 let narratives: Record<string, string> = {}
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 try { narratives = require("@/data/narratives.json") } catch {}
 
-interface YearExtreme { max: number; max_date: string; min: number; min_date: string }
-let yearExtremesMap: Record<string, YearExtreme> = {}
+let yearExtremesMap: Record<string, YearExtremeRaw> = {}
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 try { yearExtremesMap = require("@/data/year-extremes.json") } catch {}
 
-type TwinResult = { id: string; name: string; label: string; temp: number; slug: string }
-
-function findLiveTwins(
-  cityTemp: number,
-  isWorld: boolean,
-  allFR: import("@/lib/types").CityFR[],
-  allWorld: import("@/lib/types").CityWorld[],
-): TwinResult[] {
-  const pool = isWorld ? allFR : allWorld
-  return pool
-    .map((c) => {
-      const label = isWorld ? (c as import("@/lib/types").CityFR).region : (c as import("@/lib/types").CityWorld).country
-      return { id: c.id, name: c.name, label, temp: c.apparent_temp_max, slug: slugify(c.name), diff: Math.abs(c.apparent_temp_max - cityTemp) }
-    })
-    .filter((x) => x.diff <= 4)
-    .sort((a, b) => a.diff - b.diff)
-    .slice(0, 4)
+/** Nuits de gel moyennes par mois (1991-2020), produit par un autre script. Absent : pas de comparaison. */
+function loadFrostNormals(): Record<string, number[]> | null {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(process.cwd(), "data/frost-normals.json"), "utf8"))
+  } catch {
+    return null
+  }
 }
+
+const SEASONS: Season[] = ["hiver", "printemps", "ete", "automne"]
 
 function getCityBySlug(slug: string): AnyCity | null {
   const fr = citiesFR.find((c) => slugify(c.name) === slug)
@@ -76,619 +82,394 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const city = getCityBySlug(slug)
   if (!city) return {}
 
-  const climateMap = loadClimateMap()
-  const climate = (climateMap[city.id] ?? null) as ClimateEntry
-  const m = new Date().getMonth()
-  const proj2050 = climate?.proj2050?.[m] ?? null
-  const proj2050Str = proj2050 !== null ? ` GIEC 2050 : ${fmtDelta(proj2050)}°C.` : ""
-
+  const season = seasonOf(new Date().getMonth())
+  const p2050 = seasonalProjections(loadClimateFull()[city.id], season).find((p) => p.year === 2050)?.central ?? null
+  const projStr = p2050 != null ? ` En 2050, ${inSeason(season)} : ${fmtDeltaTemp(p2050)} (GIEC, SSP2-4.5).` : ""
   const location = city.isWorld ? city.country : city.region
-  const description = `Ressenti max, tendance ERA5 sur 30 ans et projections GIEC CMIP6 2030–2050 pour ${city.name} (${location}).${proj2050Str}`
+  const description = `L'écart à la normale du jour, la tendance ERA5 sur 30 ans et les projections GIEC saison par saison pour ${city.name} (${location}).${projStr}`
+  const title = `${city.name} : écart à la normale, tendance et projections · cestchaud.fr`
 
   return {
-    title: `${city.name} · Chaleur & projections climatiques · cestchaud.fr`,
+    title,
     description,
     alternates: { canonical: `https://www.cestchaud.fr/a/${slug}` },
     openGraph: {
-      title: `${city.name} · Chaleur & projections GIEC`,
+      title: `${city.name} : météo du jour ou climat qui change ?`,
       description,
       url: `https://www.cestchaud.fr/a/${slug}`,
       siteName: "cestchaud.fr",
       locale: "fr_FR",
       type: "website",
     },
-    twitter: {
-      card: "summary_large_image",
-      title: `${city.name} · Chaleur & projections GIEC`,
-      description,
-    },
+    twitter: { card: "summary_large_image", title: `${city.name} : météo du jour ou climat qui change ?`, description },
   }
 }
 
-async function fetchTropicalMetrics(lat: number, lon: number) {
-  const now = new Date()
-  const month = now.getMonth()
-  const isSummer = month >= 4 && month <= 9
-  const y = now.getFullYear()
-  const m = String(month + 1).padStart(2, "0")
-  const monthStart = `${y}-${m}-01`
-  const endDate = new Date(now)
-  endDate.setDate(endDate.getDate() - 2)
-  const endStr = endDate.toISOString().split("T")[0]
-  const past30 = new Date(now)
-  past30.setDate(past30.getDate() - 32)
-  const past30Str = past30.toISOString().split("T")[0]
+type Signals =
+  | { ok: true; period: SignalPeriod; dates: string[]; mins: (number | null)[]; maxes: (number | null)[] }
+  | { ok: false; period: SignalPeriod }
+
+/** Relevés quotidiens depuis le début de la période (archive Open-Meteo, ~2 jours de retard). */
+async function fetchSignals(lat: number, lon: number, now: Date): Promise<Signals> {
+  const period = signalPeriod(now)
+  const end = new Date(now)
+  end.setDate(end.getDate() - 2)
   try {
     const res = await fetch(
       `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}` +
-      `&daily=temperature_2m_min,apparent_temperature_max&start_date=${past30Str}&end_date=${endStr}`,
-      { next: { revalidate: 86400 } }
+        `&daily=temperature_2m_min,apparent_temperature_max&start_date=${period.start}&end_date=${end.toISOString().slice(0, 10)}&timezone=Europe%2FParis`,
+      { next: { revalidate: 86400 } },
     )
-    if (!res.ok) throw new Error(`archive API ${res.status}`)
+    if (!res.ok) throw new Error(`archive ${res.status}`)
     const data = await res.json()
-    if (data?.error) throw new Error(data.reason)
-    const dates = data.daily.time as string[]
-    const minTemps = data.daily.temperature_2m_min as (number | null)[]
-    const maxTemps = data.daily.apparent_temperature_max as (number | null)[]
-    const nightCount = dates.filter((date, i) =>
-      date >= monthStart && minTemps[i] !== null &&
-      (isSummer ? minTemps[i]! > 20 : minTemps[i]! <= 0)
-    ).length
-    let streakCount = 0
-    for (let i = maxTemps.length - 1; i >= 0; i--) {
-      if (maxTemps[i] === null) break
-      const qualifies = isSummer ? maxTemps[i]! >= 35 : maxTemps[i]! < 5
-      if (qualifies) streakCount++
-      else break
-    }
-    const daysInMonth = endDate.getMonth() === month ? endDate.getDate() : new Date(y, month + 1, 0).getDate()
-    return { nightCount, streakCount, daysInMonth, isSummer }
+    if (data?.error || !data?.daily?.time) throw new Error("archive: réponse invalide")
+    return { ok: true, period, dates: data.daily.time, mins: data.daily.temperature_2m_min, maxes: data.daily.apparent_temperature_max }
   } catch {
-    const daysInMonth = now.getDate() - 2
-    return { nightCount: 0, streakCount: 0, daysInMonth, isSummer }
+    return { ok: false, period }
   }
 }
 
-async function fetchCityWeather(lat: number, lon: number) {
-  try {
-    const url =
-      `https://api.open-meteo.com/v1/forecast` +
-      `?latitude=${lat}&longitude=${lon}` +
-      `&daily=apparent_temperature_max,weathercode` +
-      `&forecast_days=1`
-    const res = await fetch(url, { next: { revalidate: 86400 } })
-    if (!res.ok) return null
-    const data = await res.json()
-    return {
-      apparent_temp_max: Math.round(data.daily.apparent_temperature_max[0]) as number,
-      weathercode: data.daily.weathercode[0] as number,
-    }
-  } catch {
-    return null
-  }
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-function buildProjectionParagraph(
-  cityName: string,
-  region: string,
-  monthName: string,
-  normal: number | null,
-  trend: number | null,
-  proj2030: number | null,
-  proj2040: number | null,
-  proj2050: number | null,
-): string | null {
-  if (proj2050 === null && trend === null) return null
-
-  const parts: string[] = []
-
-  if (trend !== null) {
-    const trendWord = trend > 0 ? "hausse" : "baisse"
-    const trendAbs = Math.abs(trend)
-    parts.push(
-      `Sur les 30 dernières années, le ressenti de ${monthName} à ${cityName} a connu une ${trendWord} de ${trendAbs.toFixed(1)}°C selon les données ERA5. Ce chiffre, mesuré et stable, n'est pas une anomalie ponctuelle : c'est la signature d'une mutation durable du climat local.`
-    )
-  }
-
-  if (proj2030 !== null || proj2040 !== null || proj2050 !== null) {
-    const projParts: string[] = []
-    if (proj2030 !== null) projParts.push(`${fmtDelta(proj2030)}°C en 2030`)
-    if (proj2040 !== null) projParts.push(`${fmtDelta(proj2040)}°C en 2040`)
-    if (proj2050 !== null) projParts.push(`${fmtDelta(proj2050)}°C en 2050`)
-
-    const baseDesc = normal !== null ? ` par rapport à la normale actuelle de ${fmt(normal)}°C` : ""
-
-    const impact = proj2050 !== null
-      ? proj2050 >= 3
-        ? `Un écart de cette ampleur transforme concrètement les conditions de vie estivales, le stress hydrique, et les besoins en climatisation.`
-        : proj2050 >= 1.5
-        ? `Un tel décalage est déjà perceptible sur l'agriculture locale, la santé des personnes vulnérables et la gestion de l'eau.`
-        : `Même modeste en apparence, ce réchauffement décale les saisons et fragilise les écosystèmes locaux sur la durée.`
-      : ""
-
-    parts.push(
-      `Le scénario intermédiaire CMIP6 (SSP2-4.5) projette pour ${cityName} : ${projParts.join(", ")}${baseDesc}. ${impact}`
-    )
-  }
-
-  return parts.join(" ")
+function frDate(iso: string) {
+  return new Date(iso + "T12:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" })
 }
 
 export default async function CityPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const city = getCityBySlug(slug)
   if (!city) notFound()
+  const isFR = !city.isWorld
 
-  const [climateMap, { citiesFR: allFR, citiesWorld: allWorld }, weather, tropical] = await Promise.all([
-    Promise.resolve(loadClimateMap()),
-    getWeatherData(),
-    fetchCityWeather(city.lat, city.lon),
-    city.isWorld ? Promise.resolve(null) : fetchTropicalMetrics(city.lat, city.lon),
-  ])
-  const climate = (climateMap[city.id] ?? null) as ClimateEntry
-  const narrative = narratives[city.id] ?? null
-  const yearExtremes = yearExtremesMap[city.id] ?? null
-  const m = new Date().getMonth()
+  // ── Valeur du jour : cache d'abord, appel direct ensuite ──
+  const weather = await getWeatherData()
+  const live = hasLiveData(weather.citiesFR)
+  const cached = live
+    ? (isFR ? weather.citiesFR : weather.citiesWorld).find((c) => c.id === city.id)
+    : undefined
+  let today: number | null = cached?.apparent_temp_max ?? null
+  if (today == null) today = (await fetchCityWeather(city.lat, city.lon))?.apparent_temp_max ?? null
 
-  const normal = climate?.normal?.[m] ?? null
-  const trend = climate?.trend?.[m] ?? null
-  const proj2030 = climate?.proj2030?.[m] ?? null
-  const proj2040 = climate?.proj2040?.[m] ?? null
-  const proj2050 = climate?.proj2050?.[m] ?? null
+  const refDate = live ? new Date(weather.fetchedAt) : new Date()
+  const month = refDate.getMonth()
+  const monthName = MONTHS[month]
+  const season = seasonOf(month)
 
-  const anomaly =
-    weather && normal !== null
-      ? Math.round((weather.apparent_temp_max - normal) * 10) / 10
-      : null
+  // ── Climat ──
+  const full = loadClimateFull()[city.id]
+  const normal = full?.normal?.[month] ?? null
+  const trendNow = smoothedAt(full?.trend, month)
+  const anomaly = today != null && normal != null ? Math.round((today - normal) * 10) / 10 : null
+  const seasonTrend = seasonalMean(full?.trend, season)
+  const bySeason = Object.fromEntries(SEASONS.map((s) => [s, seasonalProjections(full, s)])) as Record<Season, SeasonalProjection[]>
+  const p2050 = bySeason[season].find((p) => p.year === 2050) ?? null
+  const shiftDays = full && trendNow != null ? seasonShiftDays(full.normal, month, trendNow) : null
 
-  const monthName = new Date().toLocaleDateString("fr-FR", { month: "long" })
-  const pageUrl = `https://www.cestchaud.fr/a/${slug}`
+  // ── Signaux de saison (villes françaises) ──
+  const signalMode = !isFR ? null : isColdHalf(month) ? "froid" : isHotSeason(month) ? "chaud" : null
+  const signals = signalMode ? await fetchSignals(city.lat, city.lon, new Date()) : null
+  const frostNormals = signalMode === "froid" ? loadFrostNormals() : null
 
-  const cityLocation = city.isWorld ? city.country : city.region
-  const cityTodayTemp = weather?.apparent_temp_max ?? null
-  const twins = cityTodayTemp !== null ? findLiveTwins(cityTodayTemp, !!city.isWorld, allFR, allWorld) : []
-  const now = new Date()
-  const currentMonth = now.getMonth() + 1
-  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000)
+  // ── Extrêmes, impacts, portrait ──
+  const extremes = isFR && yearExtremesMap[city.id] ? extremesView(yearExtremesMap[city.id]) : null
+  const extremesYear = extremes ? extremes.hot.date.slice(0, 4) : null
+  const regionSlug = isFR ? slugify(city.region) : null
+  const dayOfYear = Math.floor((refDate.getTime() - new Date(refDate.getFullYear(), 0, 0).getTime()) / 86_400_000)
   const cityHash = city.id.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0)
-  const regionSlug = city.isWorld ? null : slugify(city.region)
-  const impactsToShow = city.isWorld ? [] : getImpacts({
-    regionSlug,
-    month: currentMonth,
-    count: 1,
-    seed: dayOfYear + cityHash,
-  })
+  const impacts = isFR ? getImpacts({ regionSlug, month: month + 1, count: 2, seed: dayOfYear + cityHash }) : []
+  const narrative = narratives[city.id] ?? null
+  const narrativeIsSummer = narrative ? isSummerNarrative(narrative) : false
 
-  const projectionParagraph = city.isWorld ? null : buildProjectionParagraph(
-    city.name, city.region, monthName,
-    normal, trend, proj2030, proj2040, proj2050
-  )
+  const location = isFR ? city.region : city.country
+  const pageUrl = `https://www.cestchaud.fr/a/${slug}`
+  const dataLabel = refDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })
+  const tone = anomaly == null ? "signal" : anomaly >= 0.5 ? "chaud" : anomaly <= -0.5 ? "froid" : "signal"
 
-  let shareText: string
-  if (weather && anomaly !== null) {
-    const sign = anomaly > 0 ? "+" : ""
-    shareText = `A ${city.name} aujourd'hui, le ressenti max atteint ${weather.apparent_temp_max}°C, soit ${sign}${anomaly}°C par rapport a la normale de ${monthName}.`
-    if (proj2050 !== null) {
-      shareText += ` Et d'ici 2050, le GIEC projette encore ${fmtDelta(proj2050)}°C de plus.`
-    }
-  } else if (proj2050 !== null) {
-    shareText = `A ${city.name}, le GIEC (CMIP6) projette ${fmtDelta(proj2050)}°C d'ici 2050.`
-  } else {
-    shareText = `Donnees climatiques de ${city.name} sur`
-  }
-
-  const shareTextEncoded = encodeURIComponent(shareText + " " + pageUrl)
-  const shareLinks = {
-    twitter: `https://twitter.com/intent/tweet?text=${shareTextEncoded}`,
-    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
-    whatsapp: `https://api.whatsapp.com/send?text=${shareTextEncoded}`,
-    email: `mailto:?subject=${encodeURIComponent(`${city.name} · donnees climatiques`)}&body=${shareTextEncoded}`,
-  }
+  const shareText = anomaly != null
+    ? `À ${city.name} aujourd'hui : ${fmt(today, 0)} °C ressentis, soit ${fmtDeltaTemp(anomaly)} par rapport à un ${monthName} normal.${p2050?.central != null ? ` En 2050, ${inSeason(season)} : ${fmtDeltaTemp(p2050.central)} selon le GIEC.` : ""}`
+    : p2050?.central != null
+      ? `À ${city.name}, le GIEC projette ${fmtDeltaTemp(p2050.central)} ${inSeason(season)} d'ici 2050.`
+      : `Le climat de ${city.name}, expliqué simplement :`
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `${city.name} · Chaleur & projections climatiques`,
+    name: `${city.name} : écart à la normale, tendance et projections`,
     url: pageUrl,
-    description: `Données climatiques et projections GIEC pour ${city.name}, ${cityLocation}.`,
+    description: `Données climatiques et projections GIEC pour ${city.name}, ${location}.`,
     about: {
       "@type": "Place",
       name: city.name,
       geo: { "@type": "GeoCoordinates", latitude: city.lat, longitude: city.lon },
       containedInPlace: {
         "@type": "AdministrativeArea",
-        name: cityLocation,
-        containedInPlace: { "@type": "Country", name: city.isWorld ? city.country : "France" },
+        name: location,
+        containedInPlace: { "@type": "Country", name: isFR ? "France" : city.country },
       },
     },
   }
 
+  const crumbs = isFR
+    ? [{ label: "Ma ville", href: "/r" }, { label: city.region, href: `/r/${regionSlug}` }, { label: city.name }]
+    : [{ label: "Ma ville", href: "/r" }, { label: city.country }, { label: city.name }]
+
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    <PageShell crumbs={crumbs}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="flex flex-col bg-[#f5f4f0] lg:h-screen lg:overflow-hidden">
-
-        <SiteHeader asLink />
-        <Breadcrumb crumbs={
-          city.isWorld
-            ? [{ label: "Monde" }, { label: city.name }]
-            : [{ label: "Régions", href: "/r" }, { label: city.region, href: `/r/${slugify(city.region)}` }, { label: city.name }]
-        } />
-
-        <div className="flex flex-col lg:flex-row lg:flex-1 lg:min-h-0">
-
-          {/* Left: map (40%) */}
-          <div className="h-[50vw] max-h-[360px] lg:max-h-none lg:h-auto lg:w-[40%] shrink-0 relative p-3 lg:p-4">
-            <div className="w-full h-full rounded-3xl overflow-hidden">
-              <CityMapWrapper lat={city.lat} lon={city.lon} name={city.name} />
+      <div className="flex flex-col gap-16 sm:gap-20">
+        {/* ── 1. En-tête : la phrase du jour ── */}
+        <header className="flex flex-col gap-6 pt-4 sm:pt-8">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 flex-col gap-3">
+              <Eyebrow>
+                {location} · <span className="first-letter:uppercase">{dataLabel}</span>
+              </Eyebrow>
+              <Title as="h1" size="hero" animate className="break-words">{city.name}</Title>
             </div>
-            <div className="absolute top-6 left-6 z-[1000] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-sm">
-              <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-500 leading-none mb-0.5">
-                {cityLocation}
-              </p>
-              <h1 className="text-base font-black text-neutral-900 leading-tight">{city.name}</h1>
-            </div>
-            <div className="absolute bottom-6 left-6 z-[1000]">
-              <p className="font-mono text-[10px] text-neutral-500 bg-white/80 backdrop-blur-sm rounded px-2 py-1">
-                {city.lat.toFixed(2)}N · {Math.abs(city.lon).toFixed(2)}{city.lon >= 0 ? "E" : "O"}
-              </p>
+            <div className="w-28 shrink-0 sm:w-44 lg:w-64">
+              <CityLocator name={city.name} lat={city.lat} lon={city.lon} anomaly={anomaly} world={!isFR} country={city.isWorld ? city.country : undefined} />
             </div>
           </div>
 
-          {/* Right: bento (60%) */}
-          <div className="lg:flex-1 lg:min-h-0 lg:overflow-y-auto p-3 lg:p-4 lg:w-[60%]">
-            <div className="grid grid-cols-2 gap-3 pb-4">
-
-              {/* Narrative */}
-              {narrative && (
-                <article className="col-span-2 bg-neutral-900 rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">
-                    En quelques mots
-                  </p>
-                  <p className="text-sm text-white/80 leading-relaxed">{narrative}</p>
-                </article>
+          {today != null ? (
+            <div className="flex max-w-4xl flex-col gap-3">
+              <p className="font-display text-[clamp(1.7rem,4.6vw,3.2rem)] font-extrabold leading-[1.05] tracking-tight">
+                Aujourd&apos;hui, <Num value={today} from={normal ?? undefined} unit="&#8239;°C" /> ressentis.
+                {anomaly != null && (
+                  <> C&apos;est <Hl tone={tone}>{fmtDeltaTemp(anomaly)}</Hl> par rapport à un {monthName} normal.</>
+                )}
+              </p>
+              {anomaly != null && normal != null && (
+                <p className="text-[17px] leading-relaxed text-ink-soft">
+                  {capitalize(anomalyWords(anomaly))} : un {monthName} normal ici, c&apos;est {fmt(normal)}&#8239;°C de ressenti maximal{" "}
+                  <Explain term="ressenti" /> en moyenne sur 1991-2020 <Explain term="normale" />.
+                </p>
               )}
+            </div>
+          ) : (
+            <p className="max-w-3xl rounded-2xl bg-signal p-4 font-display text-xl font-bold" role="status">
+              Relevé du jour indisponible pour {city.name}. La normale, la tendance et les projections restent consultables ci-dessous.
+            </p>
+          )}
 
-              {/* Temp + Share — two side-by-side blocks */}
-              {weather && (
-                <div className="col-span-2 grid grid-cols-2 gap-3">
-                  {/* Temp info */}
-                  <div className="bg-[#dbeafe] rounded-3xl p-6">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-800/60 mb-3">
-                      Ressenti max aujourd&apos;hui
-                    </p>
-                    <div className="flex items-baseline gap-1.5 leading-none">
-                      <span className="text-6xl font-black text-blue-900">{weather.apparent_temp_max}&deg;</span>
-                      <span className="text-2xl font-black text-blue-400">C</span>
-                    </div>
-                    {anomaly !== null && (
-                      <p className="text-sm text-blue-800/60 mt-2 leading-snug">
-                        {anomaly > 0
-                          ? <>{fmtDelta(anomaly)}&deg;C <span className="font-normal">au-dessus de la normale de {monthName}</span></>
-                          : anomaly < 0
-                          ? <>{fmtDelta(anomaly)}&deg;C <span className="font-normal">en dessous de la normale de {monthName}</span></>
-                          : <span className="font-normal">dans la normale de {monthName}</span>
-                        }
-                      </p>
+          <div className="flex flex-wrap gap-2">
+            <ShareButton text={shareText} url={pageUrl} />
+            {isFR && <ButtonLink href="/notifications" variant="chaud">Recevoir le briefing <Arrow /></ButtonLink>}
+          </div>
+        </header>
+
+        {/* ── 2. Météo ou climat ── */}
+        {normal != null && trendNow != null && (
+          <Section
+            id="meteo-climat"
+            eyebrow="Météo ou climat"
+            title={trendNow >= 0.3
+              ? <>Ce que le climat <Hl tone="chaud">a déjà changé</Hl> ici.</>
+              : <>Ici, l&apos;écart du jour, c&apos;est <Hl>surtout la météo</Hl>.</>}
+            intro={<>La normale {deMonth(month)} a déjà bougé de {fmtDeltaTemp(trendNow)} en 30 ans <Explain term="tendance" />. L&apos;écart du jour se lit par-dessus.</>}
+          >
+            {today != null ? (
+              <AnomalyBreakdown city={city.name} monthLabel={monthName} normal={normal} trend={trendNow} today={today} />
+            ) : (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Card><Stat label={`Normale ${deMonth(month)}`} value={<Num value={normal} decimals={1} unit="&#8239;°C" />} sub="Ressenti maximal moyen, 1991-2020." explain="normale" /></Card>
+                <Card tone="chaud"><Stat invert label="Tendance sur 30 ans" value={<Num value={trendNow} signed decimals={1} unit="&#8239;°C" />} sub="Lissée sur trois mois autour du mois en cours." explain="tendance" /></Card>
+              </div>
+            )}
+          </Section>
+        )}
+
+        {/* ── 3. La courbe qui glisse ── */}
+        {full && (
+          <Section
+            id="saisons"
+            eyebrow="Saison par saison"
+            title={<>Le calendrier de {city.name} <Hl>glisse</Hl>.</>}
+            intro="La courbe de l'année, telle qu'elle était sur 1991-2020, telle qu'elle est aujourd'hui, et telle qu'elle pourrait être en 2050."
+          >
+            <SeasonCurve
+              city={city.name}
+              normal={full.normal}
+              trend={full.trend}
+              proj2030={full.ssp245?.proj2030 ?? Array(12).fill(null)}
+              proj2050={full.ssp245?.proj2050 ?? Array(12).fill(null)}
+              month={month}
+              shiftDays={shiftDays}
+            />
+          </Section>
+        )}
+
+        {/* ── 4. Projections par saison ── */}
+        {full && (
+          <Section
+            id="projections"
+            eyebrow="Projections GIEC"
+            title={p2050?.central != null
+              ? <>En 2050, {inSeason(season)} : <Hl tone="chaud">{fmtDeltaTemp(p2050.central)}</Hl>.</>
+              : <>Et <Hl tone="chaud">demain</Hl>&#8239;?</>}
+            intro={<>Hausse projetée par rapport au climat 2000-2020 (la courbe ci-dessus part, elle, de 1991-2020) : valeur centrale du scénario intermédiaire et fourchette entre scénarios <Explain term="projection" />. Jusqu&apos;en 2050, les scénarios divergent encore peu : la suite dépend de nos émissions.</>}
+          >
+            <ScenarioRange city={city.name} bySeason={bySeason} initial={season} />
+          </Section>
+        )}
+
+        {/* ── 5. Extrêmes de l'année ── */}
+        {extremes && (
+          <Section id="extremes" eyebrow={`Extrêmes de ${extremesYear}, jusqu'ici`} title={<>L&apos;année {extremesYear} à {city.name}, <Hl>en deux jours</Hl>.</>}>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Card tone="white">
+                <Stat label={extremes.hot.label} value={<span className="text-chaud"><Num value={extremes.hot.value} unit="&#8239;°C" /></span>} sub={<>{capitalize(extremes.hot.detail)}, le {frDate(extremes.hot.date)}.</>} explain="ressenti" />
+              </Card>
+              <Card tone="white">
+                <Stat label={extremes.cold.label} value={<span className="text-froid"><Num value={extremes.cold.value} unit="&#8239;°C" /></span>} sub={<>{capitalize(extremes.cold.detail)}, le {frDate(extremes.cold.date)}.</>} />
+              </Card>
+            </div>
+          </Section>
+        )}
+
+        {/* ── 6. Signaux de saison ── */}
+        {signals && (
+          <Section
+            id="signaux"
+            eyebrow={`Signaux ${deMonth(signals.period.month)}`}
+            title={signalMode === "froid"
+              ? <>Le gel, <Hl tone="froid">encore au rendez-vous</Hl>&#8239;?</>
+              : <>Quand la chaleur <Hl tone="chaud">ne redescend plus</Hl>.</>}
+            intro={`Relevés du 1er au ${signals.period.days} ${MONTHS[signals.period.month]} à ${city.name}.`}
+          >
+            {!signals.ok ? (
+              <p className="rounded-2xl bg-paper-deep p-4 text-[15px] text-ink-soft" role="status">
+                Relevés quotidiens indisponibles pour le moment : impossible de compter les nuits de {signalMode === "froid" ? "gel" : "chaleur"} ce mois-ci.
+              </p>
+            ) : (() => {
+              const inPeriod = signals.dates.map((d) => d >= signals.period.start && d <= signals.period.end)
+              const mins = signals.mins.map((v, i) => (inPeriod[i] ? v : null))
+              const maxes = signals.maxes.map((v, i) => (inPeriod[i] ? v : null))
+              if (signalMode === "froid") {
+                const frost = countDays(mins, (v) => v < 0)
+                const expected = expectedNights(frostNormals?.[city.id], signals.period)
+                const nm = full?.normal?.[signals.period.month]
+                const mild = nm != null ? countDays(maxes, (v) => v - nm >= 3) : null
+                return (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Card tone="froid">
+                      <Stat
+                        invert
+                        label="Nuits de gel"
+                        value={<Num value={frost} />}
+                        sub={expected != null
+                          ? <>pour <strong>{fmt(expected)}</strong> attendue{expected >= 2 ? "s" : ""} en moyenne sur cette période (1991-2020).</>
+                          : "nuits sous 0 °C sur la période."}
+                        explain="nuitGel"
+                      />
+                    </Card>
+                    {mild != null && (
+                      <Card tone="chaud">
+                        <Stat invert label="Journées très douces" value={<Num value={mild} />} sub={`jours à +3 °C ou plus au-dessus de la normale ${deMonth(signals.period.month)}.`} explain="anomalie" />
+                      </Card>
                     )}
                   </div>
-                  {/* Share */}
-                  <div className="bg-white rounded-3xl p-6">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                      Partager
-                    </p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <a href={shareLinks.twitter} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5 bg-black text-white rounded-xl py-2 px-2 text-xs font-semibold hover:bg-neutral-800 transition-colors">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.733-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" /></svg>
-                        X
-                      </a>
-                      <a href={shareLinks.linkedin} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5 bg-[#0A66C2] text-white rounded-xl py-2 px-2 text-xs font-semibold hover:bg-[#0958a8] transition-colors">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-                        LinkedIn
-                      </a>
-                      <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-1.5 bg-[#25D366] text-white rounded-xl py-2 px-2 text-xs font-semibold hover:bg-[#1fbb56] transition-colors">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" /></svg>
-                        WhatsApp
-                      </a>
-                      <a href={shareLinks.email}
-                        className="flex items-center justify-center gap-1.5 bg-neutral-100 text-neutral-700 rounded-xl py-2 px-2 text-xs font-semibold hover:bg-neutral-200 transition-colors">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
-                        Email
-                      </a>
-                      <ShareButton
-                        text={shareText}
-                        url={pageUrl}
-                        label="Copier le texte"
-                        variant="copy-grid"
-                      />
-                    </div>
-                  </div>
+                )
+              }
+              const tropical = countDays(mins, (v) => v >= 20)
+              const streak = trailingStreak(signals.maxes, (v) => v >= 35)
+              return (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Card tone="ink">
+                    <Stat invert label="Nuits tropicales" value={<Num value={tropical} />} sub={`nuits sur ${signals.period.days} sans descendre sous 20 °C.`} explain="nuitTropicale" />
+                  </Card>
+                  <Card tone={streak >= 3 ? "chaud" : "white"}>
+                    <Stat
+                      invert={streak >= 3}
+                      label="Série de jours chauds"
+                      value={<><Num value={streak} /> j</>}
+                      sub={streak >= 3 ? "jours consécutifs à 35 °C ressentis ou plus : épisode de forte chaleur." : "jours consécutifs à 35 °C ressentis ou plus (une série commence à 3)."}
+                    />
+                  </Card>
                 </div>
-              )}
+              )
+            })()}
+          </Section>
+        )}
 
-              {/* Normale + Tendance */}
-              <div className="grid grid-cols-2 gap-3 col-span-2">
-                <div className="bg-[#b8d4b0] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-green-900/50 mb-3">
-                    Normalement en {monthName}
-                  </p>
-                  {normal !== null ? (
-                    <>
-                      <div className="text-4xl font-black text-green-900 leading-none">{fmt(normal)}&deg;C</div>
-                      <p className="text-xs text-green-900/50 mt-2 leading-snug">moy. 1991–2020 · référence ERA5</p>
-                      {anomaly !== null && (
-                        <p className="text-xs text-green-900/60 mt-2 leading-snug">
-                          {anomaly === 0
-                            ? "Aujourd'hui est exactement dans la norme historique."
-                            : `Aujourd'hui il fait ${Math.abs(anomaly).toFixed(1)}°C ${anomaly > 0 ? "de plus" : "de moins"} que ce qu'on attendait pour ce mois-ci.`
-                          }
-                        </p>
-                      )}
-                    </>
-                  ) : (
-                    <p className="text-2xl font-black text-green-900/30">N/A</p>
-                  )}
-                </div>
-                <div className="bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-3">
-                    Tendance 30 ans
-                  </p>
-                  {trend !== null ? (
-                    <>
-                      <div className="text-4xl font-black text-neutral-900 leading-none">
-                        {fmtDelta(trend)}&deg;C
-                      </div>
-                      <p className="text-xs text-neutral-400 mt-2">depuis 1990 · {monthName}</p>
-                    </>
-                  ) : (
-                    <p className="text-2xl font-black text-neutral-500">N/A</p>
-                  )}
-                </div>
-              </div>
+        {/* ── 7. Impacts ── */}
+        {impacts.length > 0 && (
+          <Section
+            id="impacts"
+            eyebrow="En vrai, ça fait quoi ?"
+            title={<>Le réchauffement, <Hl tone="chaud">concrètement</Hl>.</>}
+            intro={<>Le statut de chaque impact repose sur la tendance de {theSeason(season)} ici ({fmtDeltaTemp(seasonTrend)} en 30 ans), pas sur la météo du jour <Explain term="meteoClimat" />.</>}
+          >
+            <EnVraiCaFaitQuoi impacts={impacts} seasonTrend={seasonTrend} seasonLabel={theSeason(season)}/>
+          </Section>
+        )}
 
-              {/* Sparkline 30 jours */}
-              <div className="col-span-2 bg-white rounded-3xl p-5">
-                <TempSparkline lat={city.lat} lon={city.lon} normal={normal} />
-              </div>
+        {/* ── 8. Les 30 derniers jours ── */}
+        <Section id="trente-jours" eyebrow="Les 30 derniers jours" title={<>Un mois, <Hl>jour par jour</Hl>.</>}>
+          <Card tone="white">
+            <TempSparkline lat={city.lat} lon={city.lon} normals={full?.normal ?? null} />
+          </Card>
+        </Section>
 
-              {/* Second paragraph — projection narrative */}
-              {projectionParagraph && (
-                <article className="col-span-2 bg-[#1a1a2e] rounded-3xl p-6">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-3">
-                    Ce que disent les modeles
-                  </p>
-                  <p className="text-sm text-white/75 leading-relaxed">{projectionParagraph}</p>
-                </article>
-              )}
+        {/* ── 9. Portrait ── */}
+        {narrative && (
+          <Section id="portrait" eyebrow="Portrait climatique" title={<>Portrait de <Hl>{city.name}</Hl>.</>}>
+            <Card tone="paper" className="flex max-w-4xl flex-col gap-3">
+              {isFR && narrativeIsSummer && !isHotSeason(month) && <Eyebrow>Ce portrait décrit l&apos;été</Eyebrow>}
+              <p className="text-[17px] leading-relaxed text-ink-soft">{narrative}</p>
+            </Card>
+          </Section>
+        )}
 
-              {/* Extrêmes de l'année */}
-              {yearExtremes && (
-                <div className="col-span-2 grid grid-cols-2 gap-3">
-                  <div className="bg-[#fee2e2] rounded-3xl p-5">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-red-900/50 mb-3">
-                      Record chaud {new Date().getFullYear()}
-                    </p>
-                    <div className="text-4xl font-black text-red-900 leading-none">{yearExtremes.max}&deg;C</div>
-                    <p className="text-xs text-red-900/50 mt-2">
-                      {new Date(yearExtremes.max_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
-                    </p>
-                  </div>
-                  <div className="bg-[#dbeafe] rounded-3xl p-5">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-blue-900/50 mb-3">
-                      Record froid {new Date().getFullYear()}
-                    </p>
-                    <div className="text-4xl font-black text-blue-900 leading-none">{yearExtremes.min}&deg;C</div>
-                    <p className="text-xs text-blue-900/50 mt-2">
-                      {new Date(yearExtremes.min_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Alertes thermiques (villes FR seulement) */}
-              {tropical && (
-                <div className="col-span-2 grid grid-cols-2 gap-3">
-                  {/* Nuits */}
-                  <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.isSummer ? "bg-[#1e293b]" : "bg-[#1e3a5f]"}`}>
-                    <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.isSummer ? "text-sky-400/60" : "text-blue-300/60"}`}>
-                      {tropical.isSummer ? "Nuits tropicales ce mois" : "Nuits de gel ce mois"}
-                    </p>
-                    <div className="text-4xl font-black text-white leading-none">{tropical.nightCount}</div>
-                    <p className={`text-xs mt-2 ${tropical.isSummer ? "text-sky-300/50" : "text-blue-300/50"}`}>
-                      nuit{tropical.nightCount > 1 ? "s" : ""} sur {tropical.daysInMonth} · {tropical.isSummer ? "min > 20°C" : "min < 0°C"}
-                    </p>
-                    <p className="text-xs text-slate-500 mt-2 leading-relaxed">
-                      {tropical.isSummer
-                        ? (tropical.nightCount === 0
-                          ? `Toutes les nuits ce mois sont descendues sous 20°C. Le corps a pu récupérer.`
-                          : tropical.nightCount >= 10
-                          ? `${tropical.nightCount} nuits sans fraîcheur : un mois exceptionnellement étouffant. Le sommeil réparateur est impossible.`
-                          : tropical.nightCount >= 5
-                          ? `${tropical.nightCount} nuits sans fraîcheur : le sommeil est compromis sur cette période.`
-                          : `${tropical.nightCount} nuit${tropical.nightCount > 1 ? "s" : ""} où la température n'est pas descendue sous 20°C. Difficile pour les personnes fragiles.`)
-                        : (tropical.nightCount === 0
-                          ? `Pas de nuit de gel ce mois. Les températures nocturnes sont restées positives.`
-                          : `${tropical.nightCount} nuit${tropical.nightCount > 1 ? "s" : ""} de gel (min < 0°C). Risque pour les canalisations et les cultures.`)}
-                    </p>
-                  </Link>
-                  {/* Streak */}
-                  {tropical.isSummer ? (
-                    <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.streakCount >= 3 ? "bg-[#7f1d1d]" : tropical.streakCount >= 1 ? "bg-[#fee2e2]" : "bg-white"}`}>
-                      <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-red-300/60" : "text-red-900/50"}`}>
-                        Canicule · jours consécutifs
-                      </p>
-                      <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-red-900"}`}>
-                        {tropical.streakCount}j
-                      </div>
-                      <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-red-200/50" : "text-red-900/40"}`}>
-                        seuil : ressenti max &gt; 35°C
-                      </p>
-                      <p className={`text-xs mt-2 leading-relaxed ${tropical.streakCount >= 3 ? "text-red-200/60" : "text-red-900/50"}`}>
-                        {tropical.streakCount === 0
-                          ? `Aucun jour récent au-dessus de 35°C de ressenti. En dessous du seuil canicule Météo-France.`
-                          : tropical.streakCount >= 3
-                          ? `${tropical.streakCount} jours consécutifs au-dessus de 35°C : épisode caniculaire actif selon Météo-France.`
-                          : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} au-dessus de 35°C. Pas encore un épisode caniculaire (seuil : 3 jours).`}
-                      </p>
-                  </Link>
-                  ) : (
-                    <Link href="/alertes" className={`rounded-3xl p-5 hover:brightness-110 transition-all ${tropical.streakCount >= 3 ? "bg-[#1e3a8a]" : tropical.streakCount >= 1 ? "bg-blue-50" : "bg-white"}`}>
-                      <p className={`text-[10px] uppercase tracking-[0.15em] font-semibold mb-3 ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
-                        Vague de froid · jours consécutifs
-                      </p>
-                      <div className={`text-4xl font-black leading-none ${tropical.streakCount >= 3 ? "text-white" : "text-blue-900"}`}>
-                        {tropical.streakCount}j
-                      </div>
-                      <p className={`text-xs mt-2 ${tropical.streakCount >= 3 ? "text-blue-200/50" : "text-blue-900/40"}`}>
-                        seuil : ressenti max &lt; 5°C
-                      </p>
-                      <p className={`text-xs mt-2 leading-relaxed ${tropical.streakCount >= 3 ? "text-blue-200/60" : "text-blue-900/50"}`}>
-                        {tropical.streakCount === 0
-                          ? `Pas de vague de froid en cours. Le ressenti max reste au-dessus de 5°C.`
-                          : tropical.streakCount >= 3
-                          ? `${tropical.streakCount} jours consécutifs sous 5°C de ressenti : vague de froid active.`
-                          : `${tropical.streakCount} jour${tropical.streakCount > 1 ? "s" : ""} sous 5°C. Pas encore une vague de froid (seuil : 3 jours).`}
-                      </p>
-                  </Link>
-                  )}
-                </div>
-              )}
-
-              {/* Projections GIEC + Push opt-in côte à côte (villes FR) / plein largeur (villes monde) */}
-              {city.isWorld ? (
-                <div className="col-span-2 bg-[#c4b8d4] rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                    Si rien ne change...
-                  </p>
-                  <p className="text-[10px] text-purple-900/60 mb-4">
-                    Modele CMIP6 (GIEC AR6) · ecart vs. 2000–2020
-                  </p>
-                  <div className="space-y-2.5">
-                    {([
-                      { year: 2030, val: proj2030 },
-                      { year: 2040, val: proj2040 },
-                      { year: 2050, val: proj2050 },
-                    ] as { year: number; val: number | null }[]).map(({ year, val }) => (
-                      <div key={year} className="flex items-center justify-between">
-                        <span className="text-sm font-semibold text-purple-900/60">{year}</span>
-                        <span className="font-black text-2xl text-purple-900">{fmtDelta(val)}&deg;C</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="col-span-2 grid grid-cols-2 gap-3">
-                  <div className="bg-[#c4b8d4] rounded-3xl p-5">
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-purple-900/50 mb-1">
-                      Si rien ne change...
-                    </p>
-                    <p className="text-[10px] text-purple-900/60 mb-4">
-                      CMIP6 (GIEC AR6) · écart vs. 2000–2020
-                    </p>
-                    <div className="space-y-2.5">
-                      {([
-                        { year: 2030, val: proj2030 },
-                        { year: 2040, val: proj2040 },
-                        { year: 2050, val: proj2050 },
-                      ] as { year: number; val: number | null }[]).map(({ year, val }) => (
-                        <div key={year} className="flex items-center justify-between">
-                          <span className="text-sm font-semibold text-purple-900/60">{year}</span>
-                          <span className="font-black text-2xl text-purple-900">{fmtDelta(val)}&deg;C</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="bg-neutral-900 rounded-3xl p-5 flex flex-col justify-between">
-                    <div>
-                      <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-white/60 mb-2">Notifications</p>
-                      <p className="text-sm font-black text-white leading-snug mb-2">
-                        Le ressenti de {city.name} chaque matin
-                      </p>
-                      <p className="text-xs text-white/50 leading-relaxed">
-                        Ressenti max, anomalie vs normale, jumeau climatique du jour.
-                      </p>
-                    </div>
-                    <div className="mt-4">
-                      <PushOptIn cityId={city.id} cityName={city.name} citySlug={slug} />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Jumeaux climatiques */}
-              {twins.length > 0 && (
-                <div className="col-span-2 bg-white rounded-3xl p-5">
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-4">
-                    {city.isWorld ? "Villes françaises similaires aujourd'hui" : "Jumeaux climatiques aujourd'hui"}
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {twins.map((twin) => (
-                      <Link
-                        key={twin.id}
-                        href={`/a/${twin.slug}`}
-                        className="flex items-center justify-between rounded-2xl bg-[#f5f4f0] hover:bg-neutral-100 transition-colors px-4 py-3 group"
-                      >
-                        <div>
-                          <div className="font-bold text-sm text-neutral-900 group-hover:underline">{twin.name}</div>
-                          <div className="text-[11px] text-neutral-400">{twin.label}</div>
-                        </div>
-                        <div className="font-black text-lg text-neutral-700">{twin.temp}&deg;C</div>
-                      </Link>
-                    ))}
-                  </div>
-                  <p className="text-[10px] text-neutral-400 mt-3">Ressenti max du jour · ±4°C</p>
-                </div>
-              )}
-
-              {/* En vrai, ça fait quoi ? */}
-              {impactsToShow.length > 0 && (
-                <EnVraiCaFaitQuoi impacts={impactsToShow} anomaly={anomaly} />
-              )}
-
-              {/* Liens navigation */}
-              {!city.isWorld && (
-                <Link
-                  href={`/r/${slugify(city.region)}`}
-                  className="col-span-2 flex items-center justify-between bg-orange-50 hover:bg-orange-100 transition-colors rounded-3xl px-6 py-5 group"
-                >
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-orange-400 mb-1">
-                      Votre région
-                    </p>
-                    <p className="text-base font-black text-neutral-900">{city.region}</p>
-                    <p className="text-xs text-neutral-500 mt-0.5">Climat, tendances et alertes</p>
-                  </div>
-                  <span className="text-orange-300 group-hover:text-orange-600 text-2xl transition-colors">&rarr;</span>
-                </Link>
-              )}
-
-              {/* Lien France */}
-              <Link
-                href="/en/france"
-                className="col-span-2 flex items-center justify-between bg-neutral-100 hover:bg-neutral-200 transition-colors rounded-3xl px-6 py-5 group"
-              >
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.15em] font-semibold text-neutral-400 mb-1">
-                    Vue d&apos;ensemble
-                  </p>
-                  <p className="text-base font-black text-neutral-900">La France en chiffres</p>
-                </div>
-                <span className="text-neutral-400 group-hover:text-neutral-700 text-2xl transition-colors">&rarr;</span>
-              </Link>
-
-              <PageFooter className="col-span-2" />
-
+        {/* ── 10. Aller plus loin ── */}
+        <Section eyebrow="Aller plus loin" title={<>Comparer, suivre, <Hl tone="chaud">agir</Hl>.</>}>
+          {isFR ? (
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <Card href={`/jumeaux?ville=${slug}`} tone="ink" className="flex flex-col gap-3">
+                <Eyebrow className="text-paper/70">Jumeau 2050</Eyebrow>
+                <p className="font-display text-xl font-extrabold leading-tight">Le climat de {city.name} en 2050 existe déjà ailleurs.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold text-signal">Trouver son jumeau <Arrow /></span>
+              </Card>
+              <Card href={`/r/${regionSlug}`} tone="white" className="flex flex-col gap-3">
+                <Eyebrow>Région</Eyebrow>
+                <p className="font-display text-xl font-extrabold leading-tight">{city.region}, ville par ville.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">Voir la région <Arrow /></span>
+              </Card>
+              <Card href="/notifications" tone="signal" className="flex flex-col gap-3">
+                <Eyebrow>Briefing</Eyebrow>
+                <p className="font-display text-xl font-extrabold leading-tight">L&apos;écart de {city.name}, chaque matin.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">S&apos;inscrire <Arrow /></span>
+              </Card>
+              <Card href="/citoyens" tone="outline" className="flex flex-col gap-3">
+                <Eyebrow>Agir</Eyebrow>
+                <p className="font-display text-xl font-extrabold leading-tight">Écrire à vos élus avec ces chiffres.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">Préparer mon message <Arrow /></span>
+              </Card>
             </div>
-          </div>
-        </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Card href="/r" tone="white" className="flex flex-col gap-3">
+                <Eyebrow>Toutes les villes</Eyebrow>
+                <p className="font-display text-xl font-extrabold leading-tight">Comparer avec les villes françaises et du monde.</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">Ma ville <Arrow /></span>
+              </Card>
+              <Card href="/jumeaux" tone="ink" className="flex flex-col gap-3">
+                <Eyebrow className="text-paper/70">Jumeaux 2050</Eyebrow>
+                <p className="font-display text-xl font-extrabold leading-tight">Quelle ville française aura le climat d&apos;ailleurs&#8239;?</p>
+                <span className="mt-auto inline-flex items-center gap-1 font-display font-bold text-signal">Découvrir <Arrow /></span>
+              </Card>
+            </div>
+          )}
+          <p className="text-[13px] text-mute">
+            Sources : ressenti maximal du jour Open-Meteo ; normales et tendances Copernicus ERA5 (1991-2020) <Explain term="era5" /> ; projections GIEC CMIP6 <Explain term="cmip6" />
+            {extremes && " ; extrêmes de l'année Open-Meteo"}.{" "}
+            <Link href="/a-propos" className="underline underline-offset-2">Méthode détaillée</Link>.
+          </p>
+        </Section>
       </div>
-    </>
+    </PageShell>
   )
 }
