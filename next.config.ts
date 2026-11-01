@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // polices lues depuis public/fonts par les images générées (stories, OG)
+  outputFileTracingIncludes: { "/**/*": ["./public/fonts/**"] },
   async redirects() {
     return [
       {
