@@ -152,7 +152,7 @@ export default async function SignauxPage() {
     ? {
         tone: "chaud",
         value: tropicalTotal,
-        line: `nuits tropicales ${windowLabel}.`,
+        line: `${tropicalTotal > 1 ? "nuits tropicales" : "nuit tropicale"} ${windowLabel}.`,
         sub: `Des nuits à 20 °C ou plus, cumulées dans nos ${cities.length} villes. ${inStreak} ville${inStreak > 1 ? "s" : ""} en pleine série à 35 °C ressentis.`,
         share: `${tropicalTotal} nuits sans redescendre sous 20 °C dans nos villes ${windowLabel}. La chaleur ne redescend plus.`,
       }
@@ -160,9 +160,9 @@ export default async function SignauxPage() {
       ? {
           tone: "froid",
           value: frostObserved,
-          line: `nuits de gel ${windowLabel}.`,
+          line: `${frostObserved > 1 ? "nuits" : "nuit"} de gel ${windowLabel}.`,
           sub: `Cumulées dans nos ${cities.length} villes. La comparaison à la normale arrive bientôt.`,
-          share: `${frostObserved} nuits de gel ${windowLabel} dans ${cities.length} villes françaises.`,
+          share: `${frostObserved} ${frostObserved > 1 ? "nuits" : "nuit"} de gel ${windowLabel} dans ${cities.length} villes françaises.`,
         }
       : {
           tone: "froid",
@@ -170,10 +170,10 @@ export default async function SignauxPage() {
           from: expRounded,
           of: expRounded,
           line: frostRatio < 0.8
-            ? `nuits de gel ${windowLabel}. Il en fallait ${expRounded}.`
+            ? `${frostObservedComparable > 1 ? "nuits" : "nuit"} de gel ${windowLabel}. Il en fallait ${expRounded}.`
             : frostRatio > 1.2
-              ? `nuits de gel ${windowLabel}. Plus que les ${expRounded} attendues.`
-              : `nuits de gel ${windowLabel}. Autant que les ${expRounded} attendues.`,
+              ? `${frostObservedComparable > 1 ? "nuits" : "nuit"} de gel ${windowLabel}. Plus que les ${expRounded} attendues.`
+              : `${frostObservedComparable > 1 ? "nuits" : "nuit"} de gel ${windowLabel}. Autant que les ${expRounded} attendues.`,
           sub: frostRatio < 0.8
             ? `Le gel manque dans nos ${cities.length} villes.`
             : frostRatio > 1.2

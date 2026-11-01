@@ -238,9 +238,9 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
             <div className="flex max-w-4xl flex-col gap-3">
               <p className="font-display text-[clamp(1.7rem,4.6vw,3.2rem)] font-extrabold leading-[1.05] tracking-tight">
                 Aujourd&apos;hui, <Num value={today} from={normal ?? undefined} unit="&#8239;°C" /> ressentis.
-                {anomaly != null && (
-                  <> C&apos;est <Hl tone={tone}>{fmtDeltaTemp(anomaly)}</Hl> par rapport à un {monthName} normal.</>
-                )}
+                {anomaly != null && (Math.abs(anomaly) < 0.5
+                  ? <> <Hl tone="signal">Pile dans la normale</Hl> d&apos;un {monthName}.</>
+                  : <> C&apos;est <Hl tone={tone}>{fmtDeltaTemp(anomaly)}</Hl> par rapport à un {monthName} normal.</>)}
               </p>
               {anomaly != null && normal != null && (
                 <p className="text-[17px] leading-relaxed text-ink-soft">
