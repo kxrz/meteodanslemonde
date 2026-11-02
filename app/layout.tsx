@@ -22,6 +22,13 @@ export const metadata: Metadata = {
     title: "cestchaud",
   },
   icons: {
+    // Déclarées explicitement : un objet `icons` désactive la détection automatique des fichiers app/icon.*
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-32.png", type: "image/png", sizes: "32x32" },
+    ],
+    shortcut: "/favicon.ico",
     apple: "/icons/icon-192.png",
   },
   openGraph: {
