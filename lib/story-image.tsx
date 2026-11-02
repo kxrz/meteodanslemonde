@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og"
 import { loadBrandFonts } from "@/lib/og-fonts"
+import { splitHighlight } from "@/lib/og-words"
 
 /**
  * Image verticale 1080×1920 au format story (TikTok, Instagram, WhatsApp), aux couleurs de la marque.
@@ -19,27 +20,7 @@ export async function storyImage({ eyebrow, struck, headline, highlight, tone = 
 }) {
   const fonts = await loadBrandFonts().catch(() => [])
   const hl = { chaud: "#ffc9b3", froid: "#c9dafc", signal: "#ffe14d" }[tone]
-  // Découpage mot par mot (Satori ne coupe pas les lignes à l'intérieur d'un bloc flex) :
-  // la ponctuation reste collée au mot qui la précède, le surlignage suit les mots concernés.
-  const hasHl = Boolean(highlight && headline.includes(highlight))
-  const parts = hasHl ? headline.split(highlight!) : [headline]
-  const words: { w: string; hl: boolean }[] = []
-  parts.forEach((part, i) => {
-    part.split(/\s+/).filter(Boolean).forEach((w) => {
-      if (/^[.,;:!?…»)]+$/.test(w) && words.length) words[words.length - 1].w += w
-      else words.push({ w, hl: false })
-    })
-    if (hasHl && i < parts.length - 1) {
-      highlight!.split(/\s+/).filter(Boolean).forEach((w) => words.push({ w, hl: true }))
-    }
-  })
-  // ponctuation qui suit immédiatement le surlignage (« … +4,8 °C. »)
-  for (let i = words.length - 1; i > 0; i--) {
-    if (/^[.,;:!?…»)]+/.test(words[i].w) && !words[i].hl && words[i - 1].hl && !/\s/.test(words[i].w)) {
-      const m = words[i].w.match(/^[.,;:!?…»)]+/)![0]
-      if (m === words[i].w) { words[i - 1].w += m; words.splice(i, 1) }
-    }
-  }
+  const words = splitHighlight(headline, highlight)
   const display = fonts.length ? "Bricolage" : "sans-serif"
   const body = fonts.length ? "DM Sans" : "sans-serif"
   return new ImageResponse(

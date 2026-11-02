@@ -18,6 +18,7 @@ import LinerFrance from "@/components/brand/LinerFrance"
 import DotWorld, { EURAFRICA_BOUNDS, makeProjection } from "@/components/brand/DotWorld"
 import { project as projectFR } from "@/lib/france-shape"
 import { ANOMALY_STEPS } from "@/lib/anomaly"
+import { SLIDE_COUNT, SLIDE_FORMATS } from "@/lib/brand-slides"
 
 export const metadata: Metadata = {
   title: "Marque · cestchaud.fr",
@@ -33,6 +34,11 @@ const COLORS = [
   { name: "Signal", token: "signal", hex: "#ffe14d", role: "Ce qu'il faut voir en premier : idée reçue, mot clé.", dark: false },
   { name: "Gris lisible", token: "mute", hex: "#5f5e58", role: "Le gris le plus clair autorisé pour du texte (contraste ≥ 4,5:1).", dark: true },
 ]
+
+const SLIDE_SETS = [
+  { format: "16x9", title: "16:9", desc: "1920 × 1080 · présentation, écran, vidéo", w: SLIDE_FORMATS["16x9"].width, h: SLIDE_FORMATS["16x9"].height },
+  { format: "linkedin", title: "LinkedIn 4:5", desc: "1080 × 1350 · carrousel LinkedIn (déposez le PDF), Instagram", w: SLIDE_FORMATS.linkedin.width, h: SLIDE_FORMATS.linkedin.height },
+] as const
 
 const FILES = [
   { file: "logo.svg", label: "Logotype couleur", bg: "bg-paper" },
@@ -61,6 +67,50 @@ export default function BrandPage() {
             <Logo size="lg" />
           </div>
         </header>
+
+        {/* ── Le concept en slides ── */}
+        <Section
+          id="slides"
+          eyebrow="Le concept en 7 slides"
+          title={<>Six idées, <Hl tone="chaud">une par slide</Hl>.</>}
+          intro="Pour présenter cestchaud.fr en réunion, en atelier ou sur LinkedIn. Chaque slide défend une idée, avec les vrais chiffres du site. PNG haute définition, ou PDF complet (le format d'un carrousel LinkedIn)."
+        >
+          {SLIDE_SETS.map((set) => (
+            <div key={set.format} className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="font-display text-xl font-extrabold">{set.title}</p>
+                  <p className="text-[14px] text-mute">{set.desc}</p>
+                </div>
+                <a href={`/brand/slides/${set.format}/pdf`} download className="inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 font-display text-[15px] font-bold text-paper hover:bg-ink-soft">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14" /></svg>
+                  PDF des 7 slides
+                </a>
+              </div>
+              <ul className={set.format === "16x9" ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-3" : "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"}>
+                {Array.from({ length: SLIDE_COUNT }, (_, i) => (
+                  <li key={i} className="flex flex-col overflow-hidden rounded-[var(--radius-card)] border-2 border-ink bg-white">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/brand/slides/${set.format}/${i + 1}.png`}
+                      alt={`Slide ${i + 1} sur ${SLIDE_COUNT}, format ${set.title}`}
+                      width={set.w}
+                      height={set.h}
+                      loading="lazy"
+                      className="h-auto w-full border-b-2 border-ink bg-paper"
+                    />
+                    <div className="flex items-center justify-between gap-2 px-3 py-2">
+                      <span className="font-mono text-[13px] text-mute">{String(i + 1).padStart(2, "0")}/{String(SLIDE_COUNT).padStart(2, "0")}</span>
+                      <a href={`/brand/slides/${set.format}/${i + 1}.png`} download={`cestchaud-${set.format}-${i + 1}.png`} className="inline-flex min-h-11 items-center rounded-full border-2 border-ink px-3 font-display text-[13px] font-bold hover:bg-ink hover:text-paper">
+                        PNG
+                      </a>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </Section>
 
         {/* ── L'anneau ── */}
         <Section
