@@ -15,6 +15,7 @@ import { ButtonLink, Arrow } from "@/components/ui/Button"
 import FranceDotMap, { type DotCity } from "@/components/pedago/FranceDotMap"
 import CityRanking from "@/components/pedago/CityRanking"
 import AnomalyBreakdown from "@/components/pedago/AnomalyBreakdown"
+import MythQuiz from "@/components/pedago/MythQuiz"
 import { getWeatherData } from "@/lib/weather-data"
 import { loadClimateMap } from "@/lib/climate"
 import { smoothedAt, loadClimateFull } from "@/lib/climate-season"
@@ -203,24 +204,6 @@ export default async function Home() {
           </Section>
         )}
 
-        {/* ── Idée reçue du jour ── */}
-        <Section id="idee-recue" eyebrow="Idée reçue du jour">
-          <Card tone="signal" className="flex flex-col gap-5 p-6 sm:p-10">
-            <p className="font-display text-[clamp(1.4rem,3.4vw,2.4rem)] font-bold leading-tight text-ink/60">
-              « {myth.claim} »
-            </p>
-            <p className="max-w-4xl font-display text-[clamp(1.8rem,4.6vw,3.4rem)] font-extrabold leading-[1.02] tracking-tight" data-anim="split">
-              {myth.answer.split(myth.highlight).flatMap((part, i, arr) =>
-                i < arr.length - 1 ? [part, <Hl key={i} tone="ink">{myth.highlight}</Hl>] : [part],
-              )}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href={`/idees-recues#${myth.slug}`}>Comprendre en 1 minute <Arrow /></ButtonLink>
-              <ButtonLink href="/idees-recues" variant="ghost">Toutes les idées reçues</ButtonLink>
-            </div>
-          </Card>
-        </Section>
-
         {/* ── Classement ── */}
         {hasData && (
           <Section
@@ -276,6 +259,19 @@ export default async function Home() {
               <span className="mt-auto inline-flex items-center gap-1 font-display font-bold">Préparer mon message <Arrow /></span>
             </Card>
           </div>
+        </Section>
+
+        {/* ── Le jeu du jour : vrai ou faux ── */}
+        <Section
+          id="vrai-ou-faux"
+          eyebrow="Le jeu du jour"
+          title={<>Vrai ou <Hl tone="chaud">faux</Hl>&#8239;?</>}
+          intro="Chaque jour, une phrase qu'on entend souvent sur le climat. À vous de trancher. La réponse s'appuie sur ce que montrent les expériences du site : l'écart à la normale, la décomposition météo ou climat, la courbe des saisons, les jumeaux 2050."
+        >
+          <MythQuiz claim={myth.claim} answer={myth.answer} highlight={myth.highlight} slug={myth.slug} />
+        </Section>
+
+        <Section>
           <div className="flex flex-col items-start justify-between gap-4 rounded-[var(--radius-card)] bg-paper-deep p-6 sm:flex-row sm:items-center">
             <div>
               <p className="font-display text-xl font-extrabold">L&apos;écart de votre ville, chaque matin.</p>
