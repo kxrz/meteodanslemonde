@@ -34,17 +34,15 @@ interface Props {
 
 /**
  * Une idée reçue = une carte. Le bouton « Vrai ou faux ? » barre l'affirmation et révèle la réponse mot par mot.
- * « En savoir plus » déplie l'explication et les données. Sur grand écran, l'explication est toujours visible.
+ * L'explication, les données et les sources s'affichent avec la réponse (jamais avant, pour ne pas la donner).
  * Sans JavaScript, tout est affiché ; en mouvement réduit, la réponse apparaît sans animation.
  */
 export default function MythCard({ slug, claim, answer, highlight, inSeason, tone, shareText, shareUrl, storyHref, children }: Props) {
   const root = useRef<HTMLElement>(null)
   const [armed, setArmed] = useState(false)
   const [revealed, setRevealed] = useState(false)
-  const [open, setOpen] = useState(false)
   const animate = useRef(false)
   const answerId = useId()
-  const moreId = useId()
   const { card, dark } = TONES[tone]
 
   useEffect(() => setArmed(true), [])
@@ -152,16 +150,6 @@ export default function MythCard({ slug, claim, answer, highlight, inSeason, ton
 
         {/* Actions */}
         <div data-after className={cn("flex flex-wrap items-center gap-2", hidden && "invisible")}>
-          <button
-            type="button"
-            aria-expanded={open}
-            aria-controls={moreId}
-            onClick={() => setOpen((o) => !o)}
-            className={cn("inline-flex min-h-11 items-center gap-2 rounded-full px-5 font-display text-[15px] font-bold sm:hidden", dark ? "bg-paper text-ink" : "bg-ink text-paper")}
-          >
-            {open ? "Masquer" : "En savoir plus"}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden="true" className={cn("transition-transform", open && "rotate-180")}><path d="M6 9l6 6 6-6" /></svg>
-          </button>
           <div className={cn("rounded-full", dark && "bg-paper text-ink")}>
             <ShareButton text={shareText} url={shareUrl} label="Partager" />
           </div>
@@ -178,8 +166,8 @@ export default function MythCard({ slug, claim, answer, highlight, inSeason, ton
 
       </div>
 
-      {/* En savoir plus : déplié sur mobile à la demande, toujours visible sur grand écran */}
-      <div id={moreId} className={cn("flex flex-col gap-6 px-4 pb-10 pt-6 sm:px-0", armed && !open && "max-sm:hidden")}>
+      {/* L'explication : affichée avec la réponse (toujours visible sans JavaScript) */}
+      <div data-after className={cn("flex flex-col gap-6 pb-10 pt-6", hidden && "hidden")}>
         {children}
       </div>
     </article>
