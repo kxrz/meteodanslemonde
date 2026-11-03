@@ -1,6 +1,5 @@
 import MythCard, { type MythTone } from "@/components/myths/MythCard"
 import MythDetails from "@/components/myths/MythDetails"
-import SnapScroll from "@/components/myths/SnapScroll"
 import type { Myth } from "@/lib/myths"
 import type { PedagoContext } from "@/lib/pedago-data"
 import { mythFact, mythShareText } from "@/lib/myth-facts"
@@ -24,8 +23,7 @@ export default function MythFeed({ myths, ctx, inSeason }: { myths: Myth[]; ctx:
     summer2050: city.future2050.find((s) => s.season === "ete")?.central ?? null,
   }
   return (
-    <div className="flex flex-col gap-0 sm:gap-10">
-      <SnapScroll />
+    <div className="flex flex-col gap-6 sm:gap-10">
       {myths.map((m, i) => (
         <MythCard
           key={m.slug}
@@ -33,8 +31,6 @@ export default function MythFeed({ myths, ctx, inSeason }: { myths: Myth[]; ctx:
           claim={m.claim}
           answer={m.answer}
           highlight={m.highlight}
-          index={i}
-          total={myths.length}
           inSeason={inSeason(m)}
           tone={TONES[i % TONES.length]}
           shareText={mythShareText(m, mythFact(m, facts))}

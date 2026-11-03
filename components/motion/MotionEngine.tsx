@@ -33,7 +33,21 @@ export default function MotionEngine() {
         gsap.utils.toArray<HTMLElement>('[data-anim="split"]').forEach((el) => {
           if (el.dataset.animDone) return
           const split = SplitText.create(el, { type: "words", mask: "words", wordsClass: "split-word" })
-          gsap.from(split.words, {
+          // Une ponctuation collée à un élément (« <Hl>non</Hl>. ») devient un « mot » à part, que le
+          // navigateur peut renvoyer seul à la ligne : on la recolle au mot qui la précède.
+          const words: HTMLElement[] = []
+          for (const w of split.words as HTMLElement[]) {
+            const t = (w.textContent ?? "").trim()
+            const last = words[words.length - 1]
+            if (last && /^[.,;:!?…»)]+$/.test(t)) {
+              last.textContent = (last.textContent ?? "") + t
+              const unit = w.parentElement?.classList.contains("split-word-mask") ? w.parentElement : w
+              unit.remove()
+            } else {
+              words.push(w)
+            }
+          }
+          gsap.from(words, {
             yPercent: 110,
             duration: 0.7,
             ease: "power4.out",

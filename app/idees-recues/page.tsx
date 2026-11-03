@@ -9,7 +9,6 @@ import MythFeed from "@/components/myths/MythFeed"
 import { loadPedagoContext } from "@/lib/pedago-data"
 import { mythsInPageOrder } from "@/lib/pedago"
 import { SEASON_LABEL, isColdHalf, isHotSeason } from "@/lib/season"
-import { cn } from "@/lib/cn"
 
 export const metadata: Metadata = {
   title: "Idées reçues sur le climat, démontées en 10 secondes · cestchaud.fr",
@@ -45,32 +44,33 @@ export default async function IdeesRecuesPage({ searchParams }: { searchParams: 
           <Eyebrow>{all.length} idées reçues · édition {SEASON_LABEL[ctx.season]}</Eyebrow>
           <Title as="h1" size="hero" animate className="max-w-4xl">{title}</Title>
           <p className="max-w-[48ch] font-display text-[clamp(1.2rem,2.6vw,1.6rem)] font-bold leading-snug text-ink-soft">
-            Une phrase entendue. Dix secondes. La réponse, avec les chiffres de votre ville.
+            Une phrase qu&apos;on entend souvent. Vous tranchez. La réponse arrive avec les chiffres de votre ville.
           </p>
-          <CityPicker cities={ctx.cities} value={ctx.city.id} label="Les chiffres de quelle ville ?" />
         </header>
 
-        <nav aria-label="Sommaire des idées reçues" className="flex flex-col gap-3">
-          <Eyebrow as="div">De saison</Eyebrow>
-          <ol className="flex flex-wrap gap-2">
-            {all.map((m, i) => (
-              <li key={m.slug} className={cn(i === current.length && "basis-full pt-2")}>
-                {i === current.length && <Eyebrow as="span" className="mb-2 block">Toute l&apos;année et les autres saisons</Eyebrow>}
-                <Link
-                  href={`#${m.slug}`}
-                  className={cn(
-                    "inline-flex min-h-11 items-center gap-2 rounded-full border-2 text-left text-[15px] font-semibold leading-snug transition-colors",
-                    "max-sm:w-11 max-sm:justify-center sm:px-4 sm:py-1.5",
-                    i < current.length ? "border-ink bg-white hover:bg-ink hover:text-paper max-sm:bg-ink max-sm:text-paper" : "border-line bg-paper hover:border-ink",
-                  )}
-                >
-                  <span className="font-mono text-[15px] font-bold sm:text-[12px] sm:font-normal sm:text-mute">{i + 1}</span>
-                  <span className="max-sm:sr-only">{m.claim}</span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        {/* Mode d'emploi : d'abord la ville, ensuite on fait défiler */}
+        <section aria-label="Avant de commencer" className="flex flex-col gap-6 rounded-[var(--radius-card)] bg-white p-5 sm:p-8">
+          <div className="flex flex-col gap-3">
+            <p className="font-display text-[clamp(1.3rem,2.8vw,1.8rem)] font-extrabold leading-tight">
+              <span className="mr-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink align-middle font-mono text-[16px] text-paper">1</span>
+              Choisissez votre ville
+            </p>
+            <CityPicker cities={ctx.cities} value={ctx.city.id} label={<span className="sr-only">Votre ville</span>} size="xl" />
+          </div>
+          <div className="flex flex-col gap-2 border-t border-line pt-5">
+            <p className="font-display text-[clamp(1.3rem,2.8vw,1.8rem)] font-extrabold leading-tight">
+              <span className="mr-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink align-middle font-mono text-[16px] text-paper">2</span>
+              Faites défiler
+            </p>
+            <p className="max-w-[60ch] text-[17px] leading-relaxed text-ink-soft">
+              Les {all.length} idées reçues se suivent, celles de la saison d&apos;abord. Pour chacune, touchez « Vrai ou faux ? » : la réponse s&apos;affiche, avec l&apos;explication et les chiffres de {ctx.city.name}.
+            </p>
+          </div>
+          <a href={`#${all[0].slug}`} className="inline-flex min-h-12 w-fit items-center gap-2 rounded-full bg-ink px-6 font-display text-[16px] font-bold text-paper hover:bg-ink-soft">
+            Commencer
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6" /></svg>
+          </a>
+        </section>
 
         <MythFeed myths={all} ctx={ctx} inSeason={(m) => current.includes(m)} />
 
