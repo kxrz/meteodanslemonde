@@ -23,8 +23,6 @@ interface Props {
   claim: string
   answer: string
   highlight: string
-  index: number
-  total: number
   inSeason: boolean
   tone: MythTone
   shareText: string
@@ -35,18 +33,16 @@ interface Props {
 }
 
 /**
- * Une idée reçue = une carte « story » plein écran sur mobile.
- * Toucher (ou glisser vers la gauche) barre l'affirmation et révèle la réponse mot par mot.
+ * Une idée reçue = une carte. Le bouton « Vrai ou faux ? » barre l'affirmation et révèle la réponse mot par mot.
  * « En savoir plus » déplie l'explication et les données. Sur grand écran, l'explication est toujours visible.
  * Sans JavaScript, tout est affiché ; en mouvement réduit, la réponse apparaît sans animation.
  */
-export default function MythCard({ slug, claim, answer, highlight, index, total, inSeason, tone, shareText, shareUrl, storyHref, children }: Props) {
+export default function MythCard({ slug, claim, answer, highlight, inSeason, tone, shareText, shareUrl, storyHref, children }: Props) {
   const root = useRef<HTMLElement>(null)
   const [armed, setArmed] = useState(false)
   const [revealed, setRevealed] = useState(false)
   const [open, setOpen] = useState(false)
   const animate = useRef(false)
-  const touch = useRef<{ x: number; y: number } | null>(null)
   const answerId = useId()
   const moreId = useId()
   const { card, dark } = TONES[tone]
@@ -87,43 +83,23 @@ export default function MythCard({ slug, claim, answer, highlight, index, total,
       ref={root}
       id={slug}
       aria-labelledby={`${slug}-titre`}
-      className="scroll-mt-16 max-sm:-mx-4 max-sm:snap-start sm:scroll-mt-24"
+      className="scroll-mt-20 sm:scroll-mt-24"
     >
       <div
         className={cn(
-          "relative flex flex-col gap-6 px-5 pb-6 pt-4 sm:rounded-[var(--radius-card)] sm:px-10 sm:pb-10 sm:pt-6",
-          "max-sm:min-h-[calc(100svh-4rem)]",
+          "relative flex flex-col gap-6 rounded-[var(--radius-card)] px-5 pb-6 pt-5 sm:px-10 sm:pb-10 sm:pt-8",
           card,
         )}
       >
-        {/* Progression façon story */}
-        <div className="flex flex-col gap-2">
-          <div className="flex gap-1" aria-hidden="true">
-            {Array.from({ length: total }, (_, i) => (
-              <span key={i} className={cn("h-1 flex-1 rounded-full", i <= index ? (dark ? "bg-current" : "bg-ink") : dark ? "bg-current opacity-25" : "bg-ink/20")} />
-            ))}
-          </div>
-          <p className="flex items-center justify-between font-mono text-[12px] font-semibold uppercase tracking-[0.14em] opacity-80">
-            <span>Idée reçue {index + 1}/{total}</span>
-            {inSeason && <span className={cn("rounded-full px-2 py-0.5", dark ? "bg-paper text-ink" : "bg-ink text-paper")}>De saison</span>}
+        {inSeason && (
+          <p className={cn("w-fit rounded-full px-2.5 py-0.5 font-mono text-[12px] font-semibold uppercase tracking-[0.14em]", dark ? "bg-paper text-ink" : "bg-ink text-paper")}>
+            De saison
           </p>
-        </div>
+        )}
 
-        {/* L'affirmation : toucher ou glisser pour révéler */}
-        <div
-          className={cn("flex flex-1 flex-col justify-center gap-6", !revealed && armed && "cursor-pointer")}
-          onClick={reveal}
-          onTouchStart={(e) => { touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY } }}
-          onTouchEnd={(e) => {
-            const t = touch.current
-            touch.current = null
-            if (!t) return
-            const dx = e.changedTouches[0].clientX - t.x
-            const dy = e.changedTouches[0].clientY - t.y
-            if (dx < -50 && Math.abs(dx) > Math.abs(dy) * 1.5) reveal()
-          }}
-        >
-          <h2 id={`${slug}-titre`} className={cn("font-display text-[clamp(2.5rem,10.5vw,4.6rem)] font-extrabold leading-[1] tracking-tight transition-opacity duration-500", revealed && "opacity-60")}>
+        {/* L'affirmation, puis la réponse au toucher du bouton */}
+        <div className="flex flex-col gap-6">
+          <h2 id={`${slug}-titre`} className={cn("font-display text-[clamp(2rem,8vw,4.2rem)] font-extrabold leading-[1] tracking-tight transition-opacity duration-500", revealed && "opacity-60")}>
             <span aria-hidden="true">«&#8239;</span>
             <span
               data-strike
@@ -200,11 +176,6 @@ export default function MythCard({ slug, claim, answer, highlight, index, total,
           </a>
         </div>
 
-        {index < total - 1 && (
-          <p className="text-center font-mono text-[12px] uppercase tracking-[0.14em] opacity-75 sm:hidden" aria-hidden="true">
-            Glissez vers le haut ↑ idée suivante
-          </p>
-        )}
       </div>
 
       {/* En savoir plus : déplié sur mobile à la demande, toujours visible sur grand écran */}
