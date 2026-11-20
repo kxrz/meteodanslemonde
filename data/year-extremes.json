@@ -6,7 +6,7 @@
     "min_date": "2026-01-03",
     "minTempLow": -2.5,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:32:37.845Z"
+    "updated_at": "2026-11-20T14:11:05.579Z"
   },
   "paris": {
     "max": 42,
@@ -15,7 +15,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -5.9,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:32:40.062Z"
+    "updated_at": "2026-11-20T14:11:07.938Z"
   },
   "marseille": {
     "max": 38,
@@ -24,7 +24,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -1.8,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:32:42.242Z"
+    "updated_at": "2026-11-20T14:11:10.359Z"
   },
   "bordeaux": {
     "max": 43,
@@ -33,7 +33,7 @@
     "min_date": "2026-01-01",
     "minTempLow": -6,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:32:44.402Z"
+    "updated_at": "2026-11-20T14:11:12.511Z"
   },
   "lyon": {
     "max": 39,
@@ -42,7 +42,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -7,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:32:46.581Z"
+    "updated_at": "2026-11-20T14:11:14.664Z"
   },
   "nantes": {
     "max": 43,
@@ -51,7 +51,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -6,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:32:48.746Z"
+    "updated_at": "2026-11-20T14:11:16.818Z"
   },
   "strasbourg": {
     "max": 41,
@@ -60,7 +60,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -6.9,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:32:50.924Z"
+    "updated_at": "2026-11-20T14:11:18.978Z"
   },
   "toulouse": {
     "max": 41,
@@ -69,7 +69,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -8.2,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:32:53.087Z"
+    "updated_at": "2026-11-20T14:11:21.128Z"
   },
   "nice": {
     "max": 39,
@@ -78,7 +78,7 @@
     "min_date": "2026-01-07",
     "minTempLow": 1.1,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:32:55.251Z"
+    "updated_at": "2026-11-20T14:11:23.279Z"
   },
   "montpellier": {
     "max": 41,
@@ -87,7 +87,7 @@
     "min_date": "2026-01-04",
     "minTempLow": -3.8,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:32:57.411Z"
+    "updated_at": "2026-11-20T14:11:25.433Z"
   },
   "rennes": {
     "max": 43,
@@ -96,7 +96,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -5.6,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:32:59.570Z"
+    "updated_at": "2026-11-20T14:11:27.590Z"
   },
   "grenoble": {
     "max": 40,
@@ -105,7 +105,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -9.9,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:01.737Z"
+    "updated_at": "2026-11-20T14:11:29.746Z"
   },
   "dijon": {
     "max": 37,
@@ -114,7 +114,7 @@
     "min_date": "2026-01-07",
     "minTempLow": -6.7,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:33:03.895Z"
+    "updated_at": "2026-11-20T14:11:31.896Z"
   },
   "angers": {
     "max": 43,
@@ -123,7 +123,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -5.5,
     "minTempLowDate": "2026-01-04",
-    "updated_at": "2026-11-19T14:33:06.059Z"
+    "updated_at": "2026-11-20T14:11:34.108Z"
   },
   "reims": {
     "max": 41,
@@ -132,7 +132,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -5.7,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:08.219Z"
+    "updated_at": "2026-11-20T14:11:36.263Z"
   },
   "le-mans": {
     "max": 42,
@@ -141,7 +141,7 @@
     "min_date": "2026-01-01",
     "minTempLow": -6.9,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:10.378Z"
+    "updated_at": "2026-11-20T14:11:38.412Z"
   },
   "amiens": {
     "max": 40,
@@ -150,7 +150,7 @@
     "min_date": "2026-01-03",
     "minTempLow": -7.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:12.535Z"
+    "updated_at": "2026-11-20T14:11:40.563Z"
   },
   "caen": {
     "max": 40,
@@ -159,7 +159,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -2.8,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:14.698Z"
+    "updated_at": "2026-11-20T14:11:42.711Z"
   },
   "clermont": {
     "max": 37,
@@ -168,7 +168,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -7.4,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:16.857Z"
+    "updated_at": "2026-11-20T14:11:44.861Z"
   },
   "tours": {
     "max": 42,
@@ -177,7 +177,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -5.8,
     "minTempLowDate": "2026-01-04",
-    "updated_at": "2026-11-19T14:33:19.016Z"
+    "updated_at": "2026-11-20T14:11:47.009Z"
   },
   "metz": {
     "max": 40,
@@ -186,7 +186,7 @@
     "min_date": "2026-01-03",
     "minTempLow": -6.8,
     "minTempLowDate": "2026-01-04",
-    "updated_at": "2026-11-19T14:33:21.198Z"
+    "updated_at": "2026-11-20T14:11:49.172Z"
   },
   "brest": {
     "max": 42,
@@ -195,7 +195,7 @@
     "min_date": "2026-01-09",
     "minTempLow": -0.9,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:33:23.364Z"
+    "updated_at": "2026-11-20T14:11:51.352Z"
   },
   "orleans": {
     "max": 42,
@@ -204,7 +204,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -6.5,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:33:25.531Z"
+    "updated_at": "2026-11-20T14:11:53.504Z"
   },
   "rouen": {
     "max": 41,
@@ -213,7 +213,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -7.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:27.688Z"
+    "updated_at": "2026-11-20T14:11:55.655Z"
   },
   "limoges": {
     "max": 41,
@@ -222,7 +222,7 @@
     "min_date": "2026-01-04",
     "minTempLow": -8.1,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:33:29.886Z"
+    "updated_at": "2026-11-20T14:11:57.848Z"
   },
   "poitiers": {
     "max": 42,
@@ -231,7 +231,7 @@
     "min_date": "2026-01-04",
     "minTempLow": -6.3,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:33:32.091Z"
+    "updated_at": "2026-11-20T14:12:00.005Z"
   },
   "pau": {
     "max": 42,
@@ -240,7 +240,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -6.4,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:33:34.327Z"
+    "updated_at": "2026-11-20T14:12:02.207Z"
   },
   "bayonne": {
     "max": 46,
@@ -249,7 +249,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -5.4,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:33:36.486Z"
+    "updated_at": "2026-11-20T14:12:04.422Z"
   },
   "perpignan": {
     "max": 38,
@@ -258,7 +258,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -0.5,
     "minTempLowDate": "2026-01-02",
-    "updated_at": "2026-11-19T14:33:38.645Z"
+    "updated_at": "2026-11-20T14:12:06.572Z"
   },
   "toulon": {
     "max": 39,
@@ -267,7 +267,7 @@
     "min_date": "2026-01-07",
     "minTempLow": 0.4,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:40.807Z"
+    "updated_at": "2026-11-20T14:12:08.788Z"
   },
   "ajaccio": {
     "max": 44,
@@ -276,7 +276,7 @@
     "min_date": "2026-01-07",
     "minTempLow": -0.8,
     "minTempLowDate": "2026-01-11",
-    "updated_at": "2026-11-19T14:33:42.973Z"
+    "updated_at": "2026-11-20T14:12:10.942Z"
   },
   "bastia": {
     "max": 43,
@@ -285,7 +285,7 @@
     "min_date": "2026-01-07",
     "minTempLow": 1.9,
     "minTempLowDate": "2026-01-08",
-    "updated_at": "2026-11-19T14:33:45.156Z"
+    "updated_at": "2026-11-20T14:12:13.092Z"
   },
   "la-rochelle": {
     "max": 42,
@@ -294,7 +294,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -4.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:47.321Z"
+    "updated_at": "2026-11-20T14:12:15.241Z"
   },
   "valence": {
     "max": 40,
@@ -303,7 +303,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -5.4,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:33:49.478Z"
+    "updated_at": "2026-11-20T14:12:17.391Z"
   },
   "besancon": {
     "max": 39,
@@ -312,7 +312,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -9.8,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:51.656Z"
+    "updated_at": "2026-11-20T14:12:19.624Z"
   },
   "nimes": {
     "max": 41,
@@ -321,7 +321,7 @@
     "min_date": "2026-01-04",
     "minTempLow": -3,
     "minTempLowDate": "2026-01-02",
-    "updated_at": "2026-11-19T14:33:53.924Z"
+    "updated_at": "2026-11-20T14:12:21.776Z"
   },
   "le-havre": {
     "max": 39,
@@ -330,7 +330,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -1.9,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:56.147Z"
+    "updated_at": "2026-11-20T14:12:23.940Z"
   },
   "cherbourg": {
     "max": 41,
@@ -339,7 +339,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -0.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:33:58.326Z"
+    "updated_at": "2026-11-20T14:12:26.123Z"
   },
   "lorient": {
     "max": 42,
@@ -348,7 +348,7 @@
     "min_date": "2026-01-01",
     "minTempLow": -2.7,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:34:00.484Z"
+    "updated_at": "2026-11-20T14:12:28.274Z"
   },
   "vannes": {
     "max": 43,
@@ -357,7 +357,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -5.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:02.642Z"
+    "updated_at": "2026-11-20T14:12:30.422Z"
   },
   "quimper": {
     "max": 42,
@@ -366,7 +366,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -3.4,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:34:04.861Z"
+    "updated_at": "2026-11-20T14:12:32.578Z"
   },
   "saint-malo": {
     "max": 36,
@@ -375,7 +375,7 @@
     "min_date": "2026-01-05",
     "minTempLow": 0.9,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:34:07.022Z"
+    "updated_at": "2026-11-20T14:12:34.839Z"
   },
   "dunkerque": {
     "max": 37,
@@ -384,7 +384,7 @@
     "min_date": "2026-01-03",
     "minTempLow": -1.9,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:34:09.196Z"
+    "updated_at": "2026-11-20T14:12:36.989Z"
   },
   "valenciennes": {
     "max": 39,
@@ -393,7 +393,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -4.3,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:11.355Z"
+    "updated_at": "2026-11-20T14:12:39.139Z"
   },
   "calais": {
     "max": 35,
@@ -402,7 +402,7 @@
     "min_date": "2026-01-03",
     "minTempLow": -1.4,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:34:13.511Z"
+    "updated_at": "2026-11-20T14:12:41.289Z"
   },
   "arras": {
     "max": 39,
@@ -411,7 +411,7 @@
     "min_date": "2026-01-03",
     "minTempLow": -3.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:15.679Z"
+    "updated_at": "2026-11-20T14:12:43.440Z"
   },
   "nancy": {
     "max": 39,
@@ -420,7 +420,7 @@
     "min_date": "2026-01-07",
     "minTempLow": -7.8,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:34:17.843Z"
+    "updated_at": "2026-11-20T14:12:45.593Z"
   },
   "mulhouse": {
     "max": 41,
@@ -429,7 +429,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -9,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:20.001Z"
+    "updated_at": "2026-11-20T14:12:47.742Z"
   },
   "troyes": {
     "max": 41,
@@ -438,7 +438,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -6.2,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:34:22.163Z"
+    "updated_at": "2026-11-20T14:12:49.892Z"
   },
   "aix-en-provence": {
     "max": 41,
@@ -447,7 +447,7 @@
     "min_date": "2026-01-07",
     "minTempLow": -5.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:24.362Z"
+    "updated_at": "2026-11-20T14:12:52.056Z"
   },
   "avignon": {
     "max": 40,
@@ -456,7 +456,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -3.1,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:34:26.576Z"
+    "updated_at": "2026-11-20T14:12:54.389Z"
   },
   "saint-etienne": {
     "max": 39,
@@ -465,7 +465,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -7.6,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:29.165Z"
+    "updated_at": "2026-11-20T14:12:56.618Z"
   },
   "annecy": {
     "max": 38,
@@ -474,7 +474,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -6.3,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:31.397Z"
+    "updated_at": "2026-11-20T14:12:58.929Z"
   },
   "chamonix": {
     "max": 32,
@@ -483,7 +483,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -16.6,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:34:33.583Z"
+    "updated_at": "2026-11-20T14:13:01.177Z"
   },
   "chambery": {
     "max": 40,
@@ -492,7 +492,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -8.8,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:36.136Z"
+    "updated_at": "2026-11-20T14:13:03.363Z"
   },
   "chartres": {
     "max": 41,
@@ -501,7 +501,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -7.5,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:38.363Z"
+    "updated_at": "2026-11-20T14:13:05.643Z"
   },
   "bourges": {
     "max": 40,
@@ -510,7 +510,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -6.5,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:34:40.522Z"
+    "updated_at": "2026-11-20T14:13:07.792Z"
   },
   "albi": {
     "max": 42,
@@ -519,7 +519,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -8,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:34:42.696Z"
+    "updated_at": "2026-11-20T14:13:09.957Z"
   },
   "montauban": {
     "max": 41,
@@ -528,7 +528,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -8.1,
     "minTempLowDate": "2026-01-06",
-    "updated_at": "2026-11-19T14:34:44.856Z"
+    "updated_at": "2026-11-20T14:13:12.106Z"
   },
   "la-roche-sur-yon": {
     "max": 42,
@@ -537,7 +537,7 @@
     "min_date": "2026-01-06",
     "minTempLow": -5.8,
     "minTempLowDate": "2026-01-07",
-    "updated_at": "2026-11-19T14:34:47.067Z"
+    "updated_at": "2026-11-20T14:13:14.425Z"
   },
   "chalon-sur-saone": {
     "max": 40,
@@ -546,7 +546,7 @@
     "min_date": "2026-01-05",
     "minTempLow": -7.4,
     "minTempLowDate": "2026-01-01",
-    "updated_at": "2026-11-19T14:34:49.225Z"
+    "updated_at": "2026-11-20T14:13:16.575Z"
   },
   "belfort": {
     "max": 39,
@@ -555,6 +555,6 @@
     "min_date": "2026-01-05",
     "minTempLow": -10.3,
     "minTempLowDate": "2026-01-05",
-    "updated_at": "2026-11-19T14:34:51.381Z"
+    "updated_at": "2026-11-20T14:13:18.841Z"
   }
 }
